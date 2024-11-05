@@ -1,0 +1,10 @@
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      glob: '*.{ts,tsx}'
+      run: tsc -p tsconfig.json --noEmit && npm run lint {staged_files}
+    prettier:
+      glob: '*.{ts,tsx,css,scss}'
+      run: npx prettier -w {staged_files}
+      stage_fixed: true

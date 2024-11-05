@@ -1,0 +1,56 @@
+version: '3.9'
+
+volumes:
+  pgadmin-data:
+    name: 'pgadmin-data'
+
+services:
+  server:
+    container_name: game-runner-server
+    image: game-runner-server
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PORT: ${PORT}
+    restart: always
+    ports:
+      - '${PORT}:${PORT}'
+    env_file:
+      - ./.env
+    networks:
+      - game-runner
+    depends_on:
+      - postgres
+    command: ./utils/wait-for.sh postgres:${POSTGRES_PORT} -- npm run deploy
+
+  postgres:
+    container_name: game-runner-database
+    image: postgres:14
+    ports:
+      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
+    env_file:
+      - ./.env
+    volumes:
+      - ../tmp/pgdata:/var/lib/postgresql/data
+    networks:
+      - game-runner
+
+  pgadmin:
+    container_name: game-runner-pgadmin
+    image: dpage/pgadmin4:7.4
+    restart: always
+    env_file:
+      - ./.env
+    ports:
+      - '${PGADMIN_LISTEN_PORT}:${PGADMIN_LISTEN_PORT}'
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - game-runner
+
+networks:
+  game-runner:
+    driver: bridge

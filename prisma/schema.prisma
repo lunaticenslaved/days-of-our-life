@@ -1,0 +1,100 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model FoodProduct {
+  id           String  @id @default(uuid()) @db.Uuid
+  name         String  @unique @db.VarChar(255)
+  manufacturer String? @db.VarChar(255)
+  isDeleted    Boolean @default(false)
+
+  nutrients FoodNutrients?
+
+  recipeIngrediends FoodRecipeIngredient[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FoodRecipe {
+  id          String  @id @default(uuid()) @db.Uuid
+  name        String  @db.VarChar(255)
+  description String  @db.Text
+  isDeleted   Boolean @default(false)
+
+  stats FoodRecipeStats[]
+  parts FoodRecipePart[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FoodRecipePart {
+  id          String  @id @default(uuid()) @db.Uuid
+  title       String  @db.VarChar(255)
+  description String? @db.Text
+
+  recipeId String     @db.Uuid
+  recipe   FoodRecipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  ingredients FoodRecipeIngredient[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FoodNutrients {
+  id String @id @default(uuid()) @db.Uuid
+
+  calories Float @default(0) @db.Real
+  proteins Float @default(0) @db.Real
+  fats     Float @default(0) @db.Real
+  carbs    Float @default(0) @db.Real
+
+  productId String?      @unique @db.Uuid
+  product   FoodProduct? @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  recipeStatsId String?          @unique @db.Uuid
+  recipeStats   FoodRecipeStats? @relation(fields: [recipeStatsId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FoodRecipeIngredient {
+  id          String  @id @default(uuid()) @db.Uuid
+  grams       Float   @db.Real
+  description String? @db.VarChar(255)
+
+  productId String      @db.Uuid
+  product   FoodProduct @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  recipePartId String         @db.Uuid
+  recipePart   FoodRecipePart @relation(fields: [recipePartId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FoodRecipeStats {
+  id   String @id @default(uuid()) @db.Uuid
+  type String @db.VarChar(255)
+
+  quantity Float @db.Real
+
+  recipeId String     @db.Uuid
+  recipe   FoodRecipe @relation(fields: [recipeId], references: [id])
+
+  nutrients FoodNutrients?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
