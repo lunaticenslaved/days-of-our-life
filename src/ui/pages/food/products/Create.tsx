@@ -14,12 +14,7 @@ export default function Create() {
         creation.mutate({
           name: values.name,
           manufacturer: values.manufacturer,
-          nutrients: {
-            calories: values.calories,
-            carbs: values.carbs,
-            fats: values.fats,
-            proteins: values.proteins,
-          },
+          nutrients: values.nutrients,
         });
       }}
     />

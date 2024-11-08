@@ -32,6 +32,10 @@ const columns = [
     title: 'Углеводы',
     getValue: ({ nutrients }: FoodProduct) => <div>{nutrients.carbs} г</div>,
   },
+  {
+    title: 'Клетчатка',
+    getValue: ({ nutrients }: FoodProduct) => <div>{nutrients.fibers} г</div>,
+  },
 ];
 
 export function FoodProductsTable(props: FoodProductTablesProps) {

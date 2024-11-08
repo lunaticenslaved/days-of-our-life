@@ -58,6 +58,7 @@ model FoodNutrients {
   proteins Float @default(0) @db.Real
   fats     Float @default(0) @db.Real
   carbs    Float @default(0) @db.Real
+  fibers   Float @default(0) @db.Real
 
   productId String?      @unique @db.Uuid
   product   FoodProduct? @relation(fields: [productId], references: [id], onDelete: Cascade)

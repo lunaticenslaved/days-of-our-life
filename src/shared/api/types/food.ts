@@ -1,3 +1,4 @@
+import { FoodNutrients } from '#shared/models/food';
 import { FoodProduct } from '#shared/models/FoodProduct';
 import { FoodRecipe, FoodRecipeStatsType } from '#shared/models/FoodRecipe';
 
@@ -10,12 +11,7 @@ export type CreateFoodProductResponse = FoodProduct;
 export interface CreateFoodProductRequest {
   name: string;
   manufacturer?: string;
-  nutrients: {
-    calories: number;
-    proteins: number;
-    fats: number;
-    carbs: number;
-  };
+  nutrients: FoodNutrients;
 }
 
 export type UpdateFoodProductResponse = FoodProduct;

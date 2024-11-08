@@ -2,6 +2,16 @@ import { FoodProduct } from '#shared/models/FoodProduct';
 import { FoodRecipe, FoodRecipeStatsType } from '#shared/models/FoodRecipe';
 import { Prisma } from '@prisma/client';
 
+const NUTRIENTS_SELECT = {
+  select: {
+    calories: true,
+    carbs: true,
+    proteins: true,
+    fats: true,
+    fibers: true,
+  },
+};
+
 export const SELECT_RECIPE = {
   select: {
     id: true,
@@ -32,15 +42,7 @@ export const SELECT_RECIPE = {
       select: {
         type: true,
         quantity: true,
-        nutrients: {
-          select: {
-            id: true,
-            calories: true,
-            carbs: true,
-            proteins: true,
-            fats: true,
-          },
-        },
+        nutrients: NUTRIENTS_SELECT,
       },
     },
   },
@@ -51,15 +53,7 @@ export const SELECT_PRODUCT = {
     id: true,
     name: true,
     manufacturer: true,
-    nutrients: {
-      select: {
-        id: true,
-        calories: true,
-        carbs: true,
-        proteins: true,
-        fats: true,
-      },
-    },
+    nutrients: NUTRIENTS_SELECT,
   },
 } satisfies Prisma.FoodProductDefaultArgs;
 

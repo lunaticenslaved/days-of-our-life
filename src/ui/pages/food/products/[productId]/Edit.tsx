@@ -27,12 +27,7 @@ export default function Page() {
         updating.mutate({
           name: values.name,
           manufacturer: values.manufacturer,
-          nutrients: {
-            calories: values.calories,
-            carbs: values.carbs,
-            fats: values.fats,
-            proteins: values.proteins,
-          },
+          nutrients: values.nutrients,
         });
       }}
     />

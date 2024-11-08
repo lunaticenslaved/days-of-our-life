@@ -15,6 +15,7 @@ export const FoodProductFieldValidators = {
   proteins: Validators.proteins,
   fats: Validators.fats,
   carbs: Validators.carbs,
+  fibers: Validators.fibers,
 };
 
 export interface FoodProduct {

@@ -7,10 +7,13 @@ import { z } from 'zod';
 const schema = z.object({
   name: FoodProductFieldValidators.name,
   manufacturer: FoodProductFieldValidators.manufacturer,
-  calories: FoodProductFieldValidators.calories,
-  proteins: FoodProductFieldValidators.proteins,
-  fats: FoodProductFieldValidators.fats,
-  carbs: FoodProductFieldValidators.carbs,
+  nutrients: z.object({
+    calories: FoodProductFieldValidators.calories,
+    proteins: FoodProductFieldValidators.proteins,
+    fats: FoodProductFieldValidators.fats,
+    carbs: FoodProductFieldValidators.carbs,
+    fibers: FoodProductFieldValidators.carbs,
+  }),
 });
 
 type FoodProductFormValues = z.infer<typeof schema>;
@@ -24,10 +27,13 @@ function getInitialValues(product?: FoodProduct): FoodProductFormValues {
   return {
     name: product?.name || '',
     manufacturer: product?.manufacturer || undefined,
-    calories: product?.nutrients?.calories as number,
-    proteins: product?.nutrients?.proteins as number,
-    fats: product?.nutrients?.fats as number,
-    carbs: product?.nutrients?.carbs as number,
+    nutrients: {
+      calories: product?.nutrients?.calories as number,
+      proteins: product?.nutrients?.proteins as number,
+      fats: product?.nutrients?.fats as number,
+      carbs: product?.nutrients?.carbs as number,
+      fibers: (product?.nutrients?.fibers as number) || 0,
+    },
   };
 }
 
@@ -38,10 +44,11 @@ export function FoodProductForm({ onSubmit, product }: FoodProductFormProps) {
         <>
           <FFTextInput name="name" title="Имя" required />
           <FFTextInput name="manufacturer" title="Производитель" />
-          <FFNumberInput name="calories" title="Калории" required />
-          <FFNumberInput name="proteins" title="Белки" required />
-          <FFNumberInput name="fats" title="Жиры" required />
-          <FFNumberInput name="carbs" title="Углеводы" required />
+          <FFNumberInput name="nutrients.calories" title="Калории" required />
+          <FFNumberInput name="nutrients.proteins" title="Белки" required />
+          <FFNumberInput name="nutrients.fats" title="Жиры" required />
+          <FFNumberInput name="nutrients.carbs" title="Углеводы" required />
+          <FFNumberInput name="nutrients.fibers" title="Клетчатка" required />
         </>
       )}
     </FForm>

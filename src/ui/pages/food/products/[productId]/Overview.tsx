@@ -31,6 +31,7 @@ export default function Page() {
         <li>Белки - {nutrients.proteins}</li>
         <li>Жиры - {nutrients.fats}</li>
         <li>Углеводы - {nutrients.carbs}</li>
+        <li>Клетчатка - {nutrients.fibers}</li>
       </ul>
     </section>
   );
