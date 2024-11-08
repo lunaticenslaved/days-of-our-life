@@ -1,5 +1,8 @@
-import { useFoodProductsQuery } from '#ui/api/food/products';
-import { useFoodRecipeQuery, useUpdateFoodRecipeMutation } from '#ui/api/food/recipes';
+import {
+  useListFoodProductsQuery,
+  useUpdateFoodRecipeMutation,
+  useGetFoodRecipeQuery,
+} from '#ui/api/food';
 import { FoodRecipeForm } from '#ui/entities/food-recipe';
 import { useFoodNavigation, useFoodPageParams } from '#ui/pages/food';
 
@@ -7,9 +10,9 @@ export default function Page() {
   const { recipeId = '' } = useFoodPageParams();
   const navigation = useFoodNavigation();
 
-  const query = useFoodRecipeQuery(recipeId);
+  const query = useGetFoodRecipeQuery(recipeId);
 
-  const productsQuery = useFoodProductsQuery();
+  const productsQuery = useListFoodProductsQuery();
   const editing = useUpdateFoodRecipeMutation(recipeId, {
     onSuccess: () => navigation.toRecipeOverview({ recipeId }),
   });

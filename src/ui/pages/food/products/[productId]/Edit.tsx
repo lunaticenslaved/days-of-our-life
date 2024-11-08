@@ -1,12 +1,12 @@
-import { useFoodProductQuery, useUpdateProductMutation } from '#ui/api/food/products';
+import { useGetFoodProductQuery, useUpdateFoodProductMutation } from '#ui/api/food';
 import { FoodProductForm } from '#ui/entities/food-product';
 import { useFoodNavigation, useFoodPageParams } from '#ui/pages/food';
 
 export default function Page() {
   const { productId = '' } = useFoodPageParams();
-  const query = useFoodProductQuery(productId);
+  const query = useGetFoodProductQuery(productId);
   const navigation = useFoodNavigation();
-  const updating = useUpdateProductMutation(productId, {
+  const updating = useUpdateFoodProductMutation(productId, {
     onSuccess: () => navigation.toProductOverview({ productId }),
   });
 
@@ -20,5 +20,21 @@ export default function Page() {
 
   const product = query.data;
 
-  return <FoodProductForm product={product} onSubmit={updating.mutate} />;
+  return (
+    <FoodProductForm
+      product={product}
+      onSubmit={values => {
+        updating.mutate({
+          name: values.name,
+          manufacturer: values.manufacturer,
+          nutrients: {
+            calories: values.calories,
+            carbs: values.carbs,
+            fats: values.fats,
+            proteins: values.proteins,
+          },
+        });
+      }}
+    />
+  );
 }

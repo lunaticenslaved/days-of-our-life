@@ -1,10 +1,10 @@
-import { useFoodProductQuery } from '#ui/api/food/products';
+import { useGetFoodProductQuery } from '#ui/api/food';
 import { FOOD_NAVIGATION, useFoodPageParams } from '#ui/pages/food';
 import { Link } from 'react-router-dom';
 
 export default function Page() {
   const { productId = '' } = useFoodPageParams();
-  const query = useFoodProductQuery(productId);
+  const query = useGetFoodProductQuery(productId);
 
   if (query.isLoading) {
     return <div>Loading...</div>;

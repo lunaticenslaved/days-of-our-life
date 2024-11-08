@@ -12,10 +12,10 @@ import { APP_ENV } from '#server/constants';
 
 import { RequestContext } from '#server/utils/RequestContext';
 import express from 'express';
-import { ApiRequest } from '#shared/models/request';
 import { Controller } from '#server/utils/Controller';
 import path from 'path';
 import { ApiError } from '#shared/errors';
+import { ApiResponse } from '#shared/api/types/shared';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function loadControllers(): Promise<Controller<any>[]> {
@@ -103,7 +103,7 @@ export async function configureApp(app: Express) {
             .send({
               type: 'success',
               data: resData,
-            } satisfies ApiRequest<unknown>)
+            } satisfies ApiResponse<unknown>)
             .end();
         } catch (error) {
           let status = 500;
@@ -121,7 +121,7 @@ export async function configureApp(app: Express) {
             .send({
               type: 'error',
               message: message,
-            } satisfies ApiRequest<unknown>)
+            } satisfies ApiResponse<unknown>)
             .end();
         }
       });

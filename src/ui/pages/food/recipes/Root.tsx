@@ -1,9 +1,9 @@
-import { useFoodRecipesQuery } from '#ui/api/food/recipes';
+import { useListFoodRecipesQuery } from '#ui/api/food';
 import { FOOD_NAVIGATION } from '#ui/pages/food';
 import { Link } from 'react-router-dom';
 
 export default function Page() {
-  const { data: recipes } = useFoodRecipesQuery();
+  const { data: recipes } = useListFoodRecipesQuery();
 
   return (
     <div>

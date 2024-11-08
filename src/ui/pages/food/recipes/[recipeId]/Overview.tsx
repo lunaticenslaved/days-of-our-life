@@ -1,4 +1,4 @@
-import { useFoodRecipeQuery } from '#ui/api/food/recipes';
+import { useGetFoodRecipeQuery } from '#ui/api/food';
 import { useFoodPageParams } from '#ui/pages/food';
 import { Link } from 'react-router-dom';
 import { FOOD_NAVIGATION } from '../../index';
@@ -6,7 +6,7 @@ import { FoodRecipeStatsType } from '#shared/models/FoodRecipe';
 
 export default function Page() {
   const { recipeId = '' } = useFoodPageParams();
-  const query = useFoodRecipeQuery(recipeId);
+  const query = useGetFoodRecipeQuery(recipeId);
 
   if (query.isLoading) {
     return <div>Loading...</div>;
