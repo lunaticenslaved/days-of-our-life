@@ -14,7 +14,7 @@ import { RequestContext } from '#server/utils/RequestContext';
 import express from 'express';
 import { Controller } from '#server/utils/Controller';
 import path from 'path';
-import { ApiError } from '#shared/errors';
+import { ApiError, ValidationError } from '#shared/errors';
 import { ApiResponse } from '#shared/api/types/shared';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -80,7 +80,7 @@ export async function configureApp(app: Express) {
 
       if (!config) continue;
 
-      const { parse, handler } = config;
+      const { parse, handler, validator } = config;
       const [method, route] = key.split(' ');
 
       console.log(method, route);
@@ -89,13 +89,23 @@ export async function configureApp(app: Express) {
       app[method.toLowerCase()](`/api${route}`, async (req: Request, res: Response) => {
         const data = parse(req);
 
-        const requestContext: RequestContext = {
-          prisma: prisma,
-        };
-
-        res.setHeader('content-type', 'application/json');
-
         try {
+          if (validator) {
+            const validationResult = validator.safeParse(data);
+
+            if (validationResult.error) {
+              throw new ValidationError({
+                errors: validationResult.error.errors.map(e => e.message),
+              });
+            }
+          }
+
+          const requestContext: RequestContext = {
+            prisma: prisma,
+          };
+
+          res.setHeader('content-type', 'application/json');
+
           const resData = await handler(data, requestContext);
 
           res

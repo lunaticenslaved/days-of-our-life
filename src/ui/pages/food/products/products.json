@@ -1,0 +1,90 @@
+[
+  {
+    "id": "e1307a3f-b9ed-4714-b8ba-f2a13c867f5b",
+    "name": "Сыр Сулугуни",
+    "nutrients": {
+      "calories": 286,
+      "carbs": 0.4,
+      "proteins": 20.5,
+      "fats": 22,
+      "fibers": 0
+    }
+  },
+  {
+    "id": "f7fd3518-cf60-4ace-b091-afaaf0c504e2",
+    "name": "Кефир 3,2%",
+    "nutrients": {
+      "calories": 59,
+      "carbs": 4,
+      "proteins": 2.9,
+      "fats": 3.2,
+      "fibers": 0
+    }
+  },
+  {
+    "id": "fc0cdd82-f0db-4091-8fb6-ea9e46beae2f",
+    "name": "Мука пшеничная высшего сорта",
+    "nutrients": {
+      "calories": 334,
+      "carbs": 69.9,
+      "proteins": 10.8,
+      "fats": 1.36,
+      "fibers": 3.5
+    }
+  },
+  {
+    "id": "f2c15209-fec0-49e1-b6ad-e76e36a5bb1b",
+    "name": "Рис бурый, нешлифованный",
+    "nutrients": {
+      "calories": 380,
+      "carbs": 77,
+      "proteins": 7.5,
+      "fats": 2,
+      "fibers": 14
+    }
+  },
+  {
+    "id": "5e73dc34-8cbc-4c4b-b2c4-24442ecef3f9",
+    "name": "Яйцо куриное",
+    "nutrients": {
+      "calories": 157,
+      "carbs": 0.7,
+      "proteins": 12.7,
+      "fats": 11.5,
+      "fibers": 0
+    }
+  },
+  {
+    "id": "5ba22adc-e9a1-4552-886e-2bbeb2d38c6a",
+    "name": "Горошек зеленый, замороженный",
+    "nutrients": {
+      "calories": 77,
+      "carbs": 9.1,
+      "proteins": 5.2,
+      "fats": 0.4,
+      "fibers": 4.5
+    }
+  },
+  {
+    "id": "caab0a82-ce4e-47ef-a0b4-a88da8080205",
+    "name": "Кукуруза, зерна, замороженная",
+    "nutrients": {
+      "calories": 81,
+      "carbs": 16.9,
+      "proteins": 2.6,
+      "fats": 0.7,
+      "fibers": 2.4
+    }
+  },
+  {
+    "id": "1fdeab1d-0d9f-4841-8868-d5ad9f106923",
+    "name": "Масло подсолнечное",
+    "nutrients": {
+      "calories": 899,
+      "carbs": 0,
+      "proteins": 0,
+      "fats": 89.9,
+      "fibers": 0
+    }
+  }
+]

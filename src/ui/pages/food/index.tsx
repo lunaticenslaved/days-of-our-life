@@ -10,6 +10,7 @@ import RecipesRoot from './recipes/Root';
 import RecipeCreate from './recipes/Create';
 import RecipeOverview from './recipes/[recipeId]/Overview';
 import RecipeEdit from './recipes/[recipeId]/Edit';
+import TrackerRoot from './tracker/Root';
 
 type RecipeId = { recipeId: string };
 type ProductId = { productId: string };
@@ -28,6 +29,9 @@ const routes = {
   recipeCreate: '/food/recipes/create',
   recipeOverview: '/food/recipes/:recipeId',
   recipeEdit: '/food/recipes/:recipeId/edit',
+
+  // Tracker
+  tracker: '/food/tracker',
 } as const;
 
 export const FOOD_NAVIGATION = {
@@ -48,6 +52,9 @@ export const FOOD_NAVIGATION = {
   toRecipeCreate: () => `${routes.recipeCreate}`,
   toRecipeEdit: ({ recipeId }: RecipeId) =>
     routes.recipeEdit.replace(':recipeId', recipeId),
+
+  // Tracker
+  toTracker: () => routes.tracker,
 };
 
 export function useFoodPageParams() {
@@ -90,4 +97,7 @@ export default [
     element={<RecipeOverview />}
   />,
   <Route key={routes.recipeEdit} path={routes.recipeEdit} element={<RecipeEdit />} />,
+
+  // Tracker
+  <Route key={routes.tracker} path={routes.tracker} element={<TrackerRoot />} />,
 ];

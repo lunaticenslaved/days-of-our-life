@@ -1,4 +1,4 @@
-import { FoodProduct } from '#shared/models/FoodProduct';
+import { FoodProduct } from '#shared/models/food';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 

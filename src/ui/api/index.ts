@@ -8,7 +8,7 @@ import axiosLib from 'axios';
 const axios = axiosLib.create();
 export const queryClient = new QueryClient();
 
-export function wrapApiAction<T extends object, R, K>(
+export function wrapApiAction<T extends object, R, K extends object>(
   config: ApiAction<T, R>,
   handlers: Handlers<R> = {},
   passArg: K = {} as K,
@@ -39,7 +39,10 @@ export function wrapApiAction<T extends object, R, K>(
     return response;
   };
 
-  return async (arg: Omit<T, keyof typeof passArg>, localHandlers: Handlers<R> = {}) => {
+  return async (
+    arg: Partial<T> & Omit<T, keyof typeof passArg>,
+    localHandlers: Handlers<R> = {},
+  ) => {
     const response = await fn({ ...passArg, ...arg } as unknown as T);
 
     if (response.type === 'error') {

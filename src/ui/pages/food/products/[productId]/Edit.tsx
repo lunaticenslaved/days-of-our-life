@@ -27,7 +27,7 @@ export default function Page() {
         updating.mutate({
           name: values.name,
           manufacturer: values.manufacturer,
-          nutrients: values.nutrients,
+          nutrientsPerGram: values.nutrients,
         });
       }}
     />

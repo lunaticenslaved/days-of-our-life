@@ -15,7 +15,7 @@ export default function Page() {
   }
 
   const product = query.data;
-  const { nutrients } = product;
+  const { nutrientsPerGram } = product;
 
   return (
     <section>
@@ -27,11 +27,11 @@ export default function Page() {
       {product.manufacturer && <h2>{product.manufacturer}</h2>}
 
       <ul>
-        <li>Калории - {nutrients.calories}</li>
-        <li>Белки - {nutrients.proteins}</li>
-        <li>Жиры - {nutrients.fats}</li>
-        <li>Углеводы - {nutrients.carbs}</li>
-        <li>Клетчатка - {nutrients.fibers}</li>
+        <li>Калории - {nutrientsPerGram.calories * 100}</li>
+        <li>Белки - {nutrientsPerGram.proteins * 100}</li>
+        <li>Жиры - {nutrientsPerGram.fats * 100}</li>
+        <li>Углеводы - {nutrientsPerGram.carbs * 100}</li>
+        <li>Клетчатка - {nutrientsPerGram.fibers * 100}</li>
       </ul>
     </section>
   );

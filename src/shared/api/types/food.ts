@@ -1,6 +1,11 @@
-import { FoodNutrients } from '#shared/models/food';
-import { FoodProduct } from '#shared/models/FoodProduct';
-import { FoodRecipe, FoodRecipeStatsType } from '#shared/models/FoodRecipe';
+import {
+  FoodNutrients,
+  FoodProduct,
+  FoodQuantityType,
+  FoodRecipe,
+  FoodRecipeOutput,
+  FoodTrackerDay,
+} from '#shared/models/food';
 
 interface Id {
   id: string;
@@ -11,7 +16,7 @@ export type CreateFoodProductResponse = FoodProduct;
 export interface CreateFoodProductRequest {
   name: string;
   manufacturer?: string;
-  nutrients: FoodNutrients;
+  nutrientsPerGram: FoodNutrients;
 }
 
 export type UpdateFoodProductResponse = FoodProduct;
@@ -31,10 +36,7 @@ export type CreateFoodRecipeResponse = FoodRecipe;
 export interface CreateFoodRecipeRequest {
   name: string;
   description: string;
-  stats: Array<{
-    type: FoodRecipeStatsType;
-    quantity: number;
-  }>;
+  output: FoodRecipeOutput;
   parts: Array<{
     title: string;
     description?: string;
@@ -57,3 +59,25 @@ export interface ListFoodRecipesRequest {}
 
 export type DeleteFoodRecipeResponse = void;
 export interface DeleteFoodRecipeRequest extends Id {}
+
+// Tracker
+export type AddFoodMeadIngredientResponse = void;
+export interface AddFoodMeadIngredientRequest {
+  ingredient:
+    | {
+        type: 'product';
+        productId: string;
+      }
+    | {
+        type: 'recipe';
+        recipeId: string;
+      };
+  quantityType: FoodQuantityType;
+  quantity: number;
+  date: string;
+}
+
+export type GetFoodTrackerDayResponse = FoodTrackerDay;
+export interface GetFoodTrackerDayRequest {
+  date: string;
+}

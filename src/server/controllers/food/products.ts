@@ -1,4 +1,4 @@
-import { convertFoodProduct, SELECT_PRODUCT } from '#server/models/food';
+import { convertFoodProduct, SELECT_PRODUCT } from '#server/selectors/food';
 import { Controller } from '#server/utils/Controller';
 import {
   CreateFoodProductRequest,
@@ -12,21 +12,35 @@ import {
   UpdateFoodProductRequest,
   UpdateFoodProductResponse,
 } from '#shared/api/types/food';
+import { CommonValidators } from '#shared/models/common';
+
+import { FoodValidators } from '#shared/models/food';
+import { z } from 'zod';
+
+const CreateFoodProductRequestValidator: z.ZodType<CreateFoodProductRequest> = z.object({
+  name: FoodValidators.name,
+  manufacturer: FoodValidators.manufacturer,
+  nutrientsPerGram: FoodValidators.nutrients,
+});
+
+const UpdateFoodProductRequestValidator: z.ZodType<UpdateFoodProductRequest> =
+  CreateFoodProductRequestValidator.and(z.object({ id: CommonValidators.id }));
 
 export default new Controller<'food/products'>({
   'POST /food/products': Controller.handler<
     CreateFoodProductRequest,
     CreateFoodProductResponse
   >({
+    validator: CreateFoodProductRequestValidator,
     parse: req => req.body,
-    handler: async ({ nutrients, ...data }, { prisma }) => {
+    handler: async ({ nutrientsPerGram, ...data }, { prisma }) => {
       return await prisma.foodProduct
         .create({
           data: {
             name: data.name,
             manufacturer: data.manufacturer,
-            nutrients: {
-              create: nutrients,
+            nutrientsPerGram: {
+              create: nutrientsPerGram,
             },
           },
           ...SELECT_PRODUCT,
@@ -39,16 +53,20 @@ export default new Controller<'food/products'>({
     UpdateFoodProductRequest,
     UpdateFoodProductResponse
   >({
+    validator: UpdateFoodProductRequestValidator,
     parse: req => ({ id: req.params.productId, ...req.body }),
-    handler: async ({ id, nutrients, ...data }, { prisma }) => {
+    handler: async ({ id, nutrientsPerGram, ...data }, { prisma }) => {
       return await prisma.foodProduct
         .update({
           where: { id },
           data: {
             name: data.name,
             manufacturer: data.manufacturer,
-            nutrients: {
-              update: nutrients,
+            nutrientsPerGram: {
+              upsert: {
+                create: nutrientsPerGram,
+                update: nutrientsPerGram,
+              },
             },
           },
           ...SELECT_PRODUCT,
@@ -61,6 +79,7 @@ export default new Controller<'food/products'>({
     DeleteFoodProductRequest,
     DeleteFoodProductResponse
   >({
+    validator: z.object({ id: CommonValidators.id }),
     parse: req => ({ id: req.params.productId }),
     handler: async ({ id }, { prisma }) => {
       await prisma.foodProduct.update({
@@ -74,6 +93,7 @@ export default new Controller<'food/products'>({
     ListFoodProductsRequest,
     ListFoodProductsResponse
   >({
+    validator: z.object({}),
     parse: () => ({}),
     handler: async (_, { prisma }) => {
       return await prisma.foodProduct
@@ -86,6 +106,7 @@ export default new Controller<'food/products'>({
     GetFoodProductRequest,
     GetFoodProductResponse
   >({
+    validator: z.object({ id: CommonValidators.id }),
     parse: req => ({ id: req.params.productId }),
     handler: async ({ id }, { prisma }) => {
       return await prisma.foodProduct

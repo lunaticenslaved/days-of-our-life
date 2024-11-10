@@ -1,12 +1,12 @@
 import _ from 'lodash';
-import { ZodObject } from 'zod';
+import { ZodType } from 'zod';
 
 export class Validator {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private schema: ZodObject<any>;
+  private schema: ZodType<any, any, any>;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(schema: ZodObject<any>) {
+  constructor(schema: ZodType<any, any, any>) {
     this.schema = schema;
   }
 

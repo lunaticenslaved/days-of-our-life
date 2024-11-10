@@ -1,9 +1,4 @@
-import {
-  convertFoodProduct,
-  convertFoodRecipe,
-  SELECT_PRODUCT,
-  SELECT_RECIPE,
-} from '#server/models/food';
+import { convertFoodRecipe, SELECT_RECIPE } from '#server/selectors/food';
 import { PrismaTransaction } from '#server/prisma';
 import { Controller } from '#server/utils/Controller';
 import {
@@ -18,86 +13,11 @@ import {
   UpdateFoodRecipeRequest,
   UpdateFoodRecipeResponse,
 } from '#shared/api/types/food';
-import { ValidationError } from '#shared/errors';
-import { nonReachable } from '#shared/utils';
 import _ from 'lodash';
-
-async function insertStats(
-  { id, parts, stats }: Pick<UpdateFoodRecipeRequest, 'parts' | 'stats' | 'id'>,
-  trx: PrismaTransaction,
-) {
-  if (stats.length === 0) {
-    throw new ValidationError({
-      status: 400,
-      errors: ['At least one stat is required'],
-    });
-  }
-
-  let calories = 0;
-  let fats = 0;
-  let proteins = 0;
-  let carbs = 0;
-
-  const ingredients = _.flatMap(parts, p => p.ingredients);
-
-  const products = await trx.foodProduct
-    .findMany({
-      where: {
-        id: {
-          in: ingredients.map(({ productId }) => productId),
-        },
-      },
-      ...SELECT_PRODUCT,
-    })
-    .then(data => data.map(convertFoodProduct));
-
-  for (const { nutrients, id: productId } of products) {
-    const ingredient = ingredients.find(i => i.productId === productId);
-
-    if (!ingredient) {
-      throw new Error('Unknown ingredient');
-    }
-
-    const { grams } = ingredient;
-
-    calories += (nutrients.calories / 100) * grams;
-    fats += (nutrients.fats / 100) * grams;
-    proteins += (nutrients.proteins / 100) * grams;
-    carbs += (nutrients.carbs / 100) * grams;
-  }
-
-  await trx.foodRecipeStats.deleteMany({
-    where: { recipeId: id },
-  });
-
-  for (const { type, quantity } of stats) {
-    let convert = (value: number) => value;
-
-    if (type === 'grams') {
-      convert = value => (value / quantity) * 100;
-    } else if (type === 'servings') {
-      convert = value => value / quantity;
-    } else {
-      nonReachable(type);
-    }
-
-    await trx.foodRecipeStats.create({
-      data: {
-        recipeId: id,
-        type,
-        quantity,
-        nutrients: {
-          create: {
-            calories: convert(calories),
-            fats: convert(fats),
-            proteins: convert(proteins),
-            carbs: convert(carbs),
-          },
-        },
-      },
-    });
-  }
-}
+import { FoodValidators } from '#shared/models/food';
+import { z } from 'zod';
+import { CommonValidators } from '#shared/models/common';
+import FoodNutrientsService from '#server/services/FoodNutrientsService';
 
 async function insertParts(
   { id: recipeId, parts }: Pick<UpdateFoodRecipeRequest, 'parts' | 'id'>,
@@ -122,11 +42,19 @@ async function insertParts(
   }
 }
 
+const CreateFoodRecipeRequestValidator: z.ZodType<CreateFoodRecipeRequest> = z.object({
+  name: FoodValidators.name,
+  description: FoodValidators.recipeDescription,
+  output: FoodValidators.recipeOutput,
+  parts: FoodValidators.recipeParts,
+});
+
 export default new Controller<'food/recipes'>({
   'GET /food/recipes': Controller.handler<
     ListFoodRecipesRequest,
     ListFoodRecipesResponse
   >({
+    validator: z.object({}),
     parse: () => ({}),
     handler: async (_, { prisma }) => {
       return await prisma.foodRecipe
@@ -139,6 +67,7 @@ export default new Controller<'food/recipes'>({
     GetFoodRecipeRequest,
     GetFoodRecipeResponse
   >({
+    validator: z.object({ id: CommonValidators.id }),
     parse: req => ({ id: req.params.recipeId }),
     handler: async ({ id }, { prisma }) => {
       return prisma.foodRecipe
@@ -154,20 +83,31 @@ export default new Controller<'food/recipes'>({
     CreateFoodRecipeRequest,
     CreateFoodRecipeResponse
   >({
+    validator: CreateFoodRecipeRequestValidator,
     parse: req => ({ ...req.body }),
-    handler: async ({ name, description, stats, parts }, { prisma }) => {
+    handler: async ({ name, description, output, parts }, { prisma }) => {
       return prisma.$transaction(async trx => {
+        const nutrients = await FoodNutrientsService.calculate(
+          _.flatMap(parts, p => p.ingredients),
+          trx,
+        );
+
         const { id: recipeId } = await trx.foodRecipe.create({
           data: {
             name,
             description,
+            nutrientsPerGram: {
+              create: FoodNutrientsService.divide(nutrients, output.grams),
+            },
+            output: {
+              create: output,
+            },
           },
           select: {
             id: true,
           },
         });
 
-        await insertStats({ id: recipeId, stats, parts }, trx);
         await insertParts({ id: recipeId, parts }, trx);
 
         return await trx.foodRecipe
@@ -184,18 +124,31 @@ export default new Controller<'food/recipes'>({
     UpdateFoodRecipeRequest,
     UpdateFoodRecipeResponse
   >({
-    parse: req => ({
-      ...req.body,
-      recipeId: req.params.recipeId,
-    }),
-    handler: async ({ name, description, stats, parts, id }, { prisma }) => {
+    validator: CreateFoodRecipeRequestValidator.and(
+      z.object({ id: CommonValidators.id }),
+    ),
+    parse: req => ({ ...req.body, id: req.params.recipeId }),
+    handler: async ({ name, description, output, parts, id }, { prisma }) => {
       return prisma.$transaction(async trx => {
+        const nutrients = await FoodNutrientsService.calculate(
+          _.flatMap(parts, p => p.ingredients),
+          trx,
+        );
+
         await trx.foodRecipe.update({
           where: { id },
-          data: { name, description },
+          data: {
+            name,
+            description,
+            nutrientsPerGram: {
+              update: FoodNutrientsService.divide(nutrients, output.grams),
+            },
+            output: {
+              update: output,
+            },
+          },
         });
 
-        await insertStats({ id, stats, parts }, trx);
         await insertParts({ id, parts }, trx);
 
         return await trx.foodRecipe
@@ -212,6 +165,7 @@ export default new Controller<'food/recipes'>({
     DeleteFoodRecipeRequest,
     DeleteFoodRecipeResponse
   >({
+    validator: z.object({ id: CommonValidators.id }),
     parse: req => ({ id: req.params.recipeId }),
     handler: async ({ id }, { prisma }) => {
       await prisma.foodRecipe.update({

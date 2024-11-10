@@ -1,4 +1,6 @@
 import {
+  AddFoodMeadIngredientRequest,
+  AddFoodMeadIngredientResponse,
   CreateFoodProductRequest,
   CreateFoodProductResponse,
   CreateFoodRecipeRequest,
@@ -15,6 +17,8 @@ import {
   ListFoodProductsResponse,
   ListFoodRecipesRequest,
   ListFoodRecipesResponse,
+  GetFoodTrackerDayRequest,
+  GetFoodTrackerDayResponse,
   UpdateFoodProductRequest,
   UpdateFoodProductResponse,
   UpdateFoodRecipeRequest,
@@ -70,5 +74,21 @@ export const FoodSchema = {
       path: ({ id }) => `/api/food/recipes/${id}`,
       method: 'DELETE',
     }),
+  },
+  tracker: {
+    addMealIngredient: createAction<
+      AddFoodMeadIngredientRequest,
+      AddFoodMeadIngredientResponse
+    >({
+      path: () => '/api/food/tracker/meals',
+      method: 'POST',
+      body: data => data,
+    }),
+    days: {
+      get: createAction<GetFoodTrackerDayRequest, GetFoodTrackerDayResponse>({
+        path: ({ date }) => `/api/food/tracker/days/${date}`,
+        method: 'GET',
+      }),
+    },
   },
 };

@@ -2,7 +2,7 @@ import { useGetFoodRecipeQuery } from '#ui/api/food';
 import { useFoodPageParams } from '#ui/pages/food';
 import { Link } from 'react-router-dom';
 import { FOOD_NAVIGATION } from '../../index';
-import { FoodRecipeStatsType } from '#shared/models/FoodRecipe';
+import { FoodNutrientsList } from '#ui/entities/food-nutrients';
 
 export default function Page() {
   const { recipeId = '' } = useFoodPageParams();
@@ -16,7 +16,7 @@ export default function Page() {
     return <div>not found</div>;
   }
 
-  const { parts, stats, description } = query.data;
+  const { parts, output, nutrientsPerGram, description } = query.data;
 
   return (
     <div>
@@ -27,24 +27,21 @@ export default function Page() {
       </Link>
 
       <section>
-        <h2>Статистика</h2>
+        <h2>Выход</h2>
         <ul>
-          {Object.entries(stats).map(([str, { quantity, nutrients }]) => {
-            const type = str as FoodRecipeStatsType;
-
+          {Object.entries(output).map(([key, value]) => {
             return (
-              <li key={str}>
-                <div>
-                  {type} - {quantity}
-                </div>
-                <div>Калории - {nutrients.calories} ккал</div>
-                <div>Белки - {nutrients.proteins} г</div>
-                <div>Жиры - {nutrients.fats} г</div>
-                <div>Углеводы - {nutrients.carbs} г</div>
+              <li key={key}>
+                {key} - {value}
               </li>
             );
           })}
         </ul>
+      </section>
+
+      <section>
+        <h2>Питательные вещества</h2>
+        <FoodNutrientsList nutrients={nutrientsPerGram} multiplier={100} />
       </section>
 
       <section>

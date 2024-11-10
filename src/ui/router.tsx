@@ -11,6 +11,7 @@ export function AppRouter() {
       <aside style={{ width: '100px', display: 'flex', flexDirection: 'column' }}>
         <Link to={FOOD_NAVIGATION.toProducts()}>Продукты</Link>
         <Link to={FOOD_NAVIGATION.toRecipes()}>Рецепты</Link>
+        <Link to={FOOD_NAVIGATION.toTracker()}>Трекер</Link>
       </aside>
       <main>
         <Suspense>

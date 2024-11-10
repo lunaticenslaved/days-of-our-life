@@ -1,10 +1,4 @@
-import { FoodProduct } from '#shared/models/FoodProduct';
-import {
-  FOOD_RECIPE_STATS_TYPES,
-  FoodRecipe,
-  FoodRecipeStatsType,
-  FoodRecipeValidator,
-} from '#shared/models/FoodRecipe';
+import { FoodProduct, FoodRecipe, FoodValidators } from '#shared/models/food';
 import { FFieldArray } from '#ui/components/forms/FFieldArray';
 import { FFNumberInput } from '#ui/components/forms/FFNumberInput';
 import { FForm } from '#ui/components/forms/FForm';
@@ -12,6 +6,13 @@ import { FFSelect } from '#ui/components/forms/FFSelect';
 import { FFTextArea } from '#ui/components/forms/FFTextArea';
 import { FFTextInput } from '#ui/components/forms/FFTextInput';
 import { z } from 'zod';
+
+export const FoodRecipeValidator = z.object({
+  name: FoodValidators.name,
+  description: FoodValidators.recipeDescription,
+  output: FoodValidators.recipeOutput,
+  parts: FoodValidators.recipeParts,
+});
 
 type RecipeFormValues = z.infer<typeof FoodRecipeValidator>;
 
@@ -22,28 +23,26 @@ interface RecipeFormProps {
 }
 
 function getInitialValues(recipe?: FoodRecipe): RecipeFormValues {
-  const stats: RecipeFormValues['stats'] = [];
   const parts: RecipeFormValues['parts'] = [];
-
-  for (const { type, quantity } of recipe?.stats || []) {
-    stats.push({ type, quantity });
-  }
 
   for (const part of recipe?.parts || []) {
     parts.push({
       title: part.title,
-      description: part.description,
+      description: part.description || '',
       ingredients: part.ingredients.map(i => ({
         grams: i.grams,
         productId: i.product.id,
-        description: i.description,
+        description: i.description || '',
       })),
     });
   }
 
   return {
-    stats,
     parts,
+    output: recipe?.output || {
+      grams: 0,
+      servings: 0,
+    },
     description: recipe?.description || '',
     name: recipe?.name || '',
   };
@@ -55,44 +54,14 @@ export function FoodRecipeForm({ onSubmit, products, recipe }: RecipeFormProps) 
       schema={FoodRecipeValidator}
       onSubmit={onSubmit}
       initialValues={getInitialValues(recipe)}>
-      {({ values }) => (
+      {() => (
         <>
           <FFTextInput name="name" title="Имя" required />
 
           <section>
             <h2>Статистика</h2>
-            <FFieldArray<{ type: FoodRecipeStatsType; quantity: number }>
-              name="stats"
-              newElement={{}}
-              renderField={({ name, value }) => {
-                return (
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <FFSelect
-                      name={`${name}.type`}
-                      items={FOOD_RECIPE_STATS_TYPES.filter(type => {
-                        if (type === value.type) {
-                          return true;
-                        }
-
-                        const statsWithSameType = values.stats?.find(
-                          s => s.type === type,
-                        );
-
-                        return !statsWithSameType;
-                      })}
-                      getTitle={p => p}
-                      getValue={p => p}
-                      required
-                    />
-                    <FFNumberInput
-                      name={`${name}.quantity`}
-                      title="Количество"
-                      required
-                    />
-                  </div>
-                );
-              }}
-            />
+            <FFNumberInput name={`output.grams`} title="Граммы" required />
+            <FFNumberInput name={`output.servings`} title="Порции" required />
           </section>
 
           <section>
