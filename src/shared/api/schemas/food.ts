@@ -1,6 +1,6 @@
 import {
-  AddFoodMeadIngredientRequest,
-  AddFoodMeadIngredientResponse,
+  CreateFoodMealItemRequest,
+  CreateFoodMealItemResponse,
   CreateFoodProductRequest,
   CreateFoodProductResponse,
   CreateFoodRecipeRequest,
@@ -23,6 +23,10 @@ import {
   UpdateFoodProductResponse,
   UpdateFoodRecipeRequest,
   UpdateFoodRecipeResponse,
+  UpdateFoodMealItemRequest,
+  UpdateFoodMealItemResponse,
+  DeleteFoodMealItemRequest,
+  DeleteFoodMealItemResponse,
 } from '#shared/api/types/food';
 import { createAction } from '#shared/api/utils';
 
@@ -76,19 +80,32 @@ export const FoodSchema = {
     }),
   },
   tracker: {
-    addMealIngredient: createAction<
-      AddFoodMeadIngredientRequest,
-      AddFoodMeadIngredientResponse
-    >({
-      path: () => '/api/food/tracker/meals',
-      method: 'POST',
-      body: data => data,
-    }),
     days: {
       get: createAction<GetFoodTrackerDayRequest, GetFoodTrackerDayResponse>({
         path: ({ date }) => `/api/food/tracker/days/${date}`,
         method: 'GET',
       }),
+      meals: {
+        items: {
+          create: createAction<CreateFoodMealItemRequest, CreateFoodMealItemResponse>({
+            path: ({ date }) => `/api/food/tracker/days/${date}/meals/items`,
+            method: 'POST',
+            body: data => data,
+          }),
+          update: createAction<UpdateFoodMealItemRequest, UpdateFoodMealItemResponse>({
+            path: ({ itemId, date }) =>
+              `/api/food/tracker/days/${date}/meals/items/${itemId}`,
+            method: 'PATCH',
+            body: ({ itemId: _id, ...data }) => data,
+          }),
+          delete: createAction<DeleteFoodMealItemRequest, DeleteFoodMealItemResponse>({
+            path: ({ itemId, date }) =>
+              `/api/food/tracker/days/${date}/meals/items/${itemId}`,
+            method: 'DELETE',
+            body: ({ itemId: _id }) => ({}),
+          }),
+        },
+      },
     },
   },
 };

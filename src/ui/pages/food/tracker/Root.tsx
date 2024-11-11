@@ -1,23 +1,67 @@
+import dayjs from '#shared/libs/dayjs';
+import { FoodTrackerMealItem } from '#shared/models/food';
 import { Button } from '#ui/components/Button';
 import { Dialog, useDialog } from '#ui/components/Dialog';
 import { FoodNutrientsList } from '#ui/entities/food-nutrients';
 import { useListFoodProductsQuery } from '#ui/entities/food-product';
-import { MealIngredientForm, useGetFoodTrackerDayQuery } from '#ui/entities/food-tracker';
-import { useAddFoodTrackerMealIngredientMutation } from '#ui/entities/food-tracker';
+import {
+  MealItemForm,
+  useDeleteFoodTrackerMealItemMutation,
+  useGetFoodTrackerDayQuery,
+  useUpdateFoodTrackerMealItemMutation,
+} from '#ui/entities/food-tracker';
+import { useCreateFoodTrackerMealItemMutation } from '#ui/entities/food-tracker';
+import { useEffect, useMemo, useState } from 'react';
 
 export default function Page() {
-  const date = new Date().toISOString();
+  const [date, setDate] = useState(() => dayjs().toISOString());
 
-  const newFoodDialog = useDialog();
+  const { formattedValue } = useMemo(
+    () => ({
+      formattedValue: dayjs(date).format('YYYY-M-D'),
+    }),
+    [date],
+  );
+
+  const mealItemDialog = useDialog();
   const productsQuery = useListFoodProductsQuery();
   const trackerDayQuery = useGetFoodTrackerDayQuery(date);
-  const adding = useAddFoodTrackerMealIngredientMutation({
-    onSuccess: trackerDayQuery.refetch,
+  const adding = useCreateFoodTrackerMealItemMutation({
+    onSuccess: () => {
+      trackerDayQuery.refetch();
+      mealItemDialog.close();
+    },
   });
+  const updating = useUpdateFoodTrackerMealItemMutation('', {
+    onSuccess: () => {
+      trackerDayQuery.refetch();
+      mealItemDialog.close();
+    },
+  });
+  const deleting = useDeleteFoodTrackerMealItemMutation('', {
+    onSuccess: () => {
+      trackerDayQuery.refetch();
+    },
+  });
+
+  const [itemToEdit, setItemToEdit] = useState<FoodTrackerMealItem>();
+
+  useEffect(() => {
+    if (!mealItemDialog.isOpen) {
+      setItemToEdit(undefined);
+    }
+  }, [mealItemDialog.isOpen]);
 
   return (
     <div>
-      <Button onClick={newFoodDialog.open}>Добавить еду</Button>
+      <input
+        type="date"
+        value={formattedValue}
+        onChange={e => {
+          setDate(dayjs(e.target.valueAsDate).toISOString());
+        }}
+      />
+      <Button onClick={mealItemDialog.open}>Добавить еду</Button>
 
       <ul>
         {(trackerDayQuery.data?.meals || []).map(({ items }, index) => {
@@ -28,6 +72,21 @@ export default function Page() {
                 {items.map(item => {
                   return (
                     <li key={item.id}>
+                      <Button
+                        onClick={() => {
+                          setItemToEdit(item);
+                          mealItemDialog.open();
+                        }}>
+                        Редактировать
+                      </Button>
+
+                      <Button
+                        onClick={() => {
+                          deleting.mutate({ itemId: item.id, date });
+                        }}>
+                        Удалить
+                      </Button>
+
                       {item.source.type === 'product' && (
                         <div>{item.source.product.name}</div>
                       )}
@@ -52,22 +111,36 @@ export default function Page() {
       </ul>
 
       <Dialog
-        isOpen={newFoodDialog.isOpen}
-        onClose={newFoodDialog.close}
+        isOpen={mealItemDialog.isOpen}
+        onClose={mealItemDialog.close}
         title={'Новая еда'}
         body={
-          <MealIngredientForm
+          <MealItemForm
+            mealItem={itemToEdit}
             products={productsQuery.data || []}
             onSubmit={values => {
-              adding.mutate({
-                date,
-                quantity: values.quantity,
-                quantityType: values.quantityType,
-                ingredient: {
-                  type: 'product',
-                  productId: values.productId,
-                },
-              });
+              if (itemToEdit) {
+                updating.mutate({
+                  date,
+                  itemId: itemToEdit.id,
+                  quantity: values.quantity,
+                  quantityType: values.quantityType,
+                  ingredient: {
+                    type: 'product',
+                    id: values.productId,
+                  },
+                });
+              } else {
+                adding.mutate({
+                  date,
+                  quantity: values.quantity,
+                  quantityType: values.quantityType,
+                  ingredient: {
+                    type: 'product',
+                    id: values.productId,
+                  },
+                });
+              }
             }}
           />
         }

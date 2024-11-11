@@ -1,29 +1,41 @@
 import { convertFoodTrackerDay, SELECT_TRACKER_DAY } from '#server/selectors/food';
 import FoodNutrientsService from '#server/services/FoodNutrientsService';
+import FoodTrackerDayService from '#server/services/FoodTrackerDayService';
 import { Controller } from '#server/utils/Controller';
 import {
-  AddFoodMeadIngredientRequest,
-  AddFoodMeadIngredientResponse,
+  CreateFoodMealItemRequest,
+  CreateFoodMealItemResponse,
   GetFoodTrackerDayResponse,
   GetFoodTrackerDayRequest,
+  UpdateFoodMealItemRequest,
+  UpdateFoodMealItemResponse,
+  DeleteFoodMealItemRequest,
+  DeleteFoodMealItemResponse,
 } from '#shared/api/types/food';
-import dayjs from '#shared/libs/dayjs';
+import { CommonValidators } from '#shared/models/common';
+import { FoodValidators } from '#shared/models/food';
+import { z } from 'zod';
+
+const CreateFoodMealItemValidator: z.ZodType<CreateFoodMealItemRequest> = z.object({
+  quantityType: FoodValidators.quantityType,
+  quantity: FoodValidators.quantity,
+  date: CommonValidators.date,
+  ingredient: z.object({
+    type: z.union([z.literal('product'), z.literal('recipe')]),
+    id: CommonValidators.id,
+  }),
+});
 
 export default new Controller<'food/tracker'>({
-  'POST /food/tracker/meals': Controller.handler<
-    AddFoodMeadIngredientRequest,
-    AddFoodMeadIngredientResponse
+  'POST /food/tracker/days/:date/meals/items': Controller.handler<
+    CreateFoodMealItemRequest,
+    CreateFoodMealItemResponse
   >({
-    parse: req => req.body,
+    validator: CreateFoodMealItemValidator,
+    parse: req => ({ ...req.body, date: req.params.date }),
     handler: ({ date: dateProp, ingredient, quantity, quantityType }, { prisma }) => {
       return prisma.$transaction(async trx => {
-        const date = dayjs(dateProp, { utc: true }).startOf('day').toISOString();
-
-        const day = await trx.foodTrackerDay.upsert({
-          where: { date },
-          create: { date },
-          update: {},
-        });
+        const day = await FoodTrackerDayService.getDay(dateProp, trx);
 
         if (quantityType !== 'gram') {
           throw new Error('Not implemented');
@@ -34,7 +46,7 @@ export default new Controller<'food/tracker'>({
         }
 
         const nutrients = await FoodNutrientsService.calculate(
-          [{ productId: ingredient.productId, grams: quantity }],
+          [{ productId: ingredient.id, grams: quantity }],
           trx,
         );
 
@@ -43,7 +55,7 @@ export default new Controller<'food/tracker'>({
         await trx.foodTrackerMealItem.create({
           data: {
             dayId: day.id,
-            productId: ingredient.productId,
+            productId: ingredient.id,
             nutrientsId: id,
             quantity,
             quantityType,
@@ -53,29 +65,93 @@ export default new Controller<'food/tracker'>({
     },
   }),
 
+  'PATCH /food/tracker/days/:date/meals/items/:itemId': Controller.handler<
+    UpdateFoodMealItemRequest,
+    UpdateFoodMealItemResponse
+  >({
+    validator: CreateFoodMealItemValidator.and(z.object({ itemId: CommonValidators.id })),
+    parse: req => ({ ...req.body, itemId: req.params.itemId }),
+    handler: (
+      { date: dateProp, ingredient, quantity, quantityType, itemId },
+      { prisma },
+    ) => {
+      return prisma.$transaction(async trx => {
+        const day = await FoodTrackerDayService.getDay(dateProp, trx);
+
+        if (quantityType !== 'gram') {
+          throw new Error('Not implemented');
+        }
+
+        if (ingredient.type === 'recipe') {
+          throw new Error('Not implemented'); // FIXME
+        }
+
+        const nutrients = await FoodNutrientsService.calculate(
+          [{ productId: ingredient.id, grams: quantity }],
+          trx,
+        );
+
+        const oldNutrients = await trx.foodNutrients.findFirst({
+          where: { trackerMealItem: { id: itemId } },
+        });
+        const { id } = await trx.foodNutrients.create({ data: nutrients });
+
+        const data = {
+          dayId: day.id,
+          productId: ingredient.id,
+          nutrientsId: id,
+          quantity,
+          quantityType,
+        };
+
+        await trx.foodTrackerMealItem.upsert({
+          where: { id: itemId },
+          create: data,
+          update: data,
+        });
+
+        if (oldNutrients) {
+          await trx.foodNutrients.deleteMany({ where: { id: oldNutrients.id } });
+        }
+      });
+    },
+  }),
+
+  'DELETE /food/tracker/days/:date/meals/items/:itemId': Controller.handler<
+    DeleteFoodMealItemRequest,
+    DeleteFoodMealItemResponse
+  >({
+    validator: z.object({ itemId: CommonValidators.id, date: CommonValidators.date }),
+    parse: req => ({ date: req.params.date, itemId: req.params.itemId }),
+    handler: ({ itemId }, { prisma }) => {
+      return prisma.$transaction(async trx => {
+        await trx.foodTrackerMealItem.deleteMany({
+          where: { id: itemId },
+        });
+        await trx.foodNutrients.deleteMany({
+          where: { trackerMealItem: { id: itemId } },
+        });
+      });
+    },
+  }),
+
   'GET /food/tracker/days/:date': Controller.handler<
     GetFoodTrackerDayRequest,
     GetFoodTrackerDayResponse
   >({
+    validator: z.object({ date: CommonValidators.date }),
     parse: req => ({ date: req.params.date as string }),
-    handler: async ({ date: dateProp }, { prisma }) => {
-      const date = dayjs(dateProp, { utc: true }).startOf('day').toISOString();
+    handler: async ({ date }, { prisma }) => {
+      return prisma.$transaction(async trx => {
+        const { id } = await FoodTrackerDayService.getDay(date, trx);
 
-      const day = await prisma.foodTrackerDay.findFirst({
-        where: { date },
-        ...SELECT_TRACKER_DAY,
+        return await trx.foodTrackerDay
+          .findFirstOrThrow({
+            where: { id },
+            ...SELECT_TRACKER_DAY,
+          })
+          .then(convertFoodTrackerDay);
       });
-
-      if (day) {
-        return convertFoodTrackerDay(day);
-      }
-
-      return await prisma.foodTrackerDay
-        .create({
-          data: { date },
-          ...SELECT_TRACKER_DAY,
-        })
-        .then(convertFoodTrackerDay);
     },
   }),
 });

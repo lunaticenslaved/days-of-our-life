@@ -72,7 +72,10 @@ export const SELECT_TRACKER_DAY = {
   select: {
     id: true,
     date: true,
-    meals: SELECT_MEAL_ITEM,
+    meals: {
+      ...SELECT_MEAL_ITEM,
+      orderBy: [{ createdAt: 'asc' }],
+    },
   },
 } satisfies Prisma.FoodTrackerDayDefaultArgs;
 

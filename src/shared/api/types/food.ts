@@ -61,20 +61,26 @@ export type DeleteFoodRecipeResponse = void;
 export interface DeleteFoodRecipeRequest extends Id {}
 
 // Tracker
-export type AddFoodMeadIngredientResponse = void;
-export interface AddFoodMeadIngredientRequest {
-  ingredient:
-    | {
-        type: 'product';
-        productId: string;
-      }
-    | {
-        type: 'recipe';
-        recipeId: string;
-      };
+export type CreateFoodMealItemResponse = void;
+export interface CreateFoodMealItemRequest {
+  ingredient: {
+    type: 'product' | 'recipe';
+    id: string;
+  };
   quantityType: FoodQuantityType;
   quantity: number;
   date: string;
+}
+
+export type UpdateFoodMealItemResponse = void;
+export interface UpdateFoodMealItemRequest extends CreateFoodMealItemRequest {
+  itemId: string;
+}
+
+export type DeleteFoodMealItemResponse = void;
+export interface DeleteFoodMealItemRequest {
+  date: string;
+  itemId: string;
 }
 
 export type GetFoodTrackerDayResponse = FoodTrackerDay;

@@ -7,7 +7,7 @@ type Method = 'POST' | 'GET' | 'PATCH' | 'DELETE';
 type Handler<T = unknown, TR = unknown> = {
   parse: (req: Request) => T | Promise<T>;
   handler: (data: T, context: RequestContext) => Promise<TR> | TR;
-  validator?: z.ZodType<T>;
+  validator: z.ZodType<T>;
 };
 
 type IControllerConstructor<TPath extends string, Handler> = Partial<

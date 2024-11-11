@@ -1,5 +1,5 @@
 import { CommonValidators } from '#shared/models/common';
-import { FoodProduct, FoodValidators } from '#shared/models/food';
+import { FoodProduct, FoodTrackerMealItem, FoodValidators } from '#shared/models/food';
 import { FFNumberInput } from '#ui/components/forms/FFNumberInput';
 import { FForm } from '#ui/components/forms/FForm';
 import { FFSelect } from '#ui/components/forms/FFSelect';
@@ -12,20 +12,24 @@ const schema = z.object({
   quantityType: FoodValidators.quantityType.default('gram'),
 });
 
-type MealIngredientFormValues = z.infer<typeof schema>;
+type MealItemFormValues = z.infer<typeof schema>;
 
-interface MealIngredientFormProps {
-  onSubmit(values: MealIngredientFormValues): void;
+interface MealItemFormProps {
+  onSubmit(values: MealItemFormValues): void;
   products: FoodProduct[];
+  mealItem?: FoodTrackerMealItem;
 }
 
-export function MealIngredientForm({ onSubmit, products }: MealIngredientFormProps) {
+export function MealItemForm({ onSubmit, products, mealItem }: MealItemFormProps) {
   return (
     <FForm
       schema={schema}
       onSubmit={v => onSubmit(v)}
       initialValues={{
         quantityType: 'gram',
+        productId:
+          mealItem?.source.type === 'product' ? mealItem.source.product.id : undefined,
+        quantity: mealItem?.quantity,
       }}>
       {({ values }) => {
         const product = products.find(p => p.id === values.productId);

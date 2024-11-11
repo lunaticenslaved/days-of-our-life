@@ -10,4 +10,7 @@ export const CommonValidators = {
       .string({ message: ERROR_MESSAGES.required })
       .min(1, ERROR_MESSAGES.minLengthStr(1))
       .max(length, ERROR_MESSAGES.maxLengthStr(length)),
+  date: z
+    .string({ message: ERROR_MESSAGES.required })
+    .datetime({ message: ERROR_MESSAGES.required }),
 };

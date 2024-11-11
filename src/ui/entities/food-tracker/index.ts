@@ -1,3 +1,3 @@
-export { MealIngredientForm } from './components/MealIngredientForm';
+export { MealItemForm } from './components/MealItemForm';
 
 export * from './queries';
