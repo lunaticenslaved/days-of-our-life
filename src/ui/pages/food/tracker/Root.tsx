@@ -1,5 +1,5 @@
 import dayjs from '#shared/libs/dayjs';
-import { FoodTrackerMealItem } from '#shared/models/food';
+import { FoodTrackerMealItem, sumNutrients } from '#shared/models/food';
 import { Button } from '#ui/components/Button';
 import { Dialog, useDialog } from '#ui/components/Dialog';
 import { FoodNutrientsList } from '#ui/entities/food-nutrients';
@@ -52,6 +52,8 @@ export default function Page() {
     }
   }, [mealItemDialog.isOpen]);
 
+  const secondDialog = useDialog();
+
   return (
     <div>
       <input
@@ -68,6 +70,8 @@ export default function Page() {
           return (
             <li key={index}>
               <div>Прием пищи 1</div>
+              <FoodNutrientsList nutrients={sumNutrients(items.map(i => i.nutrients))} />
+              <hr />
               <ul>
                 {items.map(item => {
                   return (
@@ -111,38 +115,51 @@ export default function Page() {
       </ul>
 
       <Dialog
-        isOpen={mealItemDialog.isOpen}
-        onClose={mealItemDialog.close}
+        dialog={secondDialog}
+        title="Dialog"
+        body={
+          <div>
+            <button onClick={secondDialog.close}>Close</button>
+          </div>
+        }
+      />
+
+      <Dialog
+        dialog={mealItemDialog}
         title={'Новая еда'}
         body={
-          <MealItemForm
-            mealItem={itemToEdit}
-            products={productsQuery.data || []}
-            onSubmit={values => {
-              if (itemToEdit) {
-                updating.mutate({
-                  date,
-                  itemId: itemToEdit.id,
-                  quantity: values.quantity,
-                  quantityType: values.quantityType,
-                  ingredient: {
-                    type: 'product',
-                    id: values.productId,
-                  },
-                });
-              } else {
-                adding.mutate({
-                  date,
-                  quantity: values.quantity,
-                  quantityType: values.quantityType,
-                  ingredient: {
-                    type: 'product',
-                    id: values.productId,
-                  },
-                });
-              }
-            }}
-          />
+          <>
+            <button onClick={secondDialog.open}>Open</button>
+
+            <MealItemForm
+              mealItem={itemToEdit}
+              products={productsQuery.data || []}
+              onSubmit={values => {
+                if (itemToEdit) {
+                  updating.mutate({
+                    date,
+                    itemId: itemToEdit.id,
+                    quantity: values.quantity,
+                    quantityType: values.quantityType,
+                    ingredient: {
+                      type: 'product',
+                      id: values.productId,
+                    },
+                  });
+                } else {
+                  adding.mutate({
+                    date,
+                    quantity: values.quantity,
+                    quantityType: values.quantityType,
+                    ingredient: {
+                      type: 'product',
+                      id: values.productId,
+                    },
+                  });
+                }
+              }}
+            />
+          </>
         }
       />
     </div>

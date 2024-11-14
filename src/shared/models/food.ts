@@ -141,3 +141,21 @@ export interface FoodTrackerMealItem {
         recipe: Pick<FoodRecipe, 'id' | 'name'>;
       };
 }
+
+export function sumNutrients(nutrientsArr: FoodNutrients[]): FoodNutrients {
+  const result = {} as FoodNutrients;
+
+  for (const nutrients of nutrientsArr) {
+    for (const [keyStr, value] of Object.entries(nutrients)) {
+      const key = keyStr as keyof FoodNutrients;
+
+      if (!(key in result)) {
+        result[key] = 0;
+      }
+
+      result[key] += value;
+    }
+  }
+
+  return result;
+}
