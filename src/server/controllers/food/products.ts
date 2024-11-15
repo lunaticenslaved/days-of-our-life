@@ -1,4 +1,5 @@
 import { convertFoodProduct, SELECT_PRODUCT } from '#server/selectors/food';
+import FoodQuantityConverterService from '#server/services/FoodQuantityConverterService';
 import { Controller } from '#server/utils/Controller';
 import {
   CreateFoodProductRequest,
@@ -34,18 +35,24 @@ export default new Controller<'food/products'>({
     validator: CreateFoodProductRequestValidator,
     parse: req => req.body,
     handler: async ({ nutrientsPerGram, ...data }, { prisma }) => {
-      return await prisma.foodProduct
-        .create({
-          data: {
-            name: data.name,
-            manufacturer: data.manufacturer,
-            nutrientsPerGram: {
-              create: nutrientsPerGram,
+      return await prisma.$transaction(async trx => {
+        const product = await trx.foodProduct
+          .create({
+            data: {
+              name: data.name,
+              manufacturer: data.manufacturer,
+              nutrientsPerGram: {
+                create: nutrientsPerGram,
+              },
             },
-          },
-          ...SELECT_PRODUCT,
-        })
-        .then(convertFoodProduct);
+            ...SELECT_PRODUCT,
+          })
+          .then(convertFoodProduct);
+
+        await FoodQuantityConverterService.insert({ productId: product.id }, trx);
+
+        return product;
+      });
     },
   }),
 
@@ -56,22 +63,28 @@ export default new Controller<'food/products'>({
     validator: UpdateFoodProductRequestValidator,
     parse: req => ({ id: req.params.productId, ...req.body }),
     handler: async ({ id, nutrientsPerGram, ...data }, { prisma }) => {
-      return await prisma.foodProduct
-        .update({
-          where: { id },
-          data: {
-            name: data.name,
-            manufacturer: data.manufacturer,
-            nutrientsPerGram: {
-              upsert: {
-                create: nutrientsPerGram,
-                update: nutrientsPerGram,
+      return await prisma.$transaction(async trx => {
+        const product = await trx.foodProduct
+          .update({
+            where: { id },
+            data: {
+              name: data.name,
+              manufacturer: data.manufacturer,
+              nutrientsPerGram: {
+                upsert: {
+                  create: nutrientsPerGram,
+                  update: nutrientsPerGram,
+                },
               },
             },
-          },
-          ...SELECT_PRODUCT,
-        })
-        .then(convertFoodProduct);
+            ...SELECT_PRODUCT,
+          })
+          .then(convertFoodProduct);
+
+        await FoodQuantityConverterService.insert({ productId: product.id }, trx);
+
+        return product;
+      });
     },
   }),
 

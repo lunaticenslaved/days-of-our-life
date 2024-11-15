@@ -11,15 +11,17 @@ datasource db {
 }
 
 model FoodQuantityConverter {
-  id        String   @id @default(uuid()) @db.Uuid
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  id    String @id @default(uuid()) @db.Uuid
   grams Float  @db.Real
   name  String @db.VarChar(255)
 
-  quantity     Float  @db.Real
-  quantityType String @db.VarChar(255)
+  recipeId String?     @db.Uuid
+  recipe   FoodRecipe? @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  productId String?      @db.Uuid
+  product   FoodProduct? @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  mealItems FoodTrackerMealItem[]
 }
 
 model FoodProduct {
@@ -31,6 +33,7 @@ model FoodProduct {
   nutrientsPerGramId String        @unique @db.Uuid
   nutrientsPerGram   FoodNutrients @relation(fields: [nutrientsPerGramId], references: [id], onDelete: Restrict)
 
+  quantities        FoodQuantityConverter[]
   recipeIngrediends FoodRecipeIngredient[]
   mealIngreients    FoodTrackerMealItem[]
 
@@ -52,6 +55,7 @@ model FoodRecipe {
 
   parts          FoodRecipePart[]
   mealIngreients FoodTrackerMealItem[]
+  quantities     FoodQuantityConverter[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -115,9 +119,11 @@ model FoodRecipeOutput {
 }
 
 model FoodTrackerMealItem {
-  id           String @id @default(uuid()) @db.Uuid
-  quantityType String @db.VarChar(255)
-  quantity     Float  @db.Real
+  id       String @id @default(uuid()) @db.Uuid
+  quantity Float  @db.Real
+
+  quantityConverterId String                @db.Uuid
+  quantityConverter   FoodQuantityConverter @relation(fields: [quantityConverterId], references: [id], onDelete: Restrict)
 
   dayId String         @db.Uuid
   day   FoodTrackerDay @relation(fields: [dayId], references: [id], onDelete: Cascade)

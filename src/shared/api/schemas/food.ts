@@ -63,7 +63,7 @@ export const FoodSchema = {
     }),
     update: createAction<UpdateFoodRecipeRequest, UpdateFoodRecipeResponse>({
       path: ({ id }) => `/api/food/recipes/${id}`,
-      method: 'POST',
+      method: 'PATCH',
       body: ({ id: _id, ...data }) => data,
     }),
     get: createAction<GetFoodRecipeRequest, GetFoodRecipeResponse>({

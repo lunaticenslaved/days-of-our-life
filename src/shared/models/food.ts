@@ -7,6 +7,7 @@ export interface FoodProduct {
   name: string;
   manufacturer?: string | null;
   nutrientsPerGram: FoodNutrients;
+  quantities: FoodQuantityConverter[];
 }
 
 export interface FoodNutrients {
@@ -17,7 +18,11 @@ export interface FoodNutrients {
   fibers: number;
 }
 
-export type FoodQuantityType = 'serving' | 'gram';
+export interface FoodQuantityConverter {
+  id: string;
+  name: string;
+  grams: number;
+}
 
 export interface FoodRecipeOutput {
   grams: number;
@@ -43,17 +48,13 @@ export interface FoodRecipe {
   }>;
   output: FoodRecipeOutput;
   nutrientsPerGram: FoodNutrients;
+  quantities: FoodQuantityConverter[];
 }
 
 export interface FoodTrackerDay {
   id: string;
   date: string;
 }
-
-export const FOOD_RECIPE_STATS_TYPES = Object.keys({
-  gram: {},
-  serving: {},
-} satisfies Record<FoodQuantityType, unknown>) as FoodQuantityType[];
 
 const nutrientsValidator = z.object({
   calories: z.number({ message: ERROR_MESSAGES.required }).gte(0, ERROR_MESSAGES.gte(0)),
@@ -74,21 +75,13 @@ const quantityValidator = z.coerce
   .number({ message: ERROR_MESSAGES.required })
   .gt(0, ERROR_MESSAGES.gt(0));
 
-const quantityTypeValidator = z.union(
-  [
-    z.literal('serving' satisfies FoodQuantityType),
-    z.literal('gram' satisfies FoodQuantityType),
-  ],
-  { message: ERROR_MESSAGES.oneOf(FOOD_RECIPE_STATS_TYPES) },
-);
-
 export const FoodValidators = {
   name: CommonValidators.str(255),
   manufacturer: CommonValidators.str(255).optional(),
   nutrients: nutrientsValidator,
   nutrientsArr: z.array(nutrientsValidator),
+  quantityConverterId: CommonValidators.id,
   quantity: quantityValidator,
-  quantityType: quantityTypeValidator,
   grams: gramsValidator,
   servings: servingsValidator,
   mealItemSource: z.union([z.literal('product'), z.literal('recipe')]),
@@ -102,7 +95,11 @@ export const FoodValidators = {
     .array(
       z.object({
         title: CommonValidators.str(255),
-        description: CommonValidators.str(4096),
+        description: z
+          .string({ message: ERROR_MESSAGES.required })
+          .min(0, ERROR_MESSAGES.minLengthStr(0))
+          .max(255, ERROR_MESSAGES.maxLengthStr(255))
+          .optional(),
         ingredients: z
           .array(
             z.object({
@@ -130,7 +127,7 @@ export interface FoodTrackerDay {
 export interface FoodTrackerMealItem {
   id: string;
   quantity: number;
-  quantityType: FoodQuantityType;
+  quantityConverter: FoodQuantityConverter;
   nutrients: FoodNutrients;
   source:
     | {
@@ -156,6 +153,25 @@ export function sumNutrients(nutrientsArr: FoodNutrients[]): FoodNutrients {
 
       result[key] += value;
     }
+  }
+
+  return result;
+}
+
+export function multiplyNutrients(
+  nutrients: FoodNutrients,
+  multiplier: number,
+): FoodNutrients {
+  const result = {} as FoodNutrients;
+
+  for (const [keyStr, value] of Object.entries(nutrients)) {
+    const key = keyStr as keyof FoodNutrients;
+
+    if (!(key in result)) {
+      result[key] = 0;
+    }
+
+    result[key] = value * multiplier;
   }
 
   return result;

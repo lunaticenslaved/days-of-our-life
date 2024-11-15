@@ -1,13 +1,16 @@
 import { CommonValidators } from '#shared/models/common';
 import {
   FoodProduct,
+  FoodQuantityConverter,
   FoodRecipe,
   FoodTrackerMealItem,
   FoodValidators,
+  multiplyNutrients,
 } from '#shared/models/food';
 import { FForm } from '#ui/components/FForm';
 import { NumberInput } from '#ui/components/NumberInput';
 import { Radio } from '#ui/components/Radio';
+import { Select } from '#ui/components/Select';
 import { FoodNutrientsList } from '#ui/entities/food-nutrients';
 import { FoodProductSelect } from '#ui/entities/food-product';
 import { FoodRecipeSelect } from '#ui/entities/food-recipe';
@@ -15,7 +18,7 @@ import { z } from 'zod';
 
 const schema = z.object({
   quantity: FoodValidators.quantity,
-  quantityType: FoodValidators.quantityType.default('gram'),
+  quantityConverterId: FoodValidators.quantityConverterId,
   sourceItemId: CommonValidators.id,
   source: FoodValidators.mealItemSource,
 });
@@ -40,7 +43,7 @@ export function MealItemForm({
       schema={schema}
       onSubmit={v => onSubmit(v)}
       initialValues={{
-        quantityType: 'gram',
+        quantityConverterId: 'grams',
         source: mealItem?.source.type ?? 'product',
         sourceItemId:
           mealItem?.source.type === 'product'
@@ -56,6 +59,13 @@ export function MealItemForm({
         );
         const recipe = recipes.find(
           p => values.source === 'recipe' && p.id === values.sourceItemId,
+        );
+        const quantities: FoodQuantityConverter[] = [
+          ...(product?.quantities || []),
+          ...(recipe?.quantities || []),
+        ];
+        const quantityConverter = quantities.find(
+          q => q.id === values.quantityConverterId,
         );
 
         return (
@@ -79,21 +89,45 @@ export function MealItemForm({
               </FForm.Field>
             )}
 
-            <FForm.Field title="Граммы" name="quantity" converter="number" required>
-              {NumberInput}
+            <FForm.Field name="quantityConverterId">
+              {inputProps => (
+                <Select {...inputProps}>
+                  {quantities.map(quantity => {
+                    return (
+                      <Select.Option key={quantity.id} value={quantity.id}>
+                        {quantity.name}
+                      </Select.Option>
+                    );
+                  })}
+                </Select>
+              )}
             </FForm.Field>
 
-            {product && values.quantity && (
+            {quantityConverter && (
+              <FForm.Field
+                title={quantityConverter.name}
+                name="quantity"
+                converter="number"
+                required>
+                {NumberInput}
+              </FForm.Field>
+            )}
+
+            {product && quantityConverter && values.quantity && (
               <FoodNutrientsList
-                nutrients={product.nutrientsPerGram}
-                multiplier={values.quantity}
+                nutrients={multiplyNutrients(
+                  product.nutrientsPerGram,
+                  quantityConverter.grams * values.quantity,
+                )}
               />
             )}
 
-            {recipe && values.quantity && (
+            {recipe && quantityConverter && values.quantity && (
               <FoodNutrientsList
-                nutrients={recipe.nutrientsPerGram}
-                multiplier={values.quantity}
+                nutrients={multiplyNutrients(
+                  recipe.nutrientsPerGram,
+                  quantityConverter.grams * values.quantity,
+                )}
               />
             )}
           </>

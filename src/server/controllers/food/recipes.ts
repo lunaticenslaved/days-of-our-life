@@ -18,6 +18,7 @@ import { FoodValidators } from '#shared/models/food';
 import { z } from 'zod';
 import { CommonValidators } from '#shared/models/common';
 import FoodNutrientsService from '#server/services/FoodNutrientsService';
+import FoodQuantityConverterService from '#server/services/FoodQuantityConverterService';
 
 async function insertParts(
   { id: recipeId, parts }: Pick<UpdateFoodRecipeRequest, 'parts' | 'id'>,
@@ -108,6 +109,7 @@ export default new Controller<'food/recipes'>({
           },
         });
 
+        await FoodQuantityConverterService.insert({ recipeId, ...output }, trx);
         await insertParts({ id: recipeId, parts }, trx);
 
         return await trx.foodRecipe
@@ -149,6 +151,7 @@ export default new Controller<'food/recipes'>({
           },
         });
 
+        await FoodQuantityConverterService.insert({ recipeId: id, ...output }, trx);
         await insertParts({ id, parts }, trx);
 
         return await trx.foodRecipe

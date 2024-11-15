@@ -3,6 +3,8 @@ import { useFoodPageParams } from '#ui/pages/food';
 import { Link } from 'react-router-dom';
 import { FOOD_NAVIGATION } from '../../index';
 import { FoodNutrientsList } from '#ui/entities/food-nutrients';
+import { FoodRecipeOutput } from '#ui/entities/food-recipe';
+import { multiplyNutrients } from '#shared/models/food';
 
 export default function Page() {
   const { recipeId = '' } = useFoodPageParams();
@@ -28,26 +30,18 @@ export default function Page() {
 
       <section>
         <h2>Выход</h2>
-        <ul>
-          {Object.entries(output).map(([key, value]) => {
-            return (
-              <li key={key}>
-                {key} - {value}
-              </li>
-            );
-          })}
-        </ul>
+        <FoodRecipeOutput output={output} />
       </section>
 
       <section>
         <h2>Питательные вещества</h2>
-        <FoodNutrientsList nutrients={nutrientsPerGram} multiplier={100} />
+        <FoodNutrientsList nutrients={multiplyNutrients(nutrientsPerGram, 100)} />
       </section>
 
       <section>
         <h2>Части рецепта</h2>
         {parts.map(({ id, title, ingredients, description }) => {
-          const descriptionItems = (description ?? '').split('\n');
+          const descriptionItems = (description ?? '').split('\n').filter(Boolean);
 
           return (
             <section key={id}>
@@ -74,7 +68,7 @@ export default function Page() {
                 <section>
                   <h4>Подготовка</h4>
                   <ul>
-                    {(description ?? '').split('\n').map((text, index) => {
+                    {descriptionItems.map((text, index) => {
                       return <li key={index}>{text}</li>;
                     })}
                   </ul>

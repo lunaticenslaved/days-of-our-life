@@ -1,7 +1,6 @@
 import {
   FoodNutrients,
   FoodProduct,
-  FoodQuantityType,
   FoodRecipe,
   FoodRecipeOutput,
   FoodTrackerDay,
@@ -67,7 +66,7 @@ export interface CreateFoodMealItemRequest {
     type: 'product' | 'recipe';
     id: string;
   };
-  quantityType: FoodQuantityType;
+  quantityConverterId: string;
   quantity: number;
   date: string;
 }

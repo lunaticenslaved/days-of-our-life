@@ -2,10 +2,17 @@ import {
   FoodTrackerDay,
   FoodProduct,
   FoodRecipe,
-  FoodQuantityType,
   FoodTrackerMealItem,
 } from '#shared/models/food';
 import { Prisma } from '@prisma/client';
+
+const QUANTITY_CONVERTER = {
+  select: {
+    id: true,
+    grams: true,
+    name: true,
+  },
+} satisfies Prisma.FoodQuantityConverterDefaultArgs;
 
 const NUTRIENTS_SELECT = {
   select: {
@@ -43,7 +50,13 @@ export const SELECT_RECIPE = {
         },
       },
     },
-    output: true,
+    output: {
+      select: {
+        grams: true,
+        servings: true,
+      },
+    },
+    quantities: QUANTITY_CONVERTER,
     nutrientsPerGram: NUTRIENTS_SELECT,
   },
 } satisfies Prisma.FoodRecipeDefaultArgs;
@@ -54,6 +67,7 @@ export const SELECT_PRODUCT = {
     name: true,
     manufacturer: true,
     nutrientsPerGram: NUTRIENTS_SELECT,
+    quantities: QUANTITY_CONVERTER,
   },
 } satisfies Prisma.FoodProductDefaultArgs;
 
@@ -61,10 +75,10 @@ export const SELECT_MEAL_ITEM = {
   select: {
     id: true,
     quantity: true,
-    quantityType: true,
     product: { select: { id: true, name: true, manufacturer: true } },
     recipe: { select: { id: true, name: true } },
     nutrients: NUTRIENTS_SELECT,
+    quantityConverter: QUANTITY_CONVERTER,
   },
 } satisfies Prisma.FoodTrackerMealItemDefaultArgs;
 
@@ -112,6 +126,7 @@ export function convertFoodRecipe(data: DBFoodRecipe): FoodRecipe {
     }),
     output: data.output,
     nutrientsPerGram: data.nutrientsPerGram,
+    quantities: data.quantities,
   };
 }
 
@@ -121,6 +136,7 @@ export function convertFoodProduct(data: DBFoodProduct): FoodProduct {
     name: data.name,
     manufacturer: data.manufacturer || undefined,
     nutrientsPerGram: data.nutrientsPerGram,
+    quantities: data.quantities,
   };
 }
 
@@ -148,8 +164,8 @@ export function convertFoodTrackerMealItem(
   return {
     id: data.id,
     quantity: data.quantity,
-    quantityType: data.quantityType as FoodQuantityType,
     nutrients: data.nutrients,
+    quantityConverter: data.quantityConverter,
     source,
   };
 }

@@ -102,7 +102,7 @@ export default function Page() {
                       <div>
                         <span>{item.quantity}</span>
                         <span>-</span>
-                        <span>{item.quantityType}</span>
+                        <span>{item.quantityConverter.name}</span>
                       </div>
                       <div>
                         <FoodNutrientsList nutrients={item.nutrients} />
@@ -143,7 +143,7 @@ export default function Page() {
                     date,
                     itemId: itemToEdit.id,
                     quantity: values.quantity,
-                    quantityType: values.quantityType,
+                    quantityConverterId: values.quantityConverterId,
                     ingredient: {
                       type: values.source,
                       id: values.sourceItemId,
@@ -153,7 +153,7 @@ export default function Page() {
                   adding.mutate({
                     date,
                     quantity: values.quantity,
-                    quantityType: values.quantityType,
+                    quantityConverterId: values.quantityConverterId,
                     ingredient: {
                       type: values.source,
                       id: values.sourceItemId,

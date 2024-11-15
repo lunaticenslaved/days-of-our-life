@@ -3,12 +3,11 @@ import _ from 'lodash';
 
 interface FoodNutrientsListProps {
   nutrients: FoodNutrients;
-  multiplier?: number;
 }
 
-export function FoodNutrientsList({ nutrients, multiplier = 1 }: FoodNutrientsListProps) {
+export function FoodNutrientsList({ nutrients }: FoodNutrientsListProps) {
   const convert = (v: number) => {
-    return _.round(v * multiplier, 2);
+    return _.round(v, 2);
   };
 
   return (

@@ -19,7 +19,7 @@ import { nonReachable } from '#shared/utils';
 import { z } from 'zod';
 
 const CreateFoodMealItemValidator: z.ZodType<CreateFoodMealItemRequest> = z.object({
-  quantityType: FoodValidators.quantityType,
+  quantityConverterId: FoodValidators.quantityConverterId,
   quantity: FoodValidators.quantity,
   date: CommonValidators.date,
   ingredient: z.object({
@@ -44,39 +44,17 @@ function getIngredientByType(ingredient: CreateFoodMealItemRequest['ingredient']
 
 async function getQuantityInGrams(
   {
-    ingredient,
-    quantityType,
+    quantityConverterId,
     quantity,
-  }: Pick<CreateFoodMealItemRequest, 'ingredient' | 'quantity' | 'quantityType'>,
+  }: Pick<CreateFoodMealItemRequest, 'ingredient' | 'quantity' | 'quantityConverterId'>,
   trx: PrismaTransaction,
 ) {
-  if (ingredient.type === 'product') {
-    if (quantityType === 'serving') {
-      throw new Error('Not implemented');
-    } else if (quantityType === 'gram') {
-      return quantity;
-    } else {
-      nonReachable(quantityType);
-    }
-  } else if (ingredient.type === 'recipe') {
-    if (quantityType === 'gram') {
-      return quantity;
-    } else if (quantityType === 'serving') {
-      const output = await trx.foodRecipeOutput.findFirstOrThrow({
-        where: { recipe: { id: ingredient.id } },
-        select: {
-          grams: true,
-          servings: true,
-        },
-      });
+  const { grams } = await trx.foodQuantityConverter.findFirstOrThrow({
+    where: { id: quantityConverterId },
+    select: { grams: true },
+  });
 
-      return (output.grams / output.servings) * quantity;
-    } else {
-      nonReachable(quantityType);
-    }
-  } else {
-    nonReachable(ingredient.type);
-  }
+  return grams * quantity;
 }
 
 export default new Controller<'food/tracker'>({
@@ -86,7 +64,10 @@ export default new Controller<'food/tracker'>({
   >({
     validator: CreateFoodMealItemValidator,
     parse: req => ({ ...req.body, date: req.params.date }),
-    handler: ({ date: dateProp, ingredient, quantity, quantityType }, { prisma }) => {
+    handler: (
+      { date: dateProp, ingredient, quantity, quantityConverterId },
+      { prisma },
+    ) => {
       return prisma.$transaction(async trx => {
         const day = await FoodTrackerDayService.getDay(dateProp, trx);
 
@@ -95,7 +76,7 @@ export default new Controller<'food/tracker'>({
             {
               productId: ingredient.id,
               grams: await getQuantityInGrams(
-                { ingredient, quantity, quantityType },
+                { ingredient, quantity, quantityConverterId },
                 trx,
               ),
             },
@@ -110,7 +91,7 @@ export default new Controller<'food/tracker'>({
             dayId: day.id,
             nutrientsId: id,
             quantity,
-            quantityType,
+            quantityConverterId,
             ...getIngredientByType(ingredient),
           },
         });
@@ -125,7 +106,7 @@ export default new Controller<'food/tracker'>({
     validator: CreateFoodMealItemValidator.and(z.object({ itemId: CommonValidators.id })),
     parse: req => ({ ...req.body, itemId: req.params.itemId }),
     handler: (
-      { date: dateProp, ingredient, quantity, quantityType, itemId },
+      { date: dateProp, ingredient, quantity, quantityConverterId, itemId },
       { prisma },
     ) => {
       return prisma.$transaction(async trx => {
@@ -136,7 +117,7 @@ export default new Controller<'food/tracker'>({
             {
               productId: ingredient.id,
               grams: await getQuantityInGrams(
-                { ingredient, quantity, quantityType },
+                { ingredient, quantity, quantityConverterId },
                 trx,
               ),
             },
@@ -153,7 +134,7 @@ export default new Controller<'food/tracker'>({
           dayId: day.id,
           nutrientsId: id,
           quantity,
-          quantityType,
+          quantityConverterId,
           ...getIngredientByType(ingredient),
         };
 
