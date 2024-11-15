@@ -5,11 +5,12 @@ import {
   FoodTrackerMealItem,
   FoodValidators,
 } from '#shared/models/food';
-import { FFNumberInput } from '#ui/components/forms/FFNumberInput';
-import { FForm } from '#ui/components/forms/FForm';
-import { FFRadioGroup } from '#ui/components/forms/FFRadioGroup';
-import { FFSelect } from '#ui/components/forms/FFSelect';
+import { FForm } from '#ui/components/FForm';
+import { NumberInput } from '#ui/components/NumberInput';
+import { Radio } from '#ui/components/Radio';
 import { FoodNutrientsList } from '#ui/entities/food-nutrients';
+import { FoodProductSelect } from '#ui/entities/food-product';
+import { FoodRecipeSelect } from '#ui/entities/food-recipe';
 import { z } from 'zod';
 
 const schema = z.object({
@@ -59,34 +60,28 @@ export function MealItemForm({
 
         return (
           <>
-            <FFRadioGroup
-              name="source"
-              options={[
-                { title: 'Product', value: 'product' },
-                { title: 'Recipe', value: 'recipe' },
-              ]}
-            />
+            <FForm.Field name="source">
+              {inputProps => (
+                <Radio.Group {...inputProps}>
+                  <Radio value="product" title="Продукт" />
+                  <Radio value="recipe" title="Рецепт" />
+                </Radio.Group>
+              )}
+            </FForm.Field>
 
             {values.source === 'product' ? (
-              <FFSelect
-                title="Продукт"
-                name="sourceItemId"
-                items={products}
-                getTitle={p => p.name}
-                getValue={p => p.id}
-                required
-              />
+              <FForm.Field name="sourceItemId" title="Продукт" required>
+                {inputProps => <FoodProductSelect {...inputProps} products={products} />}
+              </FForm.Field>
             ) : (
-              <FFSelect
-                title="Рецепт"
-                name="sourceItemId"
-                items={recipes}
-                getTitle={p => p.name}
-                getValue={p => p.id}
-                required
-              />
+              <FForm.Field name="sourceItemId" title="Рецепт" required>
+                {inputProps => <FoodRecipeSelect {...inputProps} recipes={recipes} />}
+              </FForm.Field>
             )}
-            <FFNumberInput title="Граммы" name="quantity" required />
+
+            <FForm.Field title="Граммы" name="quantity" converter="number" required>
+              {NumberInput}
+            </FForm.Field>
 
             {product && values.quantity && (
               <FoodNutrientsList

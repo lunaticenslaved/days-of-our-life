@@ -1,3 +1,6 @@
+import { FField } from './FField';
+import { FFieldArray } from './FFieldArray';
+
 import { ReactNode, useMemo } from 'react';
 import { FormState } from 'final-form';
 import { Form } from 'react-final-form';
@@ -47,3 +50,6 @@ export function FForm<V, T extends ZodType<V>, VZ extends z.infer<T>>({
     </Form>
   );
 }
+
+FForm.Field = FField;
+FForm.FieldArray = FFieldArray;

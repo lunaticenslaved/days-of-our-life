@@ -70,7 +70,7 @@ const servingsValidator = z
   .number({ message: ERROR_MESSAGES.required })
   .gt(0, ERROR_MESSAGES.gt(0));
 
-const quantityValidator = z
+const quantityValidator = z.coerce
   .number({ message: ERROR_MESSAGES.required })
   .gt(0, ERROR_MESSAGES.gt(0));
 

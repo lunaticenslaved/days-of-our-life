@@ -6,3 +6,9 @@ export interface Handlers<T> {
 export interface ClassNameProp {
   className?: string;
 }
+
+export type Direction = 'row' | 'column';
+
+export interface DirectionProp {
+  direction?: Direction;
+}

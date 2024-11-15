@@ -1,33 +1,38 @@
 import { ClassNameProp } from '#ui/types';
-import { ComponentType, CSSProperties } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 import { Field, FieldInputProps } from 'react-final-form';
 
-export interface FFComponentProps<T, TE extends HTMLElement = HTMLElement>
-  extends Pick<FieldInputProps<T, TE>, 'onBlur' | 'value' | 'onChange' | 'name'> {}
+export type FFChildrenProps<T, TE extends HTMLElement = HTMLElement> = FieldInputProps<
+  T,
+  TE
+>;
 
 export interface FFieldExtendableProps extends ClassNameProp {
   name: string;
   title?: string;
   required?: boolean;
+  converter?: 'number';
   style?: CSSProperties;
 }
 
 export interface FFieldProps<T, TE extends HTMLElement> extends FFieldExtendableProps {
-  component: ComponentType<FFComponentProps<T, TE>>;
+  children(props: FFChildrenProps<T, TE>): ReactNode;
 }
 
-export function FField<T, TE extends HTMLElement = HTMLElement>({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function FField<T = any, TE extends HTMLElement = HTMLElement>({
   name,
   title,
-  component,
+  children,
   required,
   style,
   className,
+  converter,
 }: FFieldProps<T, TE>) {
-  const Component = component;
-
   return (
-    <Field name={name}>
+    <Field
+      name={name}
+      parse={converter === 'number' ? v => (!v ? undefined : Number(v)) : undefined}>
       {({ input, meta }) => {
         return (
           <div style={style} className={className}>
@@ -36,14 +41,7 @@ export function FField<T, TE extends HTMLElement = HTMLElement>({
                 {title && <span>{title}</span>}
                 {required && <span style={{ color: 'red' }}>*</span>}
               </div>
-              <div>
-                <Component
-                  name={name}
-                  onBlur={input.onBlur}
-                  onChange={input.onChange}
-                  value={input.value}
-                />
-              </div>
+              <div>{children(input)}</div>
             </label>
             <div style={{ height: '20px', marginBottom: '10px' }}>
               {meta.touched && meta.error}

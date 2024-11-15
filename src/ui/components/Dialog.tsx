@@ -8,6 +8,7 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { createPortal } from 'react-dom';
 
 export function useDialog() {
   const id = useId();
@@ -63,6 +64,12 @@ export function Dialog({ dialog, title, body }: DialogProps) {
     titleId,
   ]);
 
+  useEffect(() => {
+    return () => {
+      removeContent(dialogId);
+    };
+  }, [dialogId, removeContent]);
+
   return null;
 }
 
@@ -104,23 +111,36 @@ export function DialogContextProvider({ children }: PropsWithChildren) {
     };
   }, [isDialogOpen]);
 
+  useEffect(() => {
+    if (!contents.length) {
+      setIsDialogOpen(false);
+    }
+  }, [contents.length]);
+
   return (
     <DialogContext.Provider value={value}>
       {children}
-      <dialog open={isDialogOpen}>
-        {contents.map(({ id, content }, index, arr) => {
-          return (
-            <div id={id} style={{ display: arr.length - 1 === index ? 'block' : 'none' }}>
-              {content}
-            </div>
-          );
-        })}
-      </dialog>
+      {isDialogOpen &&
+        createPortal(
+          <dialog open={isDialogOpen}>
+            {contents.map(({ id, content }, index, arr) => {
+              return (
+                <div
+                  id={id}
+                  key={id}
+                  style={{ display: arr.length - 1 === index ? 'block' : 'none' }}>
+                  {content}
+                </div>
+              );
+            })}
+          </dialog>,
+          document.body,
+        )}
     </DialogContext.Provider>
   );
 }
 
-export function useDialogContext() {
+function useDialogContext() {
   const context = useContext(DialogContext);
 
   if (!context) {

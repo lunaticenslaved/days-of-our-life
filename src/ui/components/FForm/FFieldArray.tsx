@@ -17,7 +17,12 @@ interface FFieldArrayProps<T> {
   renderField(props: RenderProps<T>): ReactNode;
 }
 
-export function FFieldArray<T>({ name, renderField, newElement, addButtonText ='Добавить +' }: FFieldArrayProps<T>) {
+export function FFieldArray<T>({
+  name,
+  renderField,
+  newElement,
+  addButtonText = 'Добавить +',
+}: FFieldArrayProps<T>) {
   return (
     <FieldArray<T> name={name}>
       {({ fields, meta }) => {

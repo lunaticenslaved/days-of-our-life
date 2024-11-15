@@ -4,25 +4,28 @@ import { Route, Routes } from 'react-router';
 import HomeRouter from './pages/home';
 import FoodRouter, { FOOD_NAVIGATION } from './pages/food';
 import { Link } from 'react-router-dom';
+import { DialogContextProvider } from '#ui/components/Dialog';
 
 export function AppRouter() {
   return (
-    <div style={{ display: 'flex' }}>
-      <aside style={{ width: '100px', display: 'flex', flexDirection: 'column' }}>
-        <Link to={FOOD_NAVIGATION.toProducts()}>Продукты</Link>
-        <Link to={FOOD_NAVIGATION.toRecipes()}>Рецепты</Link>
-        <Link to={FOOD_NAVIGATION.toTracker()}>Трекер</Link>
-      </aside>
-      <main>
-        <Suspense>
-          <Routes>
-            {HomeRouter}
-            {FoodRouter}
-            {/* TODO add not found page */}
-            <Route path="*" element={<div>not found</div>} />
-          </Routes>
-        </Suspense>
-      </main>
-    </div>
+    <DialogContextProvider>
+      <div style={{ display: 'flex' }}>
+        <aside style={{ width: '100px', display: 'flex', flexDirection: 'column' }}>
+          <Link to={FOOD_NAVIGATION.toProducts()}>Продукты</Link>
+          <Link to={FOOD_NAVIGATION.toRecipes()}>Рецепты</Link>
+          <Link to={FOOD_NAVIGATION.toTracker()}>Трекер</Link>
+        </aside>
+        <main>
+          <Suspense>
+            <Routes>
+              {HomeRouter}
+              {FoodRouter}
+              {/* TODO add not found page */}
+              <Route path="*" element={<div>not found</div>} />
+            </Routes>
+          </Suspense>
+        </main>
+      </div>
+    </DialogContextProvider>
   );
 }

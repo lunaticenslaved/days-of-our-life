@@ -1,10 +1,9 @@
 import { FoodProduct, FoodRecipe, FoodValidators } from '#shared/models/food';
-import { FFieldArray } from '#ui/components/forms/FFieldArray';
-import { FFNumberInput } from '#ui/components/forms/FFNumberInput';
-import { FForm } from '#ui/components/forms/FForm';
-import { FFSelect } from '#ui/components/forms/FFSelect';
-import { FFTextArea } from '#ui/components/forms/FFTextArea';
-import { FFTextInput } from '#ui/components/forms/FFTextInput';
+import { FForm } from '#ui/components/FForm';
+import { NumberInput } from '#ui/components/NumberInput';
+import { TextArea } from '#ui/components/TextArea';
+import { TextInput } from '#ui/components/TextInput';
+import { FoodProductSelect } from '#ui/entities/food-product';
 import { z } from 'zod';
 
 export const FoodRecipeValidator = z.object({
@@ -56,17 +55,28 @@ export function FoodRecipeForm({ onSubmit, products, recipe }: RecipeFormProps) 
       initialValues={getInitialValues(recipe)}>
       {() => (
         <>
-          <FFTextInput name="name" title="Имя" required />
+          <FForm.Field title="Имя" name="name" required>
+            {TextInput}
+          </FForm.Field>
 
           <section>
             <h2>Статистика</h2>
-            <FFNumberInput name={`output.grams`} title="Граммы" required />
-            <FFNumberInput name={`output.servings`} title="Порции" required />
+
+            <FForm.Field name={`output.grams`} title="Граммы" converter="number" required>
+              {NumberInput}
+            </FForm.Field>
+            <FForm.Field
+              name={`output.servings`}
+              title="Порции"
+              converter="number"
+              required>
+              {NumberInput}
+            </FForm.Field>
           </section>
 
           <section>
             <h2>Части рецепта</h2>
-            <FFieldArray<RecipeFormValues['parts'][number]>
+            <FForm.FieldArray<RecipeFormValues['parts'][number]>
               name="parts"
               addButtonText="Добавить часть рецепта"
               newElement={{
@@ -77,11 +87,17 @@ export function FoodRecipeForm({ onSubmit, products, recipe }: RecipeFormProps) 
               renderField={({ name }) => {
                 return (
                   <div style={{ marginBottom: '20px' }}>
-                    <FFTextInput name={`${name}.title`} title="Название" required />
-                    <FFTextArea name={`${name}.description`} title="Подготовка" />
+                    <FForm.Field name={`${name}.title`} title="Название" required>
+                      {TextInput}
+                    </FForm.Field>
+
+                    <FForm.Field name={`${name}.description`} title="Подготовка">
+                      {TextArea}
+                    </FForm.Field>
+
                     <section>
                       <h3>Ингредиенты</h3>
-                      <FFieldArray<
+                      <FForm.FieldArray<
                         RecipeFormValues['parts'][number]['ingredients'][number]
                       >
                         name={`${name}.ingredients`}
@@ -93,22 +109,23 @@ export function FoodRecipeForm({ onSubmit, products, recipe }: RecipeFormProps) 
                         renderField={({ name }) => {
                           return (
                             <div style={{ display: 'flex', gap: '10px' }}>
-                              <FFSelect
-                                name={`${name}.productId`}
-                                items={products}
-                                getTitle={p => p.name}
-                                getValue={p => p.id}
-                                required
-                              />
-                              <FFNumberInput
+                              <FForm.Field name={`${name}.productId`} required>
+                                {props => (
+                                  <FoodProductSelect {...props} products={products} />
+                                )}
+                              </FForm.Field>
+
+                              <FForm.Field
                                 name={`${name}.grams`}
                                 title="Граммы"
-                                required
-                              />
-                              <FFTextInput
-                                name={`${name}.description`}
-                                title="Описание"
-                              />
+                                converter="number"
+                                required>
+                                {NumberInput}
+                              </FForm.Field>
+
+                              <FForm.Field name={`${name}.description`} title="Описание">
+                                {TextInput}
+                              </FForm.Field>
                             </div>
                           );
                         }}
@@ -123,7 +140,9 @@ export function FoodRecipeForm({ onSubmit, products, recipe }: RecipeFormProps) 
 
           <hr style={{ marginTop: '20px', marginBottom: '20px' }} />
 
-          <FFTextArea name={`description`} title="Как готовить" required />
+          <FForm.Field name={`description`} title="Как готовить" required>
+            {TextArea}
+          </FForm.Field>
         </>
       )}
     </FForm>
