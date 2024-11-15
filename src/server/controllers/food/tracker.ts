@@ -1,3 +1,4 @@
+import { PrismaTransaction } from '#server/prisma';
 import { convertFoodTrackerDay, SELECT_TRACKER_DAY } from '#server/selectors/food';
 import FoodNutrientsService from '#server/services/FoodNutrientsService';
 import FoodTrackerDayService from '#server/services/FoodTrackerDayService';
@@ -14,6 +15,7 @@ import {
 } from '#shared/api/types/food';
 import { CommonValidators } from '#shared/models/common';
 import { FoodValidators } from '#shared/models/food';
+import { nonReachable } from '#shared/utils';
 import { z } from 'zod';
 
 const CreateFoodMealItemValidator: z.ZodType<CreateFoodMealItemRequest> = z.object({
@@ -21,10 +23,61 @@ const CreateFoodMealItemValidator: z.ZodType<CreateFoodMealItemRequest> = z.obje
   quantity: FoodValidators.quantity,
   date: CommonValidators.date,
   ingredient: z.object({
-    type: z.union([z.literal('product'), z.literal('recipe')]),
+    type: FoodValidators.mealItemSource,
     id: CommonValidators.id,
   }),
 });
+
+function getIngredientByType(ingredient: CreateFoodMealItemRequest['ingredient']) {
+  if (ingredient.type === 'product') {
+    return {
+      productId: ingredient.id,
+    };
+  } else if (ingredient.type === 'recipe') {
+    return {
+      recipeId: ingredient.id,
+    };
+  } else {
+    nonReachable(ingredient.type);
+  }
+}
+
+async function getQuantityInGrams(
+  {
+    ingredient,
+    quantityType,
+    quantity,
+  }: Pick<CreateFoodMealItemRequest, 'ingredient' | 'quantity' | 'quantityType'>,
+  trx: PrismaTransaction,
+) {
+  if (ingredient.type === 'product') {
+    if (quantityType === 'serving') {
+      throw new Error('Not implemented');
+    } else if (quantityType === 'gram') {
+      return quantity;
+    } else {
+      nonReachable(quantityType);
+    }
+  } else if (ingredient.type === 'recipe') {
+    if (quantityType === 'gram') {
+      return quantity;
+    } else if (quantityType === 'serving') {
+      const output = await trx.foodRecipeOutput.findFirstOrThrow({
+        where: { recipe: { id: ingredient.id } },
+        select: {
+          grams: true,
+          servings: true,
+        },
+      });
+
+      return (output.grams / output.servings) * quantity;
+    } else {
+      nonReachable(quantityType);
+    }
+  } else {
+    nonReachable(ingredient.type);
+  }
+}
 
 export default new Controller<'food/tracker'>({
   'POST /food/tracker/days/:date/meals/items': Controller.handler<
@@ -37,16 +90,16 @@ export default new Controller<'food/tracker'>({
       return prisma.$transaction(async trx => {
         const day = await FoodTrackerDayService.getDay(dateProp, trx);
 
-        if (quantityType !== 'gram') {
-          throw new Error('Not implemented');
-        }
-
-        if (ingredient.type === 'recipe') {
-          throw new Error('Not implemented'); // FIXME
-        }
-
         const nutrients = await FoodNutrientsService.calculate(
-          [{ productId: ingredient.id, grams: quantity }],
+          [
+            {
+              productId: ingredient.id,
+              grams: await getQuantityInGrams(
+                { ingredient, quantity, quantityType },
+                trx,
+              ),
+            },
+          ],
           trx,
         );
 
@@ -55,10 +108,10 @@ export default new Controller<'food/tracker'>({
         await trx.foodTrackerMealItem.create({
           data: {
             dayId: day.id,
-            productId: ingredient.id,
             nutrientsId: id,
             quantity,
             quantityType,
+            ...getIngredientByType(ingredient),
           },
         });
       });
@@ -78,16 +131,16 @@ export default new Controller<'food/tracker'>({
       return prisma.$transaction(async trx => {
         const day = await FoodTrackerDayService.getDay(dateProp, trx);
 
-        if (quantityType !== 'gram') {
-          throw new Error('Not implemented');
-        }
-
-        if (ingredient.type === 'recipe') {
-          throw new Error('Not implemented'); // FIXME
-        }
-
         const nutrients = await FoodNutrientsService.calculate(
-          [{ productId: ingredient.id, grams: quantity }],
+          [
+            {
+              productId: ingredient.id,
+              grams: await getQuantityInGrams(
+                { ingredient, quantity, quantityType },
+                trx,
+              ),
+            },
+          ],
           trx,
         );
 
@@ -98,10 +151,10 @@ export default new Controller<'food/tracker'>({
 
         const data = {
           dayId: day.id,
-          productId: ingredient.id,
           nutrientsId: id,
           quantity,
           quantityType,
+          ...getIngredientByType(ingredient),
         };
 
         await trx.foodTrackerMealItem.upsert({

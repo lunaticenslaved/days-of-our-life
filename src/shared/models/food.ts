@@ -91,6 +91,7 @@ export const FoodValidators = {
   quantityType: quantityTypeValidator,
   grams: gramsValidator,
   servings: servingsValidator,
+  mealItemSource: z.union([z.literal('product'), z.literal('recipe')]),
 
   recipeDescription: CommonValidators.str(4096),
   recipeOutput: z.object({

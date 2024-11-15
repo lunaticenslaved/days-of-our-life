@@ -1,5 +1,6 @@
 import dayjs from '#shared/libs/dayjs';
 import { FoodTrackerMealItem, sumNutrients } from '#shared/models/food';
+import { useListFoodRecipesQuery } from '#ui/api/food';
 import { Button } from '#ui/components/Button';
 import { Dialog, useDialog } from '#ui/components/Dialog';
 import { FoodNutrientsList } from '#ui/entities/food-nutrients';
@@ -25,6 +26,7 @@ export default function Page() {
 
   const mealItemDialog = useDialog();
   const productsQuery = useListFoodProductsQuery();
+  const recipesQuery = useListFoodRecipesQuery();
   const trackerDayQuery = useGetFoodTrackerDayQuery(date);
   const adding = useCreateFoodTrackerMealItemMutation({
     onSuccess: () => {
@@ -134,6 +136,7 @@ export default function Page() {
             <MealItemForm
               mealItem={itemToEdit}
               products={productsQuery.data || []}
+              recipes={recipesQuery.data || []}
               onSubmit={values => {
                 if (itemToEdit) {
                   updating.mutate({
@@ -142,8 +145,8 @@ export default function Page() {
                     quantity: values.quantity,
                     quantityType: values.quantityType,
                     ingredient: {
-                      type: 'product',
-                      id: values.productId,
+                      type: values.source,
+                      id: values.sourceItemId,
                     },
                   });
                 } else {
@@ -152,8 +155,8 @@ export default function Page() {
                     quantity: values.quantity,
                     quantityType: values.quantityType,
                     ingredient: {
-                      type: 'product',
-                      id: values.productId,
+                      type: values.source,
+                      id: values.sourceItemId,
                     },
                   });
                 }
