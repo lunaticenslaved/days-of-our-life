@@ -14,19 +14,22 @@ export function useDialog() {
   const id = useId();
   const [isOpen, setIsOpen] = useState(false);
 
-  const { removeContent } = useDialogContext();
+  const { updateDialogState } = useDialogContext();
 
   return useMemo(
     () => ({
       id,
       isOpen,
-      open: () => setIsOpen(true),
+      open: () => {
+        updateDialogState(id, { isOpen: true });
+        setIsOpen(true);
+      },
       close: () => {
+        updateDialogState(id, { isOpen: false });
         setIsOpen(false);
-        removeContent(id);
       },
     }),
-    [id, isOpen, removeContent],
+    [id, isOpen, updateDialogState],
   );
 }
 
@@ -38,102 +41,98 @@ interface DialogProps {
   body: ReactNode;
 }
 
-export function Dialog({ dialog, title, body }: DialogProps) {
-  const titleId = useId();
-  const { isOpen, close: onClose, id: dialogId } = dialog;
+export function Dialog({ dialog, body }: DialogProps) {
+  const { id: dialogId } = dialog;
 
-  const { addContent, removeContent, setIsDialogOpen } = useDialogContext();
-
-  useEffect(() => {
-    if (isOpen) {
-      addContent(dialogId, body);
-    } else {
-      removeContent(dialogId);
-    }
-
-    setIsDialogOpen(isOpen);
-  }, [
-    addContent,
-    body,
-    dialogId,
-    isOpen,
-    onClose,
-    removeContent,
-    setIsDialogOpen,
-    title,
-    titleId,
-  ]);
+  const { registerDialog, unregisterDialog } = useDialogContext();
 
   useEffect(() => {
+    registerDialog({ id: dialogId, content: body, interface: dialog });
+
     return () => {
-      removeContent(dialogId);
+      unregisterDialog(dialogId);
     };
-  }, [dialogId, removeContent]);
+  }, [body, dialog, dialogId, registerDialog, unregisterDialog]);
 
   return null;
 }
 
 export interface IDialogContext {
-  setIsDialogOpen(v: boolean | ((v: boolean) => boolean)): void;
-  isDialogOpen: boolean;
-  addContent(id: string, content: ReactNode): void;
-  removeContent(id: string): void;
+  registerDialog(item: DialogItem): void;
+  unregisterDialog(itemId: string): void;
+  updateDialogState(itemId: string, arg: { isOpen: boolean }): void;
 }
 
 const DialogContext = createContext<IDialogContext | null>(null);
 
+interface DialogItem {
+  id: string;
+  content: ReactNode;
+  interface: IUseDialog;
+}
+
 export function DialogContextProvider({ children }: PropsWithChildren) {
-  const [contents, setContents] = useState<Array<{ id: string; content: ReactNode }>>([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogs, setDialogs] = useState<DialogItem[]>([]);
+  const [openDialogIds, setOpenDialogIds] = useState<string[]>([]);
 
   const value = useMemo((): IDialogContext => {
     return {
-      isDialogOpen,
-      setIsDialogOpen,
-      addContent(id, content) {
-        setContents(v => {
-          const index = v.findIndex(i => i.id === id);
-
-          if (index !== -1) {
-            const newV = [...v];
-
-            newV.splice(index, 1, { id, content });
-
-            return newV;
-          } else {
-            return [...v, { id, content }];
-          }
-        });
+      updateDialogState: (itemId: string, arg: { isOpen: boolean }) => {
+        if (arg.isOpen) {
+          setOpenDialogIds(v => [...v.filter(id => id !== itemId), itemId]);
+        } else {
+          setOpenDialogIds(v => v.filter(id => id !== itemId));
+        }
       },
-      removeContent(id) {
-        setContents(v => v.filter(i => i.id !== id));
+      registerDialog: (item: DialogItem) => {
+        setDialogs(v => [...v, item]);
+      },
+      unregisterDialog: (itemId: DialogItem['id']) => {
+        setDialogs(v => v.filter(i => i.id !== itemId));
       },
     };
-  }, [isDialogOpen]);
+  }, []);
 
-  useEffect(() => {
-    if (!contents.length) {
-      setIsDialogOpen(false);
-    }
-  }, [contents.length]);
+  const currentOpenDialog = dialogs.find(
+    d => d.id == openDialogIds[openDialogIds.length - 1],
+  );
 
   return (
     <DialogContext.Provider value={value}>
       {children}
-      {isDialogOpen &&
+      {currentOpenDialog &&
         createPortal(
-          <dialog open={isDialogOpen}>
-            {contents.map(({ id, content }, index, arr) => {
-              return (
-                <div
-                  id={id}
-                  key={id}
-                  style={{ display: arr.length - 1 === index ? 'block' : 'none' }}>
-                  {content}
-                </div>
-              );
-            })}
-          </dialog>,
+          <div
+            style={{
+              position: 'fixed',
+              height: '100vh',
+              width: '100vw',
+              top: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'rgba(0,0,0,0.1)',
+            }}>
+            <dialog open style={{ position: 'relative', padding: '0', border: 'none' }}>
+              <button
+                style={{ position: 'absolute', right: '-40px' }}
+                onClick={currentOpenDialog.interface.close}>
+                X
+              </button>
+
+              <div style={{ padding: '20px' }}>
+                {dialogs.map(({ id, content }) => {
+                  const isOpen = currentOpenDialog.id === id;
+
+                  return (
+                    <div id={id} key={id} style={{ display: isOpen ? 'block' : 'none' }}>
+                      {content}
+                    </div>
+                  );
+                })}
+              </div>
+            </dialog>
+          </div>,
           document.body,
         )}
     </DialogContext.Provider>

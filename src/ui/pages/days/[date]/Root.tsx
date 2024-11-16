@@ -55,7 +55,7 @@ export default function Page() {
     }
   }, [mealItemDialog.isOpen]);
 
-  const secondDialog = useDialog();
+  const weightDialog = useDialog();
 
   const navigate = useNavigate();
 
@@ -72,106 +72,110 @@ export default function Page() {
         value={dayjs(fromDateFormat(date)).format('YYYY-M-D')}
         onChange={e => setDate(e.target.valueAsDate)}
       />
-      <Button onClick={mealItemDialog.open}>Добавить еду</Button>
 
-      <ul>
-        {(trackerDayQuery.data?.meals || []).map(({ items }, index) => {
-          return (
-            <li key={index}>
-              <div>Прием пищи 1</div>
-              <FoodNutrientsList nutrients={sumNutrients(items.map(i => i.nutrients))} />
-              <hr />
-              <ul>
-                {items.map(item => {
-                  return (
-                    <li key={item.id}>
-                      <Button
-                        onClick={() => {
-                          setItemToEdit(item);
-                          mealItemDialog.open();
-                        }}>
-                        Редактировать
-                      </Button>
+      <section>
+        <h2>Вес</h2>
+        <div>
+          <Button onClick={weightDialog.open}>Редактировать вес</Button>
 
-                      <Button
-                        onClick={() => {
-                          deleting.mutate({ itemId: item.id, date });
-                        }}>
-                        Удалить
-                      </Button>
+          <Dialog dialog={weightDialog} title="Dialog" body={<div>wow</div>} />
+        </div>
+      </section>
 
-                      {item.ingredient.type === 'product' && (
-                        <div>{item.ingredient.product.name}</div>
-                      )}
-                      {item.ingredient.type === 'recipe' && (
-                        <div>{item.ingredient.recipe.name}</div>
-                      )}
-                      <div>
-                        <span>{item.quantity}</span>
-                        <span>-</span>
-                        <span>{item.quantityConverter.name}</span>
-                      </div>
-                      <div>
-                        <FoodNutrientsList nutrients={item.nutrients} />
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </li>
-          );
-        })}
-      </ul>
+      <section>
+        <h2>Еда</h2>
 
-      <Dialog
-        dialog={secondDialog}
-        title="Dialog"
-        body={
-          <div>
-            <button onClick={secondDialog.close}>Close</button>
-          </div>
-        }
-      />
+        <Button onClick={mealItemDialog.open}>Добавить еду</Button>
 
-      <Dialog
-        dialog={mealItemDialog}
-        title={'Новая еда'}
-        body={
-          <>
-            <button onClick={secondDialog.open}>Open</button>
+        <ul>
+          {(trackerDayQuery.data?.meals || []).map(({ items }, index) => {
+            return (
+              <li key={index}>
+                <div>Прием пищи 1</div>
+                <FoodNutrientsList
+                  nutrients={sumNutrients(items.map(i => i.nutrients))}
+                />
+                <hr />
+                <ul>
+                  {items.map(item => {
+                    return (
+                      <li key={item.id}>
+                        <Button
+                          onClick={() => {
+                            setItemToEdit(item);
+                            mealItemDialog.open();
+                          }}>
+                          Редактировать
+                        </Button>
 
-            <MealItemForm
-              mealItem={itemToEdit}
-              products={productsQuery.data || []}
-              recipes={recipesQuery.data || []}
-              onSubmit={values => {
-                if (itemToEdit) {
-                  updating.mutate({
-                    date,
-                    itemId: itemToEdit.id,
-                    quantity: values.quantity,
-                    quantityConverterId: values.quantityConverterId,
-                    ingredient: {
-                      type: values.source,
-                      id: values.sourceItemId,
-                    },
-                  });
-                } else {
-                  adding.mutate({
-                    date,
-                    quantity: values.quantity,
-                    quantityConverterId: values.quantityConverterId,
-                    ingredient: {
-                      type: values.source,
-                      id: values.sourceItemId,
-                    },
-                  });
-                }
-              }}
-            />
-          </>
-        }
-      />
+                        <Button
+                          onClick={() => {
+                            deleting.mutate({ itemId: item.id, date });
+                          }}>
+                          Удалить
+                        </Button>
+
+                        {item.ingredient.type === 'product' && (
+                          <div>{item.ingredient.product.name}</div>
+                        )}
+                        {item.ingredient.type === 'recipe' && (
+                          <div>{item.ingredient.recipe.name}</div>
+                        )}
+                        <div>
+                          <span>{item.quantity}</span>
+                          <span>-</span>
+                          <span>{item.quantityConverter.name}</span>
+                        </div>
+                        <div>
+                          <FoodNutrientsList nutrients={item.nutrients} />
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </li>
+            );
+          })}
+        </ul>
+
+        <Dialog
+          dialog={mealItemDialog}
+          title={'Новая еда'}
+          body={
+            <>
+              <MealItemForm
+                mealItem={itemToEdit}
+                products={productsQuery.data || []}
+                recipes={recipesQuery.data || []}
+                onSubmit={values => {
+                  if (itemToEdit) {
+                    updating.mutate({
+                      date,
+                      itemId: itemToEdit.id,
+                      quantity: values.quantity,
+                      quantityConverterId: values.quantityConverterId,
+                      ingredient: {
+                        type: values.source,
+                        id: values.sourceItemId,
+                      },
+                    });
+                  } else {
+                    adding.mutate({
+                      date,
+                      quantity: values.quantity,
+                      quantityConverterId: values.quantityConverterId,
+                      ingredient: {
+                        type: values.source,
+                        id: values.sourceItemId,
+                      },
+                    });
+                  }
+                }}
+              />
+            </>
+          }
+        />
+      </section>
     </div>
   );
 }

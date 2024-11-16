@@ -10,7 +10,7 @@ import { DialogContextProvider } from '#ui/components/Dialog';
 export function AppRouter() {
   return (
     <DialogContextProvider>
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', padding: '10px' }}>
         <aside style={{ width: '100px', display: 'flex', flexDirection: 'column' }}>
           <Link to={FOOD_NAVIGATION.toRoot()}>Еда</Link>
           <Link to={DAYS_NAVIGATION.toRoot()}>Дни</Link>
