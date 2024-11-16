@@ -68,7 +68,7 @@ export default function Page() {
       <Button onClick={mealItemDialog.open}>Добавить еду</Button>
 
       <ul>
-        {(trackerDayQuery.data?.meals || []).map(({ items }, index) => {
+        {(trackerDayQuery.data?.food?.meals || []).map(({ items }, index) => {
           return (
             <li key={index}>
               <div>Прием пищи 1</div>

@@ -3,6 +3,7 @@ import {
   FoodProduct,
   FoodRecipe,
   FoodTrackerMealItem,
+  sumNutrients,
 } from '#shared/models/food';
 import { Prisma } from '@prisma/client';
 
@@ -183,8 +184,11 @@ export function convertFoodTrackerDay(data: DBFoodTrackerDay): FoodTrackerDay {
   return {
     id: data.id,
     date: data.date.toISOString(),
-    meals: data.meals.length
-      ? [{ items: data.meals.map(convertFoodTrackerMealItem) }]
-      : [],
+    food: data.meals.length
+      ? {
+          nutrients: sumNutrients(data.meals.map(meal => meal.nutrients)),
+          meals: [{ items: data.meals.map(convertFoodTrackerMealItem) }],
+        }
+      : undefined,
   };
 }
