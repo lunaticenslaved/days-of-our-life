@@ -129,12 +129,31 @@ export default new Controller<'food/tracker'>({
     parse: req => ({ date: req.params.date, itemId: req.params.itemId }),
     handler: ({ itemId }, { prisma }) => {
       return prisma.$transaction(async trx => {
+        const item = await trx.foodTrackerMealItem.findFirst({
+          where: { id: itemId },
+        });
+
+        if (!item) {
+          return;
+        }
+
         await trx.foodTrackerMealItem.deleteMany({
           where: { id: itemId },
         });
         await trx.foodNutrients.deleteMany({
           where: { trackerMealItem: { id: itemId } },
         });
+
+        const day = await trx.foodTrackerDay.findFirstOrThrow({
+          where: { id: item.dayId },
+          select: { meals: true },
+        });
+
+        if (day.meals.length === 0) {
+          await trx.foodTrackerDay.deleteMany({
+            where: { id: item.dayId },
+          });
+        }
       });
     },
   }),

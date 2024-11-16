@@ -184,11 +184,9 @@ export function convertFoodTrackerDay(data: DBFoodTrackerDay): FoodTrackerDay {
   return {
     id: data.id,
     date: data.date.toISOString(),
-    food: data.meals.length
-      ? {
-          nutrients: sumNutrients(data.meals.map(meal => meal.nutrients)),
-          meals: [{ items: data.meals.map(convertFoodTrackerMealItem) }],
-        }
-      : undefined,
+    meals: data.meals.length
+      ? [{ items: data.meals.map(convertFoodTrackerMealItem) }]
+      : [],
+    nutrients: sumNutrients(data.meals.map(meal => meal.nutrients)),
   };
 }

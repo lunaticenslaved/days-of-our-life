@@ -1,4 +1,4 @@
-import { Navigate, Route, useParams } from 'react-router';
+import { Navigate, Outlet, Route, useParams } from 'react-router';
 
 import { createNavigationHook } from '#ui/hooks/navigation';
 
@@ -11,6 +11,7 @@ import RecipeCreate from './recipes/Create';
 import RecipeOverview from './recipes/[recipeId]/Overview';
 import RecipeEdit from './recipes/[recipeId]/Edit';
 import TrackerRoot from './tracker/Root';
+import { Link } from 'react-router-dom';
 
 type RecipeId = { recipeId: string };
 type ProductId = { productId: string };
@@ -65,39 +66,31 @@ export const useFoodNavigation = createNavigationHook(FOOD_NAVIGATION);
 
 export default [
   <Route
-    key={routes.root}
+    key="food"
     path={routes.root}
-    element={<Navigate to={FOOD_NAVIGATION.toProducts()} />}
-  />,
+    element={
+      <>
+        <aside style={{ width: '100px', display: 'flex', flexDirection: 'column' }}>
+          <Link to={FOOD_NAVIGATION.toProducts()}>Продукты</Link>
+          <Link to={FOOD_NAVIGATION.toRecipes()}>Рецепты</Link>
+          <Link to={FOOD_NAVIGATION.toTracker()}>Трекер</Link>
+        </aside>
+        <div>
+          <Outlet />
+        </div>
+      </>
+    }>
+    <Route index element={<Navigate to={FOOD_NAVIGATION.toProducts()} />} />
+    <Route path={routes.products} element={<ProductsRoot />} />
+    <Route path={routes.productCreate} element={<ProductCreate />} />
+    <Route path={routes.productOverview} element={<ProductOverview />} />
+    <Route path={routes.productEdit} element={<ProductEdit />} />
 
-  // Products
-  <Route key={routes.products} path={routes.products} element={<ProductsRoot />} />,
-  <Route
-    key={routes.productCreate}
-    path={routes.productCreate}
-    element={<ProductCreate />}
-  />,
-  <Route
-    key={routes.productOverview}
-    path={routes.productOverview}
-    element={<ProductOverview />}
-  />,
-  <Route key={routes.productEdit} path={routes.productEdit} element={<ProductEdit />} />,
+    <Route path={routes.recipes} element={<RecipesRoot />} />
+    <Route path={routes.recipeCreate} element={<RecipeCreate />} />
+    <Route path={routes.recipeOverview} element={<RecipeOverview />} />
+    <Route path={routes.recipeEdit} element={<RecipeEdit />} />
 
-  // Recipes
-  <Route key={routes.recipes} path={routes.recipes} element={<RecipesRoot />} />,
-  <Route
-    key={routes.recipeCreate}
-    path={routes.recipeCreate}
-    element={<RecipeCreate />}
-  />,
-  <Route
-    key={routes.recipeOverview}
-    path={routes.recipeOverview}
-    element={<RecipeOverview />}
-  />,
-  <Route key={routes.recipeEdit} path={routes.recipeEdit} element={<RecipeEdit />} />,
-
-  // Tracker
-  <Route key={routes.tracker} path={routes.tracker} element={<TrackerRoot />} />,
+    <Route path={routes.tracker} element={<TrackerRoot />} />
+  </Route>,
 ];

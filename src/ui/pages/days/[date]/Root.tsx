@@ -12,10 +12,18 @@ import {
   useUpdateFoodTrackerMealItemMutation,
 } from '#ui/entities/food-tracker';
 import { useCreateFoodTrackerMealItemMutation } from '#ui/entities/food-tracker';
+import { DAYS_NAVIGATION, useDaysPageParams } from '#ui/pages/days';
+import { formatDate, getDate } from '#ui/pages/days/utils';
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
 
 export default function Page() {
-  const [date, setDate] = useState(() => dayjs().toISOString());
+  const params = useDaysPageParams();
+
+  const date = useMemo(() => {
+    const value = params.date ? getDate(params.date).toDate() : new Date();
+    return value.toISOString();
+  }, [params.date]);
 
   const { formattedValue } = useMemo(
     () => ({
@@ -56,14 +64,20 @@ export default function Page() {
 
   const secondDialog = useDialog();
 
+  const navigate = useNavigate();
+
+  function setDate(newDate: Date | null) {
+    if (newDate) {
+      navigate(DAYS_NAVIGATION.toDate({ date: formatDate(newDate.toISOString()) }));
+    }
+  }
+
   return (
     <div>
       <input
         type="date"
         value={formattedValue}
-        onChange={e => {
-          setDate(dayjs(e.target.valueAsDate).toISOString());
-        }}
+        onChange={e => setDate(e.target.valueAsDate)}
       />
       <Button onClick={mealItemDialog.open}>Добавить еду</Button>
 

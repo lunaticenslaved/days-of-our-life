@@ -127,10 +127,8 @@ export const FoodValidators = {
 export interface FoodTrackerDay {
   id: string;
   date: string;
-  food?: {
-    meals: Array<{ items: FoodTrackerMealItem[] }>;
-    nutrients: FoodNutrients;
-  };
+  meals: Array<{ items: FoodTrackerMealItem[] }>;
+  nutrients: FoodNutrients;
 }
 
 export interface FoodTrackerMealItem {
