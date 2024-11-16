@@ -24,6 +24,9 @@ const NUTRIENTS_SELECT = {
   },
 } satisfies Prisma.FoodNutrientsDefaultArgs;
 
+/**  It's important to not return id, createdAt, updatedAt and other fields*/
+export const ONLY_NUTRIENTS_SELECT = NUTRIENTS_SELECT;
+
 export const SELECT_RECIPE = {
   select: {
     id: true,
@@ -56,7 +59,10 @@ export const SELECT_RECIPE = {
         servings: true,
       },
     },
-    quantities: QUANTITY_CONVERTER,
+    quantities: {
+      ...QUANTITY_CONVERTER,
+      where: { isDeleted: false },
+    },
     nutrientsPerGram: NUTRIENTS_SELECT,
   },
 } satisfies Prisma.FoodRecipeDefaultArgs;
@@ -67,7 +73,10 @@ export const SELECT_PRODUCT = {
     name: true,
     manufacturer: true,
     nutrientsPerGram: NUTRIENTS_SELECT,
-    quantities: QUANTITY_CONVERTER,
+    quantities: {
+      ...QUANTITY_CONVERTER,
+      where: { isDeleted: false },
+    },
   },
 } satisfies Prisma.FoodProductDefaultArgs;
 
@@ -143,21 +152,21 @@ export function convertFoodProduct(data: DBFoodProduct): FoodProduct {
 export function convertFoodTrackerMealItem(
   data: DBFoodTrackerMealItem,
 ): FoodTrackerMealItem {
-  let source: FoodTrackerMealItem['source'] | undefined = undefined;
+  let ingredient: FoodTrackerMealItem['ingredient'] | undefined = undefined;
 
   if (data.product) {
-    source = {
+    ingredient = {
       type: 'product',
       product: data.product,
     };
   } else if (data.recipe) {
-    source = {
+    ingredient = {
       type: 'recipe',
       recipe: data.recipe,
     };
   }
 
-  if (!source) {
+  if (!ingredient) {
     throw new Error('Unknown source');
   }
 
@@ -166,7 +175,7 @@ export function convertFoodTrackerMealItem(
     quantity: data.quantity,
     nutrients: data.nutrients,
     quantityConverter: data.quantityConverter,
-    source,
+    ingredient,
   };
 }
 

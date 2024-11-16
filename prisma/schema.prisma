@@ -11,9 +11,10 @@ datasource db {
 }
 
 model FoodQuantityConverter {
-  id    String @id @default(uuid()) @db.Uuid
-  grams Float  @db.Real
-  name  String @db.VarChar(255)
+  id        String  @id @default(uuid()) @db.Uuid
+  grams     Float   @db.Real
+  name      String  @db.VarChar(255)
+  isDeleted Boolean @default(false)
 
   recipeId String?     @db.Uuid
   recipe   FoodRecipe? @relation(fields: [recipeId], references: [id], onDelete: Cascade)

@@ -14,7 +14,7 @@ import {
   UpdateFoodRecipeResponse,
 } from '#shared/api/types/food';
 import _ from 'lodash';
-import { FoodValidators } from '#shared/models/food';
+import { divideNutrients, FoodValidators } from '#shared/models/food';
 import { z } from 'zod';
 import { CommonValidators } from '#shared/models/common';
 import FoodNutrientsService from '#server/services/FoodNutrientsService';
@@ -98,7 +98,7 @@ export default new Controller<'food/recipes'>({
             name,
             description,
             nutrientsPerGram: {
-              create: FoodNutrientsService.divide(nutrients, output.grams),
+              create: divideNutrients(nutrients, output.grams),
             },
             output: {
               create: output,
@@ -143,7 +143,7 @@ export default new Controller<'food/recipes'>({
             name,
             description,
             nutrientsPerGram: {
-              update: FoodNutrientsService.divide(nutrients, output.grams),
+              update: divideNutrients(nutrients, output.grams),
             },
             output: {
               update: output,

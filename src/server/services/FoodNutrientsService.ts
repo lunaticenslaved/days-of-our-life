@@ -1,5 +1,12 @@
 import { PrismaTransaction } from '#server/prisma';
-import { FoodNutrients } from '#shared/models/food';
+import { ONLY_NUTRIENTS_SELECT } from '#server/selectors/food';
+import {
+  FoodMealIngredientType,
+  FoodNutrients,
+  multiplyNutrients,
+  sumNutrients,
+} from '#shared/models/food';
+import { nonReachable } from '#shared/utils';
 
 class FoodNutrientsService {
   async calculate(
@@ -11,11 +18,7 @@ class FoodNutrientsService {
       select: { nutrientsPerGram: true, id: true },
     });
 
-    let calories = 0;
-    let fats = 0;
-    let proteins = 0;
-    let carbs = 0;
-    let fibers = 0;
+    const items: FoodNutrients[] = [];
 
     for (const ingredient of ingredients) {
       const product = products.find(({ id }) => ingredient.productId === id);
@@ -27,30 +30,53 @@ class FoodNutrientsService {
       const { nutrientsPerGram } = product;
       const { grams } = ingredient;
 
-      calories += nutrientsPerGram.calories * grams;
-      fats += nutrientsPerGram.fats * grams;
-      proteins += nutrientsPerGram.proteins * grams;
-      carbs += nutrientsPerGram.carbs * grams;
-      fibers += nutrientsPerGram.fibers * grams;
+      items.push(multiplyNutrients(nutrientsPerGram, grams));
     }
 
-    return {
-      calories,
-      fats,
-      proteins,
-      carbs,
-      fibers,
-    };
+    return sumNutrients(items);
   }
 
-  divide(nutrients: FoodNutrients, divider: number) {
-    return {
-      calories: nutrients.calories / divider,
-      fats: nutrients.fats / divider,
-      proteins: nutrients.proteins / divider,
-      carbs: nutrients.carbs / divider,
-      fibers: nutrients.fibers / divider,
-    };
+  async createForIngredientAndQuantity(
+    arg: {
+      ingredientType: FoodMealIngredientType;
+      ingredientId: string;
+      quantityConverterId: string;
+      quantity: number;
+    },
+    trx: PrismaTransaction,
+  ) {
+    const grams = await trx.foodQuantityConverter
+      .findFirstOrThrow({
+        where: { id: arg.quantityConverterId },
+        select: { grams: true },
+      })
+      .then(data => data.grams * arg.quantity);
+
+    if (arg.ingredientType === 'product') {
+      const nutrients = await trx.foodNutrients
+        .findFirstOrThrow({
+          where: { product: { id: arg.ingredientId } },
+          ...ONLY_NUTRIENTS_SELECT,
+        })
+        .then(data => multiplyNutrients(data, grams));
+
+      return await trx.foodNutrients.create({
+        data: nutrients,
+      });
+    } else if (arg.ingredientType === 'recipe') {
+      const nutrients = await trx.foodNutrients
+        .findFirstOrThrow({
+          where: { recipe: { id: arg.ingredientId } },
+          ...ONLY_NUTRIENTS_SELECT,
+        })
+        .then(data => multiplyNutrients(data, grams));
+
+      return await trx.foodNutrients.create({
+        data: nutrients,
+      });
+    } else {
+      nonReachable(arg.ingredientType);
+    }
   }
 }
 

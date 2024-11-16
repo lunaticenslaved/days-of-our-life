@@ -12,41 +12,71 @@ type InsertArg =
 
 class FoodQuantityConverterService {
   async insert(arg: InsertArg, trx: PrismaTransaction) {
+    // TODO перенести куда-то в константы названия
+
+    const currentConvertersId: string[] = [];
+
     if ('productId' in arg) {
-      // FIXME не удалять их или апдейтить все места, где оно используется
-      await trx.foodQuantityConverter.deleteMany({
-        where: { productId: arg.productId },
+      const { productId } = arg;
+      const convertsToCreate = [{ name: 'Граммы', grams: 1, productId }];
+
+      for (const converter of convertsToCreate) {
+        const existing = await trx.foodQuantityConverter.findFirst({
+          where: { grams: converter.grams, productId, name: converter.name },
+        });
+
+        if (existing) {
+          currentConvertersId.push(existing.id);
+        } else {
+          const { id } = await trx.foodQuantityConverter.create({
+            data: converter,
+          });
+
+          currentConvertersId.push(id);
+        }
+      }
+
+      await trx.foodQuantityConverter.updateMany({
+        where: { id: { in: currentConvertersId } },
+        data: { isDeleted: false },
       });
 
-      await trx.foodQuantityConverter.create({
-        data: {
-          productId: arg.productId,
-          grams: 1,
-          name: 'Граммы',
-        },
+      await trx.foodQuantityConverter.updateMany({
+        where: { id: { notIn: currentConvertersId }, productId },
+        data: { isDeleted: true },
       });
     } else {
       const { recipeId, grams, servings } = arg;
+      const convertsToCreate = [
+        { name: 'Граммы', grams: 1, recipeId },
+        { recipeId, grams: grams / servings, name: 'Порция' },
+      ];
 
-      // FIXME не удалять их или апдейтить все места, где оно используется
-      await trx.foodQuantityConverter.deleteMany({
-        where: { recipeId },
-      });
+      for (const converter of convertsToCreate) {
+        const existing = await trx.foodQuantityConverter.findFirst({
+          where: { grams: converter.grams, recipeId, name: converter.name },
+        });
 
-      await trx.foodQuantityConverter.create({
-        data: {
-          recipeId,
-          grams: grams / servings,
-          name: 'Порция',
-        },
-      });
-      await trx.foodQuantityConverter.create({
-        data: {
-          recipeId,
-          grams: 1,
-          name: 'Граммы',
-        },
-      });
+        if (existing) {
+          currentConvertersId.push(existing.id);
+        } else {
+          const { id } = await trx.foodQuantityConverter.create({
+            data: converter,
+          });
+
+          currentConvertersId.push(id);
+        }
+
+        await trx.foodQuantityConverter.updateMany({
+          where: { id: { in: currentConvertersId } },
+          data: { isDeleted: false },
+        });
+
+        await trx.foodQuantityConverter.updateMany({
+          where: { id: { notIn: currentConvertersId }, recipeId },
+          data: { isDeleted: true },
+        });
+      }
     }
   }
 }

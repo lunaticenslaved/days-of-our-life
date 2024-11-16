@@ -1,4 +1,5 @@
 import {
+  FoodMealIngredientType,
   FoodNutrients,
   FoodProduct,
   FoodRecipe,
@@ -63,7 +64,7 @@ export interface DeleteFoodRecipeRequest extends Id {}
 export type CreateFoodMealItemResponse = void;
 export interface CreateFoodMealItemRequest {
   ingredient: {
-    type: 'product' | 'recipe';
+    type: FoodMealIngredientType;
     id: string;
   };
   quantityConverterId: string;

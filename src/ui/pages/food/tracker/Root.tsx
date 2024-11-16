@@ -93,11 +93,11 @@ export default function Page() {
                         Удалить
                       </Button>
 
-                      {item.source.type === 'product' && (
-                        <div>{item.source.product.name}</div>
+                      {item.ingredient.type === 'product' && (
+                        <div>{item.ingredient.product.name}</div>
                       )}
-                      {item.source.type === 'recipe' && (
-                        <div>{item.source.recipe.name}</div>
+                      {item.ingredient.type === 'recipe' && (
+                        <div>{item.ingredient.recipe.name}</div>
                       )}
                       <div>
                         <span>{item.quantity}</span>

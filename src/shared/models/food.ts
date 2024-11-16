@@ -51,6 +51,8 @@ export interface FoodRecipe {
   quantities: FoodQuantityConverter[];
 }
 
+export type FoodMealIngredientType = 'product' | 'recipe';
+
 export interface FoodTrackerDay {
   id: string;
   date: string;
@@ -84,7 +86,10 @@ export const FoodValidators = {
   quantity: quantityValidator,
   grams: gramsValidator,
   servings: servingsValidator,
-  mealItemSource: z.union([z.literal('product'), z.literal('recipe')]),
+  mealItemSource: z.union([
+    z.literal('product' satisfies FoodMealIngredientType),
+    z.literal('recipe' satisfies FoodMealIngredientType),
+  ]),
 
   recipeDescription: CommonValidators.str(4096),
   recipeOutput: z.object({
@@ -129,7 +134,7 @@ export interface FoodTrackerMealItem {
   quantity: number;
   quantityConverter: FoodQuantityConverter;
   nutrients: FoodNutrients;
-  source:
+  ingredient:
     | {
         type: 'product';
         product: Pick<FoodProduct, 'id' | 'name' | 'manufacturer'>;
@@ -175,4 +180,14 @@ export function multiplyNutrients(
   }
 
   return result;
+}
+
+export function divideNutrients(nutrients: FoodNutrients, divider: number) {
+  return {
+    calories: nutrients.calories / divider,
+    fats: nutrients.fats / divider,
+    proteins: nutrients.proteins / divider,
+    carbs: nutrients.carbs / divider,
+    fibers: nutrients.fibers / divider,
+  };
 }

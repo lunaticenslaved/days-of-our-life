@@ -43,13 +43,13 @@ export function MealItemForm({
       schema={schema}
       onSubmit={v => onSubmit(v)}
       initialValues={{
-        quantityConverterId: 'grams',
-        source: mealItem?.source.type ?? 'product',
+        quantityConverterId: mealItem?.quantityConverter.id,
+        source: mealItem?.ingredient.type ?? 'product',
         sourceItemId:
-          mealItem?.source.type === 'product'
-            ? mealItem.source.product.id
-            : mealItem?.source.type === 'recipe'
-            ? mealItem.source.recipe.id
+          mealItem?.ingredient.type === 'product'
+            ? mealItem.ingredient.product.id
+            : mealItem?.ingredient.type === 'recipe'
+            ? mealItem.ingredient.recipe.id
             : undefined,
         quantity: mealItem?.quantity,
       }}>

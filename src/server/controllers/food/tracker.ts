@@ -1,4 +1,3 @@
-import { PrismaTransaction } from '#server/prisma';
 import { convertFoodTrackerDay, SELECT_TRACKER_DAY } from '#server/selectors/food';
 import FoodNutrientsService from '#server/services/FoodNutrientsService';
 import FoodTrackerDayService from '#server/services/FoodTrackerDayService';
@@ -42,21 +41,6 @@ function getIngredientByType(ingredient: CreateFoodMealItemRequest['ingredient']
   }
 }
 
-async function getQuantityInGrams(
-  {
-    quantityConverterId,
-    quantity,
-  }: Pick<CreateFoodMealItemRequest, 'ingredient' | 'quantity' | 'quantityConverterId'>,
-  trx: PrismaTransaction,
-) {
-  const { grams } = await trx.foodQuantityConverter.findFirstOrThrow({
-    where: { id: quantityConverterId },
-    select: { grams: true },
-  });
-
-  return grams * quantity;
-}
-
 export default new Controller<'food/tracker'>({
   'POST /food/tracker/days/:date/meals/items': Controller.handler<
     CreateFoodMealItemRequest,
@@ -71,25 +55,21 @@ export default new Controller<'food/tracker'>({
       return prisma.$transaction(async trx => {
         const day = await FoodTrackerDayService.getDay(dateProp, trx);
 
-        const nutrients = await FoodNutrientsService.calculate(
-          [
+        const { id: nutrientsId } =
+          await FoodNutrientsService.createForIngredientAndQuantity(
             {
-              productId: ingredient.id,
-              grams: await getQuantityInGrams(
-                { ingredient, quantity, quantityConverterId },
-                trx,
-              ),
+              quantityConverterId,
+              quantity,
+              ingredientType: ingredient.type,
+              ingredientId: ingredient.id,
             },
-          ],
-          trx,
-        );
-
-        const { id } = await trx.foodNutrients.create({ data: nutrients });
+            trx,
+          );
 
         await trx.foodTrackerMealItem.create({
           data: {
             dayId: day.id,
-            nutrientsId: id,
+            nutrientsId,
             quantity,
             quantityConverterId,
             ...getIngredientByType(ingredient),
@@ -112,41 +92,31 @@ export default new Controller<'food/tracker'>({
       return prisma.$transaction(async trx => {
         const day = await FoodTrackerDayService.getDay(dateProp, trx);
 
-        const nutrients = await FoodNutrientsService.calculate(
-          [
-            {
-              productId: ingredient.id,
-              grams: await getQuantityInGrams(
-                { ingredient, quantity, quantityConverterId },
-                trx,
-              ),
-            },
-          ],
-          trx,
-        );
-
-        const oldNutrients = await trx.foodNutrients.findFirst({
+        await trx.foodTrackerMealItem.deleteMany({ where: { id: itemId } });
+        await trx.foodNutrients.deleteMany({
           where: { trackerMealItem: { id: itemId } },
         });
-        const { id } = await trx.foodNutrients.create({ data: nutrients });
 
-        const data = {
-          dayId: day.id,
-          nutrientsId: id,
-          quantity,
-          quantityConverterId,
-          ...getIngredientByType(ingredient),
-        };
+        const { id: nutrientsId } =
+          await FoodNutrientsService.createForIngredientAndQuantity(
+            {
+              quantityConverterId,
+              quantity,
+              ingredientType: ingredient.type,
+              ingredientId: ingredient.id,
+            },
+            trx,
+          );
 
-        await trx.foodTrackerMealItem.upsert({
-          where: { id: itemId },
-          create: data,
-          update: data,
+        await trx.foodTrackerMealItem.create({
+          data: {
+            dayId: day.id,
+            nutrientsId,
+            quantity,
+            quantityConverterId,
+            ...getIngredientByType(ingredient),
+          },
         });
-
-        if (oldNutrients) {
-          await trx.foodNutrients.deleteMany({ where: { id: oldNutrients.id } });
-        }
       });
     },
   }),

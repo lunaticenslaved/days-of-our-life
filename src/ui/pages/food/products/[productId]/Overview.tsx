@@ -1,4 +1,6 @@
+import { multiplyNutrients } from '#shared/models/food';
 import { useGetFoodProductQuery } from '#ui/api/food';
+import { FoodNutrientsList } from '#ui/entities/food-nutrients';
 import { FOOD_NAVIGATION, useFoodPageParams } from '#ui/pages/food';
 import { Link } from 'react-router-dom';
 
@@ -15,7 +17,7 @@ export default function Page() {
   }
 
   const product = query.data;
-  const { nutrientsPerGram } = product;
+  const nutrients = multiplyNutrients(product.nutrientsPerGram, 100);
 
   return (
     <section>
@@ -26,13 +28,7 @@ export default function Page() {
       <h1>{product.name}</h1>
       {product.manufacturer && <h2>{product.manufacturer}</h2>}
 
-      <ul>
-        <li>Калории - {nutrientsPerGram.calories * 100}</li>
-        <li>Белки - {nutrientsPerGram.proteins * 100}</li>
-        <li>Жиры - {nutrientsPerGram.fats * 100}</li>
-        <li>Углеводы - {nutrientsPerGram.carbs * 100}</li>
-        <li>Клетчатка - {nutrientsPerGram.fibers * 100}</li>
-      </ul>
+      <FoodNutrientsList nutrients={nutrients} />
     </section>
   );
 }
