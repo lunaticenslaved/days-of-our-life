@@ -1,5 +1,6 @@
 import { CommonValidators } from '#shared/models/common';
 import { ERROR_MESSAGES } from '#shared/validation';
+import _ from 'lodash';
 import { z } from 'zod';
 
 export interface FoodProduct {
@@ -190,4 +191,16 @@ export function divideNutrients(nutrients: FoodNutrients, divider: number) {
     carbs: nutrients.carbs / divider,
     fibers: nutrients.fibers / divider,
   };
+}
+
+export function roundNutrients(nutrients: FoodNutrients): FoodNutrients {
+  const result = {} as FoodNutrients;
+
+  for (const [keyStr, value] of Object.entries(nutrients)) {
+    const key = keyStr as keyof FoodNutrients;
+
+    result[key] = typeof value === 'number' ? _.round(value, 2) : value;
+  }
+
+  return result;
 }

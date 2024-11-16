@@ -1,4 +1,4 @@
-import { FoodProduct } from '#shared/models/food';
+import { FoodProduct, multiplyNutrients, roundNutrients } from '#shared/models/food';
 import { Button } from '#ui/components/Button';
 import _ from 'lodash';
 import { Link } from 'react-router-dom';
@@ -12,10 +12,19 @@ interface FoodProductTablesProps {
 export function FoodProductsTable(props: FoodProductTablesProps) {
   const { products, onDelete } = props;
 
+  const preparedProducts = products.map(product => {
+    return {
+      ...product,
+      nutrients: roundNutrients(multiplyNutrients(product.nutrientsPerGram, 100)),
+    };
+  });
+
+  type Item = (typeof preparedProducts)[number];
+
   const columns = [
     {
       title: 'Название',
-      getValue: (p: FoodProduct, { createHref }: FoodProductTablesProps) => (
+      getValue: (p: Item, { createHref }: FoodProductTablesProps) => (
         <div>
           <Link to={createHref(p)}>{p.name}</Link>
           <small style={{ marginLeft: '10px' }}>{p.manufacturer}</small>
@@ -24,33 +33,23 @@ export function FoodProductsTable(props: FoodProductTablesProps) {
     },
     {
       title: 'Калории',
-      getValue: ({ nutrientsPerGram }: FoodProduct) => {
-        return <div>{_.round(nutrientsPerGram.calories * 100, 2)} ккал</div>;
-      },
+      getValue: ({ nutrients }: Item) => nutrients.calories,
     },
     {
       title: 'Белки',
-      getValue: ({ nutrientsPerGram }: FoodProduct) => {
-        return <div>{_.round(nutrientsPerGram.proteins * 100, 2)} г</div>;
-      },
+      getValue: ({ nutrients }: Item) => nutrients.proteins,
     },
     {
       title: 'Жиры',
-      getValue: ({ nutrientsPerGram }: FoodProduct) => {
-        return <div>{_.round(nutrientsPerGram.fats * 100, 2)} г</div>;
-      },
+      getValue: ({ nutrients }: Item) => nutrients.fats,
     },
     {
       title: 'Углеводы',
-      getValue: ({ nutrientsPerGram }: FoodProduct) => {
-        return <div>{_.round(nutrientsPerGram.carbs * 100, 2)} г</div>;
-      },
+      getValue: ({ nutrients }: Item) => nutrients.carbs,
     },
     {
       title: 'Клетчатка',
-      getValue: ({ nutrientsPerGram }: FoodProduct) => {
-        return <div>{_.round(nutrientsPerGram.fibers * 100, 2)} г</div>;
-      },
+      getValue: ({ nutrients }: Item) => nutrients.fibers,
     },
     {
       title: '',
@@ -70,7 +69,7 @@ export function FoodProductsTable(props: FoodProductTablesProps) {
         </tr>
       </thead>
       <tbody>
-        {products.map(product => {
+        {preparedProducts.map(product => {
           return (
             <tr key={product.id}>
               {columns.map(({ getValue }, index) => (

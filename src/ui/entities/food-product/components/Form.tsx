@@ -1,4 +1,10 @@
-import { FoodProduct, FoodValidators } from '#shared/models/food';
+import {
+  divideNutrients,
+  FoodProduct,
+  FoodValidators,
+  multiplyNutrients,
+  roundNutrients,
+} from '#shared/models/food';
 import { FForm } from '#ui/components/FForm';
 import { NumberInput } from '#ui/components/NumberInput';
 import { TextInput } from '#ui/components/TextInput';
@@ -17,20 +23,18 @@ interface FoodProductFormProps {
   onSubmit(values: FoodProductFormValues): void;
 }
 
-function getInitialValues(product?: FoodProduct): FoodProductFormValues {
-  const nutrientsInGrams = product?.nutrientsPerGram;
+function getInitialValues(product?: FoodProduct): Partial<FoodProductFormValues> {
+  if (product) {
+    const nutrients = roundNutrients(multiplyNutrients(product.nutrientsPerGram, 100));
 
-  return {
-    name: product?.name || '',
-    manufacturer: product?.manufacturer || undefined,
-    nutrients: {
-      calories: (nutrientsInGrams?.calories || 0) * 100,
-      proteins: (nutrientsInGrams?.proteins || 0) * 100,
-      fats: (nutrientsInGrams?.fats || 0) * 100,
-      carbs: (nutrientsInGrams?.carbs || 0) * 100,
-      fibers: (nutrientsInGrams?.fibers || 0) * 100,
-    },
-  };
+    return {
+      name: product?.name || '',
+      manufacturer: product?.manufacturer || undefined,
+      nutrients: nutrients,
+    };
+  }
+
+  return {};
 }
 
 export function FoodProductForm({ onSubmit, product }: FoodProductFormProps) {
@@ -40,13 +44,7 @@ export function FoodProductForm({ onSubmit, product }: FoodProductFormProps) {
       onSubmit={({ nutrients, ...other }) => {
         return onSubmit({
           ...other,
-          nutrients: {
-            calories: nutrients.calories / 100,
-            proteins: nutrients.proteins / 100,
-            fats: nutrients.fats / 100,
-            carbs: nutrients.carbs / 100,
-            fibers: nutrients.fibers / 100,
-          },
+          nutrients: divideNutrients(nutrients, 100),
         });
       }}
       initialValues={getInitialValues(product)}>

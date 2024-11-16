@@ -1,4 +1,4 @@
-import { FoodNutrients } from '#shared/models/food';
+import { FoodNutrients, roundNutrients } from '#shared/models/food';
 import _ from 'lodash';
 
 interface FoodNutrientsListProps {
@@ -6,17 +6,15 @@ interface FoodNutrientsListProps {
 }
 
 export function FoodNutrientsList({ nutrients }: FoodNutrientsListProps) {
-  const convert = (v: number) => {
-    return _.round(v, 2);
-  };
+  const rounded = roundNutrients(nutrients);
 
   return (
     <ul>
-      <li>Калории - {convert(nutrients.calories)} ккал</li>
-      <li>Белки - {convert(nutrients.proteins)} г</li>
-      <li>Жиры - {convert(nutrients.fats)} г</li>
-      <li>Углеводы - {convert(nutrients.carbs)} г</li>
-      <li>Клетчатка - {convert(nutrients.fibers)} г</li>
+      <li>Калории - {rounded.calories} ккал</li>
+      <li>Белки - {rounded.proteins} г</li>
+      <li>Жиры - {rounded.fats} г</li>
+      <li>Углеводы - {rounded.carbs} г</li>
+      <li>Клетчатка - {rounded.fibers} г</li>
     </ul>
   );
 }

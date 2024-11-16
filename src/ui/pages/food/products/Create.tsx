@@ -1,3 +1,4 @@
+import { divideNutrients } from '#shared/models/food';
 import { useCreateFoodProductMutation } from '#ui/api/food';
 import { Button } from '#ui/components/Button';
 import { FoodProductForm } from '#ui/entities/food-product';
@@ -23,13 +24,7 @@ export default function Create() {
           for (const product of products) {
             await creationRaw.mutate({
               name: product.name,
-              nutrientsPerGram: {
-                calories: product.nutrients.calories / 100,
-                proteins: product.nutrients.proteins / 100,
-                fats: product.nutrients.fats / 100,
-                carbs: product.nutrients.carbs / 100,
-                fibers: product.nutrients.fibers / 100,
-              },
+              nutrientsPerGram: divideNutrients(product.nutrients, 100),
             });
           }
         }}>
@@ -40,13 +35,7 @@ export default function Create() {
           creation.mutate({
             name: values.name,
             manufacturer: values.manufacturer,
-            nutrientsPerGram: {
-              calories: values.nutrients.calories / 100,
-              proteins: values.nutrients.proteins / 100,
-              fats: values.nutrients.fats / 100,
-              carbs: values.nutrients.carbs / 100,
-              fibers: values.nutrients.fibers / 100,
-            },
+            nutrientsPerGram: divideNutrients(values.nutrients, 100),
           });
         }}
       />
