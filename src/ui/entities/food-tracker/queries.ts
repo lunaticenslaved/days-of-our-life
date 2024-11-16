@@ -1,4 +1,5 @@
 import { FoodSchema } from '#shared/api/schemas/food';
+import { DateFormat } from '#shared/models/common';
 import { FoodTrackerDay } from '#shared/models/food';
 import { wrapApiAction } from '#ui/api';
 import { Handlers } from '#ui/types';
@@ -36,7 +37,7 @@ export function useDeleteFoodTrackerMealItemMutation(
 }
 
 export function useGetFoodTrackerDayQuery(
-  date: string,
+  date: DateFormat,
   handlers: Handlers<FoodTrackerDay> = {},
 ) {
   return useQuery({

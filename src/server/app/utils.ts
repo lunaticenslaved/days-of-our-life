@@ -96,6 +96,7 @@ export async function configureApp(app: Express) {
             if (validationResult.error) {
               throw new ValidationError({
                 errors: validationResult.error.errors.map(e => e.message),
+                status: 400,
               });
             }
           }

@@ -10,7 +10,6 @@ import RecipesRoot from './recipes/Root';
 import RecipeCreate from './recipes/Create';
 import RecipeOverview from './recipes/[recipeId]/Overview';
 import RecipeEdit from './recipes/[recipeId]/Edit';
-import TrackerRoot from './tracker/Root';
 import { Link } from 'react-router-dom';
 
 type RecipeId = { recipeId: string };
@@ -30,9 +29,6 @@ const routes = {
   recipeCreate: '/food/recipes/create',
   recipeOverview: '/food/recipes/:recipeId',
   recipeEdit: '/food/recipes/:recipeId/edit',
-
-  // Tracker
-  tracker: '/food/tracker',
 } as const;
 
 export const FOOD_NAVIGATION = {
@@ -53,9 +49,6 @@ export const FOOD_NAVIGATION = {
   toRecipeCreate: () => `${routes.recipeCreate}`,
   toRecipeEdit: ({ recipeId }: RecipeId) =>
     routes.recipeEdit.replace(':recipeId', recipeId),
-
-  // Tracker
-  toTracker: () => routes.tracker,
 };
 
 export function useFoodPageParams() {
@@ -73,7 +66,6 @@ export default [
         <aside style={{ width: '100px', display: 'flex', flexDirection: 'column' }}>
           <Link to={FOOD_NAVIGATION.toProducts()}>Продукты</Link>
           <Link to={FOOD_NAVIGATION.toRecipes()}>Рецепты</Link>
-          <Link to={FOOD_NAVIGATION.toTracker()}>Трекер</Link>
         </aside>
         <div>
           <Outlet />
@@ -90,7 +82,5 @@ export default [
     <Route path={routes.recipeCreate} element={<RecipeCreate />} />
     <Route path={routes.recipeOverview} element={<RecipeOverview />} />
     <Route path={routes.recipeEdit} element={<RecipeEdit />} />
-
-    <Route path={routes.tracker} element={<TrackerRoot />} />
   </Route>,
 ];

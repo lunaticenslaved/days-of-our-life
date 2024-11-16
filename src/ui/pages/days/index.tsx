@@ -2,7 +2,7 @@ import { createNavigationHook } from '#ui/hooks/navigation';
 import { Navigate, Route, useParams } from 'react-router';
 
 import DateRoot from './[date]/Root';
-import { formatDate } from './utils';
+import { toDateFormat } from '#shared/models/common';
 
 type Date = { date: `${number}-${number}-${number}` };
 
@@ -27,11 +27,7 @@ export default [
   <Route
     key={routes.root}
     path={routes.root}
-    element={
-      <Navigate
-        to={DAYS_NAVIGATION.toDate({ date: formatDate(new Date().toISOString()) })}
-      />
-    }
+    element={<Navigate to={DAYS_NAVIGATION.toDate({ date: toDateFormat(new Date()) })} />}
   />,
 
   // Products

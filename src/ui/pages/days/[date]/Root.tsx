@@ -1,4 +1,5 @@
 import dayjs from '#shared/libs/dayjs';
+import { fromDateFormat, toDateFormat } from '#shared/models/common';
 import { FoodTrackerMealItem, sumNutrients } from '#shared/models/food';
 import { useListFoodRecipesQuery } from '#ui/api/food';
 import { Button } from '#ui/components/Button';
@@ -13,23 +14,15 @@ import {
 } from '#ui/entities/food-tracker';
 import { useCreateFoodTrackerMealItemMutation } from '#ui/entities/food-tracker';
 import { DAYS_NAVIGATION, useDaysPageParams } from '#ui/pages/days';
-import { formatDate, getDate } from '#ui/pages/days/utils';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 export default function Page() {
   const params = useDaysPageParams();
 
-  const date = useMemo(() => {
-    const value = params.date ? getDate(params.date).toDate() : new Date();
-    return value.toISOString();
-  }, [params.date]);
-
-  const { formattedValue } = useMemo(
-    () => ({
-      formattedValue: dayjs(date).format('YYYY-M-D'),
-    }),
-    [date],
+  const date = useMemo(
+    () => (params.date ? params.date : toDateFormat(new Date())),
+    [params.date],
   );
 
   const mealItemDialog = useDialog();
@@ -68,7 +61,7 @@ export default function Page() {
 
   function setDate(newDate: Date | null) {
     if (newDate) {
-      navigate(DAYS_NAVIGATION.toDate({ date: formatDate(newDate.toISOString()) }));
+      navigate(DAYS_NAVIGATION.toDate({ date: toDateFormat(newDate) }));
     }
   }
 
@@ -76,7 +69,7 @@ export default function Page() {
     <div>
       <input
         type="date"
-        value={formattedValue}
+        value={dayjs(fromDateFormat(date)).format('YYYY-M-D')}
         onChange={e => setDate(e.target.valueAsDate)}
       />
       <Button onClick={mealItemDialog.open}>Добавить еду</Button>

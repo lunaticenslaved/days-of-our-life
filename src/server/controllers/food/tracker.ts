@@ -12,7 +12,7 @@ import {
   DeleteFoodMealItemRequest,
   DeleteFoodMealItemResponse,
 } from '#shared/api/types/food';
-import { CommonValidators } from '#shared/models/common';
+import { CommonValidators, DateFormat, fromDateFormat } from '#shared/models/common';
 import { FoodValidators } from '#shared/models/food';
 import { nonReachable } from '#shared/utils';
 import { z } from 'zod';
@@ -20,7 +20,7 @@ import { z } from 'zod';
 const CreateFoodMealItemValidator: z.ZodType<CreateFoodMealItemRequest> = z.object({
   quantityConverterId: FoodValidators.quantityConverterId,
   quantity: FoodValidators.quantity,
-  date: CommonValidators.date,
+  date: CommonValidators.dateFormat,
   ingredient: z.object({
     type: FoodValidators.mealItemSource,
     id: CommonValidators.id,
@@ -49,10 +49,11 @@ export default new Controller<'food/tracker'>({
     validator: CreateFoodMealItemValidator,
     parse: req => ({ ...req.body, date: req.params.date }),
     handler: (
-      { date: dateProp, ingredient, quantity, quantityConverterId },
+      { ingredient, quantity, quantityConverterId, ...otherProps },
       { prisma },
     ) => {
       return prisma.$transaction(async trx => {
+        const dateProp = fromDateFormat(otherProps.date);
         const day = await FoodTrackerDayService.getDay(dateProp, trx);
 
         const { id: nutrientsId } =
@@ -86,10 +87,11 @@ export default new Controller<'food/tracker'>({
     validator: CreateFoodMealItemValidator.and(z.object({ itemId: CommonValidators.id })),
     parse: req => ({ ...req.body, itemId: req.params.itemId }),
     handler: (
-      { date: dateProp, ingredient, quantity, quantityConverterId, itemId },
+      { ingredient, quantity, quantityConverterId, itemId, ...otherProps },
       { prisma },
     ) => {
       return prisma.$transaction(async trx => {
+        const dateProp = fromDateFormat(otherProps.date);
         const day = await FoodTrackerDayService.getDay(dateProp, trx);
 
         await trx.foodTrackerMealItem.deleteMany({ where: { id: itemId } });
@@ -125,8 +127,11 @@ export default new Controller<'food/tracker'>({
     DeleteFoodMealItemRequest,
     DeleteFoodMealItemResponse
   >({
-    validator: z.object({ itemId: CommonValidators.id, date: CommonValidators.date }),
-    parse: req => ({ date: req.params.date, itemId: req.params.itemId }),
+    validator: z.object({
+      itemId: CommonValidators.id,
+      date: CommonValidators.dateFormat,
+    }),
+    parse: req => ({ date: req.params.date as DateFormat, itemId: req.params.itemId }),
     handler: ({ itemId }, { prisma }) => {
       return prisma.$transaction(async trx => {
         const item = await trx.foodTrackerMealItem.findFirst({
@@ -162,11 +167,11 @@ export default new Controller<'food/tracker'>({
     GetFoodTrackerDayRequest,
     GetFoodTrackerDayResponse
   >({
-    validator: z.object({ date: CommonValidators.date }),
-    parse: req => ({ date: req.params.date as string }),
+    validator: z.object({ date: CommonValidators.dateFormat }),
+    parse: req => ({ date: req.params.date as DateFormat }),
     handler: async ({ date }, { prisma }) => {
       return prisma.$transaction(async trx => {
-        const { id } = await FoodTrackerDayService.getDay(date, trx);
+        const { id } = await FoodTrackerDayService.getDay(fromDateFormat(date), trx);
 
         return await trx.foodTrackerDay
           .findFirstOrThrow({

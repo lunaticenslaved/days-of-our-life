@@ -1,3 +1,4 @@
+import { DateFormat } from '#shared/models/common';
 import {
   FoodMealIngredientType,
   FoodNutrients,
@@ -69,7 +70,7 @@ export interface CreateFoodMealItemRequest {
   };
   quantityConverterId: string;
   quantity: number;
-  date: string;
+  date: DateFormat;
 }
 
 export type UpdateFoodMealItemResponse = void;
@@ -79,11 +80,11 @@ export interface UpdateFoodMealItemRequest extends CreateFoodMealItemRequest {
 
 export type DeleteFoodMealItemResponse = void;
 export interface DeleteFoodMealItemRequest {
-  date: string;
+  date: DateFormat;
   itemId: string;
 }
 
 export type GetFoodTrackerDayResponse = FoodTrackerDay;
 export interface GetFoodTrackerDayRequest {
-  date: string;
+  date: DateFormat;
 }

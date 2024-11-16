@@ -1,5 +1,6 @@
+import dayjs from '#shared/libs/dayjs';
 import { ERROR_MESSAGES } from '#shared/validation';
-import { z } from 'zod';
+import { z, ZodStringDef } from 'zod';
 
 export const CommonValidators = {
   id: z
@@ -13,4 +14,20 @@ export const CommonValidators = {
   date: z
     .string({ message: ERROR_MESSAGES.required })
     .datetime({ message: ERROR_MESSAGES.required }),
+  dateFormat: z
+    .string()
+    .regex(/\d{2}-\d{2}-\d{4}/, { message: 'Invalid date format' }) as z.ZodType<
+    DateFormat,
+    ZodStringDef
+  >,
 };
+
+export type DateFormat = `${number}-${number}-${number}`;
+
+export function toDateFormat(date: string | Date) {
+  return dayjs(date).format('DD-MM-YYYY') as `${number}-${number}-${number}`;
+}
+
+export function fromDateFormat(date: `${number}-${number}-${number}`) {
+  return dayjs(date, 'DD-MM-YYYY');
+}
