@@ -1,4 +1,3 @@
-import dayjs from '#shared/libs/dayjs';
 import { fromDateFormat, toDateFormat } from '#shared/models/common';
 import { FoodTrackerMealItem, sumNutrients } from '#shared/models/food';
 import { Button } from '#ui/components/Button';
@@ -8,8 +7,12 @@ import {
   useGetBodyStatisticsQuery,
   usePostBodyWeightMutation,
 } from '#ui/entities/body-statistics';
-import { MealItemFormDialog, FoodNutrientsList } from '#ui/entities/food';
-import { useListFoodProductsQuery } from '#ui/entities/food-product';
+import {
+  MealItemFormDialog,
+  FoodNutrientsList,
+  useListFoodRecipesQuery,
+  useListFoodProductsQuery,
+} from '#ui/entities/food';
 import {
   useDeleteFoodTrackerMealItemMutation,
   useGetFoodTrackerDayQuery,
@@ -17,22 +20,27 @@ import {
   useCreateFoodTrackerMealItemMutation,
 } from '#ui/entities/food';
 import { DAYS_NAVIGATION, useDaysPageParams } from '#ui/pages/days';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useListFoodRecipesQuery } from '#ui/entities/food-recipe';
+import { DatePicker } from '#ui/components/DatePicker';
 
 export default function Page() {
   const params = useDaysPageParams();
+  const [date, setDate] = useState(() => {
+    return params.date ? fromDateFormat(params.date) : new Date();
+  });
 
-  const date = useMemo(
-    () => (params.date ? params.date : toDateFormat(new Date())),
-    [params.date],
-  );
+  const formattedDate = toDateFormat(date);
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    navigate(DAYS_NAVIGATION.toDate({ date: toDateFormat(date) }));
+  }, [date, navigate]);
 
   const mealItemDialog = useDialog();
   const productsQuery = useListFoodProductsQuery();
   const recipesQuery = useListFoodRecipesQuery();
-  const trackerDayQuery = useGetFoodTrackerDayQuery(date);
+  const trackerDayQuery = useGetFoodTrackerDayQuery(formattedDate);
   const adding = useCreateFoodTrackerMealItemMutation({
     onSuccess: () => {
       trackerDayQuery.refetch();
@@ -61,14 +69,7 @@ export default function Page() {
 
   const weightDialog = useDialog();
 
-  const navigate = useNavigate();
-
-  function setDate(newDate: Date | null) {
-    if (newDate) {
-      navigate(DAYS_NAVIGATION.toDate({ date: toDateFormat(newDate) }));
-    }
-  }
-  const bodyStatisticsQuery = useGetBodyStatisticsQuery(date);
+  const bodyStatisticsQuery = useGetBodyStatisticsQuery(formattedDate);
   const savingWeight = usePostBodyWeightMutation({
     onSuccess: () => {
       weightDialog.close();
@@ -78,11 +79,7 @@ export default function Page() {
 
   return (
     <div>
-      <input
-        type="date"
-        value={dayjs(fromDateFormat(date)).format('YYYY-M-D')}
-        onChange={e => setDate(e.target.valueAsDate)}
-      />
+      <DatePicker modelValue={date} onModelValueChange={v => setDate(v || new Date())} />
 
       <section>
         <h2>Вес</h2>
@@ -97,7 +94,7 @@ export default function Page() {
             disabled={savingWeight.isPending}
             weight={bodyStatisticsQuery.data?.weight}
             onSubmit={({ weight }) => {
-              savingWeight.mutate({ date, weight });
+              savingWeight.mutate({ date: formattedDate, weight });
             }}
           />
         </div>
@@ -131,7 +128,10 @@ export default function Page() {
 
                         <Button
                           onClick={() => {
-                            deleting.mutate({ itemId: item.id, date });
+                            deleting.mutate({
+                              itemId: item.id,
+                              date: formattedDate,
+                            });
                           }}>
                           Удалить
                         </Button>
@@ -167,7 +167,7 @@ export default function Page() {
           onSubmit={values => {
             if (itemToEdit) {
               updating.mutate({
-                date,
+                date: formattedDate,
                 itemId: itemToEdit.id,
                 quantity: values.quantity,
                 quantityConverterId: values.quantityConverterId,
@@ -178,7 +178,7 @@ export default function Page() {
               });
             } else {
               adding.mutate({
-                date,
+                date: formattedDate,
                 quantity: values.quantity,
                 quantityConverterId: values.quantityConverterId,
                 ingredient: {

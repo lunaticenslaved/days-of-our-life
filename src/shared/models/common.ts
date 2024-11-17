@@ -29,5 +29,5 @@ export function toDateFormat(date: string | Date) {
 }
 
 export function fromDateFormat(date: `${number}-${number}-${number}`) {
-  return dayjs(date, 'DD-MM-YYYY');
+  return dayjs(date, 'DD-MM-YYYY').toDate();
 }

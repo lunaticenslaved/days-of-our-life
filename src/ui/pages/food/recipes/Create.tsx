@@ -1,5 +1,8 @@
-import { useListFoodProductsQuery } from '#ui/entities/food-product';
-import { FoodRecipeForm, useCreateFoodRecipeMutation } from '#ui/entities/food-recipe';
+import {
+  FoodRecipeForm,
+  useCreateFoodRecipeMutation,
+  useListFoodProductsQuery,
+} from '#ui/entities/food';
 import { useFoodNavigation, useFoodPageParams } from '#ui/pages/food';
 
 export default function Page() {

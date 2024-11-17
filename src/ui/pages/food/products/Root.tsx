@@ -4,7 +4,7 @@ import {
   FoodProductsTable,
   useDeleteFoodProductMutation,
   useListFoodProductsQuery,
-} from '#ui/entities/food-product';
+} from '#ui/entities/food';
 
 export default function Page() {
   const { data: products = [], refetch } = useListFoodProductsQuery();

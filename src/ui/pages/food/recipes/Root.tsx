@@ -1,4 +1,4 @@
-import { useListFoodRecipesQuery } from '#ui/entities/food-recipe';
+import { useListFoodRecipesQuery } from '#ui/entities/food';
 import { FOOD_NAVIGATION } from '#ui/pages/food';
 import { Link } from 'react-router-dom';
 

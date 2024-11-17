@@ -13,7 +13,7 @@ export function usePostBodyWeightMutation(handlers: Handlers<unknown> = {}) {
 
 export function useGetBodyStatisticsQuery(date: DateFormat) {
   return useQuery({
-    queryKey: ['BodySchema.statistics.get'],
+    queryKey: ['BodySchema.statistics.get', date],
     queryFn: () => wrapApiAction(BodySchema.statistics.get)({ date }),
   });
 }

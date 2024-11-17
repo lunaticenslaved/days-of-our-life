@@ -1,9 +1,9 @@
-import { useListFoodProductsQuery } from '#ui/entities/food-product';
 import {
+  useListFoodProductsQuery,
   FoodRecipeForm,
   useGetFoodRecipeQuery,
   useUpdateFoodRecipeMutation,
-} from '#ui/entities/food-recipe';
+} from '#ui/entities/food';
 import { useFoodNavigation, useFoodPageParams } from '#ui/pages/food';
 
 export default function Page() {

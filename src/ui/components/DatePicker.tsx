@@ -1,18 +1,25 @@
 import dayjs from '#shared/libs/dayjs';
-import { useCallback, useMemo, useState } from 'react';
+import { ModelValueProps } from '#ui/types';
+import { FocusEventHandler, useCallback, useEffect, useMemo, useState } from 'react';
 
-interface DatePickerProps {
-  value?: Date;
-  onChange(value?: Date): void;
+interface DatePickerProps extends ModelValueProps<Date> {
+  onBlur?: FocusEventHandler<HTMLElement>;
+  onFocus?: FocusEventHandler<HTMLElement>;
 }
 
-export function DatePicker({ value: valueProp, onChange }: DatePickerProps) {
+export function DatePicker({
+  modelValue: valueProp,
+  onModelValueChange,
+  ...props
+}: DatePickerProps) {
   const [value, _setValue] = useState(valueProp);
 
-  const { formattedValue } = useMemo(
-    () => ({
-      formattedValue: dayjs(value).format('YYYY-M-D'),
-    }),
+  useEffect(() => {
+    _setValue(valueProp);
+  }, [valueProp]);
+
+  const formattedValue = useMemo(
+    () => (value ? dayjs(value).format('YYYY-M-D') : undefined),
     [value],
   );
 
@@ -21,13 +28,14 @@ export function DatePicker({ value: valueProp, onChange }: DatePickerProps) {
       const newValue = date ? dayjs(date).toDate() : undefined;
 
       _setValue(newValue);
-      onChange(newValue);
+      onModelValueChange?.(newValue);
     },
-    [onChange],
+    [onModelValueChange],
   );
 
   return (
     <input
+      {...props}
       type="date"
       value={formattedValue}
       onChange={e => setValue(e.target.valueAsDate)}

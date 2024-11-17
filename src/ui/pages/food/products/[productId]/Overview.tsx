@@ -1,6 +1,5 @@
 import { multiplyNutrients } from '#shared/models/food';
-import { FoodNutrientsList } from '#ui/entities/food';
-import { useGetFoodProductQuery } from '#ui/entities/food-product';
+import { useGetFoodProductQuery, FoodNutrientsList } from '#ui/entities/food';
 import { FOOD_NAVIGATION, useFoodPageParams } from '#ui/pages/food';
 import { Link } from 'react-router-dom';
 

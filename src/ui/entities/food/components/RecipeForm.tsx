@@ -3,7 +3,7 @@ import { FForm } from '#ui/components/FForm';
 import { NumberInput } from '#ui/components/NumberInput';
 import { TextArea } from '#ui/components/TextArea';
 import { TextInput } from '#ui/components/TextInput';
-import { FoodProductSelect } from '#ui/entities/food-product';
+import { FoodProductSelect } from '#ui/entities/food';
 import { z } from 'zod';
 
 export const FoodRecipeValidator = z.object({

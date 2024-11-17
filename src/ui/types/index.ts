@@ -12,3 +12,8 @@ export type Direction = 'row' | 'column';
 export interface DirectionProp {
   direction?: Direction;
 }
+
+export interface ModelValueProps<T> {
+  modelValue?: T;
+  onModelValueChange?(value?: T): void;
+}

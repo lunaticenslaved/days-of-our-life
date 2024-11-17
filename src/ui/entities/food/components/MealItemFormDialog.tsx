@@ -14,9 +14,11 @@ import { Form } from '#ui/components/Form';
 import { NumberInput } from '#ui/components/NumberInput';
 import { Radio } from '#ui/components/Radio';
 import { Select } from '#ui/components/Select';
-import { FoodNutrientsList } from '#ui/entities/food';
-import { FoodProductSelect } from '#ui/entities/food-product';
-import { FoodRecipeSelect } from '#ui/entities/food-recipe';
+import {
+  FoodRecipeSelect,
+  FoodProductSelect,
+  FoodNutrientsList,
+} from '#ui/entities/food';
 import { z } from 'zod';
 
 const schema = z.object({

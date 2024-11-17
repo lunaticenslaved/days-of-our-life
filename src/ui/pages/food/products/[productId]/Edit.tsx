@@ -2,7 +2,7 @@ import {
   FoodProductForm,
   useGetFoodProductQuery,
   useUpdateFoodProductMutation,
-} from '#ui/entities/food-product';
+} from '#ui/entities/food';
 import { useFoodNavigation, useFoodPageParams } from '#ui/pages/food';
 
 export default function Page() {
