@@ -8,6 +8,7 @@ export function NumberInput(props: NumberInputProps) {
   return (
     <input
       {...props}
+      style={{ width: '100%', margin: 0, padding: 0 }}
       type="number"
       onChange={e => {
         e.target.value = (Number(e.target.value) || undefined) as unknown as string;

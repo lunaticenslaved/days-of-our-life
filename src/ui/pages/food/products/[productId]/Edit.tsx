@@ -1,5 +1,8 @@
-import { useGetFoodProductQuery, useUpdateFoodProductMutation } from '#ui/api/food';
-import { FoodProductForm } from '#ui/entities/food-product';
+import {
+  FoodProductForm,
+  useGetFoodProductQuery,
+  useUpdateFoodProductMutation,
+} from '#ui/entities/food-product';
 import { useFoodNavigation, useFoodPageParams } from '#ui/pages/food';
 
 export default function Page() {

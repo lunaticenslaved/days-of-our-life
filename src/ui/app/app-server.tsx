@@ -1,4 +1,4 @@
-import { queryClient } from '#ui/api';
+import { queryClient } from '#ui/utils/api';
 import { AppRouter } from '#ui/router';
 import { QueryClientProvider } from '@tanstack/react-query';
 

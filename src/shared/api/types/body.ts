@@ -1,11 +1,13 @@
 import { BodyStatistics } from '#shared/models/body';
 import { DateFormat } from '#shared/models/common';
 
-export interface GetBodyStatisticsRequest {}
-export type GetBodyStatisticsResponse = BodyStatistics[];
+export type GetBodyStatisticsResponse = BodyStatistics | null;
+export interface GetBodyStatisticsRequest {
+  date: DateFormat;
+}
 
-export type PostBodyStatisticResponse = BodyStatistics;
-export interface PostBodyStatisticRequest {
+export type PostBodyWeightResponse = BodyStatistics;
+export interface PostBodyWeightRequest {
   weight: number;
   date: DateFormat;
 }

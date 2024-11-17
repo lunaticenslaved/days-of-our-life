@@ -1,7 +1,10 @@
-import { useDeleteFoodProductMutation, useListFoodProductsQuery } from '#ui/api/food';
 import { Link } from 'react-router-dom';
 import { FOOD_NAVIGATION } from '../index';
-import { FoodProductsTable } from '#ui/entities/food-product';
+import {
+  FoodProductsTable,
+  useDeleteFoodProductMutation,
+  useListFoodProductsQuery,
+} from '#ui/entities/food-product';
 
 export default function Page() {
   const { data: products = [], refetch } = useListFoodProductsQuery();

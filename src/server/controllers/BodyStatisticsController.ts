@@ -3,8 +3,8 @@ import { Controller } from '#server/utils/Controller';
 import {
   GetBodyStatisticsRequest,
   GetBodyStatisticsResponse,
-  PostBodyStatisticRequest,
-  PostBodyStatisticResponse,
+  PostBodyWeightRequest,
+  PostBodyWeightResponse,
 } from '#shared/api/types/body';
 import { BodyStatisticsValidators } from '#shared/models/body';
 import { CommonValidators, DateFormat } from '#shared/models/common';
@@ -12,22 +12,22 @@ import { CommonValidators, DateFormat } from '#shared/models/common';
 import { z } from 'zod';
 
 export default new Controller<'body/statistics'>({
-  'GET /body/statistics': Controller.handler<
+  'GET /body/statistics/:date': Controller.handler<
     GetBodyStatisticsRequest,
     GetBodyStatisticsResponse
   >({
-    validator: z.object({}),
-    parse: req => req.body,
-    handler: async (_, { prisma }) => {
+    validator: z.object({ date: CommonValidators.dateFormat }),
+    parse: req => ({ date: req.params.date as DateFormat }),
+    handler: async ({ date }, { prisma }) => {
       return await prisma.bodyStatistics
-        .findMany()
-        .then(data => data.map(convertBodyStatistics));
+        .findFirst({ where: { date } })
+        .then(data => (data ? convertBodyStatistics(data) : null));
     },
   }),
 
-  'POST /body/statistics/:date': Controller.handler<
-    PostBodyStatisticRequest,
-    PostBodyStatisticResponse
+  'POST /body/statistics/:date/weight': Controller.handler<
+    PostBodyWeightRequest,
+    PostBodyWeightResponse
   >({
     validator: z.object({
       date: CommonValidators.dateFormat,

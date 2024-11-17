@@ -1,7 +1,6 @@
 import { divideNutrients } from '#shared/models/food';
-import { useCreateFoodProductMutation } from '#ui/api/food';
 import { Button } from '#ui/components/Button';
-import { FoodProductForm } from '#ui/entities/food-product';
+import { FoodProductForm, useCreateFoodProductMutation } from '#ui/entities/food-product';
 import { useFoodNavigation } from '#ui/pages/food';
 
 import products from './products.json';

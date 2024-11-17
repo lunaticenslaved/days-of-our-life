@@ -21,7 +21,7 @@ export function Select({ children, ...props }: SelectProps) {
 
   return (
     <SelectContext.Provider value={{ value }}>
-      <select {...props} value={value}>
+      <select {...props} value={value} style={{ width: '100%' }}>
         <option value={undefined} />
         {children}
       </select>

@@ -1,6 +1,6 @@
 import { FoodSchema } from '#shared/api/schemas/food';
 import { FoodRecipe } from '#shared/models/food';
-import { wrapApiAction } from '#ui/api';
+import { wrapApiAction } from '#ui/utils/api';
 import { Handlers } from '#ui/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
 

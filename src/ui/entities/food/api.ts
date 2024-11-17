@@ -1,7 +1,7 @@
 import { FoodSchema } from '#shared/api/schemas/food';
 import { DateFormat } from '#shared/models/common';
 import { FoodTrackerDay } from '#shared/models/food';
-import { wrapApiAction } from '#ui/api';
+import { wrapApiAction } from '#ui/utils/api';
 import { Handlers } from '#ui/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
 

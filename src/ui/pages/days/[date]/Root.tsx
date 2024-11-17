@@ -1,21 +1,25 @@
 import dayjs from '#shared/libs/dayjs';
 import { fromDateFormat, toDateFormat } from '#shared/models/common';
 import { FoodTrackerMealItem, sumNutrients } from '#shared/models/food';
-import { useListFoodRecipesQuery } from '#ui/api/food';
 import { Button } from '#ui/components/Button';
-import { Dialog, useDialog } from '#ui/components/Dialog';
-import { FoodNutrientsList } from '#ui/entities/food-nutrients';
+import { useDialog } from '#ui/components/Dialog';
+import {
+  BodyWeightFormDialog,
+  useGetBodyStatisticsQuery,
+  usePostBodyWeightMutation,
+} from '#ui/entities/body-statistics';
+import { MealItemFormDialog, FoodNutrientsList } from '#ui/entities/food';
 import { useListFoodProductsQuery } from '#ui/entities/food-product';
 import {
-  MealItemForm,
   useDeleteFoodTrackerMealItemMutation,
   useGetFoodTrackerDayQuery,
   useUpdateFoodTrackerMealItemMutation,
-} from '#ui/entities/food-tracker';
-import { useCreateFoodTrackerMealItemMutation } from '#ui/entities/food-tracker';
+  useCreateFoodTrackerMealItemMutation,
+} from '#ui/entities/food';
 import { DAYS_NAVIGATION, useDaysPageParams } from '#ui/pages/days';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useListFoodRecipesQuery } from '#ui/entities/food-recipe';
 
 export default function Page() {
   const params = useDaysPageParams();
@@ -64,6 +68,13 @@ export default function Page() {
       navigate(DAYS_NAVIGATION.toDate({ date: toDateFormat(newDate) }));
     }
   }
+  const bodyStatisticsQuery = useGetBodyStatisticsQuery(date);
+  const savingWeight = usePostBodyWeightMutation({
+    onSuccess: () => {
+      weightDialog.close();
+      bodyStatisticsQuery.refetch();
+    },
+  });
 
   return (
     <div>
@@ -76,9 +87,19 @@ export default function Page() {
       <section>
         <h2>Вес</h2>
         <div>
-          <Button onClick={weightDialog.open}>Редактировать вес</Button>
+          <div style={{ display: 'flex' }}>
+            <div>{bodyStatisticsQuery.data?.weight}</div>
+            <Button onClick={weightDialog.open}>Редактировать вес</Button>
+          </div>
 
-          <Dialog dialog={weightDialog} title="Dialog" body={<div>wow</div>} />
+          <BodyWeightFormDialog
+            dialog={weightDialog}
+            disabled={savingWeight.isPending}
+            weight={bodyStatisticsQuery.data?.weight}
+            onSubmit={({ weight }) => {
+              savingWeight.mutate({ date, weight });
+            }}
+          />
         </div>
       </section>
 
@@ -138,42 +159,35 @@ export default function Page() {
           })}
         </ul>
 
-        <Dialog
+        <MealItemFormDialog
           dialog={mealItemDialog}
-          title={'Новая еда'}
-          body={
-            <>
-              <MealItemForm
-                mealItem={itemToEdit}
-                products={productsQuery.data || []}
-                recipes={recipesQuery.data || []}
-                onSubmit={values => {
-                  if (itemToEdit) {
-                    updating.mutate({
-                      date,
-                      itemId: itemToEdit.id,
-                      quantity: values.quantity,
-                      quantityConverterId: values.quantityConverterId,
-                      ingredient: {
-                        type: values.source,
-                        id: values.sourceItemId,
-                      },
-                    });
-                  } else {
-                    adding.mutate({
-                      date,
-                      quantity: values.quantity,
-                      quantityConverterId: values.quantityConverterId,
-                      ingredient: {
-                        type: values.source,
-                        id: values.sourceItemId,
-                      },
-                    });
-                  }
-                }}
-              />
-            </>
-          }
+          mealItem={itemToEdit}
+          products={productsQuery.data || []}
+          recipes={recipesQuery.data || []}
+          onSubmit={values => {
+            if (itemToEdit) {
+              updating.mutate({
+                date,
+                itemId: itemToEdit.id,
+                quantity: values.quantity,
+                quantityConverterId: values.quantityConverterId,
+                ingredient: {
+                  type: values.source,
+                  id: values.sourceItemId,
+                },
+              });
+            } else {
+              adding.mutate({
+                date,
+                quantity: values.quantity,
+                quantityConverterId: values.quantityConverterId,
+                ingredient: {
+                  type: values.source,
+                  id: values.sourceItemId,
+                },
+              });
+            }
+          }}
         />
       </section>
     </div>

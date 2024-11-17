@@ -35,29 +35,45 @@ export function useDialog() {
 
 export type IUseDialog = ReturnType<typeof useDialog>;
 
-interface DialogProps {
+interface DialogProps extends PropsWithChildren {
   dialog: IUseDialog;
-  title: ReactNode;
-  body: ReactNode;
 }
 
-export function Dialog({ dialog, body }: DialogProps) {
+export function Dialog({ dialog, children }: DialogProps) {
   const { id: dialogId } = dialog;
 
   const { registerDialog, unregisterDialog } = useDialogContext();
 
   useEffect(() => {
-    registerDialog({ id: dialogId, content: body, interface: dialog });
+    registerDialog({ id: dialogId, content: children, interface: dialog });
 
     return () => {
       unregisterDialog(dialogId);
     };
-  }, [body, dialog, dialogId, registerDialog, unregisterDialog]);
+  }, [children, dialog, dialogId, registerDialog, unregisterDialog]);
 
   return null;
 }
 
-export interface IDialogContext {
+function DialogHeader({ children }: PropsWithChildren) {
+  return (
+    <div style={{ padding: '20px', borderBottom: '1px solid grey' }}>{children}</div>
+  );
+}
+
+function DialogContent({ children }: PropsWithChildren) {
+  return <div style={{ padding: '20px' }}>{children}</div>;
+}
+
+function DialogFooter({ children }: PropsWithChildren) {
+  return <div style={{ padding: '20px', borderTop: '1px solid grey' }}>{children}</div>;
+}
+
+Dialog.Header = DialogHeader;
+Dialog.Content = DialogContent;
+Dialog.Footer = DialogFooter;
+
+interface IDialogContext {
   registerDialog(item: DialogItem): void;
   unregisterDialog(itemId: string): void;
   updateDialogState(itemId: string, arg: { isOpen: boolean }): void;
@@ -120,7 +136,7 @@ export function DialogContextProvider({ children }: PropsWithChildren) {
                 X
               </button>
 
-              <div style={{ padding: '20px' }}>
+              <div>
                 {dialogs.map(({ id, content }) => {
                   const isOpen = currentOpenDialog.id === id;
 

@@ -5,9 +5,9 @@ import { ReactNode, useMemo } from 'react';
 import { FormState } from 'final-form';
 import { Form } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
-import { Button } from '#ui/components/Button';
 import { Validator } from '#shared/validation';
 import { ZodType, z } from 'zod';
+import { Form as UIForm } from '../Form';
 
 interface ChildrenProps<T> extends Pick<FormState<T>, 'values' | 'errors'> {}
 
@@ -38,13 +38,10 @@ export function FForm<V, T extends ZodType<V>, VZ extends z.infer<T>>({
       mutators={{ ...arrayMutators }}>
       {({ values, errors, handleSubmit }) => {
         return (
-          <form onSubmit={handleSubmit}>
+          <UIForm disabled={disabled} onSubmit={handleSubmit}>
             <div>{children({ values, errors })}</div>
             {loading && <div>Loading...</div>}
-            <Button disabled={disabled} type="submit">
-              Отправить
-            </Button>
-          </form>
+          </UIForm>
         );
       }}
     </Form>

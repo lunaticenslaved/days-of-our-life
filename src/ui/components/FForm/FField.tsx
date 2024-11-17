@@ -2,21 +2,15 @@ import { ClassNameProp } from '#ui/types';
 import { CSSProperties, ReactNode } from 'react';
 import { Field, FieldInputProps } from 'react-final-form';
 
-export type FFChildrenProps<T, TE extends HTMLElement = HTMLElement> = FieldInputProps<
-  T,
-  TE
->;
+type FFChildrenProps<T, TE extends HTMLElement = HTMLElement> = FieldInputProps<T, TE>;
 
-export interface FFieldExtendableProps extends ClassNameProp {
+export interface FFieldProps<T, TE extends HTMLElement> extends ClassNameProp {
+  children(props: FFChildrenProps<T, TE>): ReactNode;
   name: string;
   title?: string;
   required?: boolean;
   converter?: 'number';
   style?: CSSProperties;
-}
-
-export interface FFieldProps<T, TE extends HTMLElement> extends FFieldExtendableProps {
-  children(props: FFChildrenProps<T, TE>): ReactNode;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -36,12 +30,12 @@ export function FField<T = any, TE extends HTMLElement = HTMLElement>({
       {({ input, meta }) => {
         return (
           <div style={style} className={className}>
-            <label>
+            <label style={{ width: '100%' }}>
               <div>
                 {title && <span>{title}</span>}
                 {required && <span style={{ color: 'red' }}>*</span>}
               </div>
-              <div>{children(input)}</div>
+              <div style={{ width: '100%' }}>{children(input)}</div>
             </label>
             <div style={{ height: '20px', marginBottom: '10px' }}>
               {meta.touched && meta.error}

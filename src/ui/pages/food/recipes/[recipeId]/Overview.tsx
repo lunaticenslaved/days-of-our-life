@@ -1,9 +1,8 @@
-import { useGetFoodRecipeQuery } from '#ui/api/food';
 import { useFoodPageParams } from '#ui/pages/food';
 import { Link } from 'react-router-dom';
 import { FOOD_NAVIGATION } from '../../index';
-import { FoodNutrientsList } from '#ui/entities/food-nutrients';
-import { FoodRecipeOutput } from '#ui/entities/food-recipe';
+import { FoodNutrientsList } from '#ui/entities/food';
+import { FoodRecipeOutput, useGetFoodRecipeQuery } from '#ui/entities/food-recipe';
 import { multiplyNutrients } from '#shared/models/food';
 
 export default function Page() {
