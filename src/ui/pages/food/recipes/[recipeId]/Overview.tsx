@@ -21,6 +21,7 @@ export default function Page() {
   }
 
   const { parts, output, nutrientsPerGram, description } = query.data;
+  const gramsPerPortion = output.grams / output.servings;
 
   return (
     <div>
@@ -37,7 +38,18 @@ export default function Page() {
 
       <section>
         <h2>Питательные вещества</h2>
-        <FoodNutrientsList nutrients={multiplyNutrients(nutrientsPerGram, 100)} />
+
+        <section>
+          <h3>На 100 г</h3>
+          <FoodNutrientsList nutrients={multiplyNutrients(nutrientsPerGram, 100)} />
+        </section>
+
+        <section>
+          <h3>На 1 порцию</h3>
+          <FoodNutrientsList
+            nutrients={multiplyNutrients(nutrientsPerGram, gramsPerPortion)}
+          />
+        </section>
       </section>
 
       <section>

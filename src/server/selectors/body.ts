@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { BodyStatistics } from '#shared/models/body';
-import { DateFormat } from '#shared/models/common';
+import { toDateFormat } from '#shared/models/common';
 
 export const SELECT_BODY_STATISTICS = {
   select: {
@@ -13,7 +13,7 @@ type DBBodyStatistics = Prisma.BodyStatisticsGetPayload<typeof SELECT_BODY_STATI
 
 export function convertBodyStatistics(data: DBBodyStatistics): BodyStatistics {
   return {
-    date: data.date as DateFormat,
+    date: toDateFormat(data.date),
     weight: data.weight,
   };
 }

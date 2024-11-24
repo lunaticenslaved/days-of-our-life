@@ -17,3 +17,13 @@ export function useGetBodyStatisticsQuery(date: DateFormat) {
     queryFn: () => wrapApiAction(BodySchema.statistics.get)({ date }),
   });
 }
+
+export function useListBodyStatisticsQuery(arg: {
+  startDate: DateFormat;
+  endDate: DateFormat;
+}) {
+  return useQuery({
+    queryKey: ['BodySchema.statistics.list', JSON.stringify(arg)],
+    queryFn: () => wrapApiAction(BodySchema.statistics.list)(arg),
+  });
+}

@@ -1,6 +1,8 @@
 import {
   GetBodyStatisticsRequest,
   GetBodyStatisticsResponse,
+  ListBodyStatisticsRequest,
+  ListBodyStatisticsResponse,
   PostBodyWeightRequest,
   PostBodyWeightResponse,
 } from '#shared/api/types/body';
@@ -11,6 +13,11 @@ export const BodySchema = {
     get: createAction<GetBodyStatisticsRequest, GetBodyStatisticsResponse>({
       path: ({ date }) => `/api/body/statistics/${date}`,
       method: 'GET',
+    }),
+    list: createAction<ListBodyStatisticsRequest, ListBodyStatisticsResponse>({
+      path: () => `/api/body/statistics`,
+      method: 'GET',
+      query: ({ startDate, endDate }) => ({ startDate, endDate }),
     }),
 
     weight: {

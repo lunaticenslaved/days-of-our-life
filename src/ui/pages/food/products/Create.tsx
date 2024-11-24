@@ -30,8 +30,8 @@ export default function Create() {
         Fill basic
       </Button>
       <FoodProductForm
-        onSubmit={values => {
-          creation.mutate({
+        onSubmit={async values => {
+          await creation.mutate({
             name: values.name,
             manufacturer: values.manufacturer,
             nutrientsPerGram: divideNutrients(values.nutrients, 100),

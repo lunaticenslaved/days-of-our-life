@@ -2,22 +2,19 @@ import { FField } from './FField';
 import { FFieldArray } from './FFieldArray';
 
 import { ReactNode, useMemo } from 'react';
-import { FormState } from 'final-form';
-import { Form } from 'react-final-form';
+import { Form, FormRenderProps } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
 import { Validator } from '#shared/validation';
 import { ZodType, z } from 'zod';
 import { Form as UIForm } from '../Form';
-
-interface ChildrenProps<T> extends Pick<FormState<T>, 'values' | 'errors'> {}
 
 interface FFormProps<V, T extends ZodType<V>, VZ extends z.infer<T>> {
   schema: T;
   disabled?: boolean;
   loading?: boolean;
   initialValues?: Partial<VZ>;
-  onSubmit(values: VZ): void;
-  children(props: ChildrenProps<VZ>): ReactNode;
+  onSubmit(values: VZ): void | Promise<void>;
+  children(props: FormRenderProps<VZ>): ReactNode;
 }
 
 export function FForm<V, T extends ZodType<V>, VZ extends z.infer<T>>({
@@ -36,10 +33,10 @@ export function FForm<V, T extends ZodType<V>, VZ extends z.infer<T>>({
       validate={validator.validate}
       initialValues={initialValues}
       mutators={{ ...arrayMutators }}>
-      {({ values, errors, handleSubmit }) => {
+      {data => {
         return (
-          <UIForm disabled={disabled} onSubmit={handleSubmit}>
-            <div>{children({ values, errors })}</div>
+          <UIForm disabled={disabled} onSubmit={data.handleSubmit}>
+            <div>{children(data)}</div>
             {loading && <div>Loading...</div>}
           </UIForm>
         );

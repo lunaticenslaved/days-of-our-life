@@ -26,7 +26,14 @@ export function FField<T = any, TE extends HTMLElement = HTMLElement>({
   return (
     <Field
       name={name}
-      parse={converter === 'number' ? v => (!v ? undefined : Number(v)) : undefined}>
+      parse={
+        converter === 'number'
+          ? v => {
+              console.log(v);
+              return !v ? undefined : Number(v);
+            }
+          : undefined
+      }>
       {({ input, meta }) => {
         return (
           <div style={style} className={className}>
