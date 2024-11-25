@@ -61,43 +61,23 @@ export function FoodProductForm({ onSubmit, product }: FoodProductFormProps) {
               {TextInput}
             </FForm.Field>
 
-            <FForm.Field
-              name="nutrients.calories"
-              title="Калории в 100Г"
-              converter="number"
-              required>
+            <FForm.Field name="nutrients.calories" title="Калории в 100Г" required>
               {NumberInput}
             </FForm.Field>
 
-            <FForm.Field
-              name="nutrients.proteins"
-              title="Белки в 100Г"
-              converter="number"
-              required>
+            <FForm.Field name="nutrients.proteins" title="Белки в 100Г" required>
               {NumberInput}
             </FForm.Field>
 
-            <FForm.Field
-              name="nutrients.fats"
-              title="Жиры в 100Г"
-              converter="number"
-              required>
+            <FForm.Field name="nutrients.fats" title="Жиры в 100Г" required>
               {NumberInput}
             </FForm.Field>
 
-            <FForm.Field
-              name="nutrients.carbs"
-              title="Углеводы в 100Г"
-              converter="number"
-              required>
+            <FForm.Field name="nutrients.carbs" title="Углеводы в 100Г" required>
               {NumberInput}
             </FForm.Field>
 
-            <FForm.Field
-              name="nutrients.fibers"
-              title="Клетчатка в 100Г"
-              converter="number"
-              required>
+            <FForm.Field name="nutrients.fibers" title="Клетчатка в 100Г" required>
               {NumberInput}
             </FForm.Field>
           </Form.Content>

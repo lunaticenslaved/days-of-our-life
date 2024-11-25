@@ -1,15 +1,16 @@
-import { ClassNameProp } from '#ui/types';
+import { ClassNameProp, ModelValueProps } from '#ui/types';
 import { CSSProperties, ReactNode } from 'react';
-import { Field, FieldInputProps } from 'react-final-form';
+import { Field, FieldInputProps, useForm } from 'react-final-form';
 
-type FFChildrenProps<T, TE extends HTMLElement = HTMLElement> = FieldInputProps<T, TE>;
+type FFChildrenProps<T, TE extends HTMLElement = HTMLElement> = FieldInputProps<T, TE> &
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ModelValueProps<any>;
 
 export interface FFieldProps<T, TE extends HTMLElement> extends ClassNameProp {
   children(props: FFChildrenProps<T, TE>): ReactNode;
   name: string;
   title?: string;
   required?: boolean;
-  converter?: 'number';
   style?: CSSProperties;
 }
 
@@ -21,19 +22,11 @@ export function FField<T = any, TE extends HTMLElement = HTMLElement>({
   required,
   style,
   className,
-  converter,
 }: FFieldProps<T, TE>) {
+  const form = useForm();
+
   return (
-    <Field
-      name={name}
-      parse={
-        converter === 'number'
-          ? v => {
-              console.log(v);
-              return !v ? undefined : Number(v);
-            }
-          : undefined
-      }>
+    <Field name={name}>
       {({ input, meta }) => {
         return (
           <div style={style} className={className}>
@@ -42,7 +35,14 @@ export function FField<T = any, TE extends HTMLElement = HTMLElement>({
                 {title && <span>{title}</span>}
                 {required && <span style={{ color: 'red' }}>*</span>}
               </div>
-              <div style={{ width: '100%' }}>{children(input)}</div>
+              <div style={{ width: '100%' }}>
+                {children({
+                  ...input,
+                  onChange: () => null,
+                  modelValue: input.value,
+                  onModelValueChange: v => form.change(name, v),
+                })}
+              </div>
             </label>
             <div style={{ height: '20px', marginBottom: '10px' }}>
               {meta.touched && meta.error}

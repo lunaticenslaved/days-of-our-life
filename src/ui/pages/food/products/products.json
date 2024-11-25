@@ -1,90 +1,200 @@
 [
   {
-    "id": "e1307a3f-b9ed-4714-b8ba-f2a13c867f5b",
-    "name": "Сыр Сулугуни",
-    "nutrients": {
-      "calories": 286,
-      "carbs": 0.4,
-      "proteins": 20.5,
-      "fats": 22,
-      "fibers": 0
-    }
-  },
-  {
-    "id": "f7fd3518-cf60-4ace-b091-afaaf0c504e2",
-    "name": "Кефир 3,2%",
-    "nutrients": {
-      "calories": 59,
-      "carbs": 4,
-      "proteins": 2.9,
-      "fats": 3.2,
-      "fibers": 0
-    }
-  },
-  {
-    "id": "fc0cdd82-f0db-4091-8fb6-ea9e46beae2f",
-    "name": "Мука пшеничная высшего сорта",
-    "nutrients": {
-      "calories": 334,
-      "carbs": 69.9,
-      "proteins": 10.8,
-      "fats": 1.36,
-      "fibers": 3.5
-    }
-  },
-  {
-    "id": "f2c15209-fec0-49e1-b6ad-e76e36a5bb1b",
+    "id": "2de1e006-60d2-46fa-8179-7b17a0f49998",
     "name": "Рис бурый, нешлифованный",
-    "nutrients": {
-      "calories": 380,
-      "carbs": 77,
-      "proteins": 7.5,
-      "fats": 2,
-      "fibers": 14
-    }
+    "nutrientsPerGram": {
+      "calories": 3.8,
+      "carbs": 0.77,
+      "proteins": 0.075,
+      "fats": 0.02,
+      "fibers": 0.14
+    },
+    "quantities": [
+      {
+        "id": "0c1d9759-38bd-4e01-a516-2284a5857476",
+        "grams": 1,
+        "name": "Граммы"
+      }
+    ]
   },
   {
-    "id": "5e73dc34-8cbc-4c4b-b2c4-24442ecef3f9",
-    "name": "Яйцо куриное",
-    "nutrients": {
-      "calories": 157,
-      "carbs": 0.7,
-      "proteins": 12.7,
-      "fats": 11.5,
-      "fibers": 0
-    }
-  },
-  {
-    "id": "5ba22adc-e9a1-4552-886e-2bbeb2d38c6a",
-    "name": "Горошек зеленый, замороженный",
-    "nutrients": {
-      "calories": 77,
-      "carbs": 9.1,
-      "proteins": 5.2,
-      "fats": 0.4,
-      "fibers": 4.5
-    }
-  },
-  {
-    "id": "caab0a82-ce4e-47ef-a0b4-a88da8080205",
+    "id": "6ad6d566-28a3-46eb-9554-f827cc373e42",
     "name": "Кукуруза, зерна, замороженная",
-    "nutrients": {
-      "calories": 81,
-      "carbs": 16.9,
-      "proteins": 2.6,
-      "fats": 0.7,
-      "fibers": 2.4
-    }
+    "nutrientsPerGram": {
+      "calories": 0.81,
+      "carbs": 0.169,
+      "proteins": 0.026,
+      "fats": 0.007,
+      "fibers": 0.024
+    },
+    "quantities": [
+      {
+        "id": "53282e2c-7337-4041-b2eb-601bd5bf2064",
+        "grams": 1,
+        "name": "Граммы"
+      }
+    ]
   },
   {
-    "id": "1fdeab1d-0d9f-4841-8868-d5ad9f106923",
+    "id": "23aee85e-591c-4a31-bedf-2cd7e6d14497",
     "name": "Масло подсолнечное",
-    "nutrients": {
-      "calories": 899,
+    "nutrientsPerGram": {
+      "calories": 8.99,
       "carbs": 0,
       "proteins": 0,
-      "fats": 89.9,
+      "fats": 0.899,
       "fibers": 0
-    }
+    },
+    "quantities": [
+      {
+        "id": "fc1d2465-63c4-4ad0-bbde-de94a46558fb",
+        "grams": 1,
+        "name": "Граммы"
+      }
+    ]
+  },
+  {
+    "id": "5534a1a6-cb3a-4f68-b588-77fd87ce347a",
+    "name": "Кефир 3,2%",
+    "nutrientsPerGram": {
+      "calories": 0.59,
+      "carbs": 0.04,
+      "proteins": 0.029,
+      "fats": 0.032,
+      "fibers": 0
+    },
+    "quantities": [
+      {
+        "id": "47d21959-5586-497e-8f49-b202ee2c9814",
+        "grams": 1,
+        "name": "Граммы"
+      }
+    ]
+  },
+  {
+    "id": "d85bc144-f6fc-45b3-b15d-a97c00f981f8",
+    "name": "Мука пшеничная высшего сорта",
+    "nutrientsPerGram": {
+      "calories": 3.34,
+      "carbs": 0.699,
+      "proteins": 0.108,
+      "fats": 0.0136,
+      "fibers": 0.035
+    },
+    "quantities": [
+      {
+        "id": "e128a2de-fc22-42c6-b667-5d61ee47edfb",
+        "grams": 1,
+        "name": "Граммы"
+      }
+    ]
+  },
+  {
+    "id": "ba1cfaae-9f39-45ce-bea2-caff86c18711",
+    "name": "Горошек зеленый, замороженный",
+    "nutrientsPerGram": {
+      "calories": 0.77,
+      "carbs": 0.091,
+      "proteins": 0.052,
+      "fats": 0.004,
+      "fibers": 0.045
+    },
+    "quantities": [
+      {
+        "id": "cfa64e87-874b-4f70-a45c-a5771849c164",
+        "grams": 1,
+        "name": "Граммы"
+      }
+    ]
+  },
+  {
+    "id": "65015cd9-81be-4e06-9c62-7bcbf45acb97",
+    "name": "Сыр Сулугуни",
+    "nutrientsPerGram": {
+      "calories": 2.86,
+      "carbs": 0.004,
+      "proteins": 0.205,
+      "fats": 0.22,
+      "fibers": 0
+    },
+    "quantities": [
+      {
+        "id": "33dc8fbb-965d-4fa1-bc5c-aa716fbafba3",
+        "grams": 1,
+        "name": "Граммы"
+      }
+    ]
+  },
+  {
+    "id": "eac58ae1-f80b-4188-a9d1-17c02905ab4b",
+    "name": "Яйцо куриное",
+    "nutrientsPerGram": {
+      "calories": 1.57,
+      "carbs": 0.007,
+      "proteins": 0.127,
+      "fats": 0.115,
+      "fibers": 0
+    },
+    "quantities": [
+      {
+        "id": "2aa2e815-3777-47ec-87b0-da4126504f1a",
+        "grams": 1,
+        "name": "Граммы"
+      }
+    ]
+  },
+  {
+    "id": "873ef177-6fec-4235-8511-ad8453338d16",
+    "name": "Сахар",
+    "nutrientsPerGram": {
+      "calories": 4,
+      "carbs": 1,
+      "proteins": 0,
+      "fats": 0,
+      "fibers": 0
+    },
+    "quantities": [
+      {
+        "id": "4eebce80-c289-493e-b16d-79056fd45c53",
+        "grams": 1,
+        "name": "Граммы"
+      }
+    ]
+  },
+  {
+    "id": "3ad5c40d-56f4-4d2c-ae77-c231e62afbbe",
+    "name": "Геркулес монастырский",
+    "nutrientsPerGram": {
+      "calories": 3.5,
+      "carbs": 0.62,
+      "proteins": 0.12,
+      "fats": 0.06,
+      "fibers": 0.06
+    },
+    "quantities": [
+      {
+        "id": "41a5bb4f-d808-4267-a697-42da2ea2b9bc",
+        "grams": 1,
+        "name": "Граммы"
+      }
+    ]
+  },
+  {
+    "id": "a926a087-2467-4829-b7b4-43ee4b4e18fa",
+    "name": "Молоко 2.5%",
+    "nutrientsPerGram": {
+      "calories": 0.53,
+      "carbs": 0.047,
+      "proteins": 0.03,
+      "fats": 0.025,
+      "fibers": 0
+    },
+    "quantities": [
+      {
+        "id": "d4ab237f-694f-4097-b138-5cdb4d2905dc",
+        "grams": 1,
+        "name": "Граммы"
+      }
+    ]
   }
 ]

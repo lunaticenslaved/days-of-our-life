@@ -120,11 +120,7 @@ export function MealItemFormDialog({
                   </FForm.Field>
 
                   {quantityConverter && (
-                    <FForm.Field
-                      title={quantityConverter.name}
-                      name="quantity"
-                      converter="number"
-                      required>
+                    <FForm.Field title={quantityConverter.name} name="quantity" required>
                       {NumberInput}
                     </FForm.Field>
                   )}

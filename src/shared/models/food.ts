@@ -113,7 +113,10 @@ export const FoodValidators = {
               grams: z
                 .number({ message: ERROR_MESSAGES.required })
                 .gte(0, ERROR_MESSAGES.gte(0)),
-              description: CommonValidators.str(255),
+              description: z
+                .string({ message: ERROR_MESSAGES.required })
+                .max(255, ERROR_MESSAGES.maxLengthStr(255))
+                .optional(),
             }),
             { message: ERROR_MESSAGES.required },
           )

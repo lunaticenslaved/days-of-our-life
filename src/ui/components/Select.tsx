@@ -1,3 +1,4 @@
+import { ModelValueProps } from '#ui/types';
 import { createContext, HTMLProps, useEffect, useState } from 'react';
 
 // TODO add area attributes
@@ -8,20 +9,32 @@ interface SelectContext {
 
 const SelectContext = createContext<SelectContext | null>(null);
 
-export interface SelectProps extends HTMLProps<HTMLSelectElement> {
-  value?: string;
-}
+export interface SelectProps
+  extends HTMLProps<HTMLSelectElement>,
+    ModelValueProps<string | undefined> {}
 
-export function Select({ children, ...props }: SelectProps) {
-  const [value, setValue] = useState(props.value);
+export function Select({
+  children,
+  modelValue,
+  onModelValueChange,
+  ...props
+}: SelectProps) {
+  const [value, setValue] = useState(modelValue);
 
   useEffect(() => {
-    setValue(props.value);
-  }, [props.value]);
+    setValue(modelValue);
+  }, [modelValue]);
 
   return (
     <SelectContext.Provider value={{ value }}>
-      <select {...props} value={value} style={{ width: '100%' }}>
+      <select
+        {...props}
+        onChange={e => {
+          onModelValueChange?.(e.target.value);
+          props.onChange?.(e);
+        }}
+        value={value}
+        style={{ width: '100%' }}>
         <option value={undefined} />
         {children}
       </select>

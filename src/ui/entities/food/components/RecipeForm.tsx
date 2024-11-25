@@ -63,25 +63,6 @@ export function FoodRecipeForm({ onSubmit, products, recipe }: RecipeFormProps) 
             </FForm.Field>
 
             <section>
-              <h2>Статистика</h2>
-
-              <FForm.Field
-                name={`output.grams`}
-                title="Граммы"
-                converter="number"
-                required>
-                {NumberInput}
-              </FForm.Field>
-              <FForm.Field
-                name={`output.servings`}
-                title="Порции"
-                converter="number"
-                required>
-                {NumberInput}
-              </FForm.Field>
-            </section>
-
-            <section>
               <h2>Части рецепта</h2>
               <FForm.FieldArray<RecipeFormValues['parts'][number]>
                 name="parts"
@@ -113,7 +94,7 @@ export function FoodRecipeForm({ onSubmit, products, recipe }: RecipeFormProps) 
                             grams: undefined as unknown as number,
                             productId: '',
                           }}
-                          renderField={({ name }) => {
+                          renderField={({ name, fields, index }) => {
                             return (
                               <div style={{ display: 'flex', gap: '10px' }}>
                                 <FForm.Field name={`${name}.productId`} required>
@@ -125,7 +106,6 @@ export function FoodRecipeForm({ onSubmit, products, recipe }: RecipeFormProps) 
                                 <FForm.Field
                                   name={`${name}.grams`}
                                   title="Граммы"
-                                  converter="number"
                                   required>
                                   {NumberInput}
                                 </FForm.Field>
@@ -135,6 +115,12 @@ export function FoodRecipeForm({ onSubmit, products, recipe }: RecipeFormProps) 
                                   title="Описание">
                                   {TextInput}
                                 </FForm.Field>
+
+                                <div>
+                                  <Button onClick={() => fields.remove(index)}>
+                                    Удалить
+                                  </Button>
+                                </div>
                               </div>
                             );
                           }}
@@ -149,9 +135,24 @@ export function FoodRecipeForm({ onSubmit, products, recipe }: RecipeFormProps) 
 
             <hr style={{ marginTop: '20px', marginBottom: '20px' }} />
 
-            <FForm.Field name={`description`} title="Как готовить" required>
-              {TextArea}
-            </FForm.Field>
+            <section>
+              <h2>Как готовить</h2>
+
+              <FForm.Field name={`description`} required>
+                {TextArea}
+              </FForm.Field>
+            </section>
+
+            <section>
+              <h2>Выход</h2>
+
+              <FForm.Field name={`output.grams`} title="Граммы" required>
+                {NumberInput}
+              </FForm.Field>
+              <FForm.Field name={`output.servings`} title="Порции" required>
+                {NumberInput}
+              </FForm.Field>
+            </section>
           </Form.Content>
 
           <Form.Footer>

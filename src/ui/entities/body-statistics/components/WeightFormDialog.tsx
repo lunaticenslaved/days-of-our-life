@@ -38,9 +38,7 @@ export function BodyWeightFormDialog({
               <Dialog.Header>Редактирование веса</Dialog.Header>
               <Dialog.Content>
                 <Form.Content>
-                  <FForm.Field name="weight" converter="number">
-                    {NumberInput}
-                  </FForm.Field>
+                  <FForm.Field name="weight">{NumberInput}</FForm.Field>
                 </Form.Content>
               </Dialog.Content>
 
