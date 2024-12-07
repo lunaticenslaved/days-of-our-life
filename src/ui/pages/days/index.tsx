@@ -1,20 +1,24 @@
 import { createNavigationHook } from '#ui/hooks/navigation';
-import { Navigate, Route, useParams } from 'react-router';
+import { Navigate, Outlet, Route, useParams } from 'react-router';
 
 import DateRoot from './[date]/Root';
+import StatisticsRootPage from './statistics/Root';
 import { toDateFormat } from '#shared/models/common';
+import { Link } from 'react-router-dom';
 
 type Date = { date: `${number}-${number}-${number}` };
 
 const routes = {
   root: '/days',
-
+  statistics: '/days/statistics',
   date: '/days/:date',
 } as const;
 
 export const DAYS_NAVIGATION = {
   toRoot: () => routes.root,
+  toStatistics: () => routes.statistics,
   toDate: ({ date }: Date) => routes.date.replace(':date', date),
+  toToday: () => routes.date.replace(':date', toDateFormat(new Date())),
 };
 
 export const useDaysNavigation = createNavigationHook(DAYS_NAVIGATION);
@@ -25,11 +29,26 @@ export function useDaysPageParams() {
 
 export default [
   <Route
-    key={routes.root}
+    key="days"
     path={routes.root}
-    element={<Navigate to={DAYS_NAVIGATION.toDate({ date: toDateFormat(new Date()) })} />}
-  />,
-
-  // Products
-  <Route key={routes.date} path={routes.date} element={<DateRoot />} />,
+    element={
+      <>
+        <aside style={{ width: '100px', display: 'flex', flexDirection: 'column' }}>
+          <Link to={DAYS_NAVIGATION.toToday()}>Дата</Link>
+          <Link to={DAYS_NAVIGATION.toStatistics()}>Статистика</Link>
+        </aside>
+        <div>
+          <Outlet />
+        </div>
+      </>
+    }>
+    <Route index element={<Navigate to={DAYS_NAVIGATION.toToday()} />} />
+    <Route
+      key={routes.statistics}
+      path={routes.statistics}
+      element={<StatisticsRootPage />}
+    />
+    ,
+    <Route key={routes.date} path={routes.date} element={<DateRoot />} />,
+  </Route>,
 ];

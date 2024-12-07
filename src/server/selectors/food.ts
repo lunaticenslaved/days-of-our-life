@@ -4,6 +4,7 @@ import {
   FoodRecipe,
   FoodTrackerMealItem,
   sumNutrients,
+  FoodNutrients,
 } from '#shared/models/food';
 import { Prisma } from '@prisma/client';
 
@@ -103,12 +104,17 @@ export const SELECT_TRACKER_DAY = {
   },
 } satisfies Prisma.FoodTrackerDayDefaultArgs;
 
+type DBFoodNutrients = Prisma.FoodNutrientsGetPayload<typeof ONLY_NUTRIENTS_SELECT>;
 type DBFoodRecipe = Prisma.FoodRecipeGetPayload<typeof SELECT_RECIPE>;
 type DBFoodProduct = Prisma.FoodProductGetPayload<typeof SELECT_PRODUCT>;
 type DBFoodTrackerDay = Prisma.FoodTrackerDayGetPayload<typeof SELECT_TRACKER_DAY>;
 type DBFoodTrackerMealItem = Prisma.FoodTrackerMealItemGetPayload<
   typeof SELECT_MEAL_ITEM
 >;
+
+export function convertFoodNutrients(data: DBFoodNutrients): FoodNutrients {
+  return data;
+}
 
 export function convertFoodRecipe(data: DBFoodRecipe): FoodRecipe {
   return {
@@ -135,7 +141,7 @@ export function convertFoodRecipe(data: DBFoodRecipe): FoodRecipe {
       };
     }),
     output: data.output,
-    nutrientsPerGram: data.nutrientsPerGram,
+    nutrientsPerGram: convertFoodNutrients(data.nutrientsPerGram),
     quantities: data.quantities,
   };
 }
@@ -145,7 +151,7 @@ export function convertFoodProduct(data: DBFoodProduct): FoodProduct {
     id: data.id,
     name: data.name,
     manufacturer: data.manufacturer || undefined,
-    nutrientsPerGram: data.nutrientsPerGram,
+    nutrientsPerGram: convertFoodNutrients(data.nutrientsPerGram),
     quantities: data.quantities,
   };
 }
@@ -187,6 +193,6 @@ export function convertFoodTrackerDay(data: DBFoodTrackerDay): FoodTrackerDay {
     meals: data.meals.length
       ? [{ items: data.meals.map(convertFoodTrackerMealItem) }]
       : [],
-    nutrients: sumNutrients(data.meals.map(meal => meal.nutrients)),
+    nutrients: sumNutrients(data.meals.map(meal => convertFoodNutrients(meal.nutrients))),
   };
 }

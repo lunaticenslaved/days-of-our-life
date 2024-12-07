@@ -160,3 +160,76 @@ model BodyStatistics {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model FemalePeriod {
+  id        String   @id @default(uuid()) @db.Uuid
+  startDate DateTime @unique
+  endDate   DateTime @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DayPart {
+  id    String @id @default(uuid()) @db.Uuid
+  name  String @db.VarChar(255)
+  order Int    @db.SmallInt
+
+  medicamentsTaken       MedicamentTaken[]
+  cosmeticProductApplied CosmeticProductApply[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Medicament {
+  id   String @id @default(uuid()) @db.Uuid
+  name String @db.VarChar(255)
+
+  taken MedicamentTaken[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MedicamentTaken {
+  id   String   @id @default(uuid()) @db.Uuid
+  date DateTime
+
+  dayPartId String  @db.Uuid
+  dayPart   DayPart @relation(fields: [dayPartId], references: [id], onDelete: Restrict)
+
+  medicamentId String     @db.Uuid
+  medicament   Medicament @relation(fields: [medicamentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([medicamentId, dayPartId])
+}
+
+model CosmeticProduct {
+  id   String @id @default(uuid()) @db.Uuid
+  name String @db.VarChar(255)
+
+  applied CosmeticProductApply[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CosmeticProductApply {
+  id   String   @id @default(uuid()) @db.Uuid
+  date DateTime
+
+  dayPartId String  @db.Uuid
+  dayPart   DayPart @relation(fields: [dayPartId], references: [id], onDelete: Restrict)
+
+  cosmeticProductId String          @db.Uuid
+  cosmeticProduct   CosmeticProduct @relation(fields: [cosmeticProductId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cosmeticProductId, dayPartId])
+}

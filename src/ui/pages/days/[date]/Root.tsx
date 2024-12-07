@@ -1,10 +1,14 @@
-import { fromDateFormat, toDateFormat } from '#shared/models/common';
+import {
+  dateDiff,
+  fromDateFormat,
+  isSameDate,
+  toDateFormat,
+} from '#shared/models/common';
 import { FoodTrackerMealItem, sumNutrients } from '#shared/models/food';
 import { Button } from '#ui/components/Button';
 import { useDialog } from '#ui/components/Dialog';
 import {
   BodyWeightFormDialog,
-  useGetBodyStatisticsQuery,
   usePostBodyWeightMutation,
 } from '#ui/entities/body-statistics';
 import {
@@ -23,6 +27,11 @@ import { DAYS_NAVIGATION, useDaysPageParams } from '#ui/pages/days';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { DatePicker } from '#ui/components/DatePicker';
+import { useGetStatisticsQuery } from '#ui/entities/statistics';
+import {
+  StartFemalePeriodButton,
+  useStartFemalePeriodMutation,
+} from '#ui/entities/female-period';
 
 export default function Page() {
   const params = useDaysPageParams();
@@ -30,6 +39,7 @@ export default function Page() {
     return params.date ? fromDateFormat(params.date) : new Date();
   });
 
+  const dateStatistics = useGetStatisticsQuery({ date: toDateFormat(date) });
   const formattedDate = toDateFormat(date);
 
   const navigate = useNavigate();
@@ -69,13 +79,20 @@ export default function Page() {
 
   const weightDialog = useDialog();
 
-  const bodyStatisticsQuery = useGetBodyStatisticsQuery(formattedDate);
   const savingWeight = usePostBodyWeightMutation({
     onSuccess: () => {
       weightDialog.close();
-      bodyStatisticsQuery.refetch();
+      dateStatistics.refetch();
     },
   });
+
+  const startFemalePeriod = useStartFemalePeriodMutation({
+    onSuccess: dateStatistics.refetch,
+  });
+
+  if (!dateStatistics.data) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
@@ -85,18 +102,48 @@ export default function Page() {
         <h2>Вес</h2>
         <div>
           <div style={{ display: 'flex' }}>
-            <div>{bodyStatisticsQuery.data?.weight}</div>
+            <div>{dateStatistics.data.body?.weight}</div>
             <Button onClick={weightDialog.open}>Редактировать вес</Button>
           </div>
 
           <BodyWeightFormDialog
             dialog={weightDialog}
             disabled={savingWeight.isPending}
-            weight={bodyStatisticsQuery.data?.weight}
+            weight={dateStatistics.data.body?.weight}
             onSubmit={({ weight }) => {
               savingWeight.mutate({ date: formattedDate, weight });
             }}
           />
+        </div>
+      </section>
+
+      <section>
+        <h2>Цикл</h2>
+        <div>
+          {dateStatistics.data.period ? (
+            isSameDate(dateStatistics.data.period.startDate, toDateFormat(date)) ? (
+              <div>Первый день</div>
+            ) : (
+              <div>
+                <div>
+                  {dateDiff(new Date(), dateStatistics.data.period.startDate, 'days')}
+                </div>
+                <div>
+                  <StartFemalePeriodButton
+                    onStartPeriod={() =>
+                      startFemalePeriod.mutate({ startDate: toDateFormat(date) })
+                    }
+                  />
+                </div>
+              </div>
+            )
+          ) : (
+            <StartFemalePeriodButton
+              onStartPeriod={() =>
+                startFemalePeriod.mutate({ startDate: toDateFormat(date) })
+              }
+            />
+          )}
         </div>
       </section>
 

@@ -23,7 +23,7 @@ export default function Create() {
           for (const product of products) {
             await creationRaw.mutate({
               name: product.name,
-              nutrientsPerGram: divideNutrients(product.nutrients, 100),
+              nutrientsPerGram: product.nutrientsPerGram,
             });
           }
         }}>

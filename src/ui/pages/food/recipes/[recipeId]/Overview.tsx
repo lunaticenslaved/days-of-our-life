@@ -70,8 +70,12 @@ export default function Page() {
                         <span>{ingredient.product.name}</span>
                         {' - '}
                         <span>{ingredient.grams} грамм</span>
-                        {' - '}
-                        <span>{ingredient.description}</span>
+                        {ingredient.description && (
+                          <>
+                            {' - '}
+                            <span>{ingredient.description}</span>
+                          </>
+                        )}
                       </li>
                     );
                   })}
@@ -95,11 +99,11 @@ export default function Page() {
 
       <section>
         <h2>Как готовить</h2>
-        <ul>
+        <ol>
           {description.split('\n').map((text, index) => {
             return <li key={index}>{text}</li>;
           })}
-        </ul>
+        </ol>
       </section>
     </div>
   );
