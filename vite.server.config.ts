@@ -23,6 +23,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      '#': resolve(__dirname, './src'),
       '#ui': resolve(__dirname, './src/ui'),
       '#libs': resolve(__dirname, './src/libs'),
       '#shared': resolve(__dirname, './src/shared'),

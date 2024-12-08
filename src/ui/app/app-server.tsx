@@ -1,11 +1,11 @@
 import { queryClient } from '#ui/utils/api';
-import { AppRouter } from '#ui/router';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { App } from './App';
 
 export function AppServer() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AppRouter />
+      <App />
     </QueryClientProvider>
   );
 }

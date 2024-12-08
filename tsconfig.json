@@ -43,6 +43,7 @@
     "rootDir": "./src",
     "baseUrl": ".",
     "paths": {
+      "#/*": ["src/*"],
       "#ui/*": ["src/ui/*"],
       "#libs/*": ["./src/libs/*"],
       "#shared/*": ["./src/shared/*"],
