@@ -55,27 +55,17 @@ export function useCreateFoodTrackerMealItemMutation(handlers: Handlers<unknown>
   });
 }
 
-export function useUpdateFoodTrackerMealItemMutation(
-  itemId: string,
-  handlers: Handlers<unknown> = {},
-) {
+export function useUpdateFoodTrackerMealItemMutation(handlers: Handlers<unknown> = {}) {
   return useMutation({
     mutationKey: [`FoodSchema.tracker.meals.days.items.update`],
-    mutationFn: wrapApiAction(FoodSchema.tracker.days.meals.items.update, handlers, {
-      itemId,
-    }),
+    mutationFn: wrapApiAction(FoodSchema.tracker.days.meals.items.update, handlers),
   });
 }
 
-export function useDeleteFoodTrackerMealItemMutation(
-  itemId: string,
-  handlers: Handlers<unknown> = {},
-) {
+export function useDeleteFoodTrackerMealItemMutation(handlers: Handlers<unknown> = {}) {
   return useMutation({
     mutationKey: [`FoodSchema.tracker.days.meals.items.delete`],
-    mutationFn: wrapApiAction(FoodSchema.tracker.days.meals.items.delete, handlers, {
-      itemId,
-    }),
+    mutationFn: wrapApiAction(FoodSchema.tracker.days.meals.items.delete, handlers),
   });
 }
 

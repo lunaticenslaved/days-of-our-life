@@ -57,13 +57,13 @@ export default function Page() {
       mealItemDialog.close();
     },
   });
-  const updating = useUpdateFoodTrackerMealItemMutation('', {
+  const updating = useUpdateFoodTrackerMealItemMutation({
     onSuccess: () => {
       trackerDayQuery.refetch();
       mealItemDialog.close();
     },
   });
-  const deleting = useDeleteFoodTrackerMealItemMutation('', {
+  const deleting = useDeleteFoodTrackerMealItemMutation({
     onSuccess: () => {
       trackerDayQuery.refetch();
     },

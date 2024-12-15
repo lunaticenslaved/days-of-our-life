@@ -8,11 +8,11 @@ import axiosLib from 'axios';
 const axios = axiosLib.create();
 export const queryClient = new QueryClient();
 
-export function wrapApiAction<T extends object, R, K extends object>(
-  config: ApiAction<T, R>,
-  handlers: Handlers<R> = {},
-  passArg: K = {} as K,
-) {
+export function wrapApiAction<
+  T extends object,
+  R,
+  P extends Partial<T> | undefined = undefined,
+>(config: ApiAction<T, R>, handlers: Handlers<R> = {}, passArg: P = undefined as P) {
   const fn = async (arg: T) => {
     let path = config.path(arg);
     const body = config.body?.(arg);
@@ -40,10 +40,10 @@ export function wrapApiAction<T extends object, R, K extends object>(
   };
 
   return async (
-    arg: Partial<T> & Omit<T, keyof typeof passArg>,
+    arg: P extends undefined ? T : Omit<T, keyof P>,
     localHandlers: Handlers<R> = {},
-  ) => {
-    const response = await fn({ ...passArg, ...arg } as unknown as T);
+  ): Promise<R> => {
+    const response = await fn({ ...(passArg || {}), ...arg } as unknown as T);
 
     if (response.type === 'error') {
       const error = new Error(response.message);

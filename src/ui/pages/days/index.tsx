@@ -3,6 +3,7 @@ import { Navigate, Outlet, Route, useParams } from 'react-router';
 
 import DateRoot from './[date]/Root';
 import StatisticsRootPage from './statistics/Root';
+import DayPartsRootPage from './parts/Root';
 import { toDateFormat } from '#shared/models/common';
 import { Link } from 'react-router-dom';
 
@@ -12,6 +13,7 @@ const routes = {
   root: '/days',
   statistics: '/days/statistics',
   date: '/days/:date',
+  dayParts: '/days/parts',
 } as const;
 
 export const DAYS_NAVIGATION = {
@@ -19,6 +21,7 @@ export const DAYS_NAVIGATION = {
   toStatistics: () => routes.statistics,
   toDate: ({ date }: Date) => routes.date.replace(':date', date),
   toToday: () => routes.date.replace(':date', toDateFormat(new Date())),
+  toDayParts: () => routes.dayParts,
 };
 
 export const useDaysNavigation = createNavigationHook(DAYS_NAVIGATION);
@@ -36,6 +39,7 @@ export default [
         <aside style={{ width: '100px', display: 'flex', flexDirection: 'column' }}>
           <Link to={DAYS_NAVIGATION.toToday()}>Дата</Link>
           <Link to={DAYS_NAVIGATION.toStatistics()}>Статистика</Link>
+          <Link to={DAYS_NAVIGATION.toDayParts()}>К периодам дня</Link>
         </aside>
         <div>
           <Outlet />
@@ -43,6 +47,7 @@ export default [
       </>
     }>
     <Route index element={<Navigate to={DAYS_NAVIGATION.toToday()} />} />
+    <Route key={routes.dayParts} path={routes.dayParts} element={<DayPartsRootPage />} />,
     <Route
       key={routes.statistics}
       path={routes.statistics}

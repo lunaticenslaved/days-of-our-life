@@ -1,3 +1,16 @@
+import {
+  CreateDayPartRequest,
+  CreateDayPartResponse,
+  DeleteDayPartRequest,
+  DeleteDayPartResponse,
+  ListDayPartsRequest,
+  ListDayPartsResponse,
+  UpdateDayPartRequest,
+  UpdateDayPartResponse,
+  UpdateOrderDayPartRequest,
+  UpdateOrderDayPartResponse,
+} from '#/shared/api/types/days';
+import { DayPart } from '#/shared/models/day';
 import { Controller } from '#server/utils/Controller';
 
 import { CommonValidators, DateFormat } from '#shared/models/common';
@@ -5,11 +18,6 @@ import { Prisma } from '@prisma/client';
 import _ from 'lodash';
 
 import { z } from 'zod';
-
-interface DayPart {
-  id: string;
-  name: string;
-}
 
 export const SELECT_DAY_PART = {
   select: {
@@ -24,32 +32,8 @@ export function convertDayPart(data: DBDayPart): DayPart {
   return data;
 }
 
-interface GetDayPartsRequest {}
-type GetDayPartsResponse = DayPart[];
-
-type CreateDayPartResponse = DayPart;
-interface CreateDayPartRequest {
-  name: string;
-}
-
-type UpdateDayPartResponse = DayPart;
-interface UpdateDayPartRequest {
-  id: string;
-  name: string;
-}
-
-type DeleteDayPartResponse = void;
-interface DeleteDayPartRequest {
-  id: string;
-}
-
-type UpdateOrderDayPartResponse = DayPart[];
-interface UpdateOrderDayPartRequest {
-  ids: string[];
-}
-
 export default new Controller<'days/parts'>({
-  'GET /days/parts': Controller.handler<GetDayPartsRequest, GetDayPartsResponse>({
+  'GET /days/parts': Controller.handler<ListDayPartsRequest, ListDayPartsResponse>({
     validator: z.object({}),
     parse: req => ({
       startDate: req.query.startDate as DateFormat,
@@ -142,6 +126,7 @@ export default new Controller<'days/parts'>({
       id: req.params.id,
     }),
     handler: async ({ id }, { prisma }) => {
+      // FIXME не удалять, если есть привязанные сущности
       await prisma.dayPart.delete({
         where: { id },
       });
