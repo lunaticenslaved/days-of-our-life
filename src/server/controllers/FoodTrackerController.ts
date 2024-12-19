@@ -1,3 +1,4 @@
+import { DateFormat, DateUtils } from '#/shared/models/date';
 import { convertFoodTrackerDay, SELECT_TRACKER_DAY } from '#server/selectors/food';
 import FoodNutrientsService from '#server/services/FoodNutrientsService';
 import FoodTrackerDayService from '#server/services/FoodTrackerDayService';
@@ -12,7 +13,7 @@ import {
   DeleteFoodMealItemRequest,
   DeleteFoodMealItemResponse,
 } from '#shared/api/types/food';
-import { CommonValidators, DateFormat, fromDateFormat } from '#shared/models/common';
+import { CommonValidators } from '#shared/models/common';
 import { FoodValidators } from '#shared/models/food';
 import { nonReachable } from '#shared/utils';
 import { z } from 'zod';
@@ -53,7 +54,7 @@ export default new Controller<'food/tracker'>({
       { prisma },
     ) => {
       return prisma.$transaction(async trx => {
-        const dateProp = fromDateFormat(otherProps.date);
+        const dateProp = DateUtils.fromDateFormat(otherProps.date);
         const day = await FoodTrackerDayService.getDay(dateProp, trx);
 
         const { id: nutrientsId } =
@@ -91,7 +92,7 @@ export default new Controller<'food/tracker'>({
       { prisma },
     ) => {
       return prisma.$transaction(async trx => {
-        const dateProp = fromDateFormat(otherProps.date);
+        const dateProp = DateUtils.fromDateFormat(otherProps.date);
         const day = await FoodTrackerDayService.getDay(dateProp, trx);
 
         await trx.foodTrackerMealItem.deleteMany({ where: { id: itemId } });
@@ -171,7 +172,10 @@ export default new Controller<'food/tracker'>({
     parse: req => ({ date: req.params.date as DateFormat }),
     handler: async ({ date }, { prisma }) => {
       return prisma.$transaction(async trx => {
-        const { id } = await FoodTrackerDayService.getDay(fromDateFormat(date), trx);
+        const { id } = await FoodTrackerDayService.getDay(
+          DateUtils.fromDateFormat(date),
+          trx,
+        );
 
         return await trx.foodTrackerDay
           .findFirstOrThrow({

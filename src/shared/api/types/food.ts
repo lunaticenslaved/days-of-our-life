@@ -1,4 +1,4 @@
-import { DateFormat } from '#shared/models/common';
+import { DateFormat } from '#/shared/models/date';
 import {
   FoodMealIngredientType,
   FoodNutrients,

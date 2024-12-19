@@ -1,8 +1,8 @@
 import { BodySchema } from '#shared/api/schemas/body';
-import { DateFormat } from '#shared/models/common';
 import { wrapApiAction } from '#ui/utils/api';
 import { Handlers } from '#ui/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { DateFormat } from '#/shared/models/date';
 
 export function usePostBodyWeightMutation(handlers: Handlers<unknown> = {}) {
   return useMutation({

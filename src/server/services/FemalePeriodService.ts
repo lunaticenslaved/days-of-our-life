@@ -1,10 +1,10 @@
+import { DateFormat, DateUtils } from '#/shared/models/date';
 import { PrismaTransaction } from '#server/prisma';
 import {
   convertFemalePeriod,
   SELECT_FEMALE_PERIOD,
 } from '#server/selectors/female-period';
 import dayjs from '#shared/libs/dayjs';
-import { DateFormat, fromDateFormat } from '#shared/models/common';
 
 class FemalePeriodService {
   async orderPeriods(_arg: unknown, trx: PrismaTransaction) {
@@ -37,8 +37,8 @@ class FemalePeriodService {
     arg: { startDate: DateFormat; endDate: DateFormat },
     trx: PrismaTransaction,
   ) {
-    const startDate = fromDateFormat(arg.startDate);
-    const endDate = fromDateFormat(arg.endDate);
+    const startDate = DateUtils.fromDateFormat(arg.startDate);
+    const endDate = DateUtils.fromDateFormat(arg.endDate);
 
     return await trx.femalePeriod
       .findMany({

@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
-import { toDateFormat } from '#shared/models/common';
 import { FemalePeriod } from '#shared/models/female-period';
+import { DateUtils } from '#/shared/models/date';
 
 export const SELECT_FEMALE_PERIOD = {
   select: {
@@ -15,7 +15,7 @@ type DBFemalePeriod = Prisma.FemalePeriodGetPayload<typeof SELECT_FEMALE_PERIOD>
 export function convertFemalePeriod(data: DBFemalePeriod): FemalePeriod {
   return {
     id: data.id,
-    startDate: toDateFormat(data.startDate),
-    endDate: toDateFormat(data.endDate),
+    startDate: DateUtils.toDateFormat(data.startDate),
+    endDate: DateUtils.toDateFormat(data.endDate),
   };
 }

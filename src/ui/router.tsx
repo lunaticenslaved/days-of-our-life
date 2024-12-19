@@ -11,19 +11,27 @@ export function AppRouter() {
   return (
     <DialogContextProvider>
       <div style={{ display: 'flex', padding: '10px' }}>
-        <aside style={{ width: '100px', display: 'flex', flexDirection: 'column' }}>
+        <aside
+          style={{
+            minWidth: '100px',
+            display: 'flex',
+            flexDirection: 'column',
+            flexShrink: 0,
+          }}>
           <Link to={FOOD_NAVIGATION.toRoot()}>Еда</Link>
           <Link to={DAYS_NAVIGATION.toRoot()}>Дни</Link>
         </aside>
-        <Suspense>
-          <Routes>
-            {HomeRouter}
-            {FoodRouter}
-            {DaysRouter}
-            {/* TODO add not found page */}
-            <Route path="*" element={<div>not found</div>} />
-          </Routes>
-        </Suspense>
+        <main style={{ flexGrow: 1, overflow: 'auto' }}>
+          <Suspense>
+            <Routes>
+              {HomeRouter}
+              {FoodRouter}
+              {DaysRouter}
+              {/* TODO add not found page */}
+              <Route path="*" element={<div>not found</div>} />
+            </Routes>
+          </Suspense>
+        </main>
       </div>
     </DialogContextProvider>
   );

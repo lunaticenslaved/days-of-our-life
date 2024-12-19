@@ -1,8 +1,8 @@
-import { DateFormat } from '#shared/models/common';
 import { wrapApiAction } from '#ui/utils/api';
 import { Handlers } from '#ui/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { FemalePeriodSchema } from '#shared/api/schemas/female-period';
+import { DateFormat } from '#/shared/models/date';
 
 export function useDeleteFemalePeriodMutation(handlers: Handlers<unknown> = {}) {
   return useMutation({

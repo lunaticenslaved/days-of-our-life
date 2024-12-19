@@ -10,10 +10,11 @@ import {
   UpdateOrderDayPartRequest,
   UpdateOrderDayPartResponse,
 } from '#/shared/api/types/days';
+import { DateFormat } from '#/shared/models/date';
 import { DayPart } from '#/shared/models/day';
 import { Controller } from '#server/utils/Controller';
 
-import { CommonValidators, DateFormat } from '#shared/models/common';
+import { CommonValidators } from '#shared/models/common';
 import { Prisma } from '@prisma/client';
 import _ from 'lodash';
 

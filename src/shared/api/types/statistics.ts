@@ -1,4 +1,4 @@
-import { DateFormat } from '#shared/models/common';
+import { DateFormat } from '#/shared/models/date';
 import { StatisticItem } from '#shared/models/statistics';
 
 export type ListStatisticsResponse = StatisticItem[];

@@ -1,4 +1,4 @@
-import { DateFormat } from '#shared/models/common';
+import { DateFormat } from '#/shared/models/date';
 import { FemalePeriod } from '#shared/models/female-period';
 
 export type CreateFemalePeriodResponse = FemalePeriod;

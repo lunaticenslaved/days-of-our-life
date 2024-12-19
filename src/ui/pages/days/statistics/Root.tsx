@@ -1,9 +1,9 @@
+import { DateUtils } from '#/shared/models/date';
 import dayjs from '#shared/libs/dayjs';
-import { toDateFormat } from '#shared/models/common';
 import { useListStatisticsQuery } from '#ui/entities/statistics';
 
-const startDate = toDateFormat(dayjs(new Date()).subtract(2, 'month'));
-const endDate = toDateFormat(new Date());
+const startDate = DateUtils.toDateFormat(dayjs(new Date()).subtract(2, 'month'));
+const endDate = DateUtils.toDateFormat(new Date());
 
 export default function Page() {
   const { data } = useListStatisticsQuery({ startDate, endDate });

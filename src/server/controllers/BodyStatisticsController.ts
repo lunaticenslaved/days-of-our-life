@@ -1,3 +1,4 @@
+import { DateFormat, DateUtils } from '#/shared/models/date';
 import { convertBodyStatistics, SELECT_BODY_STATISTICS } from '#server/selectors/body';
 import { Controller } from '#server/utils/Controller';
 import {
@@ -9,7 +10,7 @@ import {
   PostBodyWeightResponse,
 } from '#shared/api/types/body';
 import { BodyStatisticsValidators } from '#shared/models/body';
-import { CommonValidators, DateFormat, fromDateFormat } from '#shared/models/common';
+import { CommonValidators } from '#shared/models/common';
 
 import { z } from 'zod';
 
@@ -21,7 +22,7 @@ export default new Controller<'body/statistics'>({
     validator: z.object({ date: CommonValidators.dateFormat }),
     parse: req => ({ date: req.params.date as DateFormat }),
     handler: async (arg, { prisma }) => {
-      const date = fromDateFormat(arg.date);
+      const date = DateUtils.fromDateFormat(arg.date);
 
       return await prisma.bodyStatistics
         .findFirst({ where: { date } })
@@ -42,8 +43,8 @@ export default new Controller<'body/statistics'>({
       endDate: req.query.endDate as DateFormat,
     }),
     handler: async (arg, { prisma }) => {
-      const startDate = fromDateFormat(arg.startDate);
-      const endDate = fromDateFormat(arg.endDate);
+      const startDate = DateUtils.fromDateFormat(arg.startDate);
+      const endDate = DateUtils.fromDateFormat(arg.endDate);
 
       return await prisma.bodyStatistics
         .findMany({
@@ -65,7 +66,7 @@ export default new Controller<'body/statistics'>({
     }),
     parse: req => ({ date: req.params.date as DateFormat, weight: req.body.weight }),
     handler: async ({ weight, ...arg }, { prisma }) => {
-      const date = fromDateFormat(arg.date);
+      const date = DateUtils.fromDateFormat(arg.date);
 
       return await prisma.bodyStatistics
         .upsert({

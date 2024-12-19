@@ -1,3 +1,4 @@
+import { DateFormat, DateUtils } from '#/shared/models/date';
 import { convertFoodNutrients, ONLY_NUTRIENTS_SELECT } from '#server/selectors/food';
 import { Controller } from '#server/utils/Controller';
 
@@ -7,12 +8,7 @@ import {
   ListStatisticsRequest,
   ListStatisticsResponse,
 } from '#shared/api/types/statistics';
-import {
-  CommonValidators,
-  DateFormat,
-  fromDateFormat,
-  toDateFormat,
-} from '#shared/models/common';
+import { CommonValidators } from '#shared/models/common';
 import { FEMALE_PERIOD_DEFAULT_END } from '#shared/models/female-period';
 import { FoodNutrients, sumNutrients } from '#shared/models/food';
 import { StatisticItem } from '#shared/models/statistics';
@@ -31,8 +27,8 @@ export default new Controller<'statistics'>({
       endDate: req.query.endDate as DateFormat,
     }),
     handler: async (arg, { prisma }) => {
-      const startDate = fromDateFormat(arg.startDate);
-      const endDate = fromDateFormat(arg.endDate);
+      const startDate = DateUtils.fromDateFormat(arg.startDate);
+      const endDate = DateUtils.fromDateFormat(arg.endDate);
 
       const body = await prisma.bodyStatistics
         .findMany({
@@ -42,7 +38,7 @@ export default new Controller<'statistics'>({
           items.reduce(
             (acc, { date, weight }) => ({
               ...acc,
-              [toDateFormat(date)]: { weight },
+              [DateUtils.toDateFormat(date)]: { weight },
             }),
             {} as Record<string, { weight: number | null }>,
           ),
@@ -64,7 +60,7 @@ export default new Controller<'statistics'>({
             (acc, { date, meals }) => {
               return {
                 ...acc,
-                [toDateFormat(date)]: sumNutrients(
+                [DateUtils.toDateFormat(date)]: sumNutrients(
                   meals.map(i => convertFoodNutrients(i.nutrients)),
                 ),
               };
@@ -81,7 +77,7 @@ export default new Controller<'statistics'>({
 
       do {
         const dateISO = date.toISOString();
-        const dateKey = toDateFormat(date);
+        const dateKey = DateUtils.toDateFormat(date);
 
         if (!period || dayjs(period.startDate).isBefore(dateISO)) {
           period = await prisma.femalePeriod.findFirst({
@@ -100,10 +96,10 @@ export default new Controller<'statistics'>({
           },
           period: period
             ? {
-                startDate: toDateFormat(period.startDate),
+                startDate: DateUtils.toDateFormat(period.startDate),
                 endDate: dayjs(period.endDate).isSame(FEMALE_PERIOD_DEFAULT_END, 'day')
                   ? undefined
-                  : toDateFormat(period.endDate),
+                  : DateUtils.toDateFormat(period.endDate),
               }
             : undefined,
         });
@@ -126,7 +122,7 @@ export default new Controller<'statistics'>({
       date: req.params.date as DateFormat,
     }),
     handler: async (arg, { prisma }) => {
-      const date = fromDateFormat(arg.date);
+      const date = DateUtils.fromDateFormat(arg.date);
 
       const body = await prisma.bodyStatistics.findFirst({ where: { date } });
       const foodDay = await prisma.foodTrackerDay.findFirst({
@@ -147,7 +143,7 @@ export default new Controller<'statistics'>({
       });
 
       return {
-        date: toDateFormat(date),
+        date: DateUtils.toDateFormat(date),
         body: {
           weight: body?.weight,
         },
@@ -160,10 +156,10 @@ export default new Controller<'statistics'>({
         },
         period: period
           ? {
-              startDate: toDateFormat(period.startDate),
+              startDate: DateUtils.toDateFormat(period.startDate),
               endDate: dayjs(period.endDate).isSame(FEMALE_PERIOD_DEFAULT_END, 'day')
                 ? undefined
-                : toDateFormat(period.endDate),
+                : DateUtils.toDateFormat(period.endDate),
             }
           : undefined,
       };

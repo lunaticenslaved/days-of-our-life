@@ -1,3 +1,4 @@
+import { DateFormat, DateUtils } from '#/shared/models/date';
 import {
   convertFemalePeriod,
   SELECT_FEMALE_PERIOD,
@@ -13,7 +14,7 @@ import {
   ListFemalePeriodResponse,
 } from '#shared/api/types/female-period';
 
-import { CommonValidators, DateFormat, fromDateFormat } from '#shared/models/common';
+import { CommonValidators } from '#shared/models/common';
 import { FEMALE_PERIOD_DEFAULT_END } from '#shared/models/female-period';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -49,7 +50,7 @@ export default new Controller<'female-periods'>({
       startDate: req.body.startDate as DateFormat,
     }),
     handler: async (arg, { prisma }) => {
-      const startDate = fromDateFormat(arg.startDate);
+      const startDate = DateUtils.fromDateFormat(arg.startDate);
 
       return await prisma.$transaction(async trx => {
         if (await trx.femalePeriod.findFirst({ where: { startDate } })) {

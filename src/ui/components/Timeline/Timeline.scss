@@ -1,0 +1,7 @@
+.Timeline {
+    overflow-y: auto;
+
+    &_cell {
+        display: flex;
+    }
+}

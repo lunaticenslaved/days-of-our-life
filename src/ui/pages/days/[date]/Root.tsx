@@ -1,9 +1,3 @@
-import {
-  dateDiff,
-  fromDateFormat,
-  isSameDate,
-  toDateFormat,
-} from '#shared/models/common';
 import { FoodTrackerMealItem, sumNutrients } from '#shared/models/food';
 import { Button } from '#ui/components/Button';
 import { useDialog } from '#ui/components/Dialog';
@@ -32,19 +26,20 @@ import {
   StartFemalePeriodButton,
   useStartFemalePeriodMutation,
 } from '#ui/entities/female-period';
+import { DateUtils } from '#/shared/models/date';
 
 export default function Page() {
   const params = useDaysPageParams();
   const [date, setDate] = useState(() => {
-    return params.date ? fromDateFormat(params.date) : new Date();
+    return params.date ? DateUtils.fromDateFormat(params.date) : new Date();
   });
 
-  const dateStatistics = useGetStatisticsQuery({ date: toDateFormat(date) });
-  const formattedDate = toDateFormat(date);
+  const dateStatistics = useGetStatisticsQuery({ date: DateUtils.toDateFormat(date) });
+  const formattedDate = DateUtils.toDateFormat(date);
 
   const navigate = useNavigate();
   useEffect(() => {
-    navigate(DAYS_NAVIGATION.toDate({ date: toDateFormat(date) }));
+    navigate(DAYS_NAVIGATION.toDate({ date: DateUtils.toDateFormat(date) }));
   }, [date, navigate]);
 
   const mealItemDialog = useDialog();
@@ -121,17 +116,26 @@ export default function Page() {
         <h2>Цикл</h2>
         <div>
           {dateStatistics.data.period ? (
-            isSameDate(dateStatistics.data.period.startDate, toDateFormat(date)) ? (
+            DateUtils.isSame(
+              dateStatistics.data.period.startDate,
+              DateUtils.toDateFormat(date),
+            ) ? (
               <div>Первый день</div>
             ) : (
               <div>
                 <div>
-                  {dateDiff(new Date(), dateStatistics.data.period.startDate, 'days')}
+                  {DateUtils.diff(
+                    new Date(),
+                    dateStatistics.data.period.startDate,
+                    'days',
+                  )}
                 </div>
                 <div>
                   <StartFemalePeriodButton
                     onStartPeriod={() =>
-                      startFemalePeriod.mutate({ startDate: toDateFormat(date) })
+                      startFemalePeriod.mutate({
+                        startDate: DateUtils.toDateFormat(date),
+                      })
                     }
                   />
                 </div>
@@ -140,7 +144,7 @@ export default function Page() {
           ) : (
             <StartFemalePeriodButton
               onStartPeriod={() =>
-                startFemalePeriod.mutate({ startDate: toDateFormat(date) })
+                startFemalePeriod.mutate({ startDate: DateUtils.toDateFormat(date) })
               }
             />
           )}
