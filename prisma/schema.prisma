@@ -175,7 +175,7 @@ model DayPart {
   name  String @unique @db.VarChar(255)
   order Int    @default(autoincrement()) @db.SmallInt
 
-  medicamentsTaken       MedicamentTaken[]
+  medicamentIntakes      MedicamentIntake[]
   cosmeticProductApplied CosmeticProductApply[]
 
   createdAt DateTime @default(now())
@@ -183,16 +183,17 @@ model DayPart {
 }
 
 model Medicament {
-  id   String @id @default(uuid()) @db.Uuid
-  name String @db.VarChar(255)
+  id        String  @id @default(uuid()) @db.Uuid
+  name      String  @db.VarChar(255)
+  isDeleted Boolean @default(false)
 
-  taken MedicamentTaken[]
+  intakes MedicamentIntake[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model MedicamentTaken {
+model MedicamentIntake {
   id   String   @id @default(uuid()) @db.Uuid
   date DateTime
 

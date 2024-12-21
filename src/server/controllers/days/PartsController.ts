@@ -24,6 +24,7 @@ export const SELECT_DAY_PART = {
   select: {
     id: true,
     name: true,
+    order: true,
   },
 } satisfies Prisma.DayPartDefaultArgs;
 

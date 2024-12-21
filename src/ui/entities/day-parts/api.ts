@@ -2,6 +2,7 @@ import { DaysSchema } from '#/shared/api/schemas/days';
 import {
   CreateDayPartRequest,
   CreateDayPartResponse,
+  ListDayPartsResponse,
   UpdateDayPartRequest,
   UpdateDayPartResponse,
 } from '#/shared/api/types/days';
@@ -23,14 +24,15 @@ export function useCreateDayPartMutation(handlers: Handlers<unknown> = {}) {
       handlers,
     ),
     onMutate: async (variables: CreateDayPartRequest) => {
-      await queryClient.cancelQueries({ queryKey: ['days.parts.list'] });
+      await queryClient.cancelQueries({ queryKey: [DAY_PART_LIST_QUERY_KEY] });
 
       const optimisticResponse: CreateDayPartResponse = {
         id: new Date().toISOString(),
+        order: 0,
         ...variables,
       };
 
-      queryClient.setQueryData(['days.parts.list'], (old: DayPart[]): DayPart[] => [
+      queryClient.setQueryData([DAY_PART_LIST_QUERY_KEY], (old: DayPart[]): DayPart[] => [
         ...old,
         optimisticResponse,
       ]);
@@ -38,12 +40,12 @@ export function useCreateDayPartMutation(handlers: Handlers<unknown> = {}) {
       return optimisticResponse;
     },
     onSuccess: (result: CreateDayPartResponse, _, context) => {
-      queryClient.setQueryData(['days.parts.list'], (old: DayPart[]): DayPart[] =>
+      queryClient.setQueryData([DAY_PART_LIST_QUERY_KEY], (old: DayPart[]): DayPart[] =>
         old.map(todo => (todo.id === context.id ? result : todo)),
       );
     },
     onError: (_, __, context) => {
-      queryClient.setQueryData(['days.parts.list'], (old: DayPart[]): DayPart[] =>
+      queryClient.setQueryData([DAY_PART_LIST_QUERY_KEY], (old: DayPart[]): DayPart[] =>
         old.filter(todo => todo.id !== context?.id),
       );
     },
@@ -52,10 +54,12 @@ export function useCreateDayPartMutation(handlers: Handlers<unknown> = {}) {
 
 export function useUpdateDayPartMutation(handlers: Handlers<unknown> = {}) {
   return useMutation<
-    UpdateDayPartRequest,
-    DefaultError,
     UpdateDayPartResponse,
-    UpdateDayPartResponse
+    DefaultError,
+    UpdateDayPartRequest,
+    {
+      updatedItem: DayPart;
+    }
   >({
     mutationKey: [`days.parts.update`],
     mutationFn: wrapApiAction<UpdateDayPartRequest, UpdateDayPartResponse>(
@@ -63,21 +67,26 @@ export function useUpdateDayPartMutation(handlers: Handlers<unknown> = {}) {
       handlers,
     ),
     onMutate: async variables => {
-      await queryClient.cancelQueries({ queryKey: ['days.parts.list'] });
+      await queryClient.cancelQueries({ queryKey: [DAY_PART_LIST_QUERY_KEY] });
 
-      const optimisticResponse: UpdateDayPartResponse = {
+      const updatedItem: DayPart = {
         ...variables,
+        order: 0,
       };
 
-      queryClient.setQueryData(['days.parts.list'], (old: DayPart[]): DayPart[] =>
-        old.map(item => (item.id === variables.id ? variables : item)),
+      queryClient.setQueryData<ListDayPartsResponse>([DAY_PART_LIST_QUERY_KEY], old =>
+        old
+          ? old.map(item => (item.id === updatedItem.id ? updatedItem : item))
+          : undefined,
       );
 
-      return optimisticResponse;
+      return { updatedItem };
     },
-    onSuccess: (result: UpdateDayPartResponse, _, context) => {
-      queryClient.setQueryData(['days.parts.list'], (old: DayPart[]): DayPart[] =>
-        old.map(todo => (todo.id === context.id ? result : todo)),
+    onSuccess: (result, _, context) => {
+      queryClient.setQueryData<ListDayPartsResponse>([DAY_PART_LIST_QUERY_KEY], old =>
+        old
+          ? old.map(todo => (todo.id === context?.updatedItem.id ? result : todo))
+          : old,
       );
     },
     onError: () => {
@@ -100,9 +109,11 @@ export function useGetDayPartQuery(id: string) {
   });
 }
 
+export const DAY_PART_LIST_QUERY_KEY = 'days.parts.list';
+
 export function useListDayPartsQuery() {
   return useQuery({
-    queryKey: ['days.parts.list'],
+    queryKey: [DAY_PART_LIST_QUERY_KEY],
     queryFn: () => wrapApiAction(DaysSchema.parts.list)({}),
   });
 }

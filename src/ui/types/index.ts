@@ -13,7 +13,7 @@ export interface DirectionProp {
   direction?: Direction;
 }
 
-export interface ModelValueProps<T> {
+export interface ModelValueProps<T = unknown> {
   modelValue?: T;
   onModelValueChange?(value?: T): void;
 }

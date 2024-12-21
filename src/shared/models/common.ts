@@ -21,3 +21,5 @@ export const CommonValidators = {
     ZodStringDef
   >,
 };
+
+export type SortOrder = 'asc' | 'desc';
