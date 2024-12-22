@@ -1,9 +1,8 @@
 import { createNavigationHook } from '#ui/hooks/navigation';
-import { Outlet, Route, useParams } from 'react-router';
+import { Navigate, Outlet, Route, useParams } from 'react-router';
 
-import Root from './Root';
+import CalendarRoot from './calendar/Root';
 import DateRoot from './[date]/Root';
-import StatisticsRootPage from './statistics/Root';
 import DayPartsRootPage from './parts/Root';
 import MedicamentsPage from './medicaments/Root';
 import { Link } from 'react-router-dom';
@@ -13,7 +12,7 @@ type Date = { date: `${number}-${number}-${number}` };
 
 const routes = {
   root: '/days',
-  statistics: '/days/statistics',
+  calendar: '/days/calendar',
   date: '/days/:date',
   dayParts: '/days/parts',
   medicaments: '/days/medicaments',
@@ -21,7 +20,7 @@ const routes = {
 
 export const DAYS_NAVIGATION = {
   toRoot: () => routes.root,
-  toStatistics: () => routes.statistics,
+  toCalendar: () => routes.calendar,
   toDate: ({ date }: Date) => routes.date.replace(':date', date),
   toToday: () => routes.date.replace(':date', DateUtils.toDateFormat(new Date())),
   toDayParts: () => routes.dayParts,
@@ -47,9 +46,8 @@ export default [
             flexDirection: 'column',
             flexShrink: 0,
           }}>
-          <Link to={DAYS_NAVIGATION.toRoot()}>Календарь</Link>
+          <Link to={DAYS_NAVIGATION.toCalendar()}>Календарь</Link>
           <Link to={DAYS_NAVIGATION.toToday()}>Дата</Link>
-          <Link to={DAYS_NAVIGATION.toStatistics()}>Статистика</Link>
           <Link to={DAYS_NAVIGATION.toDayParts()}>К периодам дня</Link>
           <Link to={DAYS_NAVIGATION.toMedicaments()}>Медикаменты</Link>
         </aside>
@@ -58,9 +56,9 @@ export default [
         </div>
       </div>
     }>
-    <Route index element={<Root />} />
+    <Route index element={<Navigate to={DAYS_NAVIGATION.toCalendar()} />} />
+    <Route path={routes.calendar} element={<CalendarRoot />} />
     <Route path={routes.dayParts} element={<DayPartsRootPage />} />,
-    <Route path={routes.statistics} element={<StatisticsRootPage />} />
     <Route path={routes.medicaments} element={<MedicamentsPage />} />,
     <Route path={routes.date} element={<DateRoot />} />,
   </Route>,

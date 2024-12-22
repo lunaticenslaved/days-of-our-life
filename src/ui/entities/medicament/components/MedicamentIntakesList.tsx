@@ -13,7 +13,7 @@ export function MedicamentIntakesList({
   renderActions,
 }: MedicamentIntakesListProps) {
   return (
-    <ul>
+    <ul style={{ margin: 0, padding: 0 }}>
       {intakes.map(intake => {
         const medicament = medicaments.find(m => m.id === intake.medicamentId);
 

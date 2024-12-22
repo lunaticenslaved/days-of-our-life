@@ -208,3 +208,19 @@ export function roundNutrients(nutrients: FoodNutrients): FoodNutrients {
 
   return result;
 }
+
+export const FoodNutrientsUtils = {
+  isEmpty(nutrients?: FoodNutrients) {
+    if (!nutrients) {
+      return null;
+    }
+
+    for (const [_, value] of Object.entries(nutrients)) {
+      if (typeof value === 'number' && value > 0) {
+        return false;
+      }
+    }
+
+    return true;
+  },
+};

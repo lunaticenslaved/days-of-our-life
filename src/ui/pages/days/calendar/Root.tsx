@@ -1,10 +1,9 @@
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { DayPart } from '#/shared/models/day';
 import { MedicamentIntake, MedicamentUtils } from '#/shared/models/medicament';
-import { Button } from '#/ui/components/Button';
+import { StatisticItem } from '#/shared/models/statistics';
 import { DatePicker, DatePickerRangeModelValue } from '#/ui/components/DatePicker';
 import { useDialog } from '#/ui/components/Dialog';
-import { Timeline } from '#/ui/components/Timeline';
 import { useListDayPartsQuery } from '#/ui/entities/day-parts';
 import {
   useCreateMedicamentIntakeMutation,
@@ -13,11 +12,10 @@ import {
   useListMedicamentsQuery,
   useUpdateMedicamentIntakeMutation,
 } from '#/ui/entities/medicament/api';
-import {
-  MedicamentIntakeActions,
-  MedicamentIntakeFormDialog,
-  MedicamentIntakesList,
-} from '#/ui/entities/medicament/components';
+import { MedicamentIntakeFormDialog } from '#/ui/entities/medicament/components';
+import { useListStatisticsQuery } from '#/ui/entities/statistics';
+import { Calendar } from '#/ui/widgets/Calendar';
+import { keyBy } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 
 export default function PageView() {
@@ -32,7 +30,11 @@ export default function PageView() {
 
   const medicamentIntakeDialog = useDialog();
 
-  const dayPartsQuery = useListDayPartsQuery();
+  const listStatisticsQuery = useListStatisticsQuery({
+    startDate: dateRange.from,
+    endDate: dateRange.to,
+  });
+  const listDayPartsQuery = useListDayPartsQuery();
   const listMedicamentsQuery = useListMedicamentsQuery();
   const listMedicamentIntakesQuery = useListMedicamentIntakesQuery({
     startDate: dateRange.from,
@@ -61,6 +63,12 @@ export default function PageView() {
     return MedicamentUtils.zipIntakesByDateAndDatePart(intakes);
   }, [listMedicamentIntakesQuery.data]);
 
+  const preparedStatistics = useMemo(() => {
+    const statistics = listStatisticsQuery.data || [];
+
+    return keyBy(statistics, item => item.date);
+  }, [listStatisticsQuery.data]);
+
   useEffect(() => {
     if (!medicamentIntakeDialog.isOpen) {
       setMedicamentIntakeToEdit(undefined);
@@ -84,8 +92,12 @@ export default function PageView() {
     setMedicamentIntakeToEdit(intake);
   }
 
-  if (!dayPartsQuery.data || !listMedicamentsQuery.data) {
-    return null;
+  if (
+    !listDayPartsQuery.data ||
+    !listMedicamentsQuery.data ||
+    !listStatisticsQuery.data
+  ) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -124,45 +136,38 @@ export default function PageView() {
         />
       )}
 
-      <Timeline
+      <Calendar
         startDate={dateRange.from}
         endDate={dateRange.to}
-        renderCell={date => {
-          return dayPartsQuery.data.map(dayPart => {
-            const intakes = preparedMedicamentIntakes[date]?.[dayPart.id] || [];
-
-            return (
-              <div key={dayPart.id} style={{ display: 'flex', alignItems: 'flex-start' }}>
-                <div>{dayPart.name}:</div>
-                <section>
-                  <div style={{ display: 'flex' }}>
-                    <div>Медикаменты</div>
-                    <Button
-                      onClick={() => {
-                        openIntakeDialog({ date, dayPart });
-                      }}>
-                      Добавить
-                    </Button>
-                  </div>
-                  <MedicamentIntakesList
-                    medicaments={listMedicamentsQuery.data}
-                    intakes={intakes}
-                    renderActions={intake => {
-                      return (
-                        <MedicamentIntakeActions
-                          onEdit={() => {
-                            openIntakeDialog({ date, dayPart, intake });
-                          }}
-                          onDelete={() =>
-                            deleteMedicamentIntakeMutation.mutate({ id: intake.id })
-                          }
-                        />
-                      );
-                    }}
-                  />
-                </section>
-              </div>
-            );
+        dayParts={listDayPartsQuery.data}
+        medicaments={listMedicamentsQuery.data}
+        getWeight={date => {
+          const statistics: StatisticItem | undefined = preparedStatistics[date];
+          return statistics?.body.weight;
+        }}
+        getNutrients={date => {
+          const statistics: StatisticItem | undefined = preparedStatistics[date];
+          return statistics?.food.nutrients;
+        }}
+        getMedicamentIntakes={(date, dayPartId) => {
+          const intakes = preparedMedicamentIntakes[date]?.[dayPartId] || [];
+          return intakes;
+        }}
+        onMedicamentIntakeEdit={arg => {
+          openIntakeDialog({
+            ...arg,
+            intake: arg.intake,
+          });
+        }}
+        onMedicamentIntakeDelete={arg => {
+          deleteMedicamentIntakeMutation.mutate({
+            id: arg.intake.id,
+          });
+        }}
+        onAddMedicamentIntake={arg => {
+          openIntakeDialog({
+            ...arg,
+            intake: undefined,
           });
         }}
       />
@@ -191,28 +196,18 @@ function CalendarDatePicker({
   }, [endDate, startDate]);
 
   return (
-    <div>
-      <DatePicker
-        type="range"
-        modelValue={modelValue}
-        onModelValueChange={value => {
-          if (value?.from) {
-            onStartDateChange(value.from);
-          }
+    <DatePicker
+      type="range"
+      modelValue={modelValue}
+      onModelValueChange={value => {
+        if (value?.from) {
+          onStartDateChange(value.from);
+        }
 
-          if (value?.to) {
-            onEndDateChange(value.to);
-          }
-        }}
-      />
-      {JSON.stringify(
-        {
-          startDate,
-          endDate,
-        },
-        null,
-        2,
-      )}
-    </div>
+        if (value?.to) {
+          onEndDateChange(value.to);
+        }
+      }}
+    />
   );
 }

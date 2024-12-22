@@ -10,6 +10,7 @@ interface TimelineProps {
   renderCell(date: DateFormat): ReactNode;
 }
 
+// FIXME remove timeline
 export function Timeline({ startDate, endDate, renderCell }: TimelineProps) {
   const dates = useMemo((): DateFormat[] => {
     const start = DateUtils.fromDateFormat(startDate);
