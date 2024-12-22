@@ -1,3 +1,4 @@
+import { divideNutrients } from '#/shared/models/food';
 import {
   FoodProductForm,
   useGetFoodProductQuery,
@@ -30,7 +31,7 @@ export default function Page() {
         updating.mutate({
           name: values.name,
           manufacturer: values.manufacturer,
-          nutrientsPerGram: values.nutrients,
+          nutrientsPerGram: divideNutrients(values.nutrientsPer100Gramm, 100),
         });
       }}
     />

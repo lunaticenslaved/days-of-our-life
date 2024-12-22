@@ -206,7 +206,7 @@ model MedicamentIntake {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([medicamentId, dayPartId])
+  @@unique([medicamentId, dayPartId, date])
 }
 
 model CosmeticProduct {

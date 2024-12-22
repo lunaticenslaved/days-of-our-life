@@ -62,15 +62,15 @@ export default [
     key="food"
     path={routes.root}
     element={
-      <>
+      <div style={{ display: 'flex' }}>
         <aside style={{ width: '100px', display: 'flex', flexDirection: 'column' }}>
           <Link to={FOOD_NAVIGATION.toProducts()}>Продукты</Link>
           <Link to={FOOD_NAVIGATION.toRecipes()}>Рецепты</Link>
         </aside>
-        <div>
+        <div style={{ flexGrow: 1, overflow: 'auto' }}>
           <Outlet />
         </div>
-      </>
+      </div>
     }>
     <Route index element={<Navigate to={FOOD_NAVIGATION.toProducts()} />} />
     <Route path={routes.products} element={<ProductsRoot />} />

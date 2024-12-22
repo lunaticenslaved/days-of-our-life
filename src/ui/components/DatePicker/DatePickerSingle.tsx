@@ -1,31 +1,35 @@
-import dayjs from '#shared/libs/dayjs';
+import { DateFormat, DateUtils } from '#/shared/models/date';
+import { format } from './utils';
 import { ModelValueProps } from '#ui/types';
 import { FocusEventHandler, useCallback, useEffect, useMemo, useState } from 'react';
 
-interface DatePickerProps extends ModelValueProps<Date> {
+export interface DatePickerSingleProps extends ModelValueProps<DateFormat> {
   onBlur?: FocusEventHandler<HTMLElement>;
   onFocus?: FocusEventHandler<HTMLElement>;
 }
 
-export function DatePicker({
+export function DatePickerSingle({
   modelValue: valueProp,
   onModelValueChange,
   ...props
-}: DatePickerProps) {
+}: DatePickerSingleProps) {
   const [value, _setValue] = useState(valueProp);
 
   useEffect(() => {
     _setValue(valueProp);
   }, [valueProp]);
 
-  const formattedValue = useMemo(
-    () => (value ? dayjs(value).format('YYYY-M-D') : undefined),
-    [value],
-  );
+  const formattedValue = useMemo(() => {
+    if (!value) {
+      return undefined;
+    }
+
+    return format(value);
+  }, [value]);
 
   const setValue = useCallback(
     (date: Date | null) => {
-      const newValue = date ? dayjs(date).toDate() : undefined;
+      const newValue = date ? DateUtils.toDateFormat(date) : undefined;
 
       _setValue(newValue);
       onModelValueChange?.(newValue);

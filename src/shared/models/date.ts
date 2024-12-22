@@ -27,7 +27,7 @@ export const DateUtils = {
   isSame(date1: ValidDateData, date2: ValidDateData, unit: OpUnitType = 'day') {
     return getDayjsObject(date1).isSame(getDayjsObject(date2), unit);
   },
-  fromDateFormat(date: DateFormat) {
+  fromDateFormat(date: DateFormat): Date {
     const offsetMinutes = dayjs().utcOffset();
     return dayjs(date, 'DD-MM-YYYY').startOf('day').add(offsetMinutes, 'minute').toDate();
   },
@@ -35,5 +35,23 @@ export const DateUtils = {
     return dayjs(date)
       .startOf('day')
       .format('DD-MM-YYYY') as `${number}-${number}-${number}`;
+  },
+  min(...dates: DateFormat[]): DateFormat {
+    const min = dayjs.min(...dates.map(DateUtils.fromDateFormat).map(dayjs))?.toDate();
+
+    if (!min) {
+      throw new Error('No min date');
+    }
+
+    return DateUtils.toDateFormat(min);
+  },
+  max(...dates: DateFormat[]): DateFormat {
+    const max = dayjs.max(...dates.map(DateUtils.fromDateFormat).map(dayjs))?.toDate();
+
+    if (!max) {
+      throw new Error('No max date');
+    }
+
+    return DateUtils.toDateFormat(max);
   },
 };

@@ -20,7 +20,7 @@ import {
 import { DAYS_NAVIGATION, useDaysPageParams } from '#ui/pages/days';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { DatePicker } from '#ui/components/DatePicker';
+import { DatePicker } from '#/ui/components/DatePicker';
 import { useGetStatisticsQuery } from '#ui/entities/statistics';
 import {
   StartFemalePeriodButton,
@@ -91,7 +91,11 @@ export default function Page() {
 
   return (
     <div>
-      <DatePicker modelValue={date} onModelValueChange={v => setDate(v || new Date())} />
+      {/* <DatePicker
+        type="single"
+        modelValue={date}
+        onModelValueChange={v => setDate(v || new Date())}
+      /> */}
 
       <section>
         <h2>Вес</h2>

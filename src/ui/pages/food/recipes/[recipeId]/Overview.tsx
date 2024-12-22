@@ -7,10 +7,14 @@ import {
   FoodNutrientsList,
 } from '#ui/entities/food';
 import { multiplyNutrients } from '#shared/models/food';
+import { useState } from 'react';
+import { NumberInput } from '#/ui/components/NumberInput';
 
 export default function Page() {
   const { recipeId = '' } = useFoodPageParams();
   const query = useGetFoodRecipeQuery(recipeId);
+
+  const [testGrams, setTestGrams] = useState<number>();
 
   if (query.isLoading) {
     return <div>Loading...</div>;
@@ -41,11 +45,17 @@ export default function Page() {
 
         <section>
           <h3>На 100 г</h3>
+          <NumberInput modelValue={testGrams} onModelValueChange={setTestGrams} />
+          {testGrams && (
+            <div>
+              Проверка калорийности - {testGrams * query.data.nutrientsPerGram.calories}
+            </div>
+          )}
           <FoodNutrientsList nutrients={multiplyNutrients(nutrientsPerGram, 100)} />
         </section>
 
         <section>
-          <h3>На 1 порцию</h3>
+          <h3>На 1 порцию ({gramsPerPortion} г)</h3>
           <FoodNutrientsList
             nutrients={multiplyNutrients(nutrientsPerGram, gramsPerPortion)}
           />

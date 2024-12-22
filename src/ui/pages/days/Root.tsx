@@ -2,6 +2,7 @@ import { DateFormat, DateUtils } from '#/shared/models/date';
 import { DayPart } from '#/shared/models/day';
 import { MedicamentIntake, MedicamentUtils } from '#/shared/models/medicament';
 import { Button } from '#/ui/components/Button';
+import { DatePicker, DatePickerRangeModelValue } from '#/ui/components/DatePicker';
 import { useDialog } from '#/ui/components/Dialog';
 import { Timeline } from '#/ui/components/Timeline';
 import { useListDayPartsQuery } from '#/ui/entities/day-parts';
@@ -20,22 +21,22 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 
 export default function PageView() {
-  const { startDate, endDate } = useMemo(() => {
+  const [dateRange, setDateRange] = useState(() => {
     const now = DateUtils.now();
 
     return {
-      startDate: DateUtils.toDateFormat(now),
-      endDate: DateUtils.toDateFormat(now.add(30, 'day')),
+      from: DateUtils.toDateFormat(now.subtract(7, 'day')),
+      to: DateUtils.toDateFormat(now.add(7, 'day')),
     };
-  }, []);
+  });
 
   const medicamentIntakeDialog = useDialog();
 
   const dayPartsQuery = useListDayPartsQuery();
   const listMedicamentsQuery = useListMedicamentsQuery();
   const listMedicamentIntakesQuery = useListMedicamentIntakesQuery({
-    startDate,
-    endDate,
+    startDate: dateRange.from,
+    endDate: dateRange.to,
   });
   const createMedicamentIntakeMutation = useCreateMedicamentIntakeMutation({
     onMutate: () => {
@@ -89,6 +90,13 @@ export default function PageView() {
 
   return (
     <div>
+      <CalendarDatePicker
+        startDate={dateRange.from}
+        endDate={dateRange.to}
+        onStartDateChange={from => setDateRange({ ...dateRange, from })}
+        onEndDateChange={to => setDateRange({ ...dateRange, to })}
+      />
+
       {selectedDate && selectedDayPart && (
         <MedicamentIntakeFormDialog
           type={medicamentIntakeToEdit ? 'edit' : 'create'}
@@ -117,8 +125,8 @@ export default function PageView() {
       )}
 
       <Timeline
-        startDate={startDate}
-        endDate={endDate}
+        startDate={dateRange.from}
+        endDate={dateRange.to}
         renderCell={date => {
           return dayPartsQuery.data.map(dayPart => {
             const intakes = preparedMedicamentIntakes[date]?.[dayPart.id] || [];
@@ -158,6 +166,53 @@ export default function PageView() {
           });
         }}
       />
+    </div>
+  );
+}
+
+interface CalendarDatePickerProps {
+  startDate: DateFormat;
+  onStartDateChange(value: DateFormat): void;
+  endDate: DateFormat;
+  onEndDateChange(value: DateFormat): void;
+}
+
+function CalendarDatePicker({
+  startDate,
+  endDate,
+  onStartDateChange,
+  onEndDateChange,
+}: CalendarDatePickerProps) {
+  const modelValue = useMemo((): DatePickerRangeModelValue => {
+    return {
+      from: startDate,
+      to: endDate,
+    };
+  }, [endDate, startDate]);
+
+  return (
+    <div>
+      <DatePicker
+        type="range"
+        modelValue={modelValue}
+        onModelValueChange={value => {
+          if (value?.from) {
+            onStartDateChange(value.from);
+          }
+
+          if (value?.to) {
+            onEndDateChange(value.to);
+          }
+        }}
+      />
+      {JSON.stringify(
+        {
+          startDate,
+          endDate,
+        },
+        null,
+        2,
+      )}
     </div>
   );
 }

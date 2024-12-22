@@ -34,7 +34,7 @@ export default function Create() {
           await creation.mutate({
             name: values.name,
             manufacturer: values.manufacturer,
-            nutrientsPerGram: divideNutrients(values.nutrients, 100),
+            nutrientsPerGram: divideNutrients(values.nutrientsPer100Gramm, 100),
           });
         }}
       />

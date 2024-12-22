@@ -1,5 +1,4 @@
 import {
-  divideNutrients,
   FoodProduct,
   FoodValidators,
   multiplyNutrients,
@@ -10,12 +9,13 @@ import { FForm } from '#ui/components/FForm';
 import { Form } from '#ui/components/Form';
 import { NumberInput } from '#ui/components/NumberInput';
 import { TextInput } from '#ui/components/TextInput';
+import { useMemo } from 'react';
 import { z } from 'zod';
 
 const schema = z.object({
   name: FoodValidators.name,
   manufacturer: FoodValidators.manufacturer,
-  nutrients: FoodValidators.nutrients,
+  nutrientsPer100Gramm: FoodValidators.nutrients,
 });
 
 type FoodProductFormValues = z.infer<typeof schema>;
@@ -27,12 +27,14 @@ interface FoodProductFormProps {
 
 function getInitialValues(product?: FoodProduct): Partial<FoodProductFormValues> {
   if (product) {
-    const nutrients = roundNutrients(multiplyNutrients(product.nutrientsPerGram, 100));
+    const nutrientsPer100Gramm = roundNutrients(
+      multiplyNutrients(product.nutrientsPerGram, 100),
+    );
 
     return {
       name: product?.name || '',
       manufacturer: product?.manufacturer || undefined,
-      nutrients: nutrients,
+      nutrientsPer100Gramm,
     };
   }
 
@@ -40,16 +42,10 @@ function getInitialValues(product?: FoodProduct): Partial<FoodProductFormValues>
 }
 
 export function FoodProductForm({ onSubmit, product }: FoodProductFormProps) {
+  const initialValues = useMemo(() => getInitialValues(product), [product]);
+
   return (
-    <FForm
-      schema={schema}
-      onSubmit={({ nutrients, ...other }) => {
-        return onSubmit({
-          ...other,
-          nutrients: divideNutrients(nutrients, 100),
-        });
-      }}
-      initialValues={getInitialValues(product)}>
+    <FForm schema={schema} onSubmit={onSubmit} initialValues={initialValues}>
       {({ handleSubmit }) => (
         <>
           <Form.Content>
@@ -61,23 +57,35 @@ export function FoodProductForm({ onSubmit, product }: FoodProductFormProps) {
               {TextInput}
             </FForm.Field>
 
-            <FForm.Field name="nutrients.calories" title="Калории в 100Г" required>
+            <FForm.Field
+              name="nutrientsPer100Gramm.calories"
+              title="Калории в 100Г"
+              required>
               {NumberInput}
             </FForm.Field>
 
-            <FForm.Field name="nutrients.proteins" title="Белки в 100Г" required>
+            <FForm.Field
+              name="nutrientsPer100Gramm.proteins"
+              title="Белки в 100Г"
+              required>
               {NumberInput}
             </FForm.Field>
 
-            <FForm.Field name="nutrients.fats" title="Жиры в 100Г" required>
+            <FForm.Field name="nutrientsPer100Gramm.fats" title="Жиры в 100Г" required>
               {NumberInput}
             </FForm.Field>
 
-            <FForm.Field name="nutrients.carbs" title="Углеводы в 100Г" required>
+            <FForm.Field
+              name="nutrientsPer100Gramm.carbs"
+              title="Углеводы в 100Г"
+              required>
               {NumberInput}
             </FForm.Field>
 
-            <FForm.Field name="nutrients.fibers" title="Клетчатка в 100Г" required>
+            <FForm.Field
+              name="nutrientsPer100Gramm.fibers"
+              title="Клетчатка в 100Г"
+              required>
               {NumberInput}
             </FForm.Field>
           </Form.Content>
