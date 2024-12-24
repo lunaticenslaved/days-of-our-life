@@ -18,12 +18,9 @@ import { DAYS_NAVIGATION, useDaysPageParams } from '#ui/pages/days';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { DatePicker } from '#ui/components/DatePicker';
-import { useGetStatisticsQuery } from '#ui/entities/statistics';
-import {
-  StartFemalePeriodButton,
-  useStartFemalePeriodMutation,
-} from '#ui/entities/female-period';
+import { StartFemalePeriodButton } from '#ui/entities/female-period';
 import { DateUtils } from '#/shared/models/date';
+import { useGetDayQuery, useStartFemalePeriodMutation } from '#/ui/store';
 
 export default function Page() {
   const params = useDaysPageParams();
@@ -31,7 +28,6 @@ export default function Page() {
     return params.date ? DateUtils.fromDateFormat(params.date) : new Date();
   });
 
-  const dateStatistics = useGetStatisticsQuery({ date: DateUtils.toDateFormat(date) });
   const formattedDate = DateUtils.toDateFormat(date);
 
   const navigate = useNavigate();
@@ -40,6 +36,7 @@ export default function Page() {
   }, [date, navigate]);
 
   const mealItemDialog = useDialog();
+  const dayQuery = useGetDayQuery(formattedDate);
   const productsQuery = useListFoodProductsQuery();
   const recipesQuery = useListFoodRecipesQuery();
   const trackerDayQuery = useGetFoodTrackerDayQuery(formattedDate);
@@ -69,11 +66,9 @@ export default function Page() {
     }
   }, [mealItemDialog.isOpen]);
 
-  const startFemalePeriod = useStartFemalePeriodMutation({
-    onSuccess: dateStatistics.refetch,
-  });
+  const startFemalePeriod = useStartFemalePeriodMutation();
 
-  if (!dateStatistics.data) {
+  if (!dayQuery.data) {
     return <div>Loading...</div>;
   }
 
@@ -89,11 +84,11 @@ export default function Page() {
         <h2>Вес</h2>
         <div>
           <div style={{ display: 'flex' }}>
-            <div>{dateStatistics.data.body?.weight}</div>
+            <div>{dayQuery.data.weight}</div>
             <AddWeightAction
               date={DateUtils.toDateFormat(date)}
               onUpdated={() => {
-                dateStatistics.refetch();
+                dayQuery.refetch();
               }}
             />
           </div>
@@ -103,9 +98,9 @@ export default function Page() {
       <section>
         <h2>Цикл</h2>
         <div>
-          {dateStatistics.data.period ? (
+          {dayQuery.data.femalePeriod ? (
             DateUtils.isSame(
-              dateStatistics.data.period.startDate,
+              dayQuery.data.femalePeriod.startDate,
               DateUtils.toDateFormat(date),
             ) ? (
               <div>Первый день</div>
@@ -114,7 +109,7 @@ export default function Page() {
                 <div>
                   {DateUtils.diff(
                     new Date(),
-                    dateStatistics.data.period.startDate,
+                    dayQuery.data.femalePeriod.startDate,
                     'days',
                   )}
                 </div>

@@ -1,8 +1,4 @@
 import {
-  CreateBodyWeightRequest,
-  CreateBodyWeightResponse,
-} from '#/shared/api/types/body';
-import {
   CreateDayPartRequest,
   CreateDayPartResponse,
   DeleteDayPartRequest,
@@ -15,10 +11,18 @@ import {
   ListDaysResponse,
   UpdateDayPartRequest,
   UpdateDayPartResponse,
-  CreateMedicamentIntakeRequest,
-  CreateMedicamentIntakeResponse,
   GetDayRequest,
   GetDayResponse,
+  StartFemalePeriodRequest,
+  StartFemalePeriodResponse,
+  DeleteFemalePeriodRequest,
+  DeleteFemalePeriodResponse,
+  CreateBodyWeightRequest,
+  CreateBodyWeightResponse,
+  AddMedicamentToDateRequest,
+  AddMedicamentToDateResponse,
+  DeleteMedicamentInDateRequest,
+  DeleteMedicamentInDateResponse,
 } from '#/shared/api/types/days';
 import { createAction } from '#shared/api/utils';
 
@@ -57,14 +61,18 @@ export const DaysSchema = {
     method: 'GET',
     query: data => data,
   }),
+
+  // Weight
   createBodyWeight: createAction<CreateBodyWeightRequest, CreateBodyWeightResponse>({
     path: ({ date }) => `/api/days/${date}/body/weight/`,
     method: 'POST',
     body: ({ date: _, ...data }) => data,
   }),
+
+  // Medicaments
   createMedicamentIntake: createAction<
-    CreateMedicamentIntakeRequest,
-    CreateMedicamentIntakeResponse
+    AddMedicamentToDateRequest,
+    AddMedicamentToDateResponse
   >({
     path: ({ date, dayPartId, medicamentId }) =>
       `/api/days/${date}/parts/${dayPartId}/medicaments/${medicamentId}`,
@@ -73,11 +81,23 @@ export const DaysSchema = {
       data,
   }),
   deleteMedicamentIntake: createAction<
-    CreateMedicamentIntakeRequest,
-    CreateMedicamentIntakeResponse
+    DeleteMedicamentInDateRequest,
+    DeleteMedicamentInDateResponse
   >({
     path: ({ date, dayPartId, medicamentId }) =>
       `/api/days/${date}/parts/${dayPartId}/medicaments/${medicamentId}`,
     method: 'DELETE',
   }),
+
+  // Female period
+  startFemalePeriod: createAction<StartFemalePeriodRequest, StartFemalePeriodResponse>({
+    path: ({ startDate }) => `/api/days/${startDate}/female-periods`,
+    method: 'POST',
+  }),
+  deleteFemalePeriod: createAction<DeleteFemalePeriodRequest, DeleteFemalePeriodResponse>(
+    {
+      path: ({ startDate }) => `/api/days/${startDate}/female-periods`,
+      method: 'DELETE',
+    },
+  ),
 };

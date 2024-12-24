@@ -1,6 +1,14 @@
+import { BodyWeight } from '#/shared/models/body';
 import { DateFormat } from '#/shared/models/date';
 import { DayInfo, DayPart } from '#/shared/models/day';
+import { FemalePeriod } from '#/shared/models/female-period';
 import { MedicamentIntake } from '#/shared/models/medicament';
+
+export type CreateBodyWeightResponse = BodyWeight;
+export interface CreateBodyWeightRequest {
+  date: DateFormat;
+  weight: number;
+}
 
 export interface ListDayPartsRequest {}
 export type ListDayPartsResponse = DayPart[];
@@ -42,16 +50,26 @@ export interface GetDayRequest {
   date: DateFormat;
 }
 
-export type DeleteMedicamentIntakeResponse = void;
-export interface DeleteMedicamentIntakeRequest {
+export type StartFemalePeriodResponse = FemalePeriod;
+export interface StartFemalePeriodRequest {
+  startDate: DateFormat;
+}
+
+export interface DeleteFemalePeriodResponse {}
+export interface DeleteFemalePeriodRequest {
+  startDate: DateFormat;
+}
+
+export type AddMedicamentToDateResponse = MedicamentIntake;
+export interface AddMedicamentToDateRequest {
   date: DateFormat;
   medicamentId: string;
   dayPartId: string;
 }
 
-export type CreateMedicamentIntakeResponse = MedicamentIntake;
-export interface CreateMedicamentIntakeRequest {
+export type DeleteMedicamentInDateResponse = void;
+export interface DeleteMedicamentInDateRequest {
+  date: DateFormat;
   medicamentId: string;
   dayPartId: string;
-  date: DateFormat;
 }

@@ -4,7 +4,6 @@ import { DatePicker, DatePickerRangeModelValue } from '#/ui/components/DatePicke
 import { useDialog } from '#/ui/components/Dialog';
 import { useListDayPartsQuery } from '#/ui/entities/day-parts';
 import { MedicamentIntakeFormDialog } from '#/ui/entities/medicament/components';
-import { useListStatisticsQuery } from '#/ui/entities/statistics';
 import {
   useCreateMedicamentIntakeMutation,
   useDeleteMedicamentIntakeMutation,
@@ -27,11 +26,6 @@ export default function PageView() {
   const medicamentIntakeDialog = useDialog();
 
   const listDaysQuery = useListDaysQuery({
-    startDate: dateRange.from,
-    endDate: dateRange.to,
-  });
-
-  const listStatisticsQuery = useListStatisticsQuery({
     startDate: dateRange.from,
     endDate: dateRange.to,
   });
@@ -61,12 +55,7 @@ export default function PageView() {
     setSelectedDayPart(dayPart);
   }
 
-  if (
-    !listDayPartsQuery.data ||
-    !listMedicamentsQuery.data ||
-    !listStatisticsQuery.data ||
-    !listDaysQuery.data
-  ) {
+  if (!listDayPartsQuery.data || !listMedicamentsQuery.data || !listDaysQuery.data) {
     return <div>Loading...</div>;
   }
 

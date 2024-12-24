@@ -1,28 +1,37 @@
+import {
+  convertFemalePeriod,
+  SELECT_FEMALE_PERIOD,
+} from '#/server/selectors/female-period';
 import { convertFoodNutrients, ONLY_NUTRIENTS_SELECT } from '#/server/selectors/food';
 import {
   convertMedicamentIntakeSelector,
   MEDICAMENT_INTAKE_SELECTOR,
 } from '#/server/selectors/medicaments';
+import FemalePeriodService from '#/server/services/FemalePeriodService';
 import {
+  StartFemalePeriodRequest,
+  StartFemalePeriodResponse,
+  DeleteFemalePeriodRequest,
+  DeleteFemalePeriodResponse,
   GetDayRequest,
   GetDayResponse,
   ListDaysRequest,
   ListDaysResponse,
-} from '#/shared/api/types/days';
-import { DateFormat, DateUtils } from '#/shared/models/date';
-import { DayInfo } from '#/shared/models/day';
-import { FoodNutrients, sumNutrients } from '#/shared/models/food';
-import { MedicamentIntake } from '#/shared/models/medicament';
-import { BODY_WEIGHT_SELECTOR, convertBodyWeightSelector } from '#server/selectors/body';
-import { Controller } from '#server/utils/Controller';
-import {
   AddMedicamentToDateRequest,
   AddMedicamentToDateResponse,
   CreateBodyWeightRequest,
   CreateBodyWeightResponse,
-  DeleteMedicamentToDateRequest,
-  DeleteMedicamentToDateResponse,
-} from '#shared/api/types/body';
+  DeleteMedicamentInDateRequest,
+  DeleteMedicamentInDateResponse,
+} from '#/shared/api/types/days';
+import dayjs from '#/shared/libs/dayjs';
+import { DateFormat, DateUtils } from '#/shared/models/date';
+import { DayInfo } from '#/shared/models/day';
+import { FEMALE_PERIOD_DEFAULT_END } from '#/shared/models/female-period';
+import { FoodNutrients, sumNutrients } from '#/shared/models/food';
+import { MedicamentIntake } from '#/shared/models/medicament';
+import { BODY_WEIGHT_SELECTOR, convertBodyWeightSelector } from '#server/selectors/body';
+import { Controller } from '#server/utils/Controller';
 import { CommonValidators } from '#shared/models/common';
 
 import { z } from 'zod';
@@ -221,7 +230,7 @@ export default new Controller<'days'>({
     },
   }),
 
-  'POST /days/:date/parts/:dayPartId/medicaments/:medicamentId': Controller.handler<
+  'POST /days/:dateInarts/:dayPartId/medicaments/:medicamentId': Controller.handler<
     AddMedicamentToDateRequest,
     AddMedicamentToDateResponse
   >({
@@ -252,8 +261,8 @@ export default new Controller<'days'>({
   }),
 
   'DELETE /days/:date/parts/:dayPartId/medicaments/:medicamentId': Controller.handler<
-    DeleteMedicamentToDateRequest,
-    DeleteMedicamentToDateResponse
+    DeleteMedicamentInDateRequest,
+    DeleteMedicamentInDateResponse
   >({
     validator: z.object({
       date: CommonValidators.dateFormat,
@@ -274,6 +283,93 @@ export default new Controller<'days'>({
           dayPartId,
           date,
         },
+      });
+    },
+  }),
+
+  'POST /days/:date/female-periods': Controller.handler<
+    StartFemalePeriodRequest,
+    StartFemalePeriodResponse
+  >({
+    validator: z.object({
+      startDate: CommonValidators.dateFormat,
+    }),
+    parse: req => ({
+      startDate: req.body.startDate as DateFormat,
+    }),
+    handler: async (arg, { prisma }) => {
+      const startDate = DateUtils.fromDateFormat(arg.startDate);
+
+      return await prisma.$transaction(async trx => {
+        const existingPeriod = await trx.femalePeriod
+          .findFirst({
+            where: { startDate },
+            ...SELECT_FEMALE_PERIOD,
+          })
+          .then(item => (item ? convertFemalePeriod(item) : undefined));
+
+        if (existingPeriod) {
+          return existingPeriod;
+        }
+
+        const prevPeriod = await trx.femalePeriod.findFirst({
+          where: { startDate: { lt: startDate } },
+          orderBy: { startDate: 'desc' },
+        });
+
+        const nextPeriod = await trx.femalePeriod.findFirst({
+          where: { startDate: { gt: startDate } },
+          orderBy: { startDate: 'desc' },
+        });
+
+        if (prevPeriod) {
+          await trx.femalePeriod.updateMany({
+            where: { id: prevPeriod.id },
+            data: { endDate: dayjs(startDate).subtract(1, 'day').endOf('day').toDate() },
+          });
+        }
+
+        let endDate = FEMALE_PERIOD_DEFAULT_END;
+
+        if (nextPeriod) {
+          endDate = dayjs(nextPeriod.startDate)
+            .subtract(1, 'day')
+            .endOf('day')
+            .toISOString();
+        }
+
+        const { id } = await trx.femalePeriod.create({
+          data: { startDate, endDate },
+        });
+
+        await FemalePeriodService.orderPeriods({}, trx);
+
+        return await trx.femalePeriod
+          .findFirstOrThrow({
+            where: { id },
+            ...SELECT_FEMALE_PERIOD,
+          })
+          .then(convertFemalePeriod);
+      });
+    },
+  }),
+
+  'DELETE /days/:date/female-periods': Controller.handler<
+    DeleteFemalePeriodRequest,
+    DeleteFemalePeriodResponse
+  >({
+    validator: z.object({
+      startDate: CommonValidators.dateFormat,
+    }),
+    parse: req => ({
+      startDate: req.params.startDate as DateFormat,
+    }),
+    handler: async (arg, { prisma }) => {
+      const startDate = DateUtils.fromDateFormat(arg.startDate);
+
+      await prisma.$transaction(async trx => {
+        await trx.femalePeriod.delete({ where: { startDate } });
+        await FemalePeriodService.orderPeriods({}, trx);
       });
     },
   }),

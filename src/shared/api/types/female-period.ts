@@ -10,9 +10,3 @@ export interface DeleteFemalePeriodResponse {}
 export interface DeleteFemalePeriodRequest {
   id: string;
 }
-
-export type ListFemalePeriodResponse = FemalePeriod[];
-export interface ListFemalePeriodRequest {
-  startDate: DateFormat;
-  endDate: DateFormat;
-}
