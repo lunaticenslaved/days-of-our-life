@@ -34,8 +34,8 @@ export interface DeleteDayPartRequest {
   id: string;
 }
 
-export type UpdateOrderDayPartResponse = DayPart[];
-export interface UpdateOrderDayPartRequest {
+export type UpdateDayPartsResponse = DayPart[];
+export interface UpdateDayPartsRequest {
   ids: string[];
 }
 

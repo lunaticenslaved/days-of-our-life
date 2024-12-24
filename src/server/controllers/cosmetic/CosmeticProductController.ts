@@ -5,7 +5,7 @@
 //   DeleteDayPartResponse,
 //   ListDayPartsRequest,
 //   ListDayPartsResponse,
-//   UpdateOrderDayPartResponse,
+//   UpdateDayPartsResponse,
 // } from '#/shared/api/types/days';
 // import { DayPart } from '#/shared/models/day';
 // import { Controller } from '#server/utils/Controller';

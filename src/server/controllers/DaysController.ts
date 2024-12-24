@@ -23,16 +23,30 @@ import {
   CreateBodyWeightResponse,
   DeleteMedicamentInDateRequest,
   DeleteMedicamentInDateResponse,
+  CreateDayPartRequest,
+  CreateDayPartResponse,
+  DeleteDayPartRequest,
+  DeleteDayPartResponse,
+  ListDayPartsRequest,
+  ListDayPartsResponse,
+  UpdateDayPartRequest,
+  UpdateDayPartResponse,
+  UpdateDayPartsRequest,
+  UpdateDayPartsResponse,
 } from '#/shared/api/types/days';
 import dayjs from '#/shared/libs/dayjs';
 import { DateFormat, DateUtils } from '#/shared/models/date';
-import { DayInfo } from '#/shared/models/day';
+import { DayInfo, DayPart } from '#/shared/models/day';
 import { FEMALE_PERIOD_DEFAULT_END } from '#/shared/models/female-period';
 import { FoodNutrients, sumNutrients } from '#/shared/models/food';
 import { MedicamentIntake } from '#/shared/models/medicament';
 import { BODY_WEIGHT_SELECTOR, convertBodyWeightSelector } from '#server/selectors/body';
 import { Controller } from '#server/utils/Controller';
 import { CommonValidators } from '#shared/models/common';
+
+import { convertDayPartSelector, DAY_PART_SELECTOR } from '#/server/selectors/days';
+import {} from '#/shared/api/types/days';
+import _ from 'lodash';
 
 import { z } from 'zod';
 
@@ -199,6 +213,7 @@ export default new Controller<'days'>({
     },
   }),
 
+  // Weight
   'POST /days/:date/body/weight': Controller.handler<
     CreateBodyWeightRequest,
     CreateBodyWeightResponse
@@ -230,6 +245,7 @@ export default new Controller<'days'>({
     },
   }),
 
+  // Medicaments
   'POST /days/:dateInarts/:dayPartId/medicaments/:medicamentId': Controller.handler<
     AddMedicamentToDateRequest,
     AddMedicamentToDateResponse
@@ -287,6 +303,7 @@ export default new Controller<'days'>({
     },
   }),
 
+  // Female period
   'POST /days/:date/female-periods': Controller.handler<
     StartFemalePeriodRequest,
     StartFemalePeriodResponse
@@ -370,6 +387,104 @@ export default new Controller<'days'>({
       await prisma.$transaction(async trx => {
         await trx.femalePeriod.delete({ where: { startDate } });
         await FemalePeriodService.orderPeriods({}, trx);
+      });
+    },
+  }),
+
+  // Day parts
+  'GET /days/parts': Controller.handler<ListDayPartsRequest, ListDayPartsResponse>({
+    validator: z.object({}),
+    parse: req => ({
+      startDate: req.query.startDate as DateFormat,
+      endDate: req.query.endDate as DateFormat,
+    }),
+    handler: async (_, { prisma }) => {
+      return prisma.dayPart
+        .findMany({
+          orderBy: { order: 'asc' },
+          ...DAY_PART_SELECTOR,
+        })
+        .then(items => items.map(convertDayPartSelector));
+    },
+  }),
+
+  'PATCH /days/parts': Controller.handler<UpdateDayPartsRequest, UpdateDayPartsResponse>({
+    validator: z.object({
+      ids: z.array(CommonValidators.str(255)),
+    }),
+    parse: req => ({
+      ids: req.body.name,
+    }),
+    handler: async ({ ids }, { prisma }) => {
+      return await prisma.$transaction(async trx => {
+        const result: DayPart[] = [];
+
+        for (let i = 0; i < ids.length; i++) {
+          await trx.dayPart.update({
+            where: { id: ids[i] },
+            data: { order: i },
+          });
+        }
+
+        return result;
+      });
+    },
+  }),
+
+  'POST /days/parts': Controller.handler<CreateDayPartRequest, CreateDayPartResponse>({
+    validator: z.object({
+      name: CommonValidators.str(255),
+    }),
+    parse: req => ({
+      name: req.body.name,
+    }),
+    handler: async ({ name }, { prisma }) => {
+      return prisma.dayPart
+        .create({
+          data: { name },
+          ...DAY_PART_SELECTOR,
+        })
+        .then(convertDayPartSelector);
+    },
+  }),
+
+  'PATCH /days/parts/:id': Controller.handler<
+    UpdateDayPartRequest,
+    UpdateDayPartResponse
+  >({
+    validator: z.object({
+      id: CommonValidators.id,
+      name: CommonValidators.str(255),
+    }),
+    parse: req => ({
+      id: req.params.id,
+      name: req.body.name,
+    }),
+    handler: async ({ id, name }, { prisma }) => {
+      return prisma.dayPart
+        .update({
+          where: { id },
+          data: { name },
+          ...DAY_PART_SELECTOR,
+        })
+        .then(convertDayPartSelector);
+    },
+  }),
+
+  'DELETE /days/parts/:id': Controller.handler<
+    DeleteDayPartRequest,
+    DeleteDayPartResponse
+  >({
+    validator: z.object({
+      id: CommonValidators.id,
+    }),
+    parse: req => ({
+      id: req.params.id,
+    }),
+    handler: async ({ id }, { prisma }) => {
+      // FIXME не удалять, если есть привязанные сущности
+      await prisma.dayPart.delete({
+        where: { id },
       });
     },
   }),
