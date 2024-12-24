@@ -79,7 +79,11 @@ export default function Page() {
 
   return (
     <div>
-      <DatePicker modelValue={date} onModelValueChange={v => setDate(v || new Date())} />
+      <DatePicker
+        type="single"
+        modelValue={DateUtils.toDateFormat(date)}
+        onModelValueChange={v => setDate(v ? DateUtils.fromDateFormat(v) : new Date())}
+      />
 
       <section>
         <h2>Вес</h2>

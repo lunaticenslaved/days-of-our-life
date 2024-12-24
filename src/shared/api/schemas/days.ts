@@ -17,6 +17,8 @@ import {
   UpdateDayPartResponse,
   CreateMedicamentIntakeRequest,
   CreateMedicamentIntakeResponse,
+  GetDayRequest,
+  GetDayResponse,
 } from '#/shared/api/types/days';
 import { createAction } from '#shared/api/utils';
 
@@ -46,6 +48,10 @@ export const DaysSchema = {
     }),
   },
 
+  getDay: createAction<GetDayRequest, GetDayResponse>({
+    path: ({ date }) => `/api/days/${date}`,
+    method: 'GET',
+  }),
   listDays: createAction<ListDaysRequest, ListDaysResponse>({
     path: () => `/api/days`,
     method: 'GET',

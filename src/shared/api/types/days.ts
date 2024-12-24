@@ -37,6 +37,11 @@ export interface ListDaysRequest {
   endDate: DateFormat;
 }
 
+export type GetDayResponse = DayInfo;
+export interface GetDayRequest {
+  date: DateFormat;
+}
+
 export type DeleteMedicamentIntakeResponse = void;
 export interface DeleteMedicamentIntakeRequest {
   date: DateFormat;

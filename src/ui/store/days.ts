@@ -8,6 +8,7 @@ import {
   DeleteMedicamentIntakeResponse,
   CreateMedicamentIntakeRequest,
   CreateMedicamentIntakeResponse,
+  GetDayResponse,
 } from '#/shared/api/types/days';
 import { MutationHandlers } from '#/ui/types';
 import {
@@ -19,6 +20,7 @@ import {} from '#/shared/api/types/medicaments';
 import { MedicamentIntake } from '#/shared/models/medicament';
 
 const StoreKeys = {
+  getDayQuery: (): QueryKey => ['getDayQuery'],
   listDaysQuery: (): QueryKey => ['listDaysQuery'],
   createBodyWeightMutation: (): QueryKey => ['createBodyWeightMutation'],
   createMedicamentIntakeMutation: (): QueryKey => ['createMedicamentIntakeMutation'],
@@ -49,7 +51,7 @@ export function useCreateBodyWeightMutation(handlers: MutationHandlers = {}) {
         StoreKeys.listDaysQuery(),
       )?.[response.date]?.weight;
 
-      setListDaysQueryData(response.date, response);
+      setDaysQueryData(response.date, response);
 
       handlers.onMutate?.();
 
@@ -62,7 +64,7 @@ export function useCreateBodyWeightMutation(handlers: MutationHandlers = {}) {
       handlers.onError?.();
 
       if (context) {
-        setListDaysQueryData(context.response.date, {
+        setDaysQueryData(context.response.date, {
           weight: context.oldWeight,
         });
       }
@@ -98,7 +100,7 @@ export function useCreateMedicamentIntakeMutation(handlers: MutationHandlers = {
         medicamentId: request.medicamentId,
       };
 
-      setListDaysQueryData(request.date, {
+      setDaysQueryData(request.date, {
         addMedicamentIntake: createdItem,
       });
 
@@ -112,7 +114,7 @@ export function useCreateMedicamentIntakeMutation(handlers: MutationHandlers = {
       handlers.onError?.();
 
       if (context) {
-        setListDaysQueryData(context.createdItem.date, {
+        setDaysQueryData(context.createdItem.date, {
           removeMedicamentIntakeId: context.createdItem.id,
         });
       }
@@ -120,7 +122,7 @@ export function useCreateMedicamentIntakeMutation(handlers: MutationHandlers = {
     onSuccess: (response, _request, context) => {
       handlers.onSuccess?.();
 
-      setListDaysQueryData(context.createdItem.date, {
+      setDaysQueryData(context.createdItem.date, {
         removeMedicamentIntakeId: context.createdItem.id,
         addMedicamentIntake: response,
       });
@@ -152,7 +154,7 @@ export function useDeleteMedicamentIntakeMutation(handlers: MutationHandlers = {
     onMutate: async request => {
       await queryClient.cancelQueries({ queryKey: StoreKeys.listDaysQuery() });
 
-      setListDaysQueryData(request.date, {
+      setDaysQueryData(request.date, {
         removeMedicamentIntakeId: request.id,
       });
 
@@ -166,7 +168,7 @@ export function useDeleteMedicamentIntakeMutation(handlers: MutationHandlers = {
       handlers.onError?.();
 
       if (context) {
-        setListDaysQueryData(context.deletedItem.date, {
+        setDaysQueryData(context.deletedItem.date, {
           addMedicamentIntake: context.deletedItem,
         });
       }
@@ -177,7 +179,7 @@ export function useDeleteMedicamentIntakeMutation(handlers: MutationHandlers = {
   });
 }
 
-function setListDaysQueryData(
+function setDaysQueryData(
   date: DateFormat,
   arg: {
     weight?: number;
@@ -185,6 +187,8 @@ function setListDaysQueryData(
     removeMedicamentIntakeId?: string;
   },
 ) {
+  // FIXME set data for getDay request
+
   queryClient.setQueryData<ListDaysResponse>(StoreKeys.listDaysQuery(), _old => {
     if (!_old) {
       return _old;
@@ -208,11 +212,13 @@ function setListDaysQueryData(
     }
 
     if (arg.removeMedicamentIntakeId) {
-      old[date].medicamentIntakes = old[date].medicamentIntakes
-        ? old[date].medicamentIntakes.filter(
-            intake => intake.id !== arg.removeMedicamentIntakeId,
-          )
-        : undefined;
+      const oldIntakes = old[date].medicamentIntakes;
+
+      if (oldIntakes) {
+        old[date].medicamentIntakes = oldIntakes.filter(
+          intake => intake.id !== arg.removeMedicamentIntakeId,
+        );
+      }
     }
 
     return old;
@@ -223,5 +229,12 @@ export function useListDaysQuery(data: ListDaysRequest) {
   return useQuery<ListDaysResponse, DefaultError, ListDaysResponse>({
     queryKey: StoreKeys.listDaysQuery(),
     queryFn: () => wrapApiAction(Schema.days.listDays)(data),
+  });
+}
+
+export function useGetDayQuery(date: DateFormat) {
+  return useQuery<GetDayResponse, DefaultError, GetDayResponse>({
+    queryKey: StoreKeys.getDayQuery(),
+    queryFn: () => wrapApiAction(Schema.days.getDay)({ date }),
   });
 }

@@ -3,7 +3,12 @@ import {
   convertMedicamentIntakeSelector,
   MEDICAMENT_INTAKE_SELECTOR,
 } from '#/server/selectors/medicaments';
-import { ListDaysRequest, ListDaysResponse } from '#/shared/api/types/days';
+import {
+  GetDayRequest,
+  GetDayResponse,
+  ListDaysRequest,
+  ListDaysResponse,
+} from '#/shared/api/types/days';
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { DayInfo } from '#/shared/models/day';
 import { FoodNutrients, sumNutrients } from '#/shared/models/food';
@@ -132,6 +137,54 @@ export default new Controller<'days'>({
           medicamentIntake: convertMedicamentIntakeSelector(medicamentIntake),
         });
       }
+
+      return result;
+    },
+  }),
+
+  'GET /days/:date': Controller.handler<GetDayRequest, GetDayResponse>({
+    validator: z.object({
+      date: CommonValidators.dateFormat,
+    }),
+    parse: req => ({
+      date: req.query.date as DateFormat,
+    }),
+    handler: async (arg, { prisma }) => {
+      const date = DateUtils.fromDateFormat(arg.date);
+
+      const result: GetDayResponse = {
+        date: arg.date,
+      };
+
+      const weightData = await prisma.bodyStatistics.findFirst({
+        ...BODY_WEIGHT_SELECTOR,
+        where: { date },
+      });
+
+      result.weight = weightData?.weight;
+
+      const nutrients = await prisma.foodTrackerDay.findFirst({
+        where: { date },
+        select: {
+          date: true,
+          meals: {
+            select: {
+              nutrients: ONLY_NUTRIENTS_SELECT,
+            },
+          },
+        },
+      });
+
+      result.nutrients = sumNutrients(
+        nutrients?.meals.map(meal => convertFoodNutrients(meal.nutrients)) || [],
+      );
+
+      const medicamentIntakes = await prisma.medicamentIntake.findMany({
+        where: { date },
+        ...MEDICAMENT_INTAKE_SELECTOR,
+      });
+
+      result.medicamentIntakes = medicamentIntakes.map(convertMedicamentIntakeSelector);
 
       return result;
     },
