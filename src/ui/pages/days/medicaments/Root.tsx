@@ -6,7 +6,7 @@ import {
   useDeleteMedicamentMutation,
   useListMedicamentsQuery,
   useUpdateMedicamentMutation,
-} from '#/ui/entities/medicament/api';
+} from '#/ui/store';
 import {
   MedicamentActions,
   MedicamentFormDialog,

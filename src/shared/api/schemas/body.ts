@@ -3,10 +3,9 @@ import {
   GetBodyStatisticsResponse,
   ListBodyStatisticsRequest,
   ListBodyStatisticsResponse,
-  PostBodyWeightRequest,
-  PostBodyWeightResponse,
 } from '#shared/api/types/body';
 import { createAction } from '#shared/api/utils';
+import _ from 'lodash';
 
 export const BodySchema = {
   statistics: {
@@ -19,13 +18,5 @@ export const BodySchema = {
       method: 'GET',
       query: ({ startDate, endDate }) => ({ startDate, endDate }),
     }),
-
-    weight: {
-      create: createAction<PostBodyWeightRequest, PostBodyWeightResponse>({
-        path: ({ date }) => `/api/body/statistics/${date}/weight`,
-        method: 'POST',
-        body: ({ date: _date, ...data }) => data,
-      }),
-    },
   },
 };

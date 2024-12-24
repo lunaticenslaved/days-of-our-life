@@ -1,4 +1,3 @@
-import dayjs from '#/shared/libs/dayjs';
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { ReactNode, useMemo } from 'react';
 
@@ -12,20 +11,8 @@ interface TimelineProps {
 
 // FIXME remove timeline
 export function Timeline({ startDate, endDate, renderCell }: TimelineProps) {
-  const dates = useMemo((): DateFormat[] => {
-    const start = DateUtils.fromDateFormat(startDate);
-    const end = DateUtils.fromDateFormat(endDate);
-
-    const result: DateFormat[] = [];
-
-    let date = dayjs(start);
-
-    while (date.isBefore(end, 'day') || date.isSame(end, 'day')) {
-      result.push(DateUtils.toDateFormat(date));
-      date = date.add(1, 'day');
-    }
-
-    return result;
+  const dates = useMemo(() => {
+    return DateUtils.toArray({ start: startDate, end: endDate });
   }, [endDate, startDate]);
 
   return (

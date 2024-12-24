@@ -1,4 +1,8 @@
 import {
+  CreateBodyWeightRequest,
+  CreateBodyWeightResponse,
+} from '#/shared/api/types/body';
+import {
   CreateDayPartRequest,
   CreateDayPartResponse,
   DeleteDayPartRequest,
@@ -7,8 +11,12 @@ import {
   GetDayPartResponse,
   ListDayPartsRequest,
   ListDayPartsResponse,
+  ListDaysRequest,
+  ListDaysResponse,
   UpdateDayPartRequest,
   UpdateDayPartResponse,
+  CreateMedicamentIntakeRequest,
+  CreateMedicamentIntakeResponse,
 } from '#/shared/api/types/days';
 import { createAction } from '#shared/api/utils';
 
@@ -37,4 +45,33 @@ export const DaysSchema = {
       method: 'GET',
     }),
   },
+
+  listDays: createAction<ListDaysRequest, ListDaysResponse>({
+    path: () => `/api/days`,
+    method: 'GET',
+    query: data => data,
+  }),
+  createBodyWeight: createAction<CreateBodyWeightRequest, CreateBodyWeightResponse>({
+    path: ({ date }) => `/api/days/${date}/body/weight/`,
+    method: 'POST',
+    body: ({ date: _, ...data }) => data,
+  }),
+  createMedicamentIntake: createAction<
+    CreateMedicamentIntakeRequest,
+    CreateMedicamentIntakeResponse
+  >({
+    path: ({ date, dayPartId, medicamentId }) =>
+      `/api/days/${date}/parts/${dayPartId}/medicaments/${medicamentId}`,
+    method: 'POST',
+    body: ({ date: _, dayPartId: _dayPartId, medicamentId: _medicamentId, ...data }) =>
+      data,
+  }),
+  deleteMedicamentIntake: createAction<
+    CreateMedicamentIntakeRequest,
+    CreateMedicamentIntakeResponse
+  >({
+    path: ({ date, dayPartId, medicamentId }) =>
+      `/api/days/${date}/parts/${dayPartId}/medicaments/${medicamentId}`,
+    method: 'DELETE',
+  }),
 };

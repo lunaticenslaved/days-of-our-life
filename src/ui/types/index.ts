@@ -17,3 +17,9 @@ export interface ModelValueProps<T = unknown> {
   modelValue?: T;
   onModelValueChange?(value?: T): void;
 }
+
+export interface MutationHandlers {
+  onMutate?(): void;
+  onError?(): void;
+  onSuccess?(): void;
+}

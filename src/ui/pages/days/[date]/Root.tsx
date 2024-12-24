@@ -1,10 +1,7 @@
 import { FoodTrackerMealItem, sumNutrients } from '#shared/models/food';
 import { Button } from '#ui/components/Button';
 import { useDialog } from '#ui/components/Dialog';
-import {
-  BodyWeightFormDialog,
-  usePostBodyWeightMutation,
-} from '#ui/entities/body-statistics';
+import { AddWeightAction } from '#ui/entities/body-statistics';
 import {
   MealItemFormDialog,
   FoodNutrientsList,
@@ -72,15 +69,6 @@ export default function Page() {
     }
   }, [mealItemDialog.isOpen]);
 
-  const weightDialog = useDialog();
-
-  const savingWeight = usePostBodyWeightMutation({
-    onSuccess: () => {
-      weightDialog.close();
-      dateStatistics.refetch();
-    },
-  });
-
   const startFemalePeriod = useStartFemalePeriodMutation({
     onSuccess: dateStatistics.refetch,
   });
@@ -98,17 +86,13 @@ export default function Page() {
         <div>
           <div style={{ display: 'flex' }}>
             <div>{dateStatistics.data.body?.weight}</div>
-            <Button onClick={weightDialog.open}>Редактировать вес</Button>
+            <AddWeightAction
+              date={DateUtils.toDateFormat(date)}
+              onUpdated={() => {
+                dateStatistics.refetch();
+              }}
+            />
           </div>
-
-          <BodyWeightFormDialog
-            dialog={weightDialog}
-            disabled={savingWeight.isPending}
-            weight={dateStatistics.data.body?.weight}
-            onSubmit={({ weight }) => {
-              savingWeight.mutate({ date: formattedDate, weight });
-            }}
-          />
         </div>
       </section>
 

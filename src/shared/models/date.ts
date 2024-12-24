@@ -54,4 +54,37 @@ export const DateUtils = {
 
     return DateUtils.toDateFormat(max);
   },
+  toArray(arg: { start: DateFormat; end: DateFormat }): DateFormat[] {
+    const start = DateUtils.fromDateFormat(arg.start);
+    const end = DateUtils.fromDateFormat(arg.end);
+
+    const result: DateFormat[] = [];
+
+    let date = dayjs(start);
+
+    while (date.isBefore(end, 'day') || date.isSame(end, 'day')) {
+      result.push(DateUtils.toDateFormat(date));
+      date = date.add(1, 'day');
+    }
+
+    return result;
+  },
+  toMap<T>(
+    arg: { start: DateFormat; end: DateFormat },
+    fn: (arg: DateFormat) => T,
+  ): Record<DateFormat, T> {
+    const start = DateUtils.fromDateFormat(arg.start);
+    const end = DateUtils.fromDateFormat(arg.end);
+
+    const result: Record<DateFormat, T> = {};
+
+    let date = dayjs(start);
+
+    while (date.isBefore(end, 'day') || date.isSame(end, 'day')) {
+      result[DateUtils.toDateFormat(date)] = fn(DateUtils.toDateFormat(date));
+      date = date.add(1, 'day');
+    }
+
+    return result;
+  },
 };

@@ -2,7 +2,7 @@ type ApiSchemaActionConfig<T> = {
   path(data: T): string;
   method: 'POST' | 'GET' | 'PATCH' | 'DELETE';
   body?: (data: T) => unknown;
-  query?: (data: T) => Record<string, unknown>;
+  query?: (data: T) => unknown;
 };
 
 export function createAction<T, R>(config: ApiSchemaActionConfig<T>) {

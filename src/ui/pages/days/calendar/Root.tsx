@@ -1,21 +1,17 @@
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { DayPart } from '#/shared/models/day';
-import { MedicamentIntake, MedicamentUtils } from '#/shared/models/medicament';
-import { StatisticItem } from '#/shared/models/statistics';
 import { DatePicker, DatePickerRangeModelValue } from '#/ui/components/DatePicker';
 import { useDialog } from '#/ui/components/Dialog';
 import { useListDayPartsQuery } from '#/ui/entities/day-parts';
+import { MedicamentIntakeFormDialog } from '#/ui/entities/medicament/components';
+import { useListStatisticsQuery } from '#/ui/entities/statistics';
 import {
   useCreateMedicamentIntakeMutation,
   useDeleteMedicamentIntakeMutation,
-  useListMedicamentIntakesQuery,
+  useListDaysQuery,
   useListMedicamentsQuery,
-  useUpdateMedicamentIntakeMutation,
-} from '#/ui/entities/medicament/api';
-import { MedicamentIntakeFormDialog } from '#/ui/entities/medicament/components';
-import { useListStatisticsQuery } from '#/ui/entities/statistics';
+} from '#/ui/store';
 import { Calendar } from '#/ui/widgets/Calendar';
-import { keyBy } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 
 export default function PageView() {
@@ -30,22 +26,19 @@ export default function PageView() {
 
   const medicamentIntakeDialog = useDialog();
 
+  const listDaysQuery = useListDaysQuery({
+    startDate: dateRange.from,
+    endDate: dateRange.to,
+  });
+
   const listStatisticsQuery = useListStatisticsQuery({
     startDate: dateRange.from,
     endDate: dateRange.to,
   });
   const listDayPartsQuery = useListDayPartsQuery();
   const listMedicamentsQuery = useListMedicamentsQuery();
-  const listMedicamentIntakesQuery = useListMedicamentIntakesQuery({
-    startDate: dateRange.from,
-    endDate: dateRange.to,
-  });
+
   const createMedicamentIntakeMutation = useCreateMedicamentIntakeMutation({
-    onMutate: () => {
-      medicamentIntakeDialog.close();
-    },
-  });
-  const updateMedicamentIntakeMutation = useUpdateMedicamentIntakeMutation({
     onMutate: () => {
       medicamentIntakeDialog.close();
     },
@@ -54,48 +47,25 @@ export default function PageView() {
 
   const [selectedDate, setSelectedDate] = useState<DateFormat>();
   const [selectedDayPart, setSelectedDayPart] = useState<DayPart>();
-  const [medicamentIntakeToEdit, setMedicamentIntakeToEdit] =
-    useState<MedicamentIntake>();
-
-  const preparedMedicamentIntakes = useMemo(() => {
-    const intakes = listMedicamentIntakesQuery.data || [];
-
-    return MedicamentUtils.zipIntakesByDateAndDatePart(intakes);
-  }, [listMedicamentIntakesQuery.data]);
-
-  const preparedStatistics = useMemo(() => {
-    const statistics = listStatisticsQuery.data || [];
-
-    return keyBy(statistics, item => item.date);
-  }, [listStatisticsQuery.data]);
 
   useEffect(() => {
     if (!medicamentIntakeDialog.isOpen) {
-      setMedicamentIntakeToEdit(undefined);
       setSelectedDayPart(undefined);
       setSelectedDate(undefined);
     }
   }, [medicamentIntakeDialog.isOpen, selectedDayPart]);
 
-  function openIntakeDialog({
-    date,
-    dayPart,
-    intake,
-  }: {
-    date: DateFormat;
-    dayPart: DayPart;
-    intake?: MedicamentIntake;
-  }) {
+  function openIntakeDialog({ date, dayPart }: { date: DateFormat; dayPart: DayPart }) {
     medicamentIntakeDialog.open();
     setSelectedDate(date);
     setSelectedDayPart(dayPart);
-    setMedicamentIntakeToEdit(intake);
   }
 
   if (
     !listDayPartsQuery.data ||
     !listMedicamentsQuery.data ||
-    !listStatisticsQuery.data
+    !listStatisticsQuery.data ||
+    !listDaysQuery.data
   ) {
     return <div>Loading...</div>;
   }
@@ -111,27 +81,17 @@ export default function PageView() {
 
       {selectedDate && selectedDayPart && (
         <MedicamentIntakeFormDialog
-          type={medicamentIntakeToEdit ? 'edit' : 'create'}
-          medicamentId={medicamentIntakeToEdit?.medicamentId}
+          type="create"
           date={selectedDate}
           dayPartId={selectedDayPart.id}
           dialog={medicamentIntakeDialog}
           medicaments={listMedicamentsQuery.data || []}
           onSubmit={values => {
-            if (medicamentIntakeToEdit) {
-              updateMedicamentIntakeMutation.mutate({
-                id: medicamentIntakeToEdit.id,
-                date: values.date,
-                medicamentId: values.medicamentId,
-                dayPartId: values.dayPartId,
-              });
-            } else {
-              createMedicamentIntakeMutation.mutate({
-                date: values.date,
-                medicamentId: values.medicamentId,
-                dayPartId: values.dayPartId,
-              });
-            }
+            createMedicamentIntakeMutation.mutate({
+              date: values.date,
+              medicamentId: values.medicamentId,
+              dayPartId: values.dayPartId,
+            });
           }}
         />
       )}
@@ -142,34 +102,25 @@ export default function PageView() {
         dayParts={listDayPartsQuery.data}
         medicaments={listMedicamentsQuery.data}
         getWeight={date => {
-          const statistics: StatisticItem | undefined = preparedStatistics[date];
-          return statistics?.body.weight;
+          return listDaysQuery.data[date].weight;
         }}
         getNutrients={date => {
-          const statistics: StatisticItem | undefined = preparedStatistics[date];
-          return statistics?.food.nutrients;
+          return listDaysQuery.data[date].nutrients;
         }}
         getMedicamentIntakes={(date, dayPartId) => {
-          const intakes = preparedMedicamentIntakes[date]?.[dayPartId] || [];
-          return intakes;
-        }}
-        onMedicamentIntakeEdit={arg => {
-          openIntakeDialog({
-            ...arg,
-            intake: arg.intake,
-          });
+          return (
+            listDaysQuery.data[date].medicamentIntakes?.filter(
+              intake => intake.dayPartId === dayPartId,
+            ) || []
+          );
         }}
         onMedicamentIntakeDelete={arg => {
-          deleteMedicamentIntakeMutation.mutate({
-            id: arg.intake.id,
-          });
+          deleteMedicamentIntakeMutation.mutate(arg.intake);
         }}
         onAddMedicamentIntake={arg => {
-          openIntakeDialog({
-            ...arg,
-            intake: undefined,
-          });
+          openIntakeDialog(arg);
         }}
+        onUpdated={() => {}}
       />
     </div>
   );

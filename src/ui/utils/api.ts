@@ -21,8 +21,12 @@ export function wrapApiAction<
       const query = config.query(arg);
       const searchParams = new URLSearchParams();
 
-      for (const [key, value] of Object.entries(query)) {
-        searchParams.set(key, String(value));
+      if (typeof query === 'object' && query) {
+        for (const [key, value] of Object.entries(query)) {
+          searchParams.set(key, String(value));
+        }
+      } else {
+        throw new Error('Query is not an object');
       }
 
       path = `${path}?${searchParams.toString()}`;

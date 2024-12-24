@@ -20,6 +20,19 @@ export const CommonValidators = {
     DateFormat,
     ZodStringDef
   >,
+  number: (arg: { min?: number; max?: number } = {}) => {
+    let validator = z.number({ message: ERROR_MESSAGES.required });
+
+    if (typeof arg.min === 'number') {
+      validator = validator.min(1, ERROR_MESSAGES.minLengthStr(1));
+    }
+
+    if (typeof arg.max === 'number') {
+      validator = validator.max(length, ERROR_MESSAGES.maxLengthStr(length));
+    }
+
+    return validator;
+  },
 };
 
 export type SortOrder = 'asc' | 'desc';

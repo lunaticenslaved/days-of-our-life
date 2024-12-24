@@ -1,5 +1,6 @@
 import { DateFormat } from '#/shared/models/date';
-import { BodyStatistics } from '#shared/models/body';
+import { MedicamentIntake } from '#/shared/models/medicament';
+import { BodyStatistics, BodyWeight } from '#shared/models/body';
 
 export type ListBodyStatisticsResponse = BodyStatistics[];
 export interface ListBodyStatisticsRequest {
@@ -12,8 +13,22 @@ export interface GetBodyStatisticsRequest {
   date: DateFormat;
 }
 
-export type PostBodyWeightResponse = BodyStatistics;
-export interface PostBodyWeightRequest {
-  weight: number;
+export type CreateBodyWeightResponse = BodyWeight;
+export interface CreateBodyWeightRequest {
   date: DateFormat;
+  weight: number;
+}
+
+export type AddMedicamentToDateResponse = MedicamentIntake;
+export interface AddMedicamentToDateRequest {
+  date: DateFormat;
+  medicamentId: string;
+  dayPartId: string;
+}
+
+export type DeleteMedicamentToDateResponse = void;
+export interface DeleteMedicamentToDateRequest {
+  date: DateFormat;
+  medicamentId: string;
+  dayPartId: string;
 }

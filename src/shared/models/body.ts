@@ -10,3 +10,8 @@ export interface BodyStatistics {
   date: DateFormat;
   weight: number;
 }
+
+export interface BodyWeight {
+  date: DateFormat;
+  weight: number;
+}

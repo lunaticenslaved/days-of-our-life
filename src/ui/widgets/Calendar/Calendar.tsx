@@ -4,6 +4,7 @@ import { DayPart } from '#/shared/models/day';
 import { FoodNutrients } from '#/shared/models/food';
 import { Medicament, MedicamentIntake } from '#/shared/models/medicament';
 import { Button } from '#/ui/components/Button';
+import { AddWeightAction } from '#/ui/entities/body-statistics';
 import { FoodNutrientsList } from '#/ui/entities/food';
 import {
   MedicamentIntakeActions,
@@ -28,9 +29,9 @@ interface CalendarProps {
   getWeight(date: DateFormat): number | null | undefined;
   getNutrients(date: DateFormat): FoodNutrients | null | undefined;
   getMedicamentIntakes(date: DateFormat, dayPartId: string): MedicamentIntake[];
-  onMedicamentIntakeEdit(arg: RenderMedicamentIntakeActionsProps): void;
   onMedicamentIntakeDelete(arg: RenderMedicamentIntakeActionsProps): void;
   onAddMedicamentIntake(arg: RenderMedicamentIntakesProps): void;
+  onUpdated(): void;
 }
 
 export function Calendar({
@@ -42,8 +43,8 @@ export function Calendar({
   getNutrients,
   getMedicamentIntakes,
   onMedicamentIntakeDelete,
-  onMedicamentIntakeEdit,
   onAddMedicamentIntake,
+  onUpdated,
 }: CalendarProps) {
   const dates = useMemo((): DateFormat[] => {
     const start = DateUtils.fromDateFormat(startDate);
@@ -62,12 +63,7 @@ export function Calendar({
   }, [endDate, startDate]);
 
   function renderMedicamentIntakeActions(arg: RenderMedicamentIntakeActionsProps) {
-    return (
-      <MedicamentIntakeActions
-        onEdit={() => onMedicamentIntakeEdit(arg)}
-        onDelete={() => onMedicamentIntakeDelete(arg)}
-      />
-    );
+    return <MedicamentIntakeActions onDelete={() => onMedicamentIntakeDelete(arg)} />;
   }
 
   function renderMedicamentIntakes(arg: RenderMedicamentIntakesProps) {
@@ -107,8 +103,16 @@ export function Calendar({
           return (
             <Fragment key={date}>
               <tr style={{ backgroundColor: index % 2 === 0 ? 'lightgrey' : '' }}>
-                <td rowSpan={dayParts.length}>{date}</td>
-                <td rowSpan={dayParts.length}>{weight}</td>
+                <td rowSpan={dayParts.length}>
+                  {DateUtils.isSame(date, new Date()) ? <strong>{date}</strong> : date}
+                </td>
+                <td rowSpan={dayParts.length}>
+                  <AddWeightAction
+                    date={date}
+                    weight={weight || undefined}
+                    onUpdated={onUpdated}
+                  />
+                </td>
                 <td rowSpan={dayParts.length}>
                   <FoodNutrientsList nutrients={nutrients || undefined} />
                 </td>
