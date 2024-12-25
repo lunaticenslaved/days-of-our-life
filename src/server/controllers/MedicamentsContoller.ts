@@ -13,7 +13,7 @@ import {
   UpdateMedicamentResponse,
 } from '#/shared/api/types/medicaments';
 import { CommonValidators } from '#/shared/models/common';
-import { Controller } from '#server/utils/Controller';
+import { Controller } from '#/server/utils/Controller';
 
 import _ from 'lodash';
 

@@ -3,7 +3,7 @@
   "compilerOptions": {
     "module": "CommonJS",
     "types": ["node"],
-    "outDir": "../../dist",
+    "outDir": "../../dist"
   },
-  "exclude": ["../ui"]
+  "exclude": ["../client"]
 }

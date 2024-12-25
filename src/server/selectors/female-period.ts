@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { FemalePeriod } from '#shared/models/female-period';
+import { FemalePeriod } from '#/shared/models/female-period';
 import { DateUtils } from '#/shared/models/date';
 
 export const SELECT_FEMALE_PERIOD = {

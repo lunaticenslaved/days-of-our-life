@@ -5,7 +5,12 @@ import {
   useState,
   useCallback,
 } from 'react';
-import { FormFieldState, FormFieldProps, ValidationResult, validateValue } from '#libs/validate';
+import {
+  FormFieldState,
+  FormFieldProps,
+  ValidationResult,
+  validateValue,
+} from '#libs/validate';
 
 type Value = string;
 type Element = HTMLInputElement | HTMLTextAreaElement;

@@ -1,4 +1,4 @@
-import { UserService } from '#server/services/user';
+import { UserService } from '#/server/services/user';
 import { NextFunction, Request, Response } from 'express';
 
 export async function addUserFromCookie(

@@ -14,9 +14,9 @@ import {
   UpdateCosmeticProductRequest,
   UpdateCosmeticProductResponse,
 } from '#/shared/api/types/cosmetic';
-import { Controller } from '#server/utils/Controller';
+import { Controller } from '#/server/utils/Controller';
 
-import { CommonValidators } from '#shared/models/common';
+import { CommonValidators } from '#/shared/models/common';
 
 import { z } from 'zod';
 

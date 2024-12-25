@@ -1,5 +1,5 @@
-import { APP_ENV } from '#server/constants';
-import { AppEnvironment } from '#shared/constants/app';
+import { APP_ENV } from '#/server/constants';
+import { AppEnvironment } from '#/shared/constants/app';
 import { createApp as createAppDev } from './app.dev';
 import { createApp as createAppProd } from './app.prod';
 

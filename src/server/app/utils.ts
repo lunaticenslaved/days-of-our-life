@@ -5,17 +5,17 @@ import fileUpload from 'express-fileupload';
 import fs from 'fs';
 import { resolve } from 'path';
 import { prisma } from '../prisma';
-import { CORS_ORIGIN_WHITELIST, ROOT_PATH } from '#server/constants';
-import { addHeaders, addUserFromCookie } from '#server/middlewares';
-import { LC } from '#shared/types';
-import { APP_ENV } from '#server/constants';
+import { CORS_ORIGIN_WHITELIST, ROOT_PATH } from '#/server/constants';
+import { addHeaders, addUserFromCookie } from '#/server/middlewares';
+import { LC } from '#/shared/types';
+import { APP_ENV } from '#/server/constants';
 
-import { RequestContext } from '#server/utils/RequestContext';
+import { RequestContext } from '#/server/utils/RequestContext';
 import express from 'express';
-import { Controller } from '#server/utils/Controller';
+import { Controller } from '#/server/utils/Controller';
 import path from 'path';
-import { ApiError, ValidationError } from '#shared/errors';
-import { ApiResponse } from '#shared/api/types/shared';
+import { ApiError, ValidationError } from '#/shared/errors';
+import { ApiResponse } from '#/shared/api/types/shared';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function loadControllers(): Promise<Controller<any>[]> {
@@ -87,6 +87,9 @@ export async function configureApp(app: Express) {
 
       // @ts-ignore
       app[method.toLowerCase()](`/api${route}`, async (req: Request, res: Response) => {
+        console.log('PATH', req.path);
+        console.log('ROUTE', route);
+
         const data = parse(req);
 
         try {

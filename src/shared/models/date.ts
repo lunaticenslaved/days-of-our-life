@@ -1,4 +1,4 @@
-import dayjs from '#shared/libs/dayjs';
+import dayjs from '#/shared/libs/dayjs';
 import { Dayjs, OpUnitType } from 'dayjs';
 
 // FIXME move to day

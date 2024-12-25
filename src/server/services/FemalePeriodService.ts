@@ -1,10 +1,10 @@
 import { DateFormat, DateUtils } from '#/shared/models/date';
-import { PrismaTransaction } from '#server/prisma';
+import { PrismaTransaction } from '#/server/prisma';
 import {
   convertFemalePeriod,
   SELECT_FEMALE_PERIOD,
-} from '#server/selectors/female-period';
-import dayjs from '#shared/libs/dayjs';
+} from '#/server/selectors/female-period';
+import dayjs from '#/shared/libs/dayjs';
 
 class FemalePeriodService {
   async orderPeriods(_arg: unknown, trx: PrismaTransaction) {

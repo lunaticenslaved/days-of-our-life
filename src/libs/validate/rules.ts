@@ -6,12 +6,16 @@ export const required = <T>(message = 'Обязательное поле'): Vali
 
 export const minLength = (count: number, message?: string): Validator<string> => {
   return async value =>
-    (value || '').length < count ? null : message || `Минимальное число символов - ${count}`;
+    (value || '').length < count
+      ? null
+      : message || `Минимальное число символов - ${count}`;
 };
 
 export const maxLength = (count: number, message?: string): Validator<string> => {
   return async value =>
-    (value || '').length > count ? null : message || `Максимальное число символов - ${count}`;
+    (value || '').length > count
+      ? null
+      : message || `Максимальное число символов - ${count}`;
 };
 
 export const email = (): Validator<string> => {

@@ -8,14 +8,11 @@ export default defineConfig({
   plugins: [svgLoader(), react()],
   mode: process.env.NODE_ENV,
   build: {
-    outDir: 'dist/ui/spa',
+    outDir: 'dist/client/spa',
   },
   resolve: {
     alias: {
       '#': resolve(__dirname, './src'),
-      '#ui': resolve(__dirname, './src/ui'),
-      '#libs': resolve(__dirname, './src/libs'),
-      '#shared': resolve(__dirname, './src/shared'),
     },
   },
 });

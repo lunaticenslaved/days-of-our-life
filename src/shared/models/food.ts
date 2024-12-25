@@ -1,5 +1,5 @@
-import { CommonValidators } from '#shared/models/common';
-import { ERROR_MESSAGES } from '#shared/validation';
+import { CommonValidators } from '#/shared/models/common';
+import { ERROR_MESSAGES } from '#/shared/validation';
 import _ from 'lodash';
 import { z } from 'zod';
 

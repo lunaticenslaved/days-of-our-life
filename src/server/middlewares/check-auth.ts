@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { AuthenticationError } from '#shared/errors';
+import { AuthenticationError } from '#/shared/errors';
 
 export async function checkAuth(request: Request, _: Response, next: NextFunction) {
   if (!request.user) {

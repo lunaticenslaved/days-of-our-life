@@ -1,5 +1,5 @@
 import { DateFormat } from '#/shared/models/date';
-import { ERROR_MESSAGES } from '#shared/validation';
+import { ERROR_MESSAGES } from '#/shared/validation';
 import { z, ZodStringDef } from 'zod';
 
 export const CommonValidators = {

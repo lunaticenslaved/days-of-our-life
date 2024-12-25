@@ -1,5 +1,5 @@
-import { PrismaTransaction } from '#server/prisma';
-import dayjs from '#shared/libs/dayjs';
+import { PrismaTransaction } from '#/server/prisma';
+import dayjs from '#/shared/libs/dayjs';
 import { Dayjs } from 'dayjs';
 
 class FoodTrackerDayService {

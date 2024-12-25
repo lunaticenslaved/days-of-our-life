@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { BodyStatistics, BodyWeight } from '#shared/models/body';
+import { BodyStatistics, BodyWeight } from '#/shared/models/body';
 import { DateUtils } from '#/shared/models/date';
 
 export const SELECT_BODY_STATISTICS = {

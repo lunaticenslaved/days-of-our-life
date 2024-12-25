@@ -9,7 +9,7 @@ export default defineConfig({
   mode: process.env.NODE_ENV,
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/ui/index.server.tsx'),
+      entry: resolve(__dirname, 'src/client/index.server.tsx'),
       name: 'UI',
       fileName: 'index',
       formats: ['cjs'],
@@ -17,16 +17,13 @@ export default defineConfig({
     rollupOptions: {
       output: {
         format: 'cjs',
-        dir: 'dist/ui/ssr',
+        dir: 'dist/client/ssr',
       },
     },
   },
   resolve: {
     alias: {
       '#': resolve(__dirname, './src'),
-      '#ui': resolve(__dirname, './src/ui'),
-      '#libs': resolve(__dirname, './src/libs'),
-      '#shared': resolve(__dirname, './src/shared'),
     },
   },
 });

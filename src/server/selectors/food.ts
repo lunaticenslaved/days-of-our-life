@@ -5,7 +5,7 @@ import {
   FoodTrackerMealItem,
   sumNutrients,
   FoodNutrients,
-} from '#shared/models/food';
+} from '#/shared/models/food';
 import { Prisma } from '@prisma/client';
 
 const QUANTITY_CONVERTER = {

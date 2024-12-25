@@ -1,7 +1,7 @@
 {
   "ts-node": {
     "require": ["tsconfig-paths/register"],
-    "files": true,
+    "files": true
   },
   "tsc-alias": {
     "verbose": false,
@@ -43,11 +43,7 @@
     "rootDir": "./src",
     "baseUrl": ".",
     "paths": {
-      "#/*": ["src/*"],
-      "#ui/*": ["src/ui/*"],
-      "#libs/*": ["./src/libs/*"],
-      "#shared/*": ["./src/shared/*"],
-      "#server/*": ["./src/server/*"]
+      "#/*": ["src/*"]
     }
   },
   "include": ["./src"]

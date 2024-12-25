@@ -6,7 +6,6 @@
 - Fullscreen WebAPI
 - Feature Sliced Design
 
-
-## Examples 
+## Examples
 
 - https://github.com/simonoppowa/OpenNutriTracker/blob/main/README.md

@@ -24,7 +24,7 @@ import {
   DeleteMedicamentInDateRequest,
   DeleteMedicamentInDateResponse,
 } from '#/shared/api/types/days';
-import { createAction } from '#shared/api/utils';
+import { createAction } from '#/shared/api/utils';
 
 export const DaysSchema = {
   parts: {

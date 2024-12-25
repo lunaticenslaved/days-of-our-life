@@ -1,5 +1,5 @@
 import { DateFormat } from '#/shared/models/date';
-import { FemalePeriod } from '#shared/models/female-period';
+import { FemalePeriod } from '#/shared/models/female-period';
 
 export type CreateFemalePeriodResponse = FemalePeriod;
 export interface CreateFemalePeriodRequest {

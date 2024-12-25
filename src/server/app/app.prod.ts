@@ -2,13 +2,13 @@ import fs from 'fs';
 import path from 'path';
 import express from 'express';
 
-import { PORT, ROOT_PATH } from '#server/constants';
+import { PORT, ROOT_PATH } from '#/server/constants';
 
 import { addSSRRoute, configureApp } from './utils';
 
-const ASSETS_PATH = path.resolve(ROOT_PATH, 'dist/ui/spa/assets');
-const HTML_FILE_PATH = path.resolve(ROOT_PATH, 'dist/ui/spa/index.html');
-const RENDER_FILE_PATH = path.resolve(ROOT_PATH, 'dist/ui/ssr/index.js');
+const ASSETS_PATH = path.resolve(ROOT_PATH, 'dist/client/spa/assets');
+const HTML_FILE_PATH = path.resolve(ROOT_PATH, 'dist/client/spa/index.html');
+const RENDER_FILE_PATH = path.resolve(ROOT_PATH, 'dist/client/ssr/index.js');
 
 export async function createApp() {
   const app = express();

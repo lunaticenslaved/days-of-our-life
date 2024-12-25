@@ -3,12 +3,12 @@ import path from 'path';
 import express from 'express';
 import { createServer as createViteServer } from 'vite';
 
-import { PORT, ROOT_PATH } from '#server/constants';
+import { PORT, ROOT_PATH } from '#/server/constants';
 
 import { addSSRRoute, configureApp } from './utils';
 
 const HTML_FILE_PATH = path.resolve(ROOT_PATH, 'index.html');
-const UI_RENDER_FILE_PATH = path.resolve(ROOT_PATH, 'src/ui/index.server');
+const UI_RENDER_FILE_PATH = path.resolve(ROOT_PATH, 'src/client/index.server');
 
 export async function createApp() {
   const app = express();

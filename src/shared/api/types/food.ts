@@ -6,7 +6,7 @@ import {
   FoodRecipe,
   FoodRecipeOutput,
   FoodTrackerDay,
-} from '#shared/models/food';
+} from '#/shared/models/food';
 
 interface Id {
   id: string;

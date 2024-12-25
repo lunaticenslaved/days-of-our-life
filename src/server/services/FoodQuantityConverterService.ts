@@ -1,4 +1,4 @@
-import { PrismaTransaction } from '#server/prisma';
+import { PrismaTransaction } from '#/server/prisma';
 
 type InsertArg =
   | {

@@ -27,8 +27,8 @@ import {
   UpdateFoodMealItemResponse,
   DeleteFoodMealItemRequest,
   DeleteFoodMealItemResponse,
-} from '#shared/api/types/food';
-import { createAction } from '#shared/api/utils';
+} from '#/shared/api/types/food';
+import { createAction } from '#/shared/api/utils';
 
 export const FoodSchema = {
   products: {

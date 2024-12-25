@@ -1,6 +1,6 @@
-import { convertFoodProduct, SELECT_PRODUCT } from '#server/selectors/food';
-import FoodQuantityConverterService from '#server/services/FoodQuantityConverterService';
-import { Controller } from '#server/utils/Controller';
+import { convertFoodProduct, SELECT_PRODUCT } from '#/server/selectors/food';
+import FoodQuantityConverterService from '#/server/services/FoodQuantityConverterService';
+import { Controller } from '#/server/utils/Controller';
 import {
   CreateFoodProductRequest,
   CreateFoodProductResponse,
@@ -12,10 +12,10 @@ import {
   ListFoodProductsResponse,
   UpdateFoodProductRequest,
   UpdateFoodProductResponse,
-} from '#shared/api/types/food';
-import { CommonValidators } from '#shared/models/common';
+} from '#/shared/api/types/food';
+import { CommonValidators } from '#/shared/models/common';
 
-import { FoodValidators } from '#shared/models/food';
+import { FoodValidators } from '#/shared/models/food';
 import { z } from 'zod';
 
 const CreateFoodProductRequestValidator: z.ZodType<CreateFoodProductRequest> = z.object({

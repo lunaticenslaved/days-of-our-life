@@ -1,6 +1,6 @@
-import { convertFoodRecipe, SELECT_RECIPE } from '#server/selectors/food';
-import { PrismaTransaction } from '#server/prisma';
-import { Controller } from '#server/utils/Controller';
+import { convertFoodRecipe, SELECT_RECIPE } from '#/server/selectors/food';
+import { PrismaTransaction } from '#/server/prisma';
+import { Controller } from '#/server/utils/Controller';
 import {
   CreateFoodRecipeRequest,
   CreateFoodRecipeResponse,
@@ -12,13 +12,13 @@ import {
   ListFoodRecipesResponse,
   UpdateFoodRecipeRequest,
   UpdateFoodRecipeResponse,
-} from '#shared/api/types/food';
+} from '#/shared/api/types/food';
 import _ from 'lodash';
-import { divideNutrients, FoodValidators } from '#shared/models/food';
+import { divideNutrients, FoodValidators } from '#/shared/models/food';
 import { z } from 'zod';
-import { CommonValidators } from '#shared/models/common';
-import FoodNutrientsService from '#server/services/FoodNutrientsService';
-import FoodQuantityConverterService from '#server/services/FoodQuantityConverterService';
+import { CommonValidators } from '#/shared/models/common';
+import FoodNutrientsService from '#/server/services/FoodNutrientsService';
+import FoodQuantityConverterService from '#/server/services/FoodQuantityConverterService';
 
 async function insertParts(
   { id: recipeId, parts }: Pick<UpdateFoodRecipeRequest, 'parts' | 'id'>,

@@ -1,8 +1,8 @@
 import { DateFormat, DateUtils } from '#/shared/models/date';
-import { convertFoodTrackerDay, SELECT_TRACKER_DAY } from '#server/selectors/food';
-import FoodNutrientsService from '#server/services/FoodNutrientsService';
-import FoodTrackerDayService from '#server/services/FoodTrackerDayService';
-import { Controller } from '#server/utils/Controller';
+import { convertFoodTrackerDay, SELECT_TRACKER_DAY } from '#/server/selectors/food';
+import FoodNutrientsService from '#/server/services/FoodNutrientsService';
+import FoodTrackerDayService from '#/server/services/FoodTrackerDayService';
+import { Controller } from '#/server/utils/Controller';
 import {
   CreateFoodMealItemRequest,
   CreateFoodMealItemResponse,
@@ -12,10 +12,10 @@ import {
   UpdateFoodMealItemResponse,
   DeleteFoodMealItemRequest,
   DeleteFoodMealItemResponse,
-} from '#shared/api/types/food';
-import { CommonValidators } from '#shared/models/common';
-import { FoodValidators } from '#shared/models/food';
-import { nonReachable } from '#shared/utils';
+} from '#/shared/api/types/food';
+import { CommonValidators } from '#/shared/models/common';
+import { FoodValidators } from '#/shared/models/food';
+import { nonReachable } from '#/shared/utils';
 import { z } from 'zod';
 
 const CreateFoodMealItemValidator: z.ZodType<CreateFoodMealItemRequest> = z.object({

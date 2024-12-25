@@ -8,7 +8,7 @@ import {
   UpdateMedicamentRequest,
   UpdateMedicamentResponse,
 } from '#/shared/api/types/medicaments';
-import { createAction } from '#shared/api/utils';
+import { createAction } from '#/shared/api/utils';
 
 export const MedicamentsSchema = {
   create: createAction<CreateMedicamentRequest, CreateMedicamentResponse>({

@@ -1,12 +1,12 @@
-import { PrismaTransaction } from '#server/prisma';
-import { ONLY_NUTRIENTS_SELECT } from '#server/selectors/food';
+import { PrismaTransaction } from '#/server/prisma';
+import { ONLY_NUTRIENTS_SELECT } from '#/server/selectors/food';
 import {
   FoodMealIngredientType,
   FoodNutrients,
   multiplyNutrients,
   sumNutrients,
-} from '#shared/models/food';
-import { nonReachable } from '#shared/utils';
+} from '#/shared/models/food';
+import { nonReachable } from '#/shared/utils';
 
 class FoodNutrientsService {
   async calculate(

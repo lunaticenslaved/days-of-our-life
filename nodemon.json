@@ -1,5 +1,5 @@
 {
-    "execMap": {
-        "ts": "ts-node -r dotenv/config"
-    }
+  "execMap": {
+    "ts": "ts-node -r dotenv/config"
+  }
 }
