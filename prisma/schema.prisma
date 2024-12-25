@@ -210,8 +210,9 @@ model MedicamentIntake {
 }
 
 model CosmeticProduct {
-  id   String @id @default(uuid()) @db.Uuid
-  name String @db.VarChar(255)
+  id           String @id @default(uuid()) @db.Uuid
+  name         String @db.VarChar(255)
+  manufacturer String @db.VarChar(255)
 
   applied CosmeticProductApply[]
 

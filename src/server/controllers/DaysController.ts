@@ -33,6 +33,10 @@ import {
   UpdateDayPartResponse,
   UpdateDayPartsRequest,
   UpdateDayPartsResponse,
+  AddCosmeticProductToDateResponse,
+  AddCosmeticProductToDateRequest,
+  RemoveCosmeticProductFromDateRequest,
+  RemoveCosmeticProductFromDateResponse,
 } from '#/shared/api/types/days';
 import dayjs from '#/shared/libs/dayjs';
 import { DateFormat, DateUtils } from '#/shared/models/date';
@@ -44,13 +48,17 @@ import { BODY_WEIGHT_SELECTOR, convertBodyWeightSelector } from '#server/selecto
 import { Controller } from '#server/utils/Controller';
 import { CommonValidators } from '#shared/models/common';
 
-import { convertDayPartSelector, DAY_PART_SELECTOR } from '#/server/selectors/days';
+import {
+  convertCosmeticProductApplySelector,
+  convertDayPartSelector,
+  COSMETIC_PRODUCT_APPLY_SELECTOR,
+  DAY_PART_SELECTOR,
+} from '#/server/selectors/days';
 import {} from '#/shared/api/types/days';
 import _ from 'lodash';
 
 import { z } from 'zod';
 
-// FIXME remove old
 export default new Controller<'days'>({
   'GET /days': Controller.handler<ListDaysRequest, ListDaysResponse>({
     validator: z.object({
@@ -485,6 +493,60 @@ export default new Controller<'days'>({
       // FIXME не удалять, если есть привязанные сущности
       await prisma.dayPart.delete({
         where: { id },
+      });
+    },
+  }),
+
+  // Cosmetic
+  'POST /days/:date/parts/:dayPartId/cosmetic/products/:productId': Controller.handler<
+    AddCosmeticProductToDateRequest,
+    AddCosmeticProductToDateResponse
+  >({
+    validator: z.object({
+      date: CommonValidators.dateFormat,
+      dayPartId: CommonValidators.id,
+      cosmeticProductId: CommonValidators.id,
+    }),
+    parse: req => ({
+      date: req.params.date as DateFormat,
+      dayPartId: req.params.dayPartId,
+      cosmeticProductId: req.params.cosmeticProductId,
+    }),
+    handler: async ({ dayPartId, cosmeticProductId, date }, { prisma }) => {
+      return prisma.cosmeticProductApply
+        .create({
+          data: {
+            date: DateUtils.fromDateFormat(date),
+            dayPartId,
+            cosmeticProductId,
+          },
+          ...COSMETIC_PRODUCT_APPLY_SELECTOR,
+        })
+        .then(convertCosmeticProductApplySelector);
+    },
+  }),
+
+  'DELETE /days/:date/parts/:dayPartId/cosmetic/products/:productId': Controller.handler<
+    RemoveCosmeticProductFromDateRequest,
+    RemoveCosmeticProductFromDateResponse
+  >({
+    validator: z.object({
+      date: CommonValidators.dateFormat,
+      dayPartId: CommonValidators.id,
+      cosmeticProductId: CommonValidators.id,
+    }),
+    parse: req => ({
+      date: req.params.date as DateFormat,
+      dayPartId: req.params.dayPartId,
+      cosmeticProductId: req.params.cosmeticProductId,
+    }),
+    handler: async ({ dayPartId, cosmeticProductId, date }, { prisma }) => {
+      await prisma.cosmeticProductApply.deleteMany({
+        where: {
+          date: DateUtils.fromDateFormat(date),
+          dayPartId,
+          cosmeticProductId,
+        },
       });
     },
   }),

@@ -1,6 +1,7 @@
 import dayjs from '#shared/libs/dayjs';
 import { Dayjs, OpUnitType } from 'dayjs';
 
+// FIXME move to day
 export type DateFormat = `${number}-${number}-${number}`;
 
 type ValidDateData = DateFormat | Date;
