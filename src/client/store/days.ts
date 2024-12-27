@@ -15,11 +15,17 @@ import {
   AddMedicamentToDateResponse,
   DeleteMedicamentInDateRequest,
   DeleteMedicamentInDateResponse,
+  AddCosmeticProductToDateResponse,
+  AddCosmeticProductToDateRequest,
+  RemoveCosmeticProductFromDateResponse,
+  RemoveCosmeticProductFromDateRequest,
 } from '#/shared/api/types/days';
 import { Handlers, MutationHandlers } from '#/client/types';
 import { DateFormat } from '#/shared/models/date';
 import {} from '#/shared/api/types/medicaments';
 import { MedicamentIntake } from '#/shared/models/medicament';
+import { CosmeticProductApplication } from '#/shared/models/cosmetic';
+import { cloneDeep } from 'lodash';
 
 const StoreKeys = {
   getDayQuery: (): QueryKey => ['getDayQuery'],
@@ -29,6 +35,10 @@ const StoreKeys = {
   deleteMedicamentIntakeMutation: (): QueryKey => ['deleteMedicamentIntakeMutation'],
   startFemalePeriodMutation: (): QueryKey => ['startFemalePeriodMutation'],
   deleteFemalePeriodMutation: (): QueryKey => ['deleteFemalePeriodMutation'],
+  addCosmeticProductToDateMutation: (): QueryKey => ['addCosmeticProductToDateMutation'],
+  deleteCosmeticProductFromDateMutation: (): QueryKey => [
+    'deleteCosmeticProductFromDateMutation',
+  ],
 };
 
 // Days
@@ -37,6 +47,8 @@ function setDaysQueryData(
   arg: {
     weight?: number;
     addMedicamentIntake?: MedicamentIntake;
+    addCosmeticProductApplication?: CosmeticProductApplication;
+    removeCosmeticProductApplicationId?: string;
     removeMedicamentIntakeId?: string;
   },
 ) {
@@ -47,14 +59,31 @@ function setDaysQueryData(
       return _old;
     }
 
-    const old = { ..._old };
+    const old = cloneDeep(_old);
 
     if (!(date in old)) {
-      old[date] = { date: date };
+      old[date] = { date: date, cosmeticProductApplications: [] };
     }
 
     if (typeof arg.weight === 'number') {
       old[date].weight = arg.weight;
+    }
+
+    if (arg.addCosmeticProductApplication) {
+      old[date].cosmeticProductApplications = [
+        ...(old[date].cosmeticProductApplications || []),
+        arg.addCosmeticProductApplication,
+      ];
+    }
+
+    if (arg.removeCosmeticProductApplicationId) {
+      const oldIntakes = old[date].cosmeticProductApplications;
+
+      if (oldIntakes) {
+        old[date].cosmeticProductApplications = oldIntakes.filter(
+          intake => intake.id !== arg.removeCosmeticProductApplicationId,
+        );
+      }
     }
 
     if (arg.addMedicamentIntake) {
@@ -263,5 +292,109 @@ export function useDeleteFemalePeriodMutation(
   return useMutation<DeleteFemalePeriodResponse, Error, DeleteFemalePeriodRequest>({
     mutationKey: StoreKeys.deleteFemalePeriodMutation(),
     mutationFn: wrapApiAction(Schema.days.deleteFemalePeriod, handlers),
+  });
+}
+
+// Cosmetic Product
+export function useAddCosmeticProductToDateMutation(handlers: MutationHandlers = {}) {
+  return useMutation<
+    AddCosmeticProductToDateResponse,
+    DefaultError,
+    AddCosmeticProductToDateRequest,
+    { createdItem: CosmeticProductApplication }
+  >({
+    mutationKey: StoreKeys.addCosmeticProductToDateMutation(),
+    mutationFn: wrapApiAction<
+      AddCosmeticProductToDateRequest,
+      AddCosmeticProductToDateResponse
+    >(Schema.days.addCosmeticProduct),
+    onMutate: async request => {
+      await queryClient.cancelQueries({ queryKey: StoreKeys.listDaysQuery() });
+
+      const createdItem: CosmeticProductApplication = {
+        id: Date.now().toString(),
+        ...request,
+      };
+
+      setDaysQueryData(request.date, {
+        addCosmeticProductApplication: createdItem,
+      });
+
+      handlers.onMutate?.();
+
+      return {
+        createdItem,
+      };
+    },
+    onError: (_error, _request, context) => {
+      handlers.onError?.();
+
+      if (context) {
+        setDaysQueryData(context.createdItem.date, {
+          removeCosmeticProductApplicationId: context.createdItem.id,
+        });
+      }
+    },
+    onSuccess: (response, _request, context) => {
+      handlers.onSuccess?.();
+
+      setDaysQueryData(context.createdItem.date, {
+        removeCosmeticProductApplicationId: context.createdItem.id,
+        addCosmeticProductApplication: response,
+      });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: StoreKeys.listDaysQuery() });
+    },
+  });
+}
+
+export function useRemoveCosmeticProductFromDateMutation(
+  handlers: MutationHandlers = {},
+) {
+  return useMutation<
+    RemoveCosmeticProductFromDateResponse,
+    DefaultError,
+    CosmeticProductApplication,
+    { removedItem: CosmeticProductApplication }
+  >({
+    mutationKey: StoreKeys.deleteCosmeticProductFromDateMutation(),
+    mutationFn: data =>
+      wrapApiAction<
+        RemoveCosmeticProductFromDateRequest,
+        RemoveCosmeticProductFromDateResponse
+      >(Schema.days.removeCosmeticProduct)({
+        date: data.date,
+        dayPartId: data.dayPartId,
+        cosmeticProductId: data.cosmeticProductId,
+      }),
+    onMutate: async request => {
+      await queryClient.cancelQueries({ queryKey: StoreKeys.listDaysQuery() });
+
+      setDaysQueryData(request.date, {
+        removeCosmeticProductApplicationId: request.id,
+      });
+
+      handlers.onMutate?.();
+
+      return {
+        removedItem: request,
+      };
+    },
+    onError: (_error, _request, context) => {
+      handlers.onError?.();
+
+      if (context) {
+        setDaysQueryData(context.removedItem.date, {
+          addCosmeticProductApplication: context.removedItem,
+        });
+      }
+    },
+    onSuccess: (_response, _request, _context) => {
+      handlers.onSuccess?.();
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: StoreKeys.listDaysQuery() });
+    },
   });
 }

@@ -103,6 +103,13 @@ export default function PageView() {
             ) || []
           );
         }}
+        getCosmeticProductApplications={(date, datPartId) => {
+          return (
+            listDaysQuery.data[date].cosmeticProductApplications.filter(
+              item => item.dayPartId === datPartId,
+            ) || []
+          );
+        }}
         onMedicamentIntakeDelete={arg => {
           deleteMedicamentIntakeMutation.mutate(arg.intake);
         }}

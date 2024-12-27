@@ -1,7 +1,7 @@
+import { CosmeticProductApplication } from '#/shared/models/cosmetic';
 import { DateFormat } from '#/shared/models/date';
 import { FoodNutrients } from '#/shared/models/food';
 import { MedicamentIntake } from '#/shared/models/medicament';
-import { CosmeticProductApply } from '@prisma/client';
 
 export interface DayPart {
   id: string;
@@ -18,5 +18,5 @@ export interface DayInfo {
     startDate: DateFormat;
   };
   medicamentIntakes?: MedicamentIntake[];
-  cosmeticProducts?: CosmeticProductApply;
+  cosmeticProductApplications: CosmeticProductApplication[];
 }

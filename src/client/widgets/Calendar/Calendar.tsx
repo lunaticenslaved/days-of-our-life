@@ -11,7 +11,11 @@ import {
   MedicamentIntakesList,
 } from '#/client/entities/medicament/components';
 import { Fragment, useMemo } from 'react';
-
+import {
+  AddCosmeticProductAction,
+  CosmeticProductApplicationsList,
+} from '#/client/entities/cosmetic';
+import { CosmeticProductApplication } from '#/shared/models/cosmetic';
 interface RenderMedicamentIntakesProps {
   dayPart: DayPart;
   date: DateFormat;
@@ -29,6 +33,10 @@ interface CalendarProps {
   getWeight(date: DateFormat): number | null | undefined;
   getNutrients(date: DateFormat): FoodNutrients | null | undefined;
   getMedicamentIntakes(date: DateFormat, dayPartId: string): MedicamentIntake[];
+  getCosmeticProductApplications(
+    date: DateFormat,
+    dayPartId: string,
+  ): CosmeticProductApplication[];
   onMedicamentIntakeDelete(arg: RenderMedicamentIntakeActionsProps): void;
   onAddMedicamentIntake(arg: RenderMedicamentIntakesProps): void;
   onUpdated(): void;
@@ -42,6 +50,7 @@ export function Calendar({
   getWeight,
   getNutrients,
   getMedicamentIntakes,
+  getCosmeticProductApplications,
   onMedicamentIntakeDelete,
   onAddMedicamentIntake,
   onUpdated,
@@ -62,10 +71,6 @@ export function Calendar({
     return result;
   }, [endDate, startDate]);
 
-  function renderMedicamentIntakeActions(arg: RenderMedicamentIntakeActionsProps) {
-    return <MedicamentIntakeActions onDelete={() => onMedicamentIntakeDelete(arg)} />;
-  }
-
   function renderMedicamentIntakes(arg: RenderMedicamentIntakesProps) {
     return (
       <>
@@ -73,7 +78,11 @@ export function Calendar({
           medicaments={medicaments}
           intakes={getMedicamentIntakes(arg.date, arg.dayPart.id)}
           renderActions={intake => {
-            return renderMedicamentIntakeActions({ ...arg, intake });
+            return (
+              <MedicamentIntakeActions
+                onDelete={() => onMedicamentIntakeDelete({ ...arg, intake })}
+              />
+            );
           }}
         />
         <div style={{ marginTop: '10px' }}>
@@ -92,6 +101,7 @@ export function Calendar({
           <th>Нутриенты</th>
           <th>Части дня</th>
           <th>Медикаменты</th>
+          <th>Косметика</th>
         </tr>
       </thead>
       <tbody>
@@ -123,6 +133,12 @@ export function Calendar({
                     dayPart: firstDayPart,
                   })}
                 </td>
+                <td>
+                  <CosmeticProductApplicationsList
+                    applications={getCosmeticProductApplications(date, firstDayPart.id)}
+                  />
+                  <AddCosmeticProductAction date={date} dayPartId={firstDayPart.id} />
+                </td>
               </tr>
               {dayParts.slice(1).map(dayPart => {
                 return (
@@ -135,6 +151,12 @@ export function Calendar({
                         date,
                         dayPart,
                       })}
+                    </td>
+                    <td>
+                      <CosmeticProductApplicationsList
+                        applications={getCosmeticProductApplications(date, dayPart.id)}
+                      />
+                      <AddCosmeticProductAction date={date} dayPartId={dayPart.id} />
                     </td>
                   </tr>
                 );

@@ -1,7 +1,6 @@
-import { convertCosmeticProductSelector, COSMETIC_PRODUCT_SELECTOR } from './cosmetic';
 import { DayPart } from '#/shared/models/day';
 import { Prisma } from '@prisma/client';
-import { CosmeticProductApply } from '#/shared/models/cosmetic';
+import { CosmeticProductApplication } from '#/shared/models/cosmetic';
 import { DateUtils } from '#/shared/models/date';
 
 export const DAY_PART_SELECTOR = {
@@ -12,6 +11,13 @@ export const DAY_PART_SELECTOR = {
   },
 } satisfies Prisma.DayPartDefaultArgs;
 
+export const DAY_SELECTOR = {
+  select: {
+    id: true,
+    date: true,
+  },
+} satisfies Prisma.DayDefaultArgs;
+
 export function convertDayPartSelector(
   data: Prisma.DayPartGetPayload<typeof DAY_PART_SELECTOR>,
 ): DayPart {
@@ -21,18 +27,19 @@ export function convertDayPartSelector(
 export const COSMETIC_PRODUCT_APPLY_SELECTOR = {
   select: {
     id: true,
-    date: true,
     dayPartId: true,
-    cosmeticProduct: COSMETIC_PRODUCT_SELECTOR,
+    cosmeticProductId: true,
+    day: DAY_SELECTOR,
   },
-} satisfies Prisma.CosmeticProductApplyDefaultArgs;
+} satisfies Prisma.CosmeticProductApplicationDefaultArgs;
 
-export function convertCosmeticProductApplySelector(
-  data: Prisma.CosmeticProductApplyGetPayload<typeof COSMETIC_PRODUCT_APPLY_SELECTOR>,
-): CosmeticProductApply {
+export function convertCosmeticProductApplicationSelector(
+  data: Prisma.CosmeticProductApplicationGetPayload<
+    typeof COSMETIC_PRODUCT_APPLY_SELECTOR
+  >,
+): CosmeticProductApplication {
   return {
     ...data,
-    date: DateUtils.toDateFormat(data.date),
-    cosmeticProduct: convertCosmeticProductSelector(data.cosmeticProduct),
+    date: DateUtils.toDateFormat(data.day.date),
   };
 }

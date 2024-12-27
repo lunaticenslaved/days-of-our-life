@@ -1,5 +1,5 @@
 import { BodyWeight } from '#/shared/models/body';
-import { CosmeticProductApply } from '#/shared/models/cosmetic';
+import { CosmeticProductApplication } from '#/shared/models/cosmetic';
 import { DateFormat } from '#/shared/models/date';
 import { DayInfo, DayPart } from '#/shared/models/day';
 import { FemalePeriod } from '#/shared/models/female-period';
@@ -75,7 +75,7 @@ export interface DeleteMedicamentInDateRequest {
   dayPartId: string;
 }
 
-export type AddCosmeticProductToDateResponse = CosmeticProductApply;
+export type AddCosmeticProductToDateResponse = CosmeticProductApplication;
 export interface AddCosmeticProductToDateRequest {
   date: DateFormat;
   dayPartId: string;

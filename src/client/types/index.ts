@@ -18,8 +18,8 @@ export interface ModelValueProps<T = unknown> {
   onModelValueChange?(value?: T): void;
 }
 
-export interface MutationHandlers {
+export interface MutationHandlers<TSuccessData = undefined> {
   onMutate?(): void;
   onError?(): void;
-  onSuccess?(): void;
+  onSuccess?: TSuccessData extends undefined ? () => void : (data: TSuccessData) => void;
 }

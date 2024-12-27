@@ -49,7 +49,7 @@ import { Controller } from '#/server/utils/Controller';
 import { CommonValidators } from '#/shared/models/common';
 
 import {
-  convertCosmeticProductApplySelector,
+  convertCosmeticProductApplicationSelector,
   convertDayPartSelector,
   COSMETIC_PRODUCT_APPLY_SELECTOR,
   DAY_PART_SELECTOR,
@@ -58,6 +58,7 @@ import {} from '#/shared/api/types/days';
 import _ from 'lodash';
 
 import { z } from 'zod';
+import DayService from '#/server/services/DayService';
 
 export default new Controller<'days'>({
   // Day parts
@@ -171,12 +172,17 @@ export default new Controller<'days'>({
       const startDate = DateUtils.fromDateFormat(arg.startDate);
       const endDate = DateUtils.fromDateFormat(arg.endDate);
 
+      const date = {
+        gte: startDate,
+        lte: endDate,
+      };
+
       const result: ListDaysResponse = DateUtils.toMap(
         {
           start: arg.startDate,
           end: arg.endDate,
         },
-        date => ({ date }),
+        date => ({ date, cosmeticProductApplications: [] }),
       );
 
       function addToResult(
@@ -214,12 +220,7 @@ export default new Controller<'days'>({
 
       const weights = await prisma.bodyStatistics.findMany({
         ...BODY_WEIGHT_SELECTOR,
-        where: {
-          date: {
-            gte: startDate,
-            lte: endDate,
-          },
-        },
+        where: { date },
       });
 
       for (const { date, weight } of weights) {
@@ -227,12 +228,7 @@ export default new Controller<'days'>({
       }
 
       const nutrients = await prisma.foodTrackerDay.findMany({
-        where: {
-          date: {
-            gte: startDate,
-            lte: endDate,
-          },
-        },
+        where: { date },
         select: {
           date: true,
           meals: {
@@ -252,12 +248,7 @@ export default new Controller<'days'>({
       }
 
       const medicamentIntakes = await prisma.medicamentIntake.findMany({
-        where: {
-          date: {
-            gte: startDate,
-            lte: endDate,
-          },
-        },
+        where: { date },
         ...MEDICAMENT_INTAKE_SELECTOR,
       });
 
@@ -265,6 +256,19 @@ export default new Controller<'days'>({
         addToResult(medicamentIntake.date, {
           medicamentIntake: convertMedicamentIntakeSelector(medicamentIntake),
         });
+      }
+
+      const cosmeticProductApplications = await prisma.cosmeticProductApplication
+        .findMany({
+          where: { day: { date } },
+          ...COSMETIC_PRODUCT_APPLY_SELECTOR,
+        })
+        .then(items => items.map(convertCosmeticProductApplicationSelector));
+
+      for (const cosmeticProductApplication of cosmeticProductApplications) {
+        result[cosmeticProductApplication.date].cosmeticProductApplications.push(
+          cosmeticProductApplication,
+        );
       }
 
       return result;
@@ -283,6 +287,7 @@ export default new Controller<'days'>({
 
       const result: GetDayResponse = {
         date: arg.date,
+        cosmeticProductApplications: [],
       };
 
       const weightData = await prisma.bodyStatistics.findFirst({
@@ -352,7 +357,7 @@ export default new Controller<'days'>({
   }),
 
   // Medicaments
-  'POST /days/:dateInarts/:dayPartId/medicaments/:medicamentId': Controller.handler<
+  'POST /days/:date/parts/:dayPartId/medicaments/:medicamentId': Controller.handler<
     AddMedicamentToDateRequest,
     AddMedicamentToDateResponse
   >({
@@ -510,19 +515,23 @@ export default new Controller<'days'>({
     parse: req => ({
       date: req.params.date as DateFormat,
       dayPartId: req.params.dayPartId,
-      cosmeticProductId: req.params.cosmeticProductId,
+      cosmeticProductId: req.params.productId,
     }),
     handler: async ({ dayPartId, cosmeticProductId, date }, { prisma }) => {
-      return prisma.cosmeticProductApply
-        .create({
-          data: {
-            date: DateUtils.fromDateFormat(date),
-            dayPartId,
-            cosmeticProductId,
-          },
-          ...COSMETIC_PRODUCT_APPLY_SELECTOR,
-        })
-        .then(convertCosmeticProductApplySelector);
+      return await prisma.$transaction(async trx => {
+        const day = await DayService.getDay(date, trx);
+
+        return trx.cosmeticProductApplication
+          .create({
+            data: {
+              dayId: day.id,
+              dayPartId,
+              cosmeticProductId,
+            },
+            ...COSMETIC_PRODUCT_APPLY_SELECTOR,
+          })
+          .then(convertCosmeticProductApplicationSelector);
+      });
     },
   }),
 
@@ -538,15 +547,19 @@ export default new Controller<'days'>({
     parse: req => ({
       date: req.params.date as DateFormat,
       dayPartId: req.params.dayPartId,
-      cosmeticProductId: req.params.cosmeticProductId,
+      cosmeticProductId: req.params.productId,
     }),
     handler: async ({ dayPartId, cosmeticProductId, date }, { prisma }) => {
-      await prisma.cosmeticProductApply.deleteMany({
-        where: {
-          date: DateUtils.fromDateFormat(date),
-          dayPartId,
-          cosmeticProductId,
-        },
+      await prisma.$transaction(async trx => {
+        const day = await DayService.getDay(date, trx);
+
+        await trx.cosmeticProductApplication.deleteMany({
+          where: {
+            dayId: day.id,
+            dayPartId,
+            cosmeticProductId,
+          },
+        });
       });
     },
   }),

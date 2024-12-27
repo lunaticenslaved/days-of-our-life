@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router';
 import HomeRouter from './pages/home';
 import FoodRouter, { FOOD_NAVIGATION } from './pages/food';
 import DaysRouter, { DAYS_NAVIGATION } from './pages/days';
+import CosmeticRouter, { COSMETIC_NAVIGATION } from '#/client/pages/cosmetic';
 import { Link } from 'react-router-dom';
 import { DialogContextProvider } from '#/client/components/Dialog';
 
@@ -20,6 +21,7 @@ export function AppRouter() {
           }}>
           <Link to={FOOD_NAVIGATION.toRoot()}>Еда</Link>
           <Link to={DAYS_NAVIGATION.toRoot()}>Дни</Link>
+          <Link to={COSMETIC_NAVIGATION.toRoot()}>Косметика</Link>
         </aside>
         <main style={{ flexGrow: 1, overflow: 'auto' }}>
           <Suspense>
@@ -27,6 +29,7 @@ export function AppRouter() {
               {HomeRouter}
               {FoodRouter}
               {DaysRouter}
+              {CosmeticRouter}
               {/* TODO add not found page */}
               <Route path="*" element={<div>not found</div>} />
             </Routes>

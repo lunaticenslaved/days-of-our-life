@@ -170,13 +170,25 @@ model FemalePeriod {
   updatedAt DateTime @updatedAt
 }
 
+model Day {
+  id   String   @id @default(uuid()) @db.Uuid
+  date DateTime
+
+  cosmeticProductApplications CosmeticProductApplication[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([date])
+}
+
 model DayPart {
   id    String @id @default(uuid()) @db.Uuid
   name  String @unique @db.VarChar(255)
   order Int    @default(autoincrement()) @db.SmallInt
 
   medicamentIntakes      MedicamentIntake[]
-  cosmeticProductApplied CosmeticProductApply[]
+  cosmeticProductApplied CosmeticProductApplication[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -214,15 +226,17 @@ model CosmeticProduct {
   name         String @db.VarChar(255)
   manufacturer String @db.VarChar(255)
 
-  applied CosmeticProductApply[]
+  applied CosmeticProductApplication[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model CosmeticProductApply {
-  id   String   @id @default(uuid()) @db.Uuid
-  date DateTime
+model CosmeticProductApplication {
+  id String @id @default(uuid()) @db.Uuid
+
+  dayId String @db.Uuid
+  day   Day    @relation(fields: [dayId], references: [id], onDelete: Restrict)
 
   dayPartId String  @db.Uuid
   dayPart   DayPart @relation(fields: [dayPartId], references: [id], onDelete: Restrict)
@@ -233,5 +247,5 @@ model CosmeticProductApply {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([cosmeticProductId, dayPartId])
+  @@unique([cosmeticProductId, dayPartId, dayId])
 }

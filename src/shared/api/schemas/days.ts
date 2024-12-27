@@ -23,6 +23,10 @@ import {
   AddMedicamentToDateResponse,
   DeleteMedicamentInDateRequest,
   DeleteMedicamentInDateResponse,
+  AddCosmeticProductToDateRequest,
+  AddCosmeticProductToDateResponse,
+  RemoveCosmeticProductFromDateRequest,
+  RemoveCosmeticProductFromDateResponse,
 } from '#/shared/api/types/days';
 import { createAction } from '#/shared/api/utils';
 
@@ -100,4 +104,22 @@ export const DaysSchema = {
       method: 'DELETE',
     },
   ),
+
+  // Cosmetic product
+  addCosmeticProduct: createAction<
+    AddCosmeticProductToDateRequest,
+    AddCosmeticProductToDateResponse
+  >({
+    path: ({ date, dayPartId, cosmeticProductId }) =>
+      `/api/days/${date}/parts/${dayPartId}/cosmetic/products/${cosmeticProductId}`,
+    method: 'POST',
+  }),
+  removeCosmeticProduct: createAction<
+    RemoveCosmeticProductFromDateRequest,
+    RemoveCosmeticProductFromDateResponse
+  >({
+    path: ({ date, dayPartId, cosmeticProductId }) =>
+      `/api/days/${date}/parts/${dayPartId}/cosmetic/products/${cosmeticProductId}`,
+    method: 'DELETE',
+  }),
 };

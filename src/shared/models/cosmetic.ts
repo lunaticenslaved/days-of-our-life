@@ -6,9 +6,9 @@ export interface CosmeticProduct {
   manufacturer: string;
 }
 
-export interface CosmeticProductApply {
+export interface CosmeticProductApplication {
   id: string;
   date: DateFormat;
   dayPartId: string;
-  cosmeticProduct: CosmeticProduct;
+  cosmeticProductId: string;
 }

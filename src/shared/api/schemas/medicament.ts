@@ -25,10 +25,6 @@ export const MedicamentsSchema = {
     path: ({ id }) => `/api/medicaments/${id}`,
     method: 'DELETE',
   }),
-  //   get: createAction<GetDayPartRequest, GetDayPartResponse>({
-  //     path: ({ id }) => `/api/days/parts/${id}`,
-  //     method: 'GET',
-  //   }),
   list: createAction<ListMedicamentsRequest, ListMedicamentsResponse>({
     path: () => `/api/medicaments`,
     method: 'GET',

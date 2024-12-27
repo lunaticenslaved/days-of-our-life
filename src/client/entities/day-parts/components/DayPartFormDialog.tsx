@@ -38,7 +38,7 @@ export function DayPartFormDialog({ dayPart, dialog, onSubmit }: DayPartFromDial
                 </Form.Content>
               </Dialog.Content>
               <Dialog.Footer>
-                <Form.Content>
+                <Form.Footer>
                   {({ disabled }) => {
                     return (
                       <Button disabled={disabled} type="submit">
@@ -46,7 +46,7 @@ export function DayPartFormDialog({ dayPart, dialog, onSubmit }: DayPartFromDial
                       </Button>
                     );
                   }}
-                </Form.Content>
+                </Form.Footer>
               </Dialog.Footer>
             </>
           );

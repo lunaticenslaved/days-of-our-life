@@ -28,7 +28,6 @@ export const MedicamentQueryKeys = {
   },
 };
 
-// Medicaments
 export function useCreateMedicamentMutation(handlers: MutationHandlers = {}) {
   return useMutation<
     CreateMedicamentResponse,

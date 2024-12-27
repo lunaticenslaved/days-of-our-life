@@ -92,6 +92,8 @@ export async function configureApp(app: Express) {
 
         const data = parse(req);
 
+        console.log('DATA', data);
+
         try {
           if (validator) {
             const validationResult = validator.safeParse(data);
