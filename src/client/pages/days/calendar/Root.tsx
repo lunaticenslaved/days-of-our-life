@@ -90,25 +90,8 @@ export default function PageView() {
         endDate={dateRange.to}
         dayParts={listDayPartsQuery.data}
         medicaments={listMedicamentsQuery.data}
-        getWeight={date => {
-          return listDaysQuery.data[date].weight;
-        }}
-        getNutrients={date => {
-          return listDaysQuery.data[date].nutrients;
-        }}
-        getMedicamentIntakes={(date, dayPartId) => {
-          return (
-            listDaysQuery.data[date].medicamentIntakes?.filter(
-              intake => intake.dayPartId === dayPartId,
-            ) || []
-          );
-        }}
-        getCosmeticProductApplications={(date, datPartId) => {
-          return (
-            listDaysQuery.data[date].cosmeticProductApplications.filter(
-              item => item.dayPartId === datPartId,
-            ) || []
-          );
+        getDayInfo={date => {
+          return listDaysQuery.data[date];
         }}
         onMedicamentIntakeDelete={arg => {
           deleteMedicamentIntakeMutation.mutate(arg.intake);

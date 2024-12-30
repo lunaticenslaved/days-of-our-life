@@ -1,34 +1,85 @@
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { PrismaTransaction } from '#/server/prisma';
 import {
-  convertFemalePeriod,
-  SELECT_FEMALE_PERIOD,
+  convertFemalePeriodSelector,
+  FEMALE_PERIOD_SELECTOR,
 } from '#/server/selectors/female-period';
-import dayjs from '#/shared/libs/dayjs';
+import DayService from '#/server/services/DayService';
 
 class FemalePeriodService {
-  async orderPeriods(_arg: unknown, trx: PrismaTransaction) {
-    const periods = await trx.femalePeriod.findMany({
-      orderBy: { startDate: 'asc' },
+  async create(startDate: DateFormat, trx: PrismaTransaction) {
+    const day = await DayService.getDay(startDate, trx);
+
+    const previousPeriod = await trx.femalePeriod.findFirst({
+      where: {
+        startDay: {
+          date: { lt: DateUtils.fromDateFormat(startDate) },
+        },
+      },
+      orderBy: {
+        startDay: { date: 'desc' },
+      },
     });
 
-    for (let i = 0; i < periods.length; i++) {
-      const currentPeriod = periods[i];
-      const nextPeriod = i < periods.length ? periods[i + 1] : undefined;
+    const nextPeriod = await trx.femalePeriod.findFirst({
+      where: {
+        startDay: {
+          date: { gt: DateUtils.fromDateFormat(startDate) },
+        },
+      },
+      orderBy: {
+        startDay: { date: 'asc' },
+      },
+    });
 
-      if (!nextPeriod) {
-        continue;
-      }
+    return await trx.femalePeriod
+      .create({
+        data: {
+          startDay: {
+            connect: { id: day.id },
+          },
+          prevPeriod: previousPeriod
+            ? {
+                connect: { id: previousPeriod.id },
+              }
+            : undefined,
+          nextPeriod: nextPeriod
+            ? {
+                connect: { id: nextPeriod.id },
+              }
+            : undefined,
+        },
+        ...FEMALE_PERIOD_SELECTOR,
+      })
+      .then(convertFemalePeriodSelector);
+  }
 
-      const endDate = dayjs(nextPeriod.startDate).subtract(1, 'day').toDate();
+  async delete(startDate: DateFormat, trx: PrismaTransaction) {
+    const period = await trx.femalePeriod.findFirstOrThrow({
+      where: {
+        startDay: {
+          date: DateUtils.fromDateFormat(startDate),
+        },
+      },
+      select: {
+        id: true,
+        nextPeriod: true,
+        prevPeriod: true,
+      },
+    });
 
-      if (dayjs(currentPeriod.endDate).isSame(endDate)) {
-        continue;
-      }
+    await trx.femalePeriod.deleteMany({
+      where: { id: period.id },
+    });
 
+    const { prevPeriod, nextPeriod } = period;
+
+    if (prevPeriod && nextPeriod) {
       await trx.femalePeriod.update({
-        where: { id: currentPeriod.id },
-        data: { endDate },
+        where: { id: prevPeriod.id },
+        data: {
+          nextPeriodId: nextPeriod.id,
+        },
       });
     }
   }
@@ -37,18 +88,28 @@ class FemalePeriodService {
     arg: { startDate: DateFormat; endDate: DateFormat },
     trx: PrismaTransaction,
   ) {
-    const startDate = DateUtils.fromDateFormat(arg.startDate);
-    const endDate = DateUtils.fromDateFormat(arg.endDate);
-
     return await trx.femalePeriod
       .findMany({
         where: {
-          OR: [{ startDate: { lte: endDate } }, { endDate: { gte: startDate } }],
+          OR: [
+            {
+              startDay: {
+                date: { lte: DateUtils.fromDateFormat(arg.endDate) },
+              },
+            },
+            {
+              startDay: {
+                date: { gte: DateUtils.fromDateFormat(arg.startDate) },
+              },
+            },
+          ],
         },
-        orderBy: { startDate: 'asc' },
-        ...SELECT_FEMALE_PERIOD,
+        orderBy: {
+          startDay: { date: 'asc' },
+        },
+        ...FEMALE_PERIOD_SELECTOR,
       })
-      .then(items => items.map(convertFemalePeriod));
+      .then(items => items.map(convertFemalePeriodSelector));
   }
 }
 

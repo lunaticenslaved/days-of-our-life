@@ -162,9 +162,14 @@ model BodyStatistics {
 }
 
 model FemalePeriod {
-  id        String   @id @default(uuid()) @db.Uuid
-  startDate DateTime @unique
-  endDate   DateTime @unique
+  id String @id @default(uuid()) @db.Uuid
+
+  startDayId String @unique @db.Uuid
+  startDay   Day    @relation(fields: [startDayId], references: [id], onDelete: Restrict)
+
+  nextPeriodId String?       @unique @db.Uuid
+  nextPeriod   FemalePeriod? @relation(name: "nextFemalePeriod", fields: [nextPeriodId], references: [id], onDelete: SetNull)
+  prevPeriod   FemalePeriod? @relation(name: "nextFemalePeriod")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -175,6 +180,7 @@ model Day {
   date DateTime
 
   cosmeticProductApplications CosmeticProductApplication[]
+  femalePeriodStarted         FemalePeriod?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

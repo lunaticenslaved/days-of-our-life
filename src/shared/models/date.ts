@@ -25,6 +25,26 @@ export const DateUtils = {
   now() {
     return dayjs();
   },
+  isBetween(
+    date: ValidDateData,
+    dates: [ValidDateData, ValidDateData],
+    unit: OpUnitType = 'day',
+  ) {
+    const dateDJ = getDayjsObject(date);
+
+    if (dateDJ.isSame(getDayjsObject(dates[0]), unit)) {
+      return true;
+    }
+
+    if (dateDJ.isSame(getDayjsObject(dates[1]), unit)) {
+      return true;
+    }
+
+    return (
+      dateDJ.isAfter(getDayjsObject(dates[0]), unit) &&
+      dateDJ.isBefore(getDayjsObject(dates[1]), unit)
+    );
+  },
   isSame(date1: ValidDateData, date2: ValidDateData, unit: OpUnitType = 'day') {
     return getDayjsObject(date1).isSame(getDayjsObject(date2), unit);
   },
@@ -72,7 +92,7 @@ export const DateUtils = {
   },
   toMap<T>(
     arg: { start: DateFormat; end: DateFormat },
-    fn: (arg: DateFormat) => T,
+    fn: (arg: DateFormat, arg2: { prevDate: DateFormat; nextDate: DateFormat }) => T,
   ): Record<DateFormat, T> {
     const start = DateUtils.fromDateFormat(arg.start);
     const end = DateUtils.fromDateFormat(arg.end);
@@ -82,10 +102,20 @@ export const DateUtils = {
     let date = dayjs(start);
 
     while (date.isBefore(end, 'day') || date.isSame(end, 'day')) {
-      result[DateUtils.toDateFormat(date)] = fn(DateUtils.toDateFormat(date));
+      result[DateUtils.toDateFormat(date)] = fn(DateUtils.toDateFormat(date), {
+        prevDate: DateUtils.toDateFormat(dayjs(date).subtract(1, 'day')),
+        nextDate: DateUtils.toDateFormat(dayjs(date).add(1, 'day')),
+      });
       date = date.add(1, 'day');
     }
 
     return result;
+  },
+  subtract(date: ValidDateData, value: number, unit: 'day' = 'day'): Date {
+    const dateF = getDayjsObject(date);
+    return dateF.subtract(value, unit).toDate();
+  },
+  isAfter(date1: ValidDateData, date2: ValidDateData, unit: 'day' = 'day') {
+    return getDayjsObject(date1).isAfter(getDayjsObject(date2), unit);
   },
 };

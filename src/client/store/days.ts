@@ -20,12 +20,12 @@ import {
   RemoveCosmeticProductFromDateResponse,
   RemoveCosmeticProductFromDateRequest,
 } from '#/shared/api/types/days';
-import { Handlers, MutationHandlers } from '#/client/types';
-import { DateFormat } from '#/shared/models/date';
-import {} from '#/shared/api/types/medicaments';
+import { MutationHandlers } from '#/client/types';
+import { DateFormat, DateUtils } from '#/shared/models/date';
 import { MedicamentIntake } from '#/shared/models/medicament';
 import { CosmeticProductApplication } from '#/shared/models/cosmetic';
 import { cloneDeep } from 'lodash';
+import { FemalePeriod } from '#/shared/models/female-period';
 
 const StoreKeys = {
   getDayQuery: (): QueryKey => ['getDayQuery'],
@@ -50,6 +50,8 @@ function setDaysQueryData(
     addCosmeticProductApplication?: CosmeticProductApplication;
     removeCosmeticProductApplicationId?: string;
     removeMedicamentIntakeId?: string;
+    addFemalePeriod?: true;
+    removeFemalePeriod?: true;
   },
 ) {
   // FIXME set data for getDay request
@@ -100,6 +102,42 @@ function setDaysQueryData(
         old[date].medicamentIntakes = oldIntakes.filter(
           intake => intake.id !== arg.removeMedicamentIntakeId,
         );
+      }
+    }
+
+    if (arg.removeFemalePeriod || arg.addFemalePeriod) {
+      let startDate = date;
+
+      if (arg.removeFemalePeriod) {
+        old[date].femalePeriod = undefined;
+        startDate = DateUtils.min(...(Object.keys(old) as DateFormat[]));
+      }
+
+      if (arg.addFemalePeriod) {
+        startDate = date;
+
+        old[date].femalePeriod = {
+          startDate,
+        };
+      }
+
+      for (const dateStr of Object.keys(old)) {
+        const currentDate = dateStr as DateFormat;
+
+        if (DateUtils.isAfter(currentDate, startDate, 'day')) {
+          const currentFemalePeriod = old[currentDate].femalePeriod;
+
+          if (
+            currentFemalePeriod &&
+            DateUtils.isSame(currentFemalePeriod.startDate, currentDate, 'day')
+          ) {
+            startDate = currentFemalePeriod.startDate;
+          }
+
+          old[currentDate].femalePeriod = {
+            startDate,
+          };
+        }
       }
     }
 
@@ -275,23 +313,95 @@ export function useDeleteMedicamentIntakeMutation(handlers: MutationHandlers = {
 }
 
 // Female periond
-export function useStartFemalePeriodMutation(
-  handlers: Handlers<StartFemalePeriodResponse> = {},
-) {
+export function useStartFemalePeriodMutation(handlers: MutationHandlers = {}) {
   // FIXME update cache
-  return useMutation<StartFemalePeriodResponse, Error, StartFemalePeriodRequest>({
+  return useMutation<
+    StartFemalePeriodResponse,
+    Error,
+    StartFemalePeriodRequest,
+    FemalePeriod
+  >({
     mutationKey: StoreKeys.startFemalePeriodMutation(),
     mutationFn: wrapApiAction(Schema.days.startFemalePeriod, handlers),
+    onMutate: async request => {
+      await queryClient.cancelQueries({ queryKey: StoreKeys.listDaysQuery() });
+
+      const createdItem: FemalePeriod = {
+        startDate: request.startDate,
+      };
+
+      setDaysQueryData(request.startDate, {
+        addFemalePeriod: true,
+      });
+
+      handlers.onMutate?.();
+
+      return createdItem;
+    },
+    onError: (_error, _request, context) => {
+      handlers.onError?.();
+
+      if (context) {
+        setDaysQueryData(context.startDate, {
+          removeFemalePeriod: true,
+        });
+      }
+    },
+    onSuccess: (response, _request) => {
+      handlers.onSuccess?.();
+
+      setDaysQueryData(response.startDate, {
+        addFemalePeriod: true,
+      });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: StoreKeys.listDaysQuery() });
+    },
   });
 }
 
-export function useDeleteFemalePeriodMutation(
-  handlers: Handlers<DeleteFemalePeriodResponse> = {},
-) {
+export function useDeleteFemalePeriodMutation(handlers: MutationHandlers = {}) {
   // FIXME update cache
-  return useMutation<DeleteFemalePeriodResponse, Error, DeleteFemalePeriodRequest>({
+  return useMutation<
+    DeleteFemalePeriodResponse,
+    Error,
+    DeleteFemalePeriodRequest,
+    {
+      removedItem: FemalePeriod;
+    }
+  >({
     mutationKey: StoreKeys.deleteFemalePeriodMutation(),
     mutationFn: wrapApiAction(Schema.days.deleteFemalePeriod, handlers),
+    onMutate: async request => {
+      await queryClient.cancelQueries({ queryKey: StoreKeys.listDaysQuery() });
+
+      const removedItem: FemalePeriod = {
+        startDate: request.startDate,
+      };
+
+      setDaysQueryData(request.startDate, {
+        removeFemalePeriod: true,
+      });
+
+      handlers.onMutate?.();
+
+      return { removedItem };
+    },
+    onError: (_error, _request, context) => {
+      handlers.onError?.();
+
+      if (context) {
+        setDaysQueryData(context.removedItem.startDate, {
+          addFemalePeriod: true,
+        });
+      }
+    },
+    onSuccess: (_response, _request) => {
+      handlers.onSuccess?.();
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: StoreKeys.listDaysQuery() });
+    },
   });
 }
 

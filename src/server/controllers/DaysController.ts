@@ -1,7 +1,3 @@
-import {
-  convertFemalePeriod,
-  SELECT_FEMALE_PERIOD,
-} from '#/server/selectors/female-period';
 import { convertFoodNutrients, ONLY_NUTRIENTS_SELECT } from '#/server/selectors/food';
 import {
   convertMedicamentIntakeSelector,
@@ -38,10 +34,8 @@ import {
   RemoveCosmeticProductFromDateRequest,
   RemoveCosmeticProductFromDateResponse,
 } from '#/shared/api/types/days';
-import dayjs from '#/shared/libs/dayjs';
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { DayInfo, DayPart } from '#/shared/models/day';
-import { FEMALE_PERIOD_DEFAULT_END } from '#/shared/models/female-period';
 import { FoodNutrients, sumNutrients } from '#/shared/models/food';
 import { MedicamentIntake } from '#/shared/models/medicament';
 import { BODY_WEIGHT_SELECTOR, convertBodyWeightSelector } from '#/server/selectors/body';
@@ -177,12 +171,37 @@ export default new Controller<'days'>({
         lte: endDate,
       };
 
+      const femalePeriodsDesc = await FemalePeriodService.list(
+        {
+          startDate: arg.startDate,
+          endDate: arg.endDate,
+        },
+        prisma,
+      ).then(items => [...items].reverse());
+
       const result: ListDaysResponse = DateUtils.toMap(
         {
           start: arg.startDate,
           end: arg.endDate,
         },
-        date => ({ date, cosmeticProductApplications: [] }),
+        date => {
+          const femalePeriod = femalePeriodsDesc.find(period => {
+            return (
+              DateUtils.isSame(date, period.startDate, 'day') ||
+              DateUtils.isAfter(date, period.startDate, 'day')
+            );
+          });
+
+          return {
+            date,
+            femalePeriod: femalePeriod
+              ? {
+                  startDate: femalePeriod.startDate,
+                }
+              : undefined,
+            cosmeticProductApplications: [],
+          };
+        },
       );
 
       function addToResult(
@@ -423,61 +442,11 @@ export default new Controller<'days'>({
       startDate: CommonValidators.dateFormat,
     }),
     parse: req => ({
-      startDate: req.body.startDate as DateFormat,
+      startDate: req.params.date as DateFormat,
     }),
     handler: async (arg, { prisma }) => {
-      const startDate = DateUtils.fromDateFormat(arg.startDate);
-
       return await prisma.$transaction(async trx => {
-        const existingPeriod = await trx.femalePeriod
-          .findFirst({
-            where: { startDate },
-            ...SELECT_FEMALE_PERIOD,
-          })
-          .then(item => (item ? convertFemalePeriod(item) : undefined));
-
-        if (existingPeriod) {
-          return existingPeriod;
-        }
-
-        const prevPeriod = await trx.femalePeriod.findFirst({
-          where: { startDate: { lt: startDate } },
-          orderBy: { startDate: 'desc' },
-        });
-
-        const nextPeriod = await trx.femalePeriod.findFirst({
-          where: { startDate: { gt: startDate } },
-          orderBy: { startDate: 'desc' },
-        });
-
-        if (prevPeriod) {
-          await trx.femalePeriod.updateMany({
-            where: { id: prevPeriod.id },
-            data: { endDate: dayjs(startDate).subtract(1, 'day').endOf('day').toDate() },
-          });
-        }
-
-        let endDate = FEMALE_PERIOD_DEFAULT_END;
-
-        if (nextPeriod) {
-          endDate = dayjs(nextPeriod.startDate)
-            .subtract(1, 'day')
-            .endOf('day')
-            .toISOString();
-        }
-
-        const { id } = await trx.femalePeriod.create({
-          data: { startDate, endDate },
-        });
-
-        await FemalePeriodService.orderPeriods({}, trx);
-
-        return await trx.femalePeriod
-          .findFirstOrThrow({
-            where: { id },
-            ...SELECT_FEMALE_PERIOD,
-          })
-          .then(convertFemalePeriod);
+        return await FemalePeriodService.create(arg.startDate, trx);
       });
     },
   }),
@@ -490,14 +459,11 @@ export default new Controller<'days'>({
       startDate: CommonValidators.dateFormat,
     }),
     parse: req => ({
-      startDate: req.params.startDate as DateFormat,
+      startDate: req.params.date as DateFormat,
     }),
     handler: async (arg, { prisma }) => {
-      const startDate = DateUtils.fromDateFormat(arg.startDate);
-
       await prisma.$transaction(async trx => {
-        await trx.femalePeriod.delete({ where: { startDate } });
-        await FemalePeriodService.orderPeriods({}, trx);
+        await FemalePeriodService.delete(arg.startDate, trx);
       });
     },
   }),

@@ -13,7 +13,6 @@ export interface DayInfo {
   date: DateFormat;
   weight?: number;
   nutrients?: FoodNutrients;
-  // FIXME add female perion to response
   femalePeriod?: {
     startDate: DateFormat;
   };

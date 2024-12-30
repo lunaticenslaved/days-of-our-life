@@ -1,7 +1,6 @@
 import dayjs from '#/shared/libs/dayjs';
 import { DateFormat, DateUtils } from '#/shared/models/date';
-import { DayPart } from '#/shared/models/day';
-import { FoodNutrients } from '#/shared/models/food';
+import { DayInfo, DayPart } from '#/shared/models/day';
 import { Medicament, MedicamentIntake } from '#/shared/models/medicament';
 import { Button } from '#/client/components/Button';
 import { AddWeightAction } from '#/client/entities/body-statistics';
@@ -15,13 +14,14 @@ import {
   AddCosmeticProductAction,
   CosmeticProductApplicationsList,
 } from '#/client/entities/cosmetic';
-import { CosmeticProductApplication } from '#/shared/models/cosmetic';
-interface RenderMedicamentIntakesProps {
+import { StartFemalePeriodAction } from '#/client/entities/female-period';
+
+interface RenderDayPartProps {
   dayPart: DayPart;
   date: DateFormat;
 }
 
-interface RenderMedicamentIntakeActionsProps extends RenderMedicamentIntakesProps {
+interface RenderMedicamentIntakeActionsProps extends RenderDayPartProps {
   intake: MedicamentIntake;
 }
 
@@ -30,15 +30,9 @@ interface CalendarProps {
   endDate: DateFormat;
   medicaments: Medicament[];
   dayParts: DayPart[];
-  getWeight(date: DateFormat): number | null | undefined;
-  getNutrients(date: DateFormat): FoodNutrients | null | undefined;
-  getMedicamentIntakes(date: DateFormat, dayPartId: string): MedicamentIntake[];
-  getCosmeticProductApplications(
-    date: DateFormat,
-    dayPartId: string,
-  ): CosmeticProductApplication[];
+  getDayInfo(date: DateFormat): DayInfo;
   onMedicamentIntakeDelete(arg: RenderMedicamentIntakeActionsProps): void;
-  onAddMedicamentIntake(arg: RenderMedicamentIntakesProps): void;
+  onAddMedicamentIntake(arg: RenderDayPartProps): void;
   onUpdated(): void;
 }
 
@@ -47,10 +41,7 @@ export function Calendar({
   startDate,
   endDate,
   medicaments,
-  getWeight,
-  getNutrients,
-  getMedicamentIntakes,
-  getCosmeticProductApplications,
+  getDayInfo,
   onMedicamentIntakeDelete,
   onAddMedicamentIntake,
   onUpdated,
@@ -71,12 +62,17 @@ export function Calendar({
     return result;
   }, [endDate, startDate]);
 
-  function renderMedicamentIntakes(arg: RenderMedicamentIntakesProps) {
+  function renderMedicamentIntakes(arg: RenderDayPartProps) {
+    const intakes =
+      getDayInfo(arg.date).medicamentIntakes?.filter(
+        intake => intake.dayPartId === arg.dayPart.id,
+      ) || [];
+
     return (
       <>
         <MedicamentIntakesList
           medicaments={medicaments}
-          intakes={getMedicamentIntakes(arg.date, arg.dayPart.id)}
+          intakes={intakes}
           renderActions={intake => {
             return (
               <MedicamentIntakeActions
@@ -92,11 +88,26 @@ export function Calendar({
     );
   }
 
+  function renderCosmeticProducts(arg: RenderDayPartProps) {
+    const items =
+      getDayInfo(arg.date).cosmeticProductApplications.filter(
+        intake => intake.dayPartId === arg.dayPart.id,
+      ) || [];
+
+    return (
+      <>
+        <CosmeticProductApplicationsList applications={items} />
+        <AddCosmeticProductAction date={arg.date} dayPartId={arg.dayPart.id} />
+      </>
+    );
+  }
+
   return (
     <table>
       <thead>
         <tr>
           <th>Дата</th>
+          <th>Цикл</th>
           <th>Вес</th>
           <th>Нутриенты</th>
           <th>Части дня</th>
@@ -106,39 +117,52 @@ export function Calendar({
       </thead>
       <tbody>
         {dates.map((date, index) => {
-          const weight = getWeight(date);
-          const nutrients = getNutrients(date);
-          const firstDayPart = dayParts[0];
+          const dayInfo = getDayInfo(date);
+
+          const weight = dayInfo.weight;
+          const nutrients = dayInfo.nutrients;
+          const firstDayPart: DayPart | undefined = dayParts[0];
 
           return (
             <Fragment key={date}>
               <tr style={{ backgroundColor: index % 2 === 0 ? 'lightgrey' : '' }}>
-                <td rowSpan={dayParts.length}>
+                <td rowSpan={dayParts.length || 1}>
                   {DateUtils.isSame(date, new Date()) ? <strong>{date}</strong> : date}
                 </td>
-                <td rowSpan={dayParts.length}>
+                <td rowSpan={dayParts.length || 1}>
+                  <StartFemalePeriodAction
+                    femalePeriod={dayInfo.femalePeriod}
+                    date={date}
+                  />
+                </td>
+                <td rowSpan={dayParts.length || 1}>
                   <AddWeightAction
                     date={date}
                     weight={weight || undefined}
                     onUpdated={onUpdated}
                   />
                 </td>
-                <td rowSpan={dayParts.length}>
+                <td rowSpan={dayParts.length || 1}>
                   <FoodNutrientsList nutrients={nutrients || undefined} />
                 </td>
-                <td>{firstDayPart.name}</td>
-                <td>
-                  {renderMedicamentIntakes({
-                    date,
-                    dayPart: firstDayPart,
-                  })}
-                </td>
-                <td>
-                  <CosmeticProductApplicationsList
-                    applications={getCosmeticProductApplications(date, firstDayPart.id)}
-                  />
-                  <AddCosmeticProductAction date={date} dayPartId={firstDayPart.id} />
-                </td>
+
+                {firstDayPart && (
+                  <>
+                    <td>{firstDayPart.name}</td>
+                    <td>
+                      {renderMedicamentIntakes({
+                        date,
+                        dayPart: firstDayPart,
+                      })}
+                    </td>
+                    <td>
+                      {renderCosmeticProducts({
+                        date,
+                        dayPart: firstDayPart,
+                      })}
+                    </td>
+                  </>
+                )}
               </tr>
               {dayParts.slice(1).map(dayPart => {
                 return (
@@ -153,10 +177,10 @@ export function Calendar({
                       })}
                     </td>
                     <td>
-                      <CosmeticProductApplicationsList
-                        applications={getCosmeticProductApplications(date, dayPart.id)}
-                      />
-                      <AddCosmeticProductAction date={date} dayPartId={dayPart.id} />
+                      {renderCosmeticProducts({
+                        date,
+                        dayPart,
+                      })}
                     </td>
                   </tr>
                 );
