@@ -55,7 +55,7 @@ class FemalePeriodService {
   }
 
   async delete(startDate: DateFormat, trx: PrismaTransaction) {
-    const period = await trx.femalePeriod.findFirstOrThrow({
+    const period = await trx.femalePeriod.findFirst({
       where: {
         startDay: {
           date: DateUtils.fromDateFormat(startDate),
@@ -67,6 +67,10 @@ class FemalePeriodService {
         prevPeriod: true,
       },
     });
+
+    if (!period) {
+      return;
+    }
 
     await trx.femalePeriod.deleteMany({
       where: { id: period.id },

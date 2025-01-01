@@ -347,15 +347,11 @@ export function useStartFemalePeriodMutation(handlers: MutationHandlers = {}) {
         });
       }
     },
-    onSuccess: (response, _request) => {
+    onSuccess: (_response, _request) => {
       handlers.onSuccess?.();
-
-      setDaysQueryData(response.startDate, {
-        addFemalePeriod: true,
-      });
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: StoreKeys.listDaysQuery() });
+      // queryClient.invalidateQueries({ queryKey: StoreKeys.listDaysQuery() });
     },
   });
 }
@@ -400,7 +396,7 @@ export function useDeleteFemalePeriodMutation(handlers: MutationHandlers = {}) {
       handlers.onSuccess?.();
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: StoreKeys.listDaysQuery() });
+      // queryClient.invalidateQueries({ queryKey: StoreKeys.listDaysQuery() });
     },
   });
 }

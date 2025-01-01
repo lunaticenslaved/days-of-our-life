@@ -16,10 +16,6 @@ export default function Create() {
     <>
       <Button
         onClick={async () => {
-          if (![].length) {
-            return;
-          }
-
           for (const product of products) {
             await creationRaw.mutate({
               name: product.name,
