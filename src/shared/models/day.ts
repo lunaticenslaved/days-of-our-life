@@ -12,10 +12,12 @@ export interface DayPart {
 export interface DayInfo {
   date: DateFormat;
   weight?: number;
-  nutrients?: FoodNutrients;
-  femalePeriod?: {
+  femalePeriod: {
     startDate: DateFormat;
+  } | null;
+  food: {
+    nutrients: FoodNutrients;
   };
-  medicamentIntakes?: MedicamentIntake[];
+  medicamentIntakes: MedicamentIntake[];
   cosmeticProductApplications: CosmeticProductApplication[];
 }

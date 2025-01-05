@@ -120,7 +120,7 @@ export function Calendar({
           const dayInfo = getDayInfo(date);
 
           const weight = dayInfo.weight;
-          const nutrients = dayInfo.nutrients;
+          const nutrients = dayInfo.food.nutrients;
           const firstDayPart: DayPart | undefined = dayParts[0];
 
           return (

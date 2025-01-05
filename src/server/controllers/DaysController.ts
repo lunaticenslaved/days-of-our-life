@@ -1,4 +1,3 @@
-import { convertFoodNutrients, ONLY_NUTRIENTS_SELECT } from '#/server/selectors/food';
 import {
   convertMedicamentIntakeSelector,
   MEDICAMENT_INTAKE_SELECTOR,
@@ -33,26 +32,32 @@ import {
   AddCosmeticProductToDateRequest,
   RemoveCosmeticProductFromDateRequest,
   RemoveCosmeticProductFromDateResponse,
+  AddFoodMealItemToDateRequest,
+  AddFoodMealItemToDateResponse,
+  UpdateFoodMealItemForDateRequest,
+  UpdateFoodMealItemForDateResponse,
+  RemoveFoodMealItemFromDateRequest,
+  RemoveFoodMealItemFromDateResponse,
+  ListFoodMealItemsForDateRequest,
+  ListFoodMealItemsForDateResponse,
 } from '#/shared/api/types/days';
 import { DateFormat, DateUtils } from '#/shared/models/date';
-import { DayInfo, DayPart } from '#/shared/models/day';
-import { FoodNutrients, sumNutrients } from '#/shared/models/food';
-import { MedicamentIntake } from '#/shared/models/medicament';
+import { DayPart } from '#/shared/models/day';
 import { BODY_WEIGHT_SELECTOR, convertBodyWeightSelector } from '#/server/selectors/body';
 import { Controller } from '#/server/utils/Controller';
 import { CommonValidators } from '#/shared/models/common';
 
-import {
-  convertCosmeticProductApplicationSelector,
-  convertDayPartSelector,
-  COSMETIC_PRODUCT_APPLY_SELECTOR,
-  DAY_PART_SELECTOR,
-} from '#/server/selectors/days';
+import { convertDayPartSelector, DAY_PART_SELECTOR } from '#/server/selectors/days';
 import {} from '#/shared/api/types/days';
 import _ from 'lodash';
 
 import { z } from 'zod';
 import DayService from '#/server/services/DayService';
+import {
+  convertCosmeticProductApplicationSelector,
+  COSMETIC_PRODUCT_APPLY_SELECTOR,
+} from '#/server/selectors/cosmetic';
+import FoodMealService from '#/server/services/FoodMealService';
 
 export default new Controller<'days'>({
   // Day parts
@@ -163,132 +168,13 @@ export default new Controller<'days'>({
       endDate: req.query.endDate as DateFormat,
     }),
     handler: async (arg, { prisma }) => {
-      const startDate = DateUtils.fromDateFormat(arg.startDate);
-      const endDate = DateUtils.fromDateFormat(arg.endDate);
-
-      const date = {
-        gte: startDate,
-        lte: endDate,
-      };
-
-      const femalePeriodsDesc = await FemalePeriodService.list(
+      const result = await DayService.list(
         {
           startDate: arg.startDate,
           endDate: arg.endDate,
         },
         prisma,
-      ).then(items => [...items].reverse());
-
-      const result: ListDaysResponse = DateUtils.toMap(
-        {
-          start: arg.startDate,
-          end: arg.endDate,
-        },
-        date => {
-          const femalePeriod = femalePeriodsDesc.find(period => {
-            return (
-              DateUtils.isSame(date, period.startDate, 'day') ||
-              DateUtils.isAfter(date, period.startDate, 'day')
-            );
-          });
-
-          return {
-            date,
-            femalePeriod: femalePeriod
-              ? {
-                  startDate: femalePeriod.startDate,
-                }
-              : undefined,
-            cosmeticProductApplications: [],
-          };
-        },
       );
-
-      function addToResult(
-        _date: Date,
-        data: {
-          weight?: number;
-          nutrients?: FoodNutrients;
-          medicamentIntake?: MedicamentIntake;
-        },
-      ) {
-        const date = DateUtils.toDateFormat(_date);
-
-        const item: DayInfo = {
-          ...(result[date] || {}),
-          date,
-        };
-
-        if (typeof data.weight === 'number') {
-          item.weight = data.weight;
-        }
-
-        if (data.nutrients) {
-          item.nutrients = data.nutrients;
-        }
-
-        if (data.medicamentIntake) {
-          item.medicamentIntakes = [
-            ...(item.medicamentIntakes || []),
-            data.medicamentIntake,
-          ];
-        }
-
-        result[date] = item;
-      }
-
-      const weights = await prisma.bodyStatistics.findMany({
-        ...BODY_WEIGHT_SELECTOR,
-        where: { date },
-      });
-
-      for (const { date, weight } of weights) {
-        addToResult(date, { weight });
-      }
-
-      const nutrients = await prisma.foodTrackerDay.findMany({
-        where: { date },
-        select: {
-          date: true,
-          meals: {
-            select: {
-              nutrients: ONLY_NUTRIENTS_SELECT,
-            },
-          },
-        },
-      });
-
-      for (const { date, meals } of nutrients) {
-        addToResult(date, {
-          nutrients: sumNutrients(
-            meals.map(meal => convertFoodNutrients(meal.nutrients)),
-          ),
-        });
-      }
-
-      const medicamentIntakes = await prisma.medicamentIntake.findMany({
-        where: { date },
-        ...MEDICAMENT_INTAKE_SELECTOR,
-      });
-
-      for (const medicamentIntake of medicamentIntakes) {
-        addToResult(medicamentIntake.date, {
-          medicamentIntake: convertMedicamentIntakeSelector(medicamentIntake),
-        });
-      }
-
-      const cosmeticProductApplications = await prisma.cosmeticProductApplication
-        .findMany({
-          where: { day: { date } },
-          ...COSMETIC_PRODUCT_APPLY_SELECTOR,
-        })
-        .then(items => items.map(convertCosmeticProductApplicationSelector));
-
-      for (const cosmeticProductApplication of cosmeticProductApplications) {
-        result[cosmeticProductApplication.date].cosmeticProductApplications.push(
-          cosmeticProductApplication,
-        );
-      }
 
       return result;
     },
@@ -302,44 +188,15 @@ export default new Controller<'days'>({
       date: req.params.date as DateFormat,
     }),
     handler: async (arg, { prisma }) => {
-      const date = DateUtils.fromDateFormat(arg.date);
-
-      const result: GetDayResponse = {
-        date: arg.date,
-        cosmeticProductApplications: [],
-      };
-
-      const weightData = await prisma.bodyStatistics.findFirst({
-        ...BODY_WEIGHT_SELECTOR,
-        where: { date },
-      });
-
-      result.weight = weightData?.weight;
-
-      const nutrients = await prisma.foodTrackerDay.findFirst({
-        where: { date },
-        select: {
-          date: true,
-          meals: {
-            select: {
-              nutrients: ONLY_NUTRIENTS_SELECT,
-            },
-          },
+      const result = await DayService.list(
+        {
+          startDate: arg.date,
+          endDate: arg.date,
         },
-      });
-
-      result.nutrients = sumNutrients(
-        nutrients?.meals.map(meal => convertFoodNutrients(meal.nutrients)) || [],
+        prisma,
       );
 
-      const medicamentIntakes = await prisma.medicamentIntake.findMany({
-        where: { date },
-        ...MEDICAMENT_INTAKE_SELECTOR,
-      });
-
-      result.medicamentIntakes = medicamentIntakes.map(convertMedicamentIntakeSelector);
-
-      return result;
+      return result[arg.date];
     },
   }),
 
@@ -390,19 +247,21 @@ export default new Controller<'days'>({
       medicamentId: req.params.medicamentId,
       dayPartId: req.params.dayPartId,
     }),
-    handler: async ({ medicamentId, dayPartId, ...arg }, { prisma }) => {
-      const date = DateUtils.fromDateFormat(arg.date);
+    handler: async ({ medicamentId, dayPartId, date }, { prisma }) => {
+      return await prisma.$transaction(async trx => {
+        const day = await DayService.getDay(date, trx);
 
-      return await prisma.medicamentIntake
-        .create({
-          ...MEDICAMENT_INTAKE_SELECTOR,
-          data: {
-            medicamentId,
-            dayPartId,
-            date,
-          },
-        })
-        .then(convertMedicamentIntakeSelector);
+        return await trx.medicamentIntake
+          .create({
+            ...MEDICAMENT_INTAKE_SELECTOR,
+            data: {
+              medicamentId,
+              dayPartId,
+              dayId: day.id,
+            },
+          })
+          .then(convertMedicamentIntakeSelector);
+      });
     },
   }),
 
@@ -420,15 +279,17 @@ export default new Controller<'days'>({
       medicamentId: req.params.medicamentId,
       dayPartId: req.params.dayPartId,
     }),
-    handler: async ({ medicamentId, dayPartId, ...arg }, { prisma }) => {
-      const date = DateUtils.fromDateFormat(arg.date);
+    handler: async ({ medicamentId, dayPartId, date }, { prisma }) => {
+      await prisma.$transaction(async trx => {
+        const day = await DayService.getDay(date, trx);
 
-      await prisma.medicamentIntake.deleteMany({
-        where: {
-          medicamentId,
-          dayPartId,
-          date,
-        },
+        await trx.medicamentIntake.deleteMany({
+          where: {
+            medicamentId,
+            dayPartId,
+            dayId: day.id,
+          },
+        });
       });
     },
   }),
@@ -526,6 +387,150 @@ export default new Controller<'days'>({
             cosmeticProductId,
           },
         });
+      });
+    },
+  }),
+
+  // Food
+  'GET /days/:date/food/meal-items': Controller.handler<
+    ListFoodMealItemsForDateRequest,
+    ListFoodMealItemsForDateResponse
+  >({
+    validator: z.object({
+      date: CommonValidators.dateFormat,
+    }),
+    parse: req => ({
+      date: req.params.date as DateFormat,
+    }),
+    handler: async ({ date }, { prisma }) => {
+      return await prisma.$transaction(async trx => {
+        const day = await DayService.getDay(date, trx);
+
+        return await FoodMealService.list({ dayId: day.id }, trx);
+      });
+    },
+  }),
+
+  'POST /days/:date/parts/:dayPartId/food/meal-items': Controller.handler<
+    AddFoodMealItemToDateRequest,
+    AddFoodMealItemToDateResponse
+  >({
+    validator: z.object({
+      date: CommonValidators.dateFormat,
+      dayPartId: CommonValidators.id,
+      productId: CommonValidators.id,
+      quantityConverterId: CommonValidators.id,
+      quantity: CommonValidators.number({ min: 0 }),
+      item: z
+        .object({
+          type: z.enum(['product']),
+          productId: CommonValidators.id,
+        })
+        .or(
+          z.object({
+            type: z.enum(['recipe']),
+            recipeId: CommonValidators.id,
+          }),
+        ),
+    }),
+    parse: req => ({
+      date: req.params.date as DateFormat,
+      dayPartId: req.params.dayPartId,
+      item: req.body.item,
+      quantity: req.body.quantity,
+      quantityConverterId: req.body.quantityConverterId,
+    }),
+    handler: async (
+      { dayPartId, date, quantity, quantityConverterId, item },
+      { prisma },
+    ) => {
+      return await prisma.$transaction(async trx => {
+        const day = await DayService.getDay(date, trx);
+
+        return await FoodMealService.create(
+          {
+            dayId: day.id,
+            dayPartId,
+            quantity,
+            quantityConverterId,
+            item,
+          },
+          trx,
+        );
+      });
+    },
+  }),
+
+  'PATCH /days/:date/parts/:dayPartId/food/meal-items/:mealItemId': Controller.handler<
+    UpdateFoodMealItemForDateRequest,
+    UpdateFoodMealItemForDateResponse
+  >({
+    validator: z.object({
+      mealItemId: CommonValidators.id,
+      date: CommonValidators.dateFormat,
+      dayPartId: CommonValidators.id,
+      productId: CommonValidators.id,
+      quantityConverterId: CommonValidators.id,
+      quantity: CommonValidators.number({ min: 0 }),
+      item: z
+        .object({
+          type: z.enum(['product']),
+          productId: CommonValidators.id,
+        })
+        .or(
+          z.object({
+            type: z.enum(['recipe']),
+            recipeId: CommonValidators.id,
+          }),
+        ),
+    }),
+    parse: req => ({
+      date: req.params.date as DateFormat,
+      dayPartId: req.params.dayPartId,
+      item: req.body.item,
+      quantity: req.body.quantity,
+      quantityConverterId: req.body.quantityConverterId,
+      mealItemId: req.params.mealItemId,
+    }),
+    handler: async (
+      { dayPartId, date, quantity, quantityConverterId, mealItemId, item },
+      { prisma },
+    ) => {
+      return await prisma.$transaction(async trx => {
+        const day = await DayService.getDay(date, trx);
+
+        return await FoodMealService.update(
+          {
+            dayId: day.id,
+            mealItemId,
+            dayPartId,
+            quantity,
+            quantityConverterId,
+            item,
+          },
+          trx,
+        );
+      });
+    },
+  }),
+
+  'DELETE /days/:date/parts/:dayPartId/food/meal-items/:mealItemId': Controller.handler<
+    RemoveFoodMealItemFromDateRequest,
+    RemoveFoodMealItemFromDateResponse
+  >({
+    validator: z.object({
+      mealItemId: CommonValidators.id,
+      date: CommonValidators.dateFormat,
+      dayPartId: CommonValidators.id,
+    }),
+    parse: req => ({
+      date: req.params.date as DateFormat,
+      dayPartId: req.params.dayPartId,
+      mealItemId: req.params.mealItemId,
+    }),
+    handler: async ({ mealItemId }, { prisma }) => {
+      await prisma.$transaction(async trx => {
+        return await FoodMealService.delete({ mealItemId }, trx);
       });
     },
   }),

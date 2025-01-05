@@ -3,7 +3,7 @@ import {
   FoodProduct,
   FoodQuantityConverter,
   FoodRecipe,
-  FoodTrackerMealItem,
+  FoodMealItem,
   FoodValidators,
   multiplyNutrients,
 } from '#/shared/models/food';
@@ -35,7 +35,7 @@ interface MealItemFormDialogProps {
   onSubmit(values: MealItemFormValues): void;
   products: FoodProduct[];
   recipes: FoodRecipe[];
-  mealItem?: FoodTrackerMealItem;
+  mealItem?: FoodMealItem;
 }
 
 export function MealItemFormDialog({

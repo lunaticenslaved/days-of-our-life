@@ -1,11 +1,6 @@
 import { PrismaTransaction } from '#/server/prisma';
 import { ONLY_NUTRIENTS_SELECT } from '#/server/selectors/food';
-import {
-  FoodMealIngredientType,
-  FoodNutrients,
-  multiplyNutrients,
-  sumNutrients,
-} from '#/shared/models/food';
+import { FoodNutrients, multiplyNutrients, sumNutrients } from '#/shared/models/food';
 import { nonReachable } from '#/shared/utils';
 
 class FoodNutrientsService {
@@ -37,11 +32,21 @@ class FoodNutrientsService {
   }
 
   async createForIngredientAndQuantity(
-    arg: {
-      ingredientType: FoodMealIngredientType;
-      ingredientId: string;
+    {
+      item,
+      ...arg
+    }: {
       quantityConverterId: string;
       quantity: number;
+      item:
+        | {
+            type: 'product';
+            productId: string;
+          }
+        | {
+            type: 'recipe';
+            recipeId: string;
+          };
     },
     trx: PrismaTransaction,
   ) {
@@ -52,10 +57,10 @@ class FoodNutrientsService {
       })
       .then(data => data.grams * arg.quantity);
 
-    if (arg.ingredientType === 'product') {
+    if (item.type === 'product') {
       const nutrients = await trx.foodNutrients
         .findFirstOrThrow({
-          where: { product: { id: arg.ingredientId } },
+          where: { product: { id: item.productId } },
           ...ONLY_NUTRIENTS_SELECT,
         })
         .then(data => multiplyNutrients(data, grams));
@@ -63,10 +68,10 @@ class FoodNutrientsService {
       return await trx.foodNutrients.create({
         data: nutrients,
       });
-    } else if (arg.ingredientType === 'recipe') {
+    } else if (item.type === 'recipe') {
       const nutrients = await trx.foodNutrients
         .findFirstOrThrow({
-          where: { recipe: { id: arg.ingredientId } },
+          where: { recipe: { id: item.recipeId } },
           ...ONLY_NUTRIENTS_SELECT,
         })
         .then(data => multiplyNutrients(data, grams));
@@ -75,7 +80,7 @@ class FoodNutrientsService {
         data: nutrients,
       });
     } else {
-      nonReachable(arg.ingredientType);
+      nonReachable(item);
     }
   }
 }

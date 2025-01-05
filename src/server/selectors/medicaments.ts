@@ -13,7 +13,11 @@ export const MEDICAMENT_SELECTOR = {
 export const MEDICAMENT_INTAKE_SELECTOR = {
   select: {
     id: true,
-    date: true,
+    day: {
+      select: {
+        date: true,
+      },
+    },
     dayPartId: true,
     medicamentId: true,
   },
@@ -30,6 +34,6 @@ export function convertMedicamentIntakeSelector(
 ): MedicamentIntake {
   return {
     ...item,
-    date: DateUtils.toDateFormat(item.date),
+    date: DateUtils.toDateFormat(item.day.date),
   };
 }

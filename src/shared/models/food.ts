@@ -1,4 +1,5 @@
 import { CommonValidators } from '#/shared/models/common';
+import { DateFormat } from '#/shared/models/date';
 import { ERROR_MESSAGES } from '#/shared/validation';
 import _ from 'lodash';
 import { z } from 'zod';
@@ -54,7 +55,7 @@ export interface FoodRecipe {
 
 export type FoodMealIngredientType = 'product' | 'recipe';
 
-export interface FoodTrackerDay {
+export interface FoodDay {
   id: string;
   date: string;
 }
@@ -127,15 +128,17 @@ export const FoodValidators = {
     .min(1, ERROR_MESSAGES.minLengthArr(1)),
 };
 
-export interface FoodTrackerDay {
+export interface FoodDay {
   id: string;
   date: string;
-  meals: Array<{ items: FoodTrackerMealItem[] }>;
+  meals: Array<{ items: FoodMealItem[] }>;
   nutrients: FoodNutrients;
 }
 
-export interface FoodTrackerMealItem {
+export interface FoodMealItem {
   id: string;
+  date: DateFormat;
+  dayPartId: string;
   quantity: number;
   quantityConverter: FoodQuantityConverter;
   nutrients: FoodNutrients;

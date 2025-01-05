@@ -1,9 +1,8 @@
 import { FoodSchema } from '#/shared/api/schemas/food';
-import { FoodProduct, FoodRecipe, FoodTrackerDay } from '#/shared/models/food';
+import { FoodProduct, FoodRecipe } from '#/shared/models/food';
 import { wrapApiAction } from '#/client/utils/api';
 import { Handlers } from '#/client/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { DateFormat } from '#/shared/models/date';
 
 // Recipe
 export function useListFoodRecipesQuery() {
@@ -44,38 +43,6 @@ export function useDeleteFoodRecipeMutation(
   return useMutation({
     mutationKey: [`FoodSchema.recipes.delete(${productId})`],
     mutationFn: wrapApiAction(FoodSchema.recipes.delete, handlers),
-  });
-}
-
-// Meal Item
-export function useCreateFoodTrackerMealItemMutation(handlers: Handlers<unknown> = {}) {
-  return useMutation({
-    mutationKey: [`FoodSchema.tracker.days.meals.items.create`],
-    mutationFn: wrapApiAction(FoodSchema.tracker.days.meals.items.create, handlers),
-  });
-}
-
-export function useUpdateFoodTrackerMealItemMutation(handlers: Handlers<unknown> = {}) {
-  return useMutation({
-    mutationKey: [`FoodSchema.tracker.meals.days.items.update`],
-    mutationFn: wrapApiAction(FoodSchema.tracker.days.meals.items.update, handlers),
-  });
-}
-
-export function useDeleteFoodTrackerMealItemMutation(handlers: Handlers<unknown> = {}) {
-  return useMutation({
-    mutationKey: [`FoodSchema.tracker.days.meals.items.delete`],
-    mutationFn: wrapApiAction(FoodSchema.tracker.days.meals.items.delete, handlers),
-  });
-}
-
-export function useGetFoodTrackerDayQuery(
-  date: DateFormat,
-  handlers: Handlers<FoodTrackerDay> = {},
-) {
-  return useQuery({
-    queryKey: ['FoodSchema.tracker.days.get', date],
-    queryFn: () => wrapApiAction(FoodSchema.tracker.days.get, handlers)({ date }),
   });
 }
 

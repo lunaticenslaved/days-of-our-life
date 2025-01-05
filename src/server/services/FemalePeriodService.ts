@@ -92,28 +92,44 @@ class FemalePeriodService {
     arg: { startDate: DateFormat; endDate: DateFormat },
     trx: PrismaTransaction,
   ) {
-    return await trx.femalePeriod
-      .findMany({
-        where: {
-          OR: [
-            {
-              startDay: {
-                date: { lte: DateUtils.fromDateFormat(arg.endDate) },
-              },
-            },
-            {
-              startDay: {
-                date: { gte: DateUtils.fromDateFormat(arg.startDate) },
-              },
-            },
-          ],
+    const before = await trx.femalePeriod.findFirst({
+      ...FEMALE_PERIOD_SELECTOR,
+      where: {
+        startDay: {
+          date: {
+            lte: DateUtils.fromDateFormat(arg.startDate),
+          },
         },
-        orderBy: {
-          startDay: { date: 'asc' },
+      },
+      orderBy: {
+        startDay: {
+          date: 'desc',
         },
-        ...FEMALE_PERIOD_SELECTOR,
-      })
-      .then(items => items.map(convertFemalePeriodSelector));
+      },
+    });
+
+    const list = await trx.femalePeriod.findMany({
+      where: {
+        OR: [
+          {
+            startDay: {
+              date: { lte: DateUtils.fromDateFormat(arg.endDate) },
+            },
+          },
+          {
+            startDay: {
+              date: { gt: DateUtils.fromDateFormat(arg.startDate) },
+            },
+          },
+        ],
+      },
+      orderBy: {
+        startDay: { date: 'asc' },
+      },
+      ...FEMALE_PERIOD_SELECTOR,
+    });
+
+    return [...(before ? [before] : []), ...list].map(convertFemalePeriodSelector);
   }
 }
 

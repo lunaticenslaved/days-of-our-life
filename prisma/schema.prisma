@@ -22,7 +22,7 @@ model FoodQuantityConverter {
   productId String?      @db.Uuid
   product   FoodProduct? @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  mealItems FoodTrackerMealItem[]
+  mealItems FoodMealItem[]
 }
 
 model FoodProduct {
@@ -36,7 +36,7 @@ model FoodProduct {
 
   quantities        FoodQuantityConverter[]
   recipeIngrediends FoodRecipeIngredient[]
-  mealIngreients    FoodTrackerMealItem[]
+  mealIngreients    FoodMealItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -55,7 +55,7 @@ model FoodRecipe {
   output   FoodRecipeOutput @relation(fields: [outputId], references: [id], onDelete: Restrict)
 
   parts          FoodRecipePart[]
-  mealIngreients FoodTrackerMealItem[]
+  mealIngreients FoodMealItem[]
   quantities     FoodQuantityConverter[]
 
   createdAt DateTime @default(now())
@@ -87,10 +87,11 @@ model FoodNutrients {
 
   product         FoodProduct?
   recipe          FoodRecipe?
-  trackerMealItem FoodTrackerMealItem?
+  trackerMealItem FoodMealItem?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Day       Day?
 }
 
 model FoodRecipeIngredient {
@@ -119,15 +120,18 @@ model FoodRecipeOutput {
   updatedAt DateTime @updatedAt
 }
 
-model FoodTrackerMealItem {
+model FoodMealItem {
   id       String @id @default(uuid()) @db.Uuid
   quantity Float  @db.Real
 
   quantityConverterId String                @db.Uuid
   quantityConverter   FoodQuantityConverter @relation(fields: [quantityConverterId], references: [id], onDelete: Restrict)
 
-  dayId String         @db.Uuid
-  day   FoodTrackerDay @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  dayId String @db.Uuid
+  day   Day    @relation(fields: [dayId], references: [id], onDelete: Restrict)
+
+  dayPartId String  @db.Uuid
+  dayPart   DayPart @relation(fields: [dayPartId], references: [id], onDelete: Restrict)
 
   recipeId String?     @db.Uuid
   recipe   FoodRecipe? @relation(fields: [recipeId], references: [id], onDelete: Restrict)
@@ -137,16 +141,6 @@ model FoodTrackerMealItem {
 
   nutrientsId String        @unique @db.Uuid
   nutrients   FoodNutrients @relation(fields: [nutrientsId], references: [id], onDelete: Restrict)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model FoodTrackerDay {
-  id   String   @id @default(uuid()) @db.Uuid
-  date DateTime @unique
-
-  meals FoodTrackerMealItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -179,8 +173,13 @@ model Day {
   id   String   @id @default(uuid()) @db.Uuid
   date DateTime
 
-  cosmeticProductApplications CosmeticProductApplication[]
-  femalePeriodStarted         FemalePeriod?
+  cosmeticProducts    CosmeticProductApplication[]
+  femalePeriodStarted FemalePeriod?
+  medicaments         MedicamentIntake[]
+  foodMealItems       FoodMealItem[]
+
+  nutrientsId String        @unique @db.Uuid
+  nutrients   FoodNutrients @relation(fields: [nutrientsId], references: [id], onDelete: Restrict)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -195,6 +194,7 @@ model DayPart {
 
   medicamentIntakes      MedicamentIntake[]
   cosmeticProductApplied CosmeticProductApplication[]
+  foodMealItems          FoodMealItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -212,8 +212,10 @@ model Medicament {
 }
 
 model MedicamentIntake {
-  id   String   @id @default(uuid()) @db.Uuid
-  date DateTime
+  id String @id @default(uuid()) @db.Uuid
+
+  dayId String @db.Uuid
+  day   Day    @relation(fields: [dayId], references: [id], onDelete: Restrict)
 
   dayPartId String  @db.Uuid
   dayPart   DayPart @relation(fields: [dayPartId], references: [id], onDelete: Restrict)
@@ -224,7 +226,7 @@ model MedicamentIntake {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([medicamentId, dayPartId, date])
+  @@unique([medicamentId, dayPartId, dayId])
 }
 
 model CosmeticProduct {

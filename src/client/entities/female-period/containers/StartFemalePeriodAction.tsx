@@ -8,7 +8,7 @@ import { FemalePeriod } from '#/shared/models/female-period';
 
 interface StartFemalePeriodActionProps {
   date: DateFormat;
-  femalePeriod?: FemalePeriod;
+  femalePeriod?: FemalePeriod | null;
 }
 
 export function StartFemalePeriodAction({

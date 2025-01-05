@@ -5,7 +5,6 @@ import {
   FoodProduct,
   FoodRecipe,
   FoodRecipeOutput,
-  FoodTrackerDay,
 } from '#/shared/models/food';
 
 interface Id {
@@ -62,6 +61,7 @@ export type DeleteFoodRecipeResponse = void;
 export interface DeleteFoodRecipeRequest extends Id {}
 
 // Tracker
+// FIXME delete
 export type CreateFoodMealItemResponse = void;
 export interface CreateFoodMealItemRequest {
   ingredient: {
@@ -82,9 +82,4 @@ export type DeleteFoodMealItemResponse = void;
 export interface DeleteFoodMealItemRequest {
   date: DateFormat;
   itemId: string;
-}
-
-export type GetFoodTrackerDayResponse = FoodTrackerDay;
-export interface GetFoodTrackerDayRequest {
-  date: DateFormat;
 }

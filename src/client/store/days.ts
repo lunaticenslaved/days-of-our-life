@@ -19,6 +19,13 @@ import {
   AddCosmeticProductToDateRequest,
   RemoveCosmeticProductFromDateResponse,
   RemoveCosmeticProductFromDateRequest,
+  AddFoodMealItemToDateResponse,
+  AddFoodMealItemToDateRequest,
+  UpdateFoodMealItemForDateResponse,
+  UpdateFoodMealItemForDateRequest,
+  RemoveFoodMealItemFromDateRequest,
+  RemoveFoodMealItemFromDateResponse,
+  ListFoodMealItemsForDateResponse,
 } from '#/shared/api/types/days';
 import { MutationHandlers } from '#/client/types';
 import { DateFormat, DateUtils } from '#/shared/models/date';
@@ -26,6 +33,7 @@ import { MedicamentIntake } from '#/shared/models/medicament';
 import { CosmeticProductApplication } from '#/shared/models/cosmetic';
 import { cloneDeep } from 'lodash';
 import { FemalePeriod } from '#/shared/models/female-period';
+import { FoodMealItem, sumNutrients } from '#/shared/models/food';
 
 const StoreKeys = {
   getDayQuery: (): QueryKey => ['getDayQuery'],
@@ -39,6 +47,12 @@ const StoreKeys = {
   deleteCosmeticProductFromDateMutation: (): QueryKey => [
     'deleteCosmeticProductFromDateMutation',
   ],
+
+  // Food
+  addFoodToDate: (): QueryKey => ['addFoodToDate'],
+  updateFoodForDate: (): QueryKey => ['updateFoodForDate'],
+  deleteFoodFromDate: (): QueryKey => ['deleteFoodFromDate'],
+  listFoodForDate: (): QueryKey => ['listFoodForDate'],
 };
 
 // Days
@@ -52,6 +66,8 @@ function setDaysQueryData(
     removeMedicamentIntakeId?: string;
     addFemalePeriod?: true;
     removeFemalePeriod?: true;
+    addFoodMealItem?: FoodMealItem;
+    removeFoodMealItemId?: string;
   },
 ) {
   // FIXME set data for getDay request
@@ -64,7 +80,15 @@ function setDaysQueryData(
     const old = cloneDeep(_old);
 
     if (!(date in old)) {
-      old[date] = { date: date, cosmeticProductApplications: [] };
+      old[date] = {
+        date: date,
+        cosmeticProductApplications: [],
+        medicamentIntakes: [],
+        food: {
+          nutrients: sumNutrients([]),
+        },
+        femalePeriod: null,
+      };
     }
 
     if (typeof arg.weight === 'number') {
@@ -109,7 +133,7 @@ function setDaysQueryData(
       let startDate = date;
 
       if (arg.removeFemalePeriod) {
-        old[date].femalePeriod = undefined;
+        old[date].femalePeriod = null;
         startDate = DateUtils.min(...(Object.keys(old) as DateFormat[]));
       }
 
@@ -501,6 +525,208 @@ export function useRemoveCosmeticProductFromDateMutation(
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: StoreKeys.listDaysQuery() });
+    },
+  });
+}
+
+// Food
+export function useListFoodForDateQuery(date: DateFormat) {
+  return useQuery<
+    ListFoodMealItemsForDateResponse,
+    DefaultError,
+    ListFoodMealItemsForDateResponse
+  >({
+    queryKey: StoreKeys.listFoodForDate(),
+    queryFn: () => wrapApiAction(Schema.days.listFoodMealItems)({ date }),
+  });
+}
+
+export function useAddFoodToDateMutation(handlers: MutationHandlers = {}) {
+  return useMutation<
+    AddFoodMealItemToDateResponse,
+    DefaultError,
+    Omit<FoodMealItem, 'id'>,
+    { createdItem: FoodMealItem }
+  >({
+    mutationKey: StoreKeys.addFoodToDate(),
+    mutationFn: item => {
+      return wrapApiAction<AddFoodMealItemToDateRequest, AddFoodMealItemToDateResponse>(
+        Schema.days.addFoodMealItem,
+      )({
+        date: item.date,
+        dayPartId: item.dayPartId,
+        item:
+          item.ingredient.type === 'product'
+            ? {
+                type: 'product',
+                productId: item.ingredient.product.id,
+              }
+            : {
+                type: 'recipe',
+                recipeId: item.ingredient.recipe.id,
+              },
+        quantity: item.quantity,
+        quantityConverterId: item.quantityConverter.id,
+      });
+    },
+    onMutate: async request => {
+      await queryClient.cancelQueries({ queryKey: StoreKeys.listFoodForDate() });
+
+      const createdItem: FoodMealItem = {
+        id: Date.now().toString(),
+        ...request,
+      };
+
+      setDaysQueryData(request.date, {
+        addFoodMealItem: createdItem,
+      });
+
+      handlers.onMutate?.();
+
+      return {
+        createdItem,
+      };
+    },
+    onError: (_error, _request, context) => {
+      handlers.onError?.();
+
+      if (context) {
+        setDaysQueryData(context.createdItem.date, {
+          removeFoodMealItemId: context.createdItem.id,
+        });
+      }
+    },
+    onSuccess: (response, _request, context) => {
+      handlers.onSuccess?.();
+
+      setDaysQueryData(context.createdItem.date, {
+        removeFoodMealItemId: context.createdItem.id,
+        addFoodMealItem: response,
+      });
+    },
+  });
+}
+
+export function useUpdateFoodForDateMutation(handlers: MutationHandlers = {}) {
+  return useMutation<
+    UpdateFoodMealItemForDateResponse,
+    DefaultError,
+    FoodMealItem,
+    { oldItem: FoodMealItem }
+  >({
+    mutationKey: StoreKeys.updateFoodForDate(),
+    mutationFn: item => {
+      return wrapApiAction<
+        UpdateFoodMealItemForDateRequest,
+        UpdateFoodMealItemForDateResponse
+      >(Schema.days.updateFoodMealItem)({
+        mealItemId: item.id,
+        date: item.date,
+        dayPartId: item.dayPartId,
+        item:
+          item.ingredient.type === 'product'
+            ? {
+                type: 'product',
+                productId: item.ingredient.product.id,
+              }
+            : {
+                type: 'recipe',
+                recipeId: item.ingredient.recipe.id,
+              },
+        quantity: item.quantity,
+        quantityConverterId: item.quantityConverter.id,
+      });
+    },
+    onMutate: async request => {
+      await queryClient.cancelQueries({ queryKey: StoreKeys.listFoodForDate() });
+
+      const oldItem: FoodMealItem = {
+        ...request,
+      };
+
+      setDaysQueryData(request.date, {
+        removeFoodMealItemId: oldItem.id,
+        addFoodMealItem: oldItem,
+      });
+
+      handlers.onMutate?.();
+
+      return {
+        oldItem,
+      };
+    },
+    onError: (_error, _request, context) => {
+      handlers.onError?.();
+
+      if (context) {
+        setDaysQueryData(context.oldItem.date, {
+          removeFoodMealItemId: context.oldItem.id,
+          addFoodMealItem: context.oldItem,
+        });
+      }
+    },
+    onSuccess: (response, _request, context) => {
+      handlers.onSuccess?.();
+
+      setDaysQueryData(context.oldItem.date, {
+        removeFoodMealItemId: context.oldItem.id,
+        addFoodMealItem: response,
+      });
+    },
+  });
+}
+
+export function useRemoveFoodFromDateMutation(handlers: MutationHandlers = {}) {
+  return useMutation<
+    RemoveFoodMealItemFromDateResponse,
+    DefaultError,
+    FoodMealItem,
+    { oldItem: FoodMealItem }
+  >({
+    mutationKey: StoreKeys.deleteFoodFromDate(),
+    mutationFn: item => {
+      return wrapApiAction<
+        RemoveFoodMealItemFromDateRequest,
+        RemoveFoodMealItemFromDateResponse
+      >(Schema.days.removeFoodMealItem)({
+        mealItemId: item.id,
+        date: item.date,
+        dayPartId: item.dayPartId,
+      });
+    },
+    onMutate: async request => {
+      await queryClient.cancelQueries({ queryKey: StoreKeys.listFoodForDate() });
+
+      const oldItem: FoodMealItem = {
+        ...request,
+      };
+
+      setDaysQueryData(request.date, {
+        removeFoodMealItemId: oldItem.id,
+        addFoodMealItem: oldItem,
+      });
+
+      handlers.onMutate?.();
+
+      return {
+        oldItem,
+      };
+    },
+    onError: (_error, _request, context) => {
+      handlers.onError?.();
+
+      if (context) {
+        setDaysQueryData(context.oldItem.date, {
+          addFoodMealItem: context.oldItem,
+        });
+      }
+    },
+    onSuccess: (_response, _request, context) => {
+      handlers.onSuccess?.();
+
+      setDaysQueryData(context.oldItem.date, {
+        removeFoodMealItemId: context.oldItem.id,
+      });
     },
   });
 }

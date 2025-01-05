@@ -27,6 +27,14 @@ import {
   AddCosmeticProductToDateResponse,
   RemoveCosmeticProductFromDateRequest,
   RemoveCosmeticProductFromDateResponse,
+  AddFoodMealItemToDateRequest,
+  AddFoodMealItemToDateResponse,
+  UpdateFoodMealItemForDateRequest,
+  UpdateFoodMealItemForDateResponse,
+  RemoveFoodMealItemFromDateRequest,
+  RemoveFoodMealItemFromDateResponse,
+  ListFoodMealItemsForDateRequest,
+  ListFoodMealItemsForDateResponse,
 } from '#/shared/api/types/days';
 import { createAction } from '#/shared/api/utils';
 
@@ -120,6 +128,42 @@ export const DaysSchema = {
   >({
     path: ({ date, dayPartId, cosmeticProductId }) =>
       `/api/days/${date}/parts/${dayPartId}/cosmetic/products/${cosmeticProductId}`,
+    method: 'DELETE',
+  }),
+
+  // Food
+  listFoodMealItems: createAction<
+    ListFoodMealItemsForDateRequest,
+    ListFoodMealItemsForDateResponse
+  >({
+    path: ({ date }) => `/api/days/${date}/food/meal-items`,
+    method: 'POST',
+    body: ({ date: _date, ...data }) => data,
+  }),
+  addFoodMealItem: createAction<
+    AddFoodMealItemToDateRequest,
+    AddFoodMealItemToDateResponse
+  >({
+    path: ({ date, dayPartId }) => `/api/days/${date}/parts/${dayPartId}/food/meal-items`,
+    method: 'POST',
+    body: ({ date: _date, dayPartId: _dayPartId, ...data }) => data,
+  }),
+  updateFoodMealItem: createAction<
+    UpdateFoodMealItemForDateRequest,
+    UpdateFoodMealItemForDateResponse
+  >({
+    path: ({ date, mealItemId, dayPartId }) =>
+      `/api/days/${date}/parts/${dayPartId}/food/meal-items/${mealItemId}`,
+    method: 'PATCH',
+    body: ({ date: _date, mealItemId: _mealItemId, dayPartId: _dayPartId, ...data }) =>
+      data,
+  }),
+  removeFoodMealItem: createAction<
+    RemoveFoodMealItemFromDateRequest,
+    RemoveFoodMealItemFromDateResponse
+  >({
+    path: ({ date, mealItemId, dayPartId }) =>
+      `/api/days/${date}/parts/${dayPartId}/food/meal-items/${mealItemId}`,
     method: 'DELETE',
   }),
 };

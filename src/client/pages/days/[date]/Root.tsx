@@ -1,4 +1,4 @@
-import { FoodTrackerMealItem, sumNutrients } from '#/shared/models/food';
+import { FoodMealItem, sumNutrients } from '#/shared/models/food';
 import { Button } from '#/client/components/Button';
 import { useDialog } from '#/client/components/Dialog';
 import { AddWeightAction } from '#/client/entities/body-statistics';
@@ -8,19 +8,21 @@ import {
   useListFoodRecipesQuery,
   useListFoodProductsQuery,
 } from '#/client/entities/food';
-import {
-  useDeleteFoodTrackerMealItemMutation,
-  useGetFoodTrackerDayQuery,
-  useUpdateFoodTrackerMealItemMutation,
-  useCreateFoodTrackerMealItemMutation,
-} from '#/client/entities/food';
 import { DAYS_NAVIGATION, useDaysPageParams } from '#/client/pages/days';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { DatePicker } from '#/client/components/DatePicker';
 import { StartFemalePeriodButton } from '#/client/entities/female-period';
 import { DateUtils } from '#/shared/models/date';
-import { useGetDayQuery, useStartFemalePeriodMutation } from '#/client/store';
+import {
+  useAddFoodToDateMutation,
+  useGetDayQuery,
+  useStartFemalePeriodMutation,
+  useUpdateFoodForDateMutation,
+  useRemoveFoodFromDateMutation,
+  useListFoodForDateQuery,
+} from '#/client/store';
+import { groupBy } from 'lodash';
 
 export default function Page() {
   const params = useDaysPageParams();
@@ -39,26 +41,26 @@ export default function Page() {
   const dayQuery = useGetDayQuery(formattedDate);
   const productsQuery = useListFoodProductsQuery();
   const recipesQuery = useListFoodRecipesQuery();
-  const trackerDayQuery = useGetFoodTrackerDayQuery(formattedDate);
-  const adding = useCreateFoodTrackerMealItemMutation({
+  const listFoodForDateQuery = useListFoodForDateQuery(DateUtils.toDateFormat(date));
+  const addFoodToDateMutation = useAddFoodToDateMutation({
     onSuccess: () => {
-      trackerDayQuery.refetch();
+      listFoodForDateQuery.refetch();
       mealItemDialog.close();
     },
   });
-  const updating = useUpdateFoodTrackerMealItemMutation({
+  const updateFoodForDateMutation = useUpdateFoodForDateMutation({
     onSuccess: () => {
-      trackerDayQuery.refetch();
+      listFoodForDateQuery.refetch();
       mealItemDialog.close();
     },
   });
-  const deleting = useDeleteFoodTrackerMealItemMutation({
+  const removeFoodFromDateMutation = useRemoveFoodFromDateMutation({
     onSuccess: () => {
-      trackerDayQuery.refetch();
+      listFoodForDateQuery.refetch();
     },
   });
 
-  const [itemToEdit, setItemToEdit] = useState<FoodTrackerMealItem>();
+  const [itemToEdit, setItemToEdit] = useState<FoodMealItem>();
 
   useEffect(() => {
     if (!mealItemDialog.isOpen) {
@@ -140,7 +142,9 @@ export default function Page() {
         <Button onClick={mealItemDialog.open}>Добавить еду</Button>
 
         <ul>
-          {(trackerDayQuery.data?.meals || []).map(({ items }, index) => {
+          {Object.values(
+            groupBy(listFoodForDateQuery.data || [], item => item.dayPartId),
+          ).map((items, index) => {
             return (
               <li key={index}>
                 <div>Прием пищи 1</div>
@@ -162,10 +166,7 @@ export default function Page() {
 
                         <Button
                           onClick={() => {
-                            deleting.mutate({
-                              itemId: item.id,
-                              date: formattedDate,
-                            });
+                            removeFoodFromDateMutation.mutate(item);
                           }}>
                           Удалить
                         </Button>
@@ -199,28 +200,29 @@ export default function Page() {
           products={productsQuery.data || []}
           recipes={recipesQuery.data || []}
           onSubmit={values => {
-            if (itemToEdit) {
-              updating.mutate({
-                date: formattedDate,
-                itemId: itemToEdit.id,
-                quantity: values.quantity,
-                quantityConverterId: values.quantityConverterId,
-                ingredient: {
-                  type: values.source,
-                  id: values.sourceItemId,
-                },
-              });
-            } else {
-              adding.mutate({
-                date: formattedDate,
-                quantity: values.quantity,
-                quantityConverterId: values.quantityConverterId,
-                ingredient: {
-                  type: values.source,
-                  id: values.sourceItemId,
-                },
-              });
-            }
+            // FIXME
+            // if (itemToEdit) {
+            //   updateFoodForDateMutation.mutate({
+            //     date: formattedDate,
+            //     itemId: itemToEdit.id,
+            //     quantity: values.quantity,
+            //     quantityConverterId: values.quantityConverterId,
+            //     ingredient: {
+            //       type: values.source,
+            //       id: values.sourceItemId,
+            //     },
+            //   });
+            // } else {
+            //   addFoodToDateMutation.mutate({
+            //     date: formattedDate,
+            //     quantity: values.quantity,
+            //     quantityConverterId: values.quantityConverterId,
+            //     ingredient: {
+            //       type: values.source,
+            //       id: values.sourceItemId,
+            //     },
+            //   });
+            // }
           }}
         />
       </section>

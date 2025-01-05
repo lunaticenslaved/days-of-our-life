@@ -1,9 +1,8 @@
+import { DateUtils } from '#/shared/models/date';
 import {
-  FoodTrackerDay,
   FoodProduct,
   FoodRecipe,
-  FoodTrackerMealItem,
-  sumNutrients,
+  FoodMealItem,
   FoodNutrients,
 } from '#/shared/models/food';
 import { Prisma } from '@prisma/client';
@@ -82,35 +81,28 @@ export const SELECT_PRODUCT = {
   },
 } satisfies Prisma.FoodProductDefaultArgs;
 
-export const SELECT_MEAL_ITEM = {
+export const FOOD_MEAL_ITEM_SELECTOR = {
   select: {
     id: true,
     quantity: true,
+    dayPartId: true,
     product: { select: { id: true, name: true, manufacturer: true } },
     recipe: { select: { id: true, name: true } },
     nutrients: NUTRIENTS_SELECT,
     quantityConverter: QUANTITY_CONVERTER,
-  },
-} satisfies Prisma.FoodTrackerMealItemDefaultArgs;
-
-export const SELECT_TRACKER_DAY = {
-  select: {
-    id: true,
-    date: true,
-    meals: {
-      ...SELECT_MEAL_ITEM,
-      orderBy: [{ createdAt: 'asc' }],
+    day: {
+      select: {
+        id: true,
+        date: true,
+      },
     },
   },
-} satisfies Prisma.FoodTrackerDayDefaultArgs;
+} satisfies Prisma.FoodMealItemDefaultArgs;
 
 type DBFoodNutrients = Prisma.FoodNutrientsGetPayload<typeof ONLY_NUTRIENTS_SELECT>;
 type DBFoodRecipe = Prisma.FoodRecipeGetPayload<typeof SELECT_RECIPE>;
 type DBFoodProduct = Prisma.FoodProductGetPayload<typeof SELECT_PRODUCT>;
-type DBFoodTrackerDay = Prisma.FoodTrackerDayGetPayload<typeof SELECT_TRACKER_DAY>;
-type DBFoodTrackerMealItem = Prisma.FoodTrackerMealItemGetPayload<
-  typeof SELECT_MEAL_ITEM
->;
+type DBFoodMealItem = Prisma.FoodMealItemGetPayload<typeof FOOD_MEAL_ITEM_SELECTOR>;
 
 export function convertFoodNutrients(data: DBFoodNutrients): FoodNutrients {
   return data;
@@ -156,10 +148,8 @@ export function convertFoodProduct(data: DBFoodProduct): FoodProduct {
   };
 }
 
-export function convertFoodTrackerMealItem(
-  data: DBFoodTrackerMealItem,
-): FoodTrackerMealItem {
-  let ingredient: FoodTrackerMealItem['ingredient'] | undefined = undefined;
+export function convertFoodMealItemSelector(data: DBFoodMealItem): FoodMealItem {
+  let ingredient: FoodMealItem['ingredient'] | undefined = undefined;
 
   if (data.product) {
     ingredient = {
@@ -182,17 +172,8 @@ export function convertFoodTrackerMealItem(
     quantity: data.quantity,
     nutrients: data.nutrients,
     quantityConverter: data.quantityConverter,
+    date: DateUtils.toDateFormat(data.day.date),
+    dayPartId: data.dayPartId,
     ingredient,
-  };
-}
-
-export function convertFoodTrackerDay(data: DBFoodTrackerDay): FoodTrackerDay {
-  return {
-    id: data.id,
-    date: data.date.toISOString(),
-    meals: data.meals.length
-      ? [{ items: data.meals.map(convertFoodTrackerMealItem) }]
-      : [],
-    nutrients: sumNutrients(data.meals.map(meal => convertFoodNutrients(meal.nutrients))),
   };
 }
