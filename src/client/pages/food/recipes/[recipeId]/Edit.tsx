@@ -1,5 +1,4 @@
 import {
-  useListFoodProductsQuery,
   FoodRecipeForm,
   useGetFoodRecipeQuery,
   useUpdateFoodRecipeMutation,
@@ -12,12 +11,11 @@ export default function Page() {
 
   const query = useGetFoodRecipeQuery(recipeId);
 
-  const productsQuery = useListFoodProductsQuery();
   const editing = useUpdateFoodRecipeMutation(recipeId, {
     onSuccess: () => navigation.toRecipeOverview({ recipeId }),
   });
 
-  if (query.isLoading || productsQuery.isLoading) {
+  if (query.isLoading) {
     return <div>Loading...</div>;
   }
 
@@ -25,11 +23,5 @@ export default function Page() {
     return <div>not found</div>;
   }
 
-  return (
-    <FoodRecipeForm
-      recipe={query.data}
-      products={productsQuery.data || []}
-      onSubmit={editing.mutate}
-    />
-  );
+  return <FoodRecipeForm recipe={query.data} onSubmit={editing.mutate} />;
 }

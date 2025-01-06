@@ -91,7 +91,6 @@ model FoodNutrients {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Day       Day?
 }
 
 model FoodRecipeIngredient {
@@ -177,9 +176,6 @@ model Day {
   femalePeriodStarted FemalePeriod?
   medicaments         MedicamentIntake[]
   foodMealItems       FoodMealItem[]
-
-  nutrientsId String        @unique @db.Uuid
-  nutrients   FoodNutrients @relation(fields: [nutrientsId], references: [id], onDelete: Restrict)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -5,13 +5,6 @@ import { Handlers } from '#/client/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 // Recipe
-export function useListFoodRecipesQuery() {
-  return useQuery({
-    queryKey: ['FoodSchema.recipes.list'],
-    queryFn: wrapApiAction(FoodSchema.recipes.list),
-  });
-}
-
 export function useGetFoodRecipeQuery(recipeId: string) {
   return useQuery({
     queryKey: [`FoodSchema.recipes.get(${recipeId})`],
@@ -47,13 +40,6 @@ export function useDeleteFoodRecipeMutation(
 }
 
 // Product
-export function useListFoodProductsQuery() {
-  return useQuery({
-    queryKey: ['FoodSchema.products.list'],
-    queryFn: wrapApiAction(FoodSchema.products.list),
-  });
-}
-
 export function useGetFoodProductQuery(productId: string) {
   return useQuery({
     queryKey: [`FoodSchema.products.get(${productId})`],

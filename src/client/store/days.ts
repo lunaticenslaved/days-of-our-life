@@ -28,12 +28,13 @@ import {
   ListFoodMealItemsForDateResponse,
 } from '#/shared/api/types/days';
 import { MutationHandlers } from '#/client/types';
-import { DateFormat, DateUtils } from '#/shared/models/date';
+import { DateFormat } from '#/shared/models/date';
 import { MedicamentIntake } from '#/shared/models/medicament';
 import { CosmeticProductApplication } from '#/shared/models/cosmetic';
 import { cloneDeep } from 'lodash';
 import { FemalePeriod } from '#/shared/models/female-period';
 import { FoodMealItem, sumNutrients } from '#/shared/models/food';
+import { DayUtils } from '#/shared/models/day';
 
 const StoreKeys = {
   getDayQuery: (): QueryKey => ['getDayQuery'],
@@ -77,7 +78,7 @@ function setDaysQueryData(
       return _old;
     }
 
-    const old = cloneDeep(_old);
+    let old = cloneDeep(_old);
 
     if (!(date in old)) {
       old[date] = {
@@ -130,39 +131,15 @@ function setDaysQueryData(
     }
 
     if (arg.removeFemalePeriod || arg.addFemalePeriod) {
-      let startDate = date;
-
       if (arg.removeFemalePeriod) {
         old[date].femalePeriod = null;
-        startDate = DateUtils.min(...(Object.keys(old) as DateFormat[]));
       }
 
       if (arg.addFemalePeriod) {
-        startDate = date;
-
-        old[date].femalePeriod = {
-          startDate,
-        };
+        old[date].femalePeriod = { startDate: date };
       }
 
-      for (const dateStr of Object.keys(old)) {
-        const currentDate = dateStr as DateFormat;
-
-        if (DateUtils.isAfter(currentDate, startDate, 'day')) {
-          const currentFemalePeriod = old[currentDate].femalePeriod;
-
-          if (
-            currentFemalePeriod &&
-            DateUtils.isSame(currentFemalePeriod.startDate, currentDate, 'day')
-          ) {
-            startDate = currentFemalePeriod.startDate;
-          }
-
-          old[currentDate].femalePeriod = {
-            startDate,
-          };
-        }
-      }
+      old = DayUtils.orderFemalePeriods(old);
     }
 
     return old;

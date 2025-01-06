@@ -1,5 +1,5 @@
-import { useListFoodRecipesQuery } from '#/client/entities/food';
 import { FOOD_NAVIGATION } from '#/client/pages/food';
+import { useListFoodRecipesQuery } from '#/client/store';
 import { Link } from 'react-router-dom';
 
 export default function Page() {

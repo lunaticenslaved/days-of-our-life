@@ -15,8 +15,8 @@ import { NumberInput } from '#/client/components/NumberInput';
 import { Radio } from '#/client/components/Radio';
 import { Select } from '#/client/components/Select';
 import {
-  FoodRecipeSelect,
-  FoodProductSelect,
+  FoodRecipeSearch,
+  FoodProductSearch,
   FoodNutrientsList,
 } from '#/client/entities/food';
 import { z } from 'zod';
@@ -93,15 +93,11 @@ export function MealItemFormDialog({
 
                   {values.source === 'product' ? (
                     <FForm.Field name="sourceItemId" title="Продукт" required>
-                      {inputProps => (
-                        <FoodProductSelect {...inputProps} products={products} />
-                      )}
+                      {inputProps => <FoodProductSearch {...inputProps} />}
                     </FForm.Field>
                   ) : (
                     <FForm.Field name="sourceItemId" title="Рецепт" required>
-                      {inputProps => (
-                        <FoodRecipeSelect {...inputProps} recipes={recipes} />
-                      )}
+                      {inputProps => <FoodRecipeSearch {...inputProps} />}
                     </FForm.Field>
                   )}
 

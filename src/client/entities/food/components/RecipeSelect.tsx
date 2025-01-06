@@ -1,7 +1,7 @@
 import { FoodRecipe } from '#/shared/models/food';
 import { Select, SelectProps } from '#/client/components/Select';
 
-interface FoodRecipeSelectProps extends SelectProps {
+export interface FoodRecipeSelectProps extends SelectProps {
   recipes: FoodRecipe[];
 }
 

@@ -1,11 +1,11 @@
-import { FoodProduct, FoodRecipe, FoodValidators } from '#/shared/models/food';
+import { FoodRecipe, FoodValidators } from '#/shared/models/food';
 import { Button } from '#/client/components/Button';
 import { FForm } from '#/client/components/FForm';
 import { Form } from '#/client/components/Form';
 import { NumberInput } from '#/client/components/NumberInput';
 import { TextArea } from '#/client/components/TextArea';
 import { TextInput } from '#/client/components/TextInput';
-import { FoodProductSelect } from '#/client/entities/food';
+import { FoodProductSearch } from '#/client/entities/food';
 import { z } from 'zod';
 
 export const FoodRecipeValidator = z.object({
@@ -19,7 +19,6 @@ type RecipeFormValues = z.infer<typeof FoodRecipeValidator>;
 
 interface RecipeFormProps {
   recipe?: FoodRecipe;
-  products: FoodProduct[];
   onSubmit(values: RecipeFormValues): void;
 }
 
@@ -38,6 +37,14 @@ function getInitialValues(recipe?: FoodRecipe): RecipeFormValues {
     });
   }
 
+  if (parts.length === 0) {
+    parts.push({
+      title: 'Основная',
+      description: '-',
+      ingredients: [],
+    });
+  }
+
   return {
     parts,
     output: recipe?.output || {
@@ -49,7 +56,7 @@ function getInitialValues(recipe?: FoodRecipe): RecipeFormValues {
   };
 }
 
-export function FoodRecipeForm({ onSubmit, products, recipe }: RecipeFormProps) {
+export function FoodRecipeForm({ onSubmit, recipe }: RecipeFormProps) {
   return (
     <FForm
       schema={FoodRecipeValidator}
@@ -98,9 +105,7 @@ export function FoodRecipeForm({ onSubmit, products, recipe }: RecipeFormProps) 
                             return (
                               <div style={{ display: 'flex', gap: '10px' }}>
                                 <FForm.Field name={`${name}.productId`} required>
-                                  {props => (
-                                    <FoodProductSelect {...props} products={products} />
-                                  )}
+                                  {props => <FoodProductSearch {...props} />}
                                 </FForm.Field>
 
                                 <FForm.Field

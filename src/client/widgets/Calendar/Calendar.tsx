@@ -30,7 +30,7 @@ interface CalendarProps {
   endDate: DateFormat;
   medicaments: Medicament[];
   dayParts: DayPart[];
-  getDayInfo(date: DateFormat): DayInfo;
+  getDayInfo(date: DateFormat): DayInfo | undefined;
   onMedicamentIntakeDelete(arg: RenderMedicamentIntakeActionsProps): void;
   onAddMedicamentIntake(arg: RenderDayPartProps): void;
   onUpdated(): void;
@@ -64,7 +64,7 @@ export function Calendar({
 
   function renderMedicamentIntakes(arg: RenderDayPartProps) {
     const intakes =
-      getDayInfo(arg.date).medicamentIntakes?.filter(
+      getDayInfo(arg.date)?.medicamentIntakes?.filter(
         intake => intake.dayPartId === arg.dayPart.id,
       ) || [];
 
@@ -90,7 +90,7 @@ export function Calendar({
 
   function renderCosmeticProducts(arg: RenderDayPartProps) {
     const items =
-      getDayInfo(arg.date).cosmeticProductApplications.filter(
+      getDayInfo(arg.date)?.cosmeticProductApplications.filter(
         intake => intake.dayPartId === arg.dayPart.id,
       ) || [];
 
@@ -119,8 +119,8 @@ export function Calendar({
         {dates.map((date, index) => {
           const dayInfo = getDayInfo(date);
 
-          const weight = dayInfo.weight;
-          const nutrients = dayInfo.food.nutrients;
+          const weight = dayInfo?.weight;
+          const nutrients = dayInfo?.food.nutrients;
           const firstDayPart: DayPart | undefined = dayParts[0];
 
           return (
@@ -130,10 +130,12 @@ export function Calendar({
                   {DateUtils.isSame(date, new Date()) ? <strong>{date}</strong> : date}
                 </td>
                 <td rowSpan={dayParts.length || 1}>
-                  <StartFemalePeriodAction
-                    femalePeriod={dayInfo.femalePeriod}
-                    date={date}
-                  />
+                  {!!dayInfo && (
+                    <StartFemalePeriodAction
+                      femalePeriod={dayInfo.femalePeriod}
+                      date={date}
+                    />
+                  )}
                 </td>
                 <td rowSpan={dayParts.length || 1}>
                   <AddWeightAction

@@ -2,12 +2,7 @@ import { FoodMealItem, sumNutrients } from '#/shared/models/food';
 import { Button } from '#/client/components/Button';
 import { useDialog } from '#/client/components/Dialog';
 import { AddWeightAction } from '#/client/entities/body-statistics';
-import {
-  MealItemFormDialog,
-  FoodNutrientsList,
-  useListFoodRecipesQuery,
-  useListFoodProductsQuery,
-} from '#/client/entities/food';
+import { MealItemFormDialog, FoodNutrientsList } from '#/client/entities/food';
 import { DAYS_NAVIGATION, useDaysPageParams } from '#/client/pages/days';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -21,6 +16,8 @@ import {
   useUpdateFoodForDateMutation,
   useRemoveFoodFromDateMutation,
   useListFoodForDateQuery,
+  useListFoodProductsQuery,
+  useListFoodRecipesQuery,
 } from '#/client/store';
 import { groupBy } from 'lodash';
 

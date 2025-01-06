@@ -23,12 +23,66 @@ export default function PageView() {
     };
   });
 
+  return (
+    <div>
+      <CalendarDatePicker
+        startDate={dateRange.from}
+        endDate={dateRange.to}
+        onStartDateChange={from => setDateRange(v => ({ ...v, from }))}
+        onEndDateChange={to => setDateRange(v => ({ ...v, to }))}
+      />
+
+      <LocalCalendar
+        key={`${dateRange.from} - ${dateRange.to}`}
+        startDate={dateRange.from}
+        endDate={dateRange.to}
+      />
+    </div>
+  );
+}
+
+interface CalendarDatePickerProps {
+  startDate: DateFormat;
+  onStartDateChange(value: DateFormat): void;
+  endDate: DateFormat;
+  onEndDateChange(value: DateFormat): void;
+}
+
+function CalendarDatePicker({
+  startDate,
+  endDate,
+  onStartDateChange,
+  onEndDateChange,
+}: CalendarDatePickerProps) {
+  const modelValue = useMemo((): DatePickerRangeModelValue => {
+    return {
+      from: startDate,
+      to: endDate,
+    };
+  }, [endDate, startDate]);
+
+  return (
+    <DatePicker
+      type="range"
+      modelValue={modelValue}
+      onModelValueChange={value => {
+        if (value?.from && modelValue.from !== value.from) {
+          onStartDateChange(value.from);
+        }
+
+        if (value?.to && modelValue.to !== value.to) {
+          onEndDateChange(value.to);
+        }
+      }}
+    />
+  );
+}
+
+function LocalCalendar(props: { startDate: DateFormat; endDate: DateFormat }) {
   const medicamentIntakeDialog = useDialog();
 
-  const listDaysQuery = useListDaysQuery({
-    startDate: dateRange.from,
-    endDate: dateRange.to,
-  });
+  const listDaysQuery = useListDaysQuery(props);
+
   const listDayPartsQuery = useListDayPartsQuery();
   const listMedicamentsQuery = useListMedicamentsQuery();
 
@@ -60,14 +114,7 @@ export default function PageView() {
   }
 
   return (
-    <div>
-      <CalendarDatePicker
-        startDate={dateRange.from}
-        endDate={dateRange.to}
-        onStartDateChange={from => setDateRange({ ...dateRange, from })}
-        onEndDateChange={to => setDateRange({ ...dateRange, to })}
-      />
-
+    <>
       {selectedDate && selectedDayPart && (
         <MedicamentIntakeFormDialog
           type="create"
@@ -86,8 +133,8 @@ export default function PageView() {
       )}
 
       <Calendar
-        startDate={dateRange.from}
-        endDate={dateRange.to}
+        startDate={props.startDate}
+        endDate={props.endDate}
         dayParts={listDayPartsQuery.data}
         medicaments={listMedicamentsQuery.data}
         getDayInfo={date => {
@@ -101,43 +148,6 @@ export default function PageView() {
         }}
         onUpdated={() => {}}
       />
-    </div>
-  );
-}
-
-interface CalendarDatePickerProps {
-  startDate: DateFormat;
-  onStartDateChange(value: DateFormat): void;
-  endDate: DateFormat;
-  onEndDateChange(value: DateFormat): void;
-}
-
-function CalendarDatePicker({
-  startDate,
-  endDate,
-  onStartDateChange,
-  onEndDateChange,
-}: CalendarDatePickerProps) {
-  const modelValue = useMemo((): DatePickerRangeModelValue => {
-    return {
-      from: startDate,
-      to: endDate,
-    };
-  }, [endDate, startDate]);
-
-  return (
-    <DatePicker
-      type="range"
-      modelValue={modelValue}
-      onModelValueChange={value => {
-        if (value?.from) {
-          onStartDateChange(value.from);
-        }
-
-        if (value?.to) {
-          onEndDateChange(value.to);
-        }
-      }}
-    />
+    </>
   );
 }
