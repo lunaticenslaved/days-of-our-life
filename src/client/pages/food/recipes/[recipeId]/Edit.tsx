@@ -1,9 +1,6 @@
-import {
-  FoodRecipeForm,
-  useGetFoodRecipeQuery,
-  useUpdateFoodRecipeMutation,
-} from '#/client/entities/food';
+import { FoodRecipeForm } from '#/client/entities/food';
 import { useFoodNavigation, useFoodPageParams } from '#/client/pages/food';
+import { useGetFoodRecipeQuery, useUpdateFoodRecipeMutation } from '#/client/store';
 
 export default function Page() {
   const { recipeId = '' } = useFoodPageParams();
@@ -11,7 +8,7 @@ export default function Page() {
 
   const query = useGetFoodRecipeQuery(recipeId);
 
-  const editing = useUpdateFoodRecipeMutation(recipeId, {
+  const editing = useUpdateFoodRecipeMutation({
     onSuccess: () => navigation.toRecipeOverview({ recipeId }),
   });
 
@@ -23,5 +20,15 @@ export default function Page() {
     return <div>not found</div>;
   }
 
-  return <FoodRecipeForm recipe={query.data} onSubmit={editing.mutate} />;
+  return (
+    <FoodRecipeForm
+      recipe={query.data}
+      onSubmit={async values => {
+        await editing.mutate({
+          ...values,
+          id: recipeId,
+        });
+      }}
+    />
+  );
 }

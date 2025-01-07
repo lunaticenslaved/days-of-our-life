@@ -32,7 +32,6 @@ export interface FoodRecipeOutput {
 }
 
 export interface FoodRecipeIngredient {
-  id: string;
   grams: number;
   description?: string;
   product: Pick<FoodProduct, 'id' | 'manufacturer' | 'name'>;
@@ -43,7 +42,6 @@ export interface FoodRecipe {
   name: string;
   description: string;
   parts: Array<{
-    id: string;
     title: string;
     description?: string;
     ingredients: FoodRecipeIngredient[];
@@ -81,7 +79,10 @@ const quantityValidator = z.coerce
 
 export const FoodValidators = {
   name: CommonValidators.str(255),
-  manufacturer: CommonValidators.str(255).optional(),
+  manufacturer: z
+    .string({ message: ERROR_MESSAGES.required })
+    .max(255, ERROR_MESSAGES.maxLengthStr(255))
+    .optional(),
   nutrients: nutrientsValidator,
   nutrientsArr: z.array(nutrientsValidator),
   quantityConverterId: CommonValidators.id,

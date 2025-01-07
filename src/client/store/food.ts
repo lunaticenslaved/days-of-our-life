@@ -1,27 +1,41 @@
 import {
   CreateFoodProductRequest,
   CreateFoodProductResponse,
+  CreateFoodRecipeRequest,
+  CreateFoodRecipeResponse,
   DeleteFoodProductRequest,
   DeleteFoodProductResponse,
+  DeleteFoodRecipeRequest,
+  DeleteFoodRecipeResponse,
   GetFoodProductRequest,
   GetFoodProductResponse,
   ListFoodProductsResponse,
   UpdateFoodProductRequest,
   UpdateFoodProductResponse,
+  UpdateFoodRecipeRequest,
+  UpdateFoodRecipeResponse,
 } from '#/shared/api/types/food';
 import { MutationHandlers } from '#/client/types';
 import { queryClient, wrapApiAction } from '#/client/utils/api';
 import { Schema } from '#/shared/api/schemas';
 import { QueryKey, useMutation, useQuery } from '@tanstack/react-query';
-import { FoodProduct } from '#/shared/models/food';
+import { FoodProduct, FoodRecipe } from '#/shared/models/food';
 import { cloneDeep, orderBy } from 'lodash';
 
 const StoreKeys = {
+  // Product
   listProducts: (): QueryKey => ['food', 'products', 'list'],
   getProduct: (productId: string): QueryKey => ['food', 'product', productId],
   createProduct: (): QueryKey => ['food', 'products', 'create'],
   deleteProduct: (): QueryKey => ['food', 'products', 'delete'],
   updateProduct: (): QueryKey => ['food', 'products', 'update'],
+
+  // Recipe
+  listRecipes: (): QueryKey => ['food', 'recipes', 'list'],
+  getRecipe: (recipeId: string): QueryKey => ['food', 'recipe', recipeId],
+  createRecipe: (): QueryKey => ['food', 'recipes', 'create'],
+  updateRecipe: (): QueryKey => ['food', 'recipes', 'update'],
+  deleteRecipe: (): QueryKey => ['food', 'recipes', 'delete'],
 };
 
 async function onProductsChange(arg: {
@@ -148,6 +162,7 @@ export function useCreateFoodProductMutation(
     },
   });
 }
+
 export function useUpdateFoodProductMutation(
   handlers: MutationHandlers<FoodProduct> = {},
 ) {
@@ -255,9 +270,80 @@ export function useDeleteFoodProductMutation(
 }
 
 // Recipe
+// FIXME add relavidation and cache updates
 export function useListFoodRecipesQuery() {
   return useQuery({
     queryKey: ['FoodSchema.recipes.list'],
     queryFn: wrapApiAction(Schema.food.recipes.list),
+  });
+}
+
+export function useGetFoodRecipeQuery(recipeId: string) {
+  return useQuery({
+    queryKey: StoreKeys.getRecipe(recipeId),
+    queryFn: () => wrapApiAction(Schema.food.recipes.get)({ id: recipeId }),
+  });
+}
+
+export function useCreateFoodRecipeMutation(handlers: MutationHandlers<FoodRecipe> = {}) {
+  return useMutation<CreateFoodRecipeResponse, Error, CreateFoodRecipeRequest>({
+    mutationKey: StoreKeys.createRecipe(),
+    mutationFn: wrapApiAction(Schema.food.recipes.create),
+    onMutate() {
+      handlers.onMutate?.();
+    },
+    onError: (_error, _request, _context) => {
+      handlers.onError?.();
+    },
+    onSuccess: (response, _request, _context) => {
+      handlers.onSuccess?.(response);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: StoreKeys.listRecipes(),
+      });
+    },
+  });
+}
+
+export function useUpdateFoodRecipeMutation(handlers: MutationHandlers<FoodRecipe> = {}) {
+  return useMutation<UpdateFoodRecipeResponse, Error, UpdateFoodRecipeRequest>({
+    mutationKey: StoreKeys.updateRecipe(),
+    mutationFn: wrapApiAction(Schema.food.recipes.update),
+    onMutate() {
+      handlers.onMutate?.();
+    },
+    onError: (_error, _request, _context) => {
+      handlers.onError?.();
+    },
+    onSuccess: (response, _request, _context) => {
+      handlers.onSuccess?.(response);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: StoreKeys.listRecipes(),
+      });
+    },
+  });
+}
+
+export function useDeleteFoodRecipeMutation(handlers: MutationHandlers<void> = {}) {
+  return useMutation<DeleteFoodRecipeResponse, Error, DeleteFoodRecipeRequest>({
+    mutationKey: StoreKeys.deleteRecipe(),
+    mutationFn: wrapApiAction(Schema.food.recipes.delete),
+    onMutate() {
+      handlers.onMutate?.();
+    },
+    onError: (_error, _request, _context) => {
+      handlers.onError?.();
+    },
+    onSuccess: (response, _request, _context) => {
+      handlers.onSuccess?.(response);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: StoreKeys.listRecipes(),
+      });
+    },
   });
 }

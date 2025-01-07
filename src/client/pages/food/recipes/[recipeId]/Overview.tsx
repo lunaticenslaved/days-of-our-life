@@ -1,14 +1,11 @@
 import { useFoodPageParams } from '#/client/pages/food';
 import { Link } from 'react-router-dom';
 import { FOOD_NAVIGATION } from '../../index';
-import {
-  FoodRecipeOutput,
-  useGetFoodRecipeQuery,
-  FoodNutrientsList,
-} from '#/client/entities/food';
+import { FoodRecipeOutput, FoodNutrientsList } from '#/client/entities/food';
 import { multiplyNutrients } from '#/shared/models/food';
 import { useState } from 'react';
 import { NumberInput } from '#/client/components/NumberInput';
+import { useGetFoodRecipeQuery } from '#/client/store';
 
 export default function Page() {
   const { recipeId = '' } = useFoodPageParams();
@@ -64,19 +61,19 @@ export default function Page() {
 
       <section>
         <h2>Части рецепта</h2>
-        {parts.map(({ id, title, ingredients, description }) => {
+        {parts.map(({ title, ingredients, description }, index) => {
           const descriptionItems = (description ?? '').split('\n').filter(Boolean);
 
           return (
-            <section key={id}>
+            <section key={index}>
               <h3>{title}</h3>
 
               <section>
                 <h4>Ингредиенты</h4>
                 <ul>
-                  {ingredients.map(ingredient => {
+                  {ingredients.map((ingredient, index) => {
                     return (
-                      <li key={ingredient.id}>
+                      <li key={index}>
                         <span>{ingredient.product.name}</span>
                         {' - '}
                         <span>{ingredient.grams} грамм</span>

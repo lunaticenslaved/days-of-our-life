@@ -52,7 +52,7 @@ export function wrapApiAction<
       setTimeout(() => {
         console.log('resolving');
         resolve(undefined);
-      }, 3000);
+      }, 1000);
     });
 
     const response = await fn({ ...(passArg || {}), ...arg } as unknown as T);
