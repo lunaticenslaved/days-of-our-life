@@ -95,9 +95,8 @@ export default new Controller<'food/products'>({
     validator: z.object({ id: CommonValidators.id }),
     parse: req => ({ id: req.params.productId }),
     handler: async ({ id }, { prisma }) => {
-      await prisma.foodProduct.update({
+      await prisma.foodProduct.deleteMany({
         where: { id },
-        data: { isDeleted: true },
       });
     },
   }),

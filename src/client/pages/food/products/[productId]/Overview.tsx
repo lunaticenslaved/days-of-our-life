@@ -1,11 +1,12 @@
 import { multiplyNutrients } from '#/shared/models/food';
-import { useGetFoodProductQuery, FoodNutrientsList } from '#/client/entities/food';
+import { FoodNutrientsList } from '#/client/entities/food';
 import { FOOD_NAVIGATION, useFoodPageParams } from '#/client/pages/food';
 import { Link } from 'react-router-dom';
+import { useGetFoodProductQuery } from '#/client/store';
 
 export default function Page() {
   const { productId = '' } = useFoodPageParams();
-  const query = useGetFoodProductQuery(productId);
+  const query = useGetFoodProductQuery({ id: productId });
 
   if (query.isLoading) {
     return <div>Loading...</div>;
