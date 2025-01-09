@@ -2,40 +2,50 @@ import { Suspense } from 'react';
 import { Route, Routes } from 'react-router';
 
 import HomeRouter from './pages/home';
-import FoodRouter, { FOOD_NAVIGATION } from './pages/food';
-import DaysRouter, { DAYS_NAVIGATION } from './pages/days';
-import CosmeticRouter, { COSMETIC_NAVIGATION } from '#/client/pages/cosmetic';
-import { Link } from 'react-router-dom';
+import FoodRouter from './pages/food';
+import DaysRouter from './pages/days';
+import CosmeticRouter from './pages/cosmetic';
 import { DialogContextProvider } from '#/client/components/Dialog';
+import {
+  NavigationContextProvider,
+  TheLeftNavigation,
+} from '#/client/widgets/Navigation';
 
 export function AppRouter() {
   return (
-    <DialogContextProvider>
-      <div style={{ display: 'flex', padding: '10px' }}>
-        <aside
+    <NavigationContextProvider>
+      <DialogContextProvider>
+        <div
           style={{
-            minWidth: '100px',
             display: 'flex',
-            flexDirection: 'column',
-            flexShrink: 0,
+            height: '100%',
           }}>
-          <Link to={FOOD_NAVIGATION.toRoot()}>Еда</Link>
-          <Link to={DAYS_NAVIGATION.toRoot()}>Дни</Link>
-          <Link to={COSMETIC_NAVIGATION.toRoot()}>Косметика</Link>
-        </aside>
-        <main style={{ flexGrow: 1, overflow: 'auto' }}>
-          <Suspense>
-            <Routes>
-              {HomeRouter}
-              {FoodRouter}
-              {DaysRouter}
-              {CosmeticRouter}
-              {/* TODO add not found page */}
-              <Route path="*" element={<div>not found</div>} />
-            </Routes>
-          </Suspense>
-        </main>
-      </div>
-    </DialogContextProvider>
+          <aside style={{ padding: '20px' }}>
+            <TheLeftNavigation />
+          </aside>
+
+          <main
+            style={{
+              flexGrow: 1,
+              overflow: 'auto',
+              padding: '30px',
+              backgroundColor: 'rgba(255,255,255,1)',
+              height: '100%',
+              borderRadius: '20px 0 0 20px',
+            }}>
+            <Suspense>
+              <Routes>
+                {HomeRouter}
+                {FoodRouter}
+                {DaysRouter}
+                {CosmeticRouter}
+                {/* TODO add not found page */}
+                <Route path="*" element={<div>not found</div>} />
+              </Routes>
+            </Suspense>
+          </main>
+        </div>
+      </DialogContextProvider>
+    </NavigationContextProvider>
   );
 }

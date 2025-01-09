@@ -5,3 +5,5 @@ export { CosmeticProductSelect } from './components/CosmeticProductSelect';
 
 export { AddCosmeticProductAction } from './containers/AddCosmeticProductAction';
 export { CosmeticProductApplicationsList } from './containers/CosmeticProductApplicationsList';
+
+export * from './icons';

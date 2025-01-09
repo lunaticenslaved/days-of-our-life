@@ -15,4 +15,6 @@ export default defineConfig({
       '#': resolve(__dirname, './src'),
     },
   },
+  root: './',
+  publicDir: 'src/public',
 });

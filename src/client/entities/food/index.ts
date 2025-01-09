@@ -10,3 +10,5 @@ export { FoodProductsTable } from './components/ProductsTable';
 
 export { FoodProductSearch } from './containers/FoodProductSearch';
 export { FoodRecipeSearch } from './containers/FoodRecipeSearch';
+
+export * from './icons';
