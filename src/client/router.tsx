@@ -5,6 +5,7 @@ import HomeRouter from './pages/home';
 import FoodRouter from './pages/food';
 import DaysRouter from './pages/days';
 import CosmeticRouter from './pages/cosmetic';
+import MedicamentsRouter from './pages/medicaments';
 import { DialogContextProvider } from '#/client/components/Dialog';
 import {
   NavigationContextProvider,
@@ -39,6 +40,7 @@ export function AppRouter() {
                 {FoodRouter}
                 {DaysRouter}
                 {CosmeticRouter}
+                {MedicamentsRouter}
                 {/* TODO add not found page */}
                 <Route path="*" element={<div>not found</div>} />
               </Routes>
