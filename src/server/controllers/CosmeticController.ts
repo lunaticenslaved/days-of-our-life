@@ -3,14 +3,24 @@ import {
   COSMETIC_PRODUCT_SELECTOR,
 } from '#/server/selectors/cosmetic';
 import {
+  CreateCosmeticIngredientRequest,
+  CreateCosmeticIngredientResponse,
   CreateCosmeticProductRequest,
   CreateCosmeticProductResponse,
+  DeleteCosmeticIngredientRequest,
+  DeleteCosmeticIngredientResponse,
   DeleteCosmeticProductRequest,
   DeleteCosmeticProductResponse,
+  GetCosmeticIngredientRequest,
+  GetCosmeticIngredientResponse,
   GetCosmeticProductRequest,
   GetCosmeticProductResponse,
+  ListCosmeticIngredientsRequest,
+  ListCosmeticIngredientsResponse,
   ListCosmeticProductsRequest,
   ListCosmeticProductsResponse,
+  UpdateCosmeticIngredientRequest,
+  UpdateCosmeticIngredientResponse,
   UpdateCosmeticProductRequest,
   UpdateCosmeticProductResponse,
 } from '#/shared/api/types/cosmetic';
@@ -19,8 +29,10 @@ import { Controller } from '#/server/utils/Controller';
 import { CommonValidators } from '#/shared/models/common';
 
 import { z } from 'zod';
+import CosmeticIngredientService from '#/server/services/CosmeticIngredientService';
 
-export default new Controller<'cosmetic/products'>({
+export default new Controller<'cosmetic'>({
+  // Cosmetic Products
   'GET /cosmetic/products': Controller.handler<
     ListCosmeticProductsRequest,
     ListCosmeticProductsResponse
@@ -123,6 +135,80 @@ export default new Controller<'cosmetic/products'>({
           ...COSMETIC_PRODUCT_SELECTOR,
         })
         .then(convertCosmeticProductSelector);
+    },
+  }),
+
+  // Cosmetic Ingredients
+  'POST /cosmetic/ingredients': Controller.handler<
+    CreateCosmeticIngredientRequest,
+    CreateCosmeticIngredientResponse
+  >({
+    validator: z.object({
+      name: CommonValidators.str(255),
+    }),
+    parse: req => ({
+      name: req.body.name,
+    }),
+    handler: async (data, { prisma }) => {
+      return CosmeticIngredientService.create(data, prisma);
+    },
+  }),
+
+  'PATCH /cosmetic/ingredients/:id': Controller.handler<
+    UpdateCosmeticIngredientRequest,
+    UpdateCosmeticIngredientResponse
+  >({
+    validator: z.object({
+      id: CommonValidators.id,
+      name: CommonValidators.str(255),
+    }),
+    parse: req => ({
+      id: req.params.ingredientId,
+      name: req.body.name,
+    }),
+    handler: async ({ id, ...data }, { prisma }) => {
+      return CosmeticIngredientService.update({ id, ...data }, prisma);
+    },
+  }),
+
+  'DELETE /cosmetic/ingredients/:id': Controller.handler<
+    DeleteCosmeticIngredientRequest,
+    DeleteCosmeticIngredientResponse
+  >({
+    validator: z.object({
+      id: CommonValidators.id,
+    }),
+    parse: req => ({
+      id: req.params.ingredientId,
+    }),
+    handler: async ({ id }, { prisma }) => {
+      return CosmeticIngredientService.delete({ id }, prisma);
+    },
+  }),
+
+  'GET /cosmetic/ingredients/:id': Controller.handler<
+    GetCosmeticIngredientRequest,
+    GetCosmeticIngredientResponse
+  >({
+    validator: z.object({
+      id: CommonValidators.id,
+    }),
+    parse: req => ({
+      id: req.params.ingredientId,
+    }),
+    handler: async ({ id }, { prisma }) => {
+      return CosmeticIngredientService.get({ id }, prisma);
+    },
+  }),
+
+  'GET /cosmetic/ingredients': Controller.handler<
+    ListCosmeticIngredientsRequest,
+    ListCosmeticIngredientsResponse
+  >({
+    validator: z.object({}),
+    parse: () => ({}),
+    handler: async (_, { prisma }) => {
+      return CosmeticIngredientService.list({}, prisma);
     },
   }),
 });

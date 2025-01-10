@@ -12,3 +12,8 @@ export interface CosmeticProductApplication {
   dayPartId: string;
   cosmeticProductId: string;
 }
+
+export interface CosmeticIngredient {
+  id: string;
+  name: string;
+}
