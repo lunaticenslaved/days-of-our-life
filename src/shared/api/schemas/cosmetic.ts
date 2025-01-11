@@ -9,10 +9,31 @@ import {
   UpdateCosmeticProductResponse,
   GetCosmeticProductRequest,
   GetCosmeticProductResponse,
+  CreateCosmeticIngredientRequest,
+  CreateCosmeticIngredientResponse,
+  UpdateCosmeticIngredientRequest,
+  UpdateCosmeticIngredientResponse,
+  DeleteCosmeticIngredientRequest,
+  DeleteCosmeticIngredientResponse,
+  GetCosmeticIngredientRequest,
+  GetCosmeticIngredientResponse,
+  ListCosmeticIngredientsRequest,
+  ListCosmeticIngredientsResponse,
+  CreateCosmeticBenefitRequest,
+  CreateCosmeticBenefitResponse,
+  UpdateCosmeticBenefitRequest,
+  UpdateCosmeticBenefitResponse,
+  DeleteCosmeticBenefitRequest,
+  DeleteCosmeticBenefitResponse,
+  GetCosmeticBenefitRequest,
+  GetCosmeticBenefitResponse,
+  ListCosmeticBenefitsRequest,
+  ListCosmeticBenefitsResponse,
 } from '#/shared/api/types/cosmetic';
 import { createAction } from '#/shared/api/utils';
 
 export const CosmeticSchema = {
+  // Cosmetic Products
   createCosmeticProduct: createAction<
     CreateCosmeticProductRequest,
     CreateCosmeticProductResponse
@@ -49,4 +70,81 @@ export const CosmeticSchema = {
       method: 'GET',
     },
   ),
+
+  // Cosmetic Ingredients
+  createCosmeticIngredient: createAction<
+    CreateCosmeticIngredientRequest,
+    CreateCosmeticIngredientResponse
+  >({
+    path: () => `/api/cosmetic/ingredients`,
+    method: 'POST',
+    body: data => data,
+  }),
+  updateCosmeticIngredient: createAction<
+    UpdateCosmeticIngredientRequest,
+    UpdateCosmeticIngredientResponse
+  >({
+    path: ({ id }) => `/api/cosmetic/ingredients/:${id}`,
+    method: 'PATCH',
+    body: ({ id: _id, ...data }) => data,
+  }),
+  deleteCosmeticIngredient: createAction<
+    DeleteCosmeticIngredientRequest,
+    DeleteCosmeticIngredientResponse
+  >({
+    path: ({ id }) => `/api/cosmetic/ingredients/:${id}`,
+    method: 'DELETE',
+  }),
+  getCosmeticIngredient: createAction<
+    GetCosmeticIngredientRequest,
+    GetCosmeticIngredientResponse
+  >({
+    path: ({ id }) => `/api/cosmetic/ingredients/:${id}`,
+    method: 'GET',
+  }),
+  listCosmeticIngredients: createAction<
+    ListCosmeticIngredientsRequest,
+    ListCosmeticIngredientsResponse
+  >({
+    path: () => `/api/cosmetic/ingredients`,
+    method: 'GET',
+  }),
+
+  // Cosmetic Benefits
+  createCosmeticBenefit: createAction<
+    CreateCosmeticBenefitRequest,
+    CreateCosmeticBenefitResponse
+  >({
+    path: () => `/api/cosmetic/benefits`,
+    method: 'POST',
+    body: data => data,
+  }),
+  updateCosmeticBenefit: createAction<
+    UpdateCosmeticBenefitRequest,
+    UpdateCosmeticBenefitResponse
+  >({
+    path: ({ id }) => `/api/cosmetic/benefits/${id}`,
+    method: 'PATCH',
+    body: ({ id: _id, ...data }) => data,
+  }),
+  deleteCosmeticBenefit: createAction<
+    DeleteCosmeticBenefitRequest,
+    DeleteCosmeticBenefitResponse
+  >({
+    path: ({ id }) => `/api/cosmetic/benefits/${id}`,
+    method: 'DELETE',
+  }),
+  getCosmeticBenefit: createAction<GetCosmeticBenefitRequest, GetCosmeticBenefitResponse>(
+    {
+      path: ({ id }) => `/api/cosmetic/benefits/${id}`,
+      method: 'GET',
+    },
+  ),
+  listCosmeticBenefits: createAction<
+    ListCosmeticBenefitsRequest,
+    ListCosmeticBenefitsResponse
+  >({
+    path: () => `/api/cosmetic/benefits`,
+    method: 'GET',
+  }),
 };

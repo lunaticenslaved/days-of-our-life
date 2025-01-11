@@ -3,22 +3,32 @@ import {
   COSMETIC_PRODUCT_SELECTOR,
 } from '#/server/selectors/cosmetic';
 import {
+  CreateCosmeticBenefitRequest,
+  CreateCosmeticBenefitResponse,
   CreateCosmeticIngredientRequest,
   CreateCosmeticIngredientResponse,
   CreateCosmeticProductRequest,
   CreateCosmeticProductResponse,
+  DeleteCosmeticBenefitRequest,
+  DeleteCosmeticBenefitResponse,
   DeleteCosmeticIngredientRequest,
   DeleteCosmeticIngredientResponse,
   DeleteCosmeticProductRequest,
   DeleteCosmeticProductResponse,
+  GetCosmeticBenefitRequest,
+  GetCosmeticBenefitResponse,
   GetCosmeticIngredientRequest,
   GetCosmeticIngredientResponse,
   GetCosmeticProductRequest,
   GetCosmeticProductResponse,
+  ListCosmeticBenefitsRequest,
+  ListCosmeticBenefitsResponse,
   ListCosmeticIngredientsRequest,
   ListCosmeticIngredientsResponse,
   ListCosmeticProductsRequest,
   ListCosmeticProductsResponse,
+  UpdateCosmeticBenefitRequest,
+  UpdateCosmeticBenefitResponse,
   UpdateCosmeticIngredientRequest,
   UpdateCosmeticIngredientResponse,
   UpdateCosmeticProductRequest,
@@ -30,6 +40,7 @@ import { CommonValidators } from '#/shared/models/common';
 
 import { z } from 'zod';
 import CosmeticIngredientService from '#/server/services/CosmeticIngredientService';
+import CosmeticIngredientBenefitService from '#/server/services/CosmeticIngredientBenefitService';
 
 export default new Controller<'cosmetic'>({
   // Cosmetic Products
@@ -209,6 +220,84 @@ export default new Controller<'cosmetic'>({
     parse: () => ({}),
     handler: async (_, { prisma }) => {
       return CosmeticIngredientService.list({}, prisma);
+    },
+  }),
+
+  // // Cosmetic Benefits
+  'POST /cosmetic/benefits': Controller.handler<
+    CreateCosmeticBenefitRequest,
+    CreateCosmeticBenefitResponse
+  >({
+    validator: z.object({
+      name: CommonValidators.str(255),
+      parentId: CommonValidators.id.optional(),
+    }),
+    parse: req => ({
+      name: req.body.name,
+      parentId: req.body.parentId,
+    }),
+    handler: async (data, { prisma }) => {
+      return CosmeticIngredientBenefitService.create(data, prisma);
+    },
+  }),
+
+  'PATCH /cosmetic/benefits/:id': Controller.handler<
+    UpdateCosmeticBenefitRequest,
+    UpdateCosmeticBenefitResponse
+  >({
+    validator: z.object({
+      id: CommonValidators.id,
+      name: CommonValidators.str(255),
+      parentId: CommonValidators.id.optional(),
+    }),
+    parse: req => ({
+      id: req.params.id,
+      name: req.body.name,
+      parentId: req.body.parentId,
+    }),
+    handler: async (data, { prisma }) => {
+      return CosmeticIngredientBenefitService.update(data, prisma);
+    },
+  }),
+
+  'DELETE /cosmetic/benefits/:id': Controller.handler<
+    DeleteCosmeticBenefitRequest,
+    DeleteCosmeticBenefitResponse
+  >({
+    validator: z.object({
+      id: CommonValidators.id,
+    }),
+    parse: req => ({
+      id: req.params.id,
+    }),
+    handler: async (data, { prisma }) => {
+      return CosmeticIngredientBenefitService.delete(data, prisma);
+    },
+  }),
+
+  'GET /cosmetic/benefits/:id': Controller.handler<
+    GetCosmeticBenefitRequest,
+    GetCosmeticBenefitResponse
+  >({
+    validator: z.object({
+      id: CommonValidators.id,
+    }),
+    parse: req => ({
+      id: req.params.id,
+    }),
+    handler: async (data, { prisma }) => {
+      return CosmeticIngredientBenefitService.get(data, prisma);
+    },
+  }),
+
+  'GET /cosmetic/benefits': Controller.handler<
+    ListCosmeticBenefitsRequest,
+    ListCosmeticBenefitsResponse
+  >({
+    validator: z.object({}),
+    parse: _req => ({}),
+    handler: async (data, { prisma }) => {
+      return CosmeticIngredientBenefitService.list(data, prisma);
     },
   }),
 });

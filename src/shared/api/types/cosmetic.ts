@@ -1,4 +1,8 @@
-import { CosmeticIngredient, CosmeticProduct } from '#/shared/models/cosmetic';
+import {
+  CosmeticIngredient,
+  CosmeticIngredientBenefit,
+  CosmeticProduct,
+} from '#/shared/models/cosmetic';
 
 export type CreateCosmeticProductResponse = CosmeticProduct;
 export interface CreateCosmeticProductRequest {
@@ -50,3 +54,30 @@ export interface GetCosmeticIngredientRequest {
 
 export type ListCosmeticIngredientsResponse = CosmeticIngredient[];
 export interface ListCosmeticIngredientsRequest {}
+
+// Cosmetic Ingredient Benefits
+export type CreateCosmeticBenefitResponse = CosmeticIngredientBenefit;
+export interface CreateCosmeticBenefitRequest {
+  name: string;
+  parentId?: string;
+}
+
+export type UpdateCosmeticBenefitResponse = CosmeticIngredientBenefit;
+export interface UpdateCosmeticBenefitRequest {
+  id: string;
+  name: string;
+  parentId?: string;
+}
+
+export type DeleteCosmeticBenefitResponse = void;
+export interface DeleteCosmeticBenefitRequest {
+  id: string;
+}
+
+export type GetCosmeticBenefitResponse = CosmeticIngredientBenefit;
+export interface GetCosmeticBenefitRequest {
+  id: string;
+}
+
+export type ListCosmeticBenefitsResponse = CosmeticIngredientBenefit[];
+export interface ListCosmeticBenefitsRequest {}
