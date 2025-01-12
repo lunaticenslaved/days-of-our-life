@@ -1,4 +1,5 @@
 import { DateFormat } from '#/shared/models/date';
+import { orderBy } from 'lodash';
 
 export interface CosmeticProduct {
   id: string;
@@ -32,9 +33,7 @@ export interface CosmeticBenefitTree {
 }
 
 export const CosmeticUtils = {
-  treeBenefits(
-    benefits: CosmeticBenefit[],
-  ): Array<CosmeticBenefitTree> {
+  treeBenefits(benefits: CosmeticBenefit[]): Array<CosmeticBenefitTree> {
     const result: Array<CosmeticBenefitTree> = [];
 
     const map: Record<string, CosmeticBenefitTree> = {};
@@ -59,5 +58,8 @@ export const CosmeticUtils = {
     }
 
     return result;
+  },
+  orderBenefits<T extends Pick<CosmeticBenefit, 'name'>>(benefits: T[]): T[] {
+    return orderBy(benefits, benefit => benefit.name, 'asc');
   },
 };

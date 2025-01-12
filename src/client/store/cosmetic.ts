@@ -527,6 +527,7 @@ export function useCreateCosmeticBenefitMutation(
       const createdItem: CosmeticBenefit = {
         id: Date.now().toString(),
         name: request.name,
+        parentId: request.parentId,
       };
 
       updateCosmeticBenefitsQueries({
@@ -607,7 +608,7 @@ export function useUpdateCosmeticBenefitMutation(handlers: MutationHandlers = {}
     UpdateCosmeticBenefitResponse,
     DefaultError,
     {
-      ingredient: CosmeticBenefit;
+      oldItem: CosmeticBenefit;
       newData: Omit<UpdateCosmeticBenefitRequest, 'id'>;
     },
     {
@@ -619,17 +620,17 @@ export function useUpdateCosmeticBenefitMutation(handlers: MutationHandlers = {}
     mutationFn: data =>
       wrapApiAction<UpdateCosmeticBenefitRequest, UpdateCosmeticBenefitResponse>(
         Schema.cosmetic.updateCosmeticBenefit,
-      )({ id: data.ingredient.id, ...data.newData }),
+      )({ id: data.oldItem.id, ...data.newData }),
     onMutate: async request => {
       await queryClient.cancelQueries({ queryKey: StoreKeys.listCosmeticBenefits() });
 
       const newItem: CosmeticBenefit = {
-        id: request.ingredient.id,
+        id: request.oldItem.id,
         ...request.newData,
       };
 
       updateCosmeticBenefitsQueries({
-        removeCosmeticBenefitById: request.ingredient.id,
+        removeCosmeticBenefitById: request.oldItem.id,
         addCosmeticBenefit: newItem,
       });
 
@@ -637,7 +638,7 @@ export function useUpdateCosmeticBenefitMutation(handlers: MutationHandlers = {}
 
       return {
         newItem,
-        oldItem: request.ingredient,
+        oldItem: request.oldItem,
       };
     },
     onError: (_error, _request, context) => {
