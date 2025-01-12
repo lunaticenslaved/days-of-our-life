@@ -1,7 +1,7 @@
 import { PrismaTransaction } from '#/server/prisma';
-import { CosmeticIngredientBenefit } from '#/shared/models/cosmetic';
+import { CosmeticBenefit } from '#/shared/models/cosmetic';
 import {
-  convertCosmeticIngredientBenefitSelector,
+  convertCosmeticBenefitSelector,
   COSMETIC_INGREDIENT_BENEFIT_SELECTOR,
 } from '#/server/selectors/cosmetic';
 
@@ -11,8 +11,8 @@ class CosmeticBenefitService {
   async create(
     arg: { name: string; parentId?: string },
     trx: PrismaTransaction,
-  ): Promise<CosmeticIngredientBenefit> {
-    return trx.cosmeticIngredientBenefit
+  ): Promise<CosmeticBenefit> {
+    return trx.cosmeticBenefit
       .create({
         data: {
           name: arg.name,
@@ -20,7 +20,7 @@ class CosmeticBenefitService {
         },
         ...COSMETIC_INGREDIENT_BENEFIT_SELECTOR,
       })
-      .then(convertCosmeticIngredientBenefitSelector);
+      .then(convertCosmeticBenefitSelector);
   }
 
   async update(
@@ -30,8 +30,8 @@ class CosmeticBenefitService {
       parentId?: string;
     },
     trx: PrismaTransaction,
-  ): Promise<CosmeticIngredientBenefit> {
-    return trx.cosmeticIngredientBenefit
+  ): Promise<CosmeticBenefit> {
+    return trx.cosmeticBenefit
       .update({
         where: {
           id: arg.id,
@@ -42,7 +42,7 @@ class CosmeticBenefitService {
         },
         ...COSMETIC_INGREDIENT_BENEFIT_SELECTOR,
       })
-      .then(convertCosmeticIngredientBenefitSelector);
+      .then(convertCosmeticBenefitSelector);
   }
 
   async delete(
@@ -51,7 +51,7 @@ class CosmeticBenefitService {
     },
     trx: PrismaTransaction,
   ) {
-    await trx.cosmeticIngredientBenefit.delete({
+    await trx.cosmeticBenefit.delete({
       where: { id: arg.id },
     });
   }
@@ -61,24 +61,21 @@ class CosmeticBenefitService {
       id: string;
     },
     trx: PrismaTransaction,
-  ): Promise<CosmeticIngredientBenefit> {
-    return await trx.cosmeticIngredientBenefit
+  ): Promise<CosmeticBenefit> {
+    return await trx.cosmeticBenefit
       .findFirstOrThrow({
         where: { id: arg.id },
         ...COSMETIC_INGREDIENT_BENEFIT_SELECTOR,
       })
-      .then(convertCosmeticIngredientBenefitSelector);
+      .then(convertCosmeticBenefitSelector);
   }
 
-  async list(
-    _arg: unknown,
-    trx: PrismaTransaction,
-  ): Promise<CosmeticIngredientBenefit[]> {
-    return await trx.cosmeticIngredientBenefit
+  async list(_arg: unknown, trx: PrismaTransaction): Promise<CosmeticBenefit[]> {
+    return await trx.cosmeticBenefit
       .findMany({
         ...COSMETIC_INGREDIENT_BENEFIT_SELECTOR,
       })
-      .then(items => items.map(convertCosmeticIngredientBenefitSelector));
+      .then(items => items.map(convertCosmeticBenefitSelector));
   }
 }
 

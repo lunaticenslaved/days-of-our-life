@@ -1,6 +1,6 @@
 import {
   CosmeticIngredient,
-  CosmeticIngredientBenefit,
+  CosmeticBenefit,
   CosmeticProduct,
 } from '#/shared/models/cosmetic';
 
@@ -56,13 +56,13 @@ export type ListCosmeticIngredientsResponse = CosmeticIngredient[];
 export interface ListCosmeticIngredientsRequest {}
 
 // Cosmetic Ingredient Benefits
-export type CreateCosmeticBenefitResponse = CosmeticIngredientBenefit;
+export type CreateCosmeticBenefitResponse = CosmeticBenefit;
 export interface CreateCosmeticBenefitRequest {
   name: string;
   parentId?: string;
 }
 
-export type UpdateCosmeticBenefitResponse = CosmeticIngredientBenefit;
+export type UpdateCosmeticBenefitResponse = CosmeticBenefit;
 export interface UpdateCosmeticBenefitRequest {
   id: string;
   name: string;
@@ -74,10 +74,10 @@ export interface DeleteCosmeticBenefitRequest {
   id: string;
 }
 
-export type GetCosmeticBenefitResponse = CosmeticIngredientBenefit;
+export type GetCosmeticBenefitResponse = CosmeticBenefit;
 export interface GetCosmeticBenefitRequest {
   id: string;
 }
 
-export type ListCosmeticBenefitsResponse = CosmeticIngredientBenefit[];
+export type ListCosmeticBenefitsResponse = CosmeticBenefit[];
 export interface ListCosmeticBenefitsRequest {}

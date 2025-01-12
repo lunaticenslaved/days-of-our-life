@@ -18,26 +18,26 @@ export interface CosmeticIngredient {
   name: string;
 }
 
-export interface CosmeticIngredientBenefit {
+export interface CosmeticBenefit {
   id: string;
   name: string;
   parentId?: string;
 }
 
-export interface CosmeticIngredientBenefitTree {
+export interface CosmeticBenefitTree {
   id: string;
   name: string;
   parentId?: string;
-  children: CosmeticIngredientBenefitTree[];
+  children: CosmeticBenefitTree[];
 }
 
 export const CosmeticUtils = {
   treeBenefits(
-    benefits: CosmeticIngredientBenefit[],
-  ): Array<CosmeticIngredientBenefitTree> {
-    const result: Array<CosmeticIngredientBenefitTree> = [];
+    benefits: CosmeticBenefit[],
+  ): Array<CosmeticBenefitTree> {
+    const result: Array<CosmeticBenefitTree> = [];
 
-    const map: Record<string, CosmeticIngredientBenefitTree> = {};
+    const map: Record<string, CosmeticBenefitTree> = {};
 
     for (const benefit of benefits) {
       map[benefit.id] = {

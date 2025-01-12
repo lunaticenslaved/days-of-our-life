@@ -40,7 +40,7 @@ import { CommonValidators } from '#/shared/models/common';
 
 import { z } from 'zod';
 import CosmeticIngredientService from '#/server/services/CosmeticIngredientService';
-import CosmeticIngredientBenefitService from '#/server/services/CosmeticIngredientBenefitService';
+import CosmeticBenefitService from '#/server/services/CosmeticBenefitService';
 
 export default new Controller<'cosmetic'>({
   // Cosmetic Products
@@ -237,7 +237,7 @@ export default new Controller<'cosmetic'>({
       parentId: req.body.parentId,
     }),
     handler: async (data, { prisma }) => {
-      return CosmeticIngredientBenefitService.create(data, prisma);
+      return CosmeticBenefitService.create(data, prisma);
     },
   }),
 
@@ -256,7 +256,7 @@ export default new Controller<'cosmetic'>({
       parentId: req.body.parentId,
     }),
     handler: async (data, { prisma }) => {
-      return CosmeticIngredientBenefitService.update(data, prisma);
+      return CosmeticBenefitService.update(data, prisma);
     },
   }),
 
@@ -271,7 +271,7 @@ export default new Controller<'cosmetic'>({
       id: req.params.id,
     }),
     handler: async (data, { prisma }) => {
-      return CosmeticIngredientBenefitService.delete(data, prisma);
+      return CosmeticBenefitService.delete(data, prisma);
     },
   }),
 
@@ -286,7 +286,7 @@ export default new Controller<'cosmetic'>({
       id: req.params.id,
     }),
     handler: async (data, { prisma }) => {
-      return CosmeticIngredientBenefitService.get(data, prisma);
+      return CosmeticBenefitService.get(data, prisma);
     },
   }),
 
@@ -297,7 +297,7 @@ export default new Controller<'cosmetic'>({
     validator: z.object({}),
     parse: _req => ({}),
     handler: async (data, { prisma }) => {
-      return CosmeticIngredientBenefitService.list(data, prisma);
+      return CosmeticBenefitService.list(data, prisma);
     },
   }),
 });

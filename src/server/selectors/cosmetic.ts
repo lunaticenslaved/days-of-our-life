@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client';
 import {
   CosmeticIngredient,
   CosmeticProduct,
-  CosmeticIngredientBenefit,
+  CosmeticBenefit,
   CosmeticProductApplication,
 } from '#/shared/models/cosmetic';
 import { DAY_SELECTOR } from '#/server/selectors/days';
@@ -38,7 +38,7 @@ export const COSMETIC_INGREDIENT_BENEFIT_SELECTOR = {
     name: true,
     parentId: true,
   },
-} satisfies Prisma.CosmeticIngredientBenefitDefaultArgs;
+} satisfies Prisma.CosmeticBenefitDefaultArgs;
 
 export function convertCosmeticProductApplicationSelector(
   data: Prisma.CosmeticProductApplicationGetPayload<
@@ -63,10 +63,10 @@ export function convertCosmeticIngredientSelector(
   return { ...data };
 }
 
-export function convertCosmeticIngredientBenefitSelector(
-  data: Prisma.CosmeticIngredientBenefitGetPayload<
+export function convertCosmeticBenefitSelector(
+  data: Prisma.CosmeticBenefitGetPayload<
     typeof COSMETIC_INGREDIENT_BENEFIT_SELECTOR
   >,
-): CosmeticIngredientBenefit {
+): CosmeticBenefit {
   return { ...data, parentId: data.parentId || undefined };
 }
