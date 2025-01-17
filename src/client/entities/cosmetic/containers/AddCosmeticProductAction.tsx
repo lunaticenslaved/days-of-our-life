@@ -8,7 +8,7 @@ import {
 } from '#/client/store';
 import { DateFormat } from '#/shared/models/date';
 import { z } from 'zod';
-import { CosmeticProductSelect } from '../components/CosmeticProductSelect';
+import { CosmeticProductSingleSelect } from '../components/CosmeticProductSelect';
 import { useMemo } from 'react';
 import { CommonValidators } from '#/shared/models/common';
 
@@ -61,9 +61,9 @@ export function AddCosmeticProductAction({
                   <Form.Content>
                     <FForm.Field name="cosmeticProductId">
                       {inputProps => (
-                        <CosmeticProductSelect
+                        <CosmeticProductSingleSelect
                           {...inputProps}
-                          cosmeticProducts={listCosmeticProductsQuery.data || []}
+                          entities={listCosmeticProductsQuery.data || []}
                         />
                       )}
                     </FForm.Field>

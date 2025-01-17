@@ -1,23 +1,27 @@
-import { Select, SelectProps } from '#/client/components/Select';
 import { CosmeticProduct } from '#/shared/models/cosmetic';
 
-interface CosmeticProductSelectProps extends SelectProps {
-  cosmeticProducts: CosmeticProduct[];
-}
+import {
+  createEntityMultipleSelect,
+  createEntitySingleSelect,
+} from '#/client/component-factories/EntitySelect';
+import { ComponentProps } from 'react';
 
-export function CosmeticProductSelect({
-  cosmeticProducts,
-  ...props
-}: CosmeticProductSelectProps) {
-  return (
-    <Select {...props}>
-      {cosmeticProducts.map(cosmeticProduct => {
-        return (
-          <Select.Option key={cosmeticProduct.id} value={cosmeticProduct.id}>
-            {cosmeticProduct.name}
-          </Select.Option>
-        );
-      })}
-    </Select>
-  );
-}
+export const CosmeticProductMultipleSelect = createEntityMultipleSelect<CosmeticProduct>(
+  'CosmeticProduct',
+  {
+    getValue: entity => entity.id,
+    renderOption: entity => <>{entity.name}</>,
+  },
+);
+
+export const CosmeticProductSingleSelect = createEntitySingleSelect<CosmeticProduct>(
+  'CosmeticProduct',
+  {
+    getValue: entity => entity.id,
+    renderOption: entity => <>{entity.name}</>,
+  },
+);
+
+export type CosmeticProductSingleSelectProps = ComponentProps<
+  typeof CosmeticProductSingleSelect
+>;

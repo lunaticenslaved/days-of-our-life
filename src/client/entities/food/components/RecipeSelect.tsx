@@ -1,20 +1,21 @@
 import { FoodRecipe } from '#/shared/models/food';
-import { Select, SelectProps } from '#/client/components/Select';
+import {
+  createEntityMultipleSelect,
+  createEntitySingleSelect,
+} from '#/client/component-factories/EntitySelect';
+import { ComponentProps } from 'react';
 
-export interface FoodRecipeSelectProps extends SelectProps {
-  recipes: FoodRecipe[];
-}
+export const FoodRecipeMultipleSelect = createEntityMultipleSelect<FoodRecipe>(
+  'FoodRecipe',
+  {
+    getValue: entity => entity.id,
+    renderOption: entity => <>{entity.name}</>,
+  },
+);
 
-export function FoodRecipeSelect({ recipes, ...props }: FoodRecipeSelectProps) {
-  return (
-    <Select {...props}>
-      {recipes.map(recipe => {
-        return (
-          <Select.Option key={recipe.id} value={recipe.id}>
-            {recipe.name}
-          </Select.Option>
-        );
-      })}
-    </Select>
-  );
-}
+export const FoodRecipeSingleSelect = createEntitySingleSelect<FoodRecipe>('FoodRecipe', {
+  getValue: entity => entity.id,
+  renderOption: entity => <>{entity.name}</>,
+});
+
+export type FoodRecipeSingleSelectProps = ComponentProps<typeof FoodRecipeSingleSelect>;

@@ -1,23 +1,22 @@
 import { Medicament } from '#/shared/models/medicament';
-import { Select, SelectProps } from '#/client/components/Select';
-import { ModelValueProps } from '#/client/types';
 
-export interface MedicamentSelectProps
-  extends ModelValueProps<string>,
-    Omit<SelectProps, keyof ModelValueProps> {
-  medicaments: Medicament[];
-}
+import {
+  createEntityMultipleSelect,
+  createEntitySingleSelect,
+} from '#/client/component-factories/EntitySelect';
+import { ComponentProps } from 'react';
 
-export function MedicamentSelect({ medicaments, ...props }: MedicamentSelectProps) {
-  return (
-    <Select {...props}>
-      {medicaments.map(quantity => {
-        return (
-          <Select.Option key={quantity.id} value={quantity.id}>
-            {quantity.name}
-          </Select.Option>
-        );
-      })}
-    </Select>
-  );
-}
+export const MedicamentMultipleSelect = createEntityMultipleSelect<Medicament>(
+  'Medicament',
+  {
+    getValue: entity => entity.id,
+    renderOption: entity => <>{entity.name}</>,
+  },
+);
+
+export const MedicamentSingleSelect = createEntitySingleSelect<Medicament>('Medicament', {
+  getValue: entity => entity.id,
+  renderOption: entity => <>{entity.name}</>,
+});
+
+export type MedicamentSingleSelectProps = ComponentProps<typeof MedicamentSingleSelect>;

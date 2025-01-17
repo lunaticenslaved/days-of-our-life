@@ -105,7 +105,9 @@ export function FoodRecipeForm({ onSubmit, recipe }: RecipeFormProps) {
                             return (
                               <div style={{ display: 'flex', gap: '10px' }}>
                                 <FForm.Field name={`${name}.productId`} required>
-                                  {props => <FoodProductSearch {...props} />}
+                                  {props => (
+                                    <FoodProductSearch type="single" {...props} />
+                                  )}
                                 </FForm.Field>
 
                                 <FForm.Field

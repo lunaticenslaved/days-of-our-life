@@ -3,13 +3,11 @@ import {
   CosmeticBenefitTree,
   CosmeticUtils,
 } from '#/shared/models/cosmetic';
-import { Select, SelectProps } from '#/client/components/Select';
-import { ModelValueProps } from '#/client/types';
+import { Select, SelectSingleProps } from '#/client/components/Select';
 import { useMemo } from 'react';
 
 export interface CosmeticBenefitSelectProps
-  extends ModelValueProps<string>,
-    Omit<SelectProps, keyof ModelValueProps> {
+  extends Pick<SelectSingleProps, 'modelValue' | 'onModelValueChange'> {
   benefits: CosmeticBenefit[];
   hiddenIds?: string[];
 }

@@ -1,7 +1,7 @@
 import { CommonValidators } from '#/shared/models/common';
 import { DateFormat } from '#/shared/models/date';
 import { Medicament } from '#/shared/models/medicament';
-import { MedicamentSelect } from '#/client/entities/medicament/components/MedicamentSelect';
+import { MedicamentSingleSelect } from '#/client/entities/medicament/components/MedicamentSelect';
 import { Button } from '#/client/components/Button';
 import { Dialog, IUseDialog } from '#/client/components/Dialog';
 import { FForm } from '#/client/components/FForm';
@@ -53,7 +53,7 @@ export function MedicamentIntakeFormDialog(props: MedicamentIntakeFormDialogProp
                   <FForm.Field name="medicamentId">
                     {inputProps => {
                       return (
-                        <MedicamentSelect {...inputProps} medicaments={medicaments} />
+                        <MedicamentSingleSelect {...inputProps} entities={medicaments} />
                       );
                     }}
                   </FForm.Field>
