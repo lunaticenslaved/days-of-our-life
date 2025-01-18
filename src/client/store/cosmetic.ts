@@ -663,13 +663,14 @@ export function useGetCosmeticBenefitQuery(benefitId: string) {
   });
 }
 
-export function useListCosmeticBenefitsQuery() {
+export function useListCosmeticBenefitsQuery(enabled = true) {
   return useQuery<ListCosmeticBenefitsResponse, Error, ListCosmeticBenefitsResponse>({
     queryKey: StoreKeys.listCosmeticBenefits(),
     queryFn: wrapApiAction(Schema.cosmetic.listCosmeticBenefits),
     select: data => {
       return orderBy(data, item => item.name, 'asc');
     },
+    enabled,
   });
 }
 

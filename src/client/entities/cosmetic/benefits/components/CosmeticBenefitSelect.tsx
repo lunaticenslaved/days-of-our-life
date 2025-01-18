@@ -10,7 +10,6 @@ import {
 } from '#/client/components/Select';
 import { useMemo } from 'react';
 import { useListCosmeticBenefitsQuery } from '#/client/store';
-import { differenceWith } from 'lodash';
 
 function Options({
   benefits,
@@ -86,19 +85,13 @@ export function CosmeticBenefitSingleSelect({
 }: CosmeticBenefitSingleSelectProps) {
   const listCosmeticBenefitsQuery = useListCosmeticBenefitsQuery();
 
-  const benefits = useMemo(() => {
-    const items = listCosmeticBenefitsQuery.data || [];
-
-    if (!hiddenIds?.length) {
-      return items;
-    }
-
-    return differenceWith(items, hiddenIds, (item, id) => item.id === id);
-  }, [hiddenIds, listCosmeticBenefitsQuery.data]);
-
   return (
     <Select {...props}>
-      <Options {...props} benefits={benefits} hiddenIds={hiddenIds} />
+      <Options
+        {...props}
+        benefits={listCosmeticBenefitsQuery.data || []}
+        hiddenIds={hiddenIds}
+      />
     </Select>
   );
 }
@@ -114,19 +107,13 @@ export function CosmeticBenefitMultipleSelect({
 }: CosmeticBenefitMultipleSelectProps) {
   const listCosmeticBenefitsQuery = useListCosmeticBenefitsQuery();
 
-  const benefits = useMemo(() => {
-    const items = listCosmeticBenefitsQuery.data || [];
-
-    if (!hiddenIds?.length) {
-      return items;
-    }
-
-    return differenceWith(items, hiddenIds, (item, id) => item.id === id);
-  }, [hiddenIds, listCosmeticBenefitsQuery.data]);
-
   return (
     <Select {...props} multiple>
-      <Options {...props} benefits={benefits} hiddenIds={hiddenIds} />
+      <Options
+        {...props}
+        benefits={listCosmeticBenefitsQuery.data || []}
+        hiddenIds={hiddenIds}
+      />
     </Select>
   );
 }

@@ -8,6 +8,7 @@ import { Form } from '#/client/components/Form';
 import { z } from 'zod';
 import { useMemo } from 'react';
 import { CosmeticBenefitMultipleSelect } from '#/client/entities/cosmetic/benefits/components/CosmeticBenefitSelect';
+import { useListCosmeticBenefitsQuery } from '#/client/store';
 
 const schema = z.object({
   name: CommonValidators.str(255),
@@ -40,13 +41,19 @@ export function CosmeticIngredientFormDialog({
   onSubmit,
   ingredient,
 }: CosmeticIngredientFormDialogProps) {
+  const { isFetching } = useListCosmeticBenefitsQuery(false);
+
   const initialValues = useMemo(() => {
     return getInitialValues({ ingredient });
   }, [ingredient]);
 
   return (
     <Dialog dialog={dialog}>
-      <FForm schema={schema} onSubmit={onSubmit} initialValues={initialValues}>
+      <FForm
+        schema={schema}
+        onSubmit={onSubmit}
+        initialValues={initialValues}
+        disabled={isFetching}>
         {() => {
           return (
             <>
