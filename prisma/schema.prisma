@@ -259,6 +259,8 @@ model CosmeticIngredient {
 
   name String @db.Char(255)
 
+  benefits CosmeticBenefit[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -273,7 +275,8 @@ model CosmeticBenefit {
   parentId String?          @db.Uuid
   parent   CosmeticBenefit? @relation("CosmeticBenefitToTarget", fields: [parentId], references: [id], onDelete: Restrict)
 
-  children CosmeticBenefit[] @relation("CosmeticBenefitToTarget")
+  children    CosmeticBenefit[]    @relation("CosmeticBenefitToTarget")
+  ingredients CosmeticIngredient[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

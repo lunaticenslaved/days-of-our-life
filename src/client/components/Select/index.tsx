@@ -11,21 +11,25 @@ export type { SelectSingleProps, SelectMultipleProps };
 
 export type SelectProps = SelectSingleProps | SelectMultipleProps;
 
-const SelectWithRef = forwardRef<HTMLSelectElement, SelectProps>(function Select({
-  children,
-  ...props
-}) {
+const SelectWithRef = forwardRef<HTMLSelectElement, SelectProps>(function Select(
+  { children, ...props },
+  ref,
+) {
   if (props.multiple) {
     return (
       <SelectContextProvider type="multiple">
-        <SelectMultiple {...props}>{children}</SelectMultiple>
+        <SelectMultiple ref={ref} {...props}>
+          {children}
+        </SelectMultiple>
       </SelectContextProvider>
     );
   }
 
   return (
     <SelectContextProvider type="single">
-      <SelectSingle {...props}>{children}</SelectSingle>
+      <SelectSingle ref={ref} {...props}>
+        {children}
+      </SelectSingle>
     </SelectContextProvider>
   );
 });

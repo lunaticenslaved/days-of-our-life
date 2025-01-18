@@ -315,6 +315,7 @@ export function useCreateCosmeticIngredientMutation(
       const createdItem: CosmeticIngredient = {
         id: Date.now().toString(),
         name: request.name,
+        benefitIds: request.benefitIds,
       };
 
       updateCosmeticIngredientsQueries({
@@ -407,13 +408,14 @@ export function useUpdateCosmeticIngredientMutation(handlers: MutationHandlers =
     mutationFn: data =>
       wrapApiAction<UpdateCosmeticIngredientRequest, UpdateCosmeticIngredientResponse>(
         Schema.cosmetic.updateCosmeticIngredient,
-      )({ id: data.ingredient.id, ...data.newData }),
+      )({ ...data.newData, id: data.ingredient.id }),
     onMutate: async request => {
       await queryClient.cancelQueries({ queryKey: StoreKeys.listCosmeticIngredients() });
 
       const newItem: CosmeticIngredient = {
         id: request.ingredient.id,
-        ...request.newData,
+        name: request.newData.name,
+        benefitIds: request.newData.benefitIds,
       };
 
       updateCosmeticIngredientsQueries({

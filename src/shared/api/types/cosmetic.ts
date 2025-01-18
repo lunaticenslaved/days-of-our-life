@@ -34,12 +34,14 @@ export interface ListCosmeticProductsRequest {}
 export type CreateCosmeticIngredientResponse = CosmeticIngredient;
 export interface CreateCosmeticIngredientRequest {
   name: string;
+  benefitIds: string[];
 }
 
 export type UpdateCosmeticIngredientResponse = CosmeticIngredient;
 export interface UpdateCosmeticIngredientRequest {
   id: string;
   name: string;
+  benefitIds: string[];
 }
 
 export type DeleteCosmeticIngredientResponse = void;

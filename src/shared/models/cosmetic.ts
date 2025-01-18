@@ -17,6 +17,7 @@ export interface CosmeticProductApplication {
 export interface CosmeticIngredient {
   id: string;
   name: string;
+  benefitIds: string[];
 }
 
 export interface CosmeticBenefit {

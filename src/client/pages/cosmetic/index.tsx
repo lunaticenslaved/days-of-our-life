@@ -3,6 +3,7 @@ import { Navigate, Outlet, Route, useParams } from 'react-router';
 import { createNavigationHook } from '#/client/hooks/navigation';
 
 import ProductCreate from './products/Create';
+import IngredientsRoot from './ingredients/Root';
 import ProductsRoot from './products/Root';
 import BenefitsRoot from './benefits/Root';
 import ProductOverview from './products/[productId]/Overivew';
@@ -22,6 +23,9 @@ const routes = {
 
   // Benefits
   benefits: '/cosmetic/benefits',
+
+  // Ingredients
+  ingredients: '/cosmetic/ingredients',
 } as const;
 
 export const COSMETIC_NAVIGATION = {
@@ -37,6 +41,9 @@ export const COSMETIC_NAVIGATION = {
 
   // Benefits
   toBenefits: () => routes.benefits,
+
+  // Ingredients
+  toIngredients: () => routes.ingredients,
 };
 
 export function useCosmeticPageParams() {
@@ -54,12 +61,14 @@ export default [
         <aside style={{ width: '100px', display: 'flex', flexDirection: 'column' }}>
           <Link to={COSMETIC_NAVIGATION.toProducts()}>Продукты</Link>
           <Link to={COSMETIC_NAVIGATION.toBenefits()}>Бенефиты</Link>
+          <Link to={COSMETIC_NAVIGATION.toIngredients()}>Ингредиент</Link>
         </aside>
         <div style={{ flexGrow: 1, overflow: 'auto' }}>
           <Outlet />
         </div>
       </div>
     }>
+    {/* Products */}
     <Route path={routes.products} element={<ProductsRoot />} />
     <Route path={routes.productCreate} element={<ProductCreate />} />
     <Route path={routes.productOverview} element={<ProductOverview />} />
@@ -68,6 +77,12 @@ export default [
     {/* Benefits */}
     <Route path={routes.benefits} element={<BenefitsRoot />} />
 
-    <Route index element={<Navigate to={COSMETIC_NAVIGATION.toProducts()} />} />
+    {/* Ingredients */}
+    <Route path={routes.ingredients} element={<IngredientsRoot />} />
+
+    <Route
+      path={routes.root}
+      element={<Navigate to={COSMETIC_NAVIGATION.toProducts()} />}
+    />
   </Route>,
 ];

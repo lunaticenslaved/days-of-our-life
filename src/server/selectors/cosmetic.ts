@@ -29,10 +29,15 @@ export const COSMETIC_INGREDIENT_SELECTOR = {
   select: {
     id: true,
     name: true,
+    benefits: {
+      select: {
+        id: true,
+      },
+    },
   },
 } satisfies Prisma.CosmeticIngredientDefaultArgs;
 
-export const COSMETIC_INGREDIENT_BENEFIT_SELECTOR = {
+export const COSMETIC_BENEFIT_SELECTOR = {
   select: {
     id: true,
     name: true,
@@ -57,16 +62,20 @@ export function convertCosmeticProductSelector(
   return data;
 }
 
-export function convertCosmeticIngredientSelector(
-  data: Prisma.CosmeticIngredientGetPayload<typeof COSMETIC_INGREDIENT_SELECTOR>,
-): CosmeticIngredient {
-  return { ...data };
+export function convertCosmeticIngredientSelector({
+  benefits,
+  ...data
+}: Prisma.CosmeticIngredientGetPayload<
+  typeof COSMETIC_INGREDIENT_SELECTOR
+>): CosmeticIngredient {
+  return {
+    ...data,
+    benefitIds: benefits.map(benefit => benefit.id),
+  };
 }
 
 export function convertCosmeticBenefitSelector(
-  data: Prisma.CosmeticBenefitGetPayload<
-    typeof COSMETIC_INGREDIENT_BENEFIT_SELECTOR
-  >,
+  data: Prisma.CosmeticBenefitGetPayload<typeof COSMETIC_BENEFIT_SELECTOR>,
 ): CosmeticBenefit {
   return { ...data, parentId: data.parentId || undefined };
 }

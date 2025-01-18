@@ -36,16 +36,18 @@ export function TheLeftNavigation() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const value = LINKS.find(link => location.pathname.startsWith(link.to))?.to;
+
   return (
     <NavigationBar
-      value={LINKS.find(link => location.pathname.startsWith(link.to))?.to}
+      value={value}
       onChange={newPathname => {
-        if (newPathname) {
+        if (newPathname && !location.pathname.startsWith(newPathname)) {
           navigate(newPathname);
         }
       }}>
       {LINKS.map(({ icon, title, to }) => {
-        return <NavigationBar.Action title={title} value={to} icon={icon} />;
+        return <NavigationBar.Action key={to} title={title} value={to} icon={icon} />;
       })}
     </NavigationBar>
   );

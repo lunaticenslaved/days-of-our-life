@@ -2,7 +2,7 @@ import { PrismaTransaction } from '#/server/prisma';
 import { CosmeticBenefit } from '#/shared/models/cosmetic';
 import {
   convertCosmeticBenefitSelector,
-  COSMETIC_INGREDIENT_BENEFIT_SELECTOR,
+  COSMETIC_BENEFIT_SELECTOR,
 } from '#/server/selectors/cosmetic';
 
 // FIXME check recursive tree
@@ -18,7 +18,7 @@ class CosmeticBenefitService {
           name: arg.name,
           parentId: arg.parentId,
         },
-        ...COSMETIC_INGREDIENT_BENEFIT_SELECTOR,
+        ...COSMETIC_BENEFIT_SELECTOR,
       })
       .then(convertCosmeticBenefitSelector);
   }
@@ -40,7 +40,7 @@ class CosmeticBenefitService {
           name: arg.name,
           parentId: arg.parentId,
         },
-        ...COSMETIC_INGREDIENT_BENEFIT_SELECTOR,
+        ...COSMETIC_BENEFIT_SELECTOR,
       })
       .then(convertCosmeticBenefitSelector);
   }
@@ -65,7 +65,7 @@ class CosmeticBenefitService {
     return await trx.cosmeticBenefit
       .findFirstOrThrow({
         where: { id: arg.id },
-        ...COSMETIC_INGREDIENT_BENEFIT_SELECTOR,
+        ...COSMETIC_BENEFIT_SELECTOR,
       })
       .then(convertCosmeticBenefitSelector);
   }
@@ -73,7 +73,7 @@ class CosmeticBenefitService {
   async list(_arg: unknown, trx: PrismaTransaction): Promise<CosmeticBenefit[]> {
     return await trx.cosmeticBenefit
       .findMany({
-        ...COSMETIC_INGREDIENT_BENEFIT_SELECTOR,
+        ...COSMETIC_BENEFIT_SELECTOR,
       })
       .then(items => items.map(convertCosmeticBenefitSelector));
   }

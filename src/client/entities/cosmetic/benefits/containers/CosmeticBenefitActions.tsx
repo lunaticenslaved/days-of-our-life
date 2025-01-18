@@ -5,7 +5,6 @@ import { CosmeticBenefitFormDialog } from '#/client/entities/cosmetic/benefits/c
 import {
   useCreateCosmeticBenefitMutation,
   useDeleteCosmeticBenefitMutation,
-  useListCosmeticBenefitsQuery,
   useUpdateCosmeticBenefitMutation,
 } from '#/client/store';
 import { CosmeticBenefit } from '#/shared/models/cosmetic';
@@ -18,8 +17,6 @@ export function CosmeticBenefitActions({ benefit }: CosmeticBenefitActionsProps)
   const createDialog = useDialog();
   const updateDialog = useDialog();
   const deleteDialog = useDialog();
-
-  const listCosmeticBenefitsQuery = useListCosmeticBenefitsQuery();
 
   const createCosmeticBenefitMutation = useCreateCosmeticBenefitMutation({
     onMutate: createDialog.close,
@@ -39,7 +36,6 @@ export function CosmeticBenefitActions({ benefit }: CosmeticBenefitActionsProps)
 
       {createDialog.isOpen && (
         <CosmeticBenefitFormDialog
-          benefits={listCosmeticBenefitsQuery.data || []}
           parentId={benefit.id}
           dialog={createDialog}
           onSubmit={values => {
@@ -62,7 +58,6 @@ export function CosmeticBenefitActions({ benefit }: CosmeticBenefitActionsProps)
 
       {updateDialog.isOpen && (
         <CosmeticBenefitFormDialog
-          benefits={listCosmeticBenefitsQuery.data || []}
           benefit={benefit}
           dialog={updateDialog}
           onSubmit={values => {

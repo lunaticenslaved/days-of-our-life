@@ -156,9 +156,11 @@ export default new Controller<'cosmetic'>({
   >({
     validator: z.object({
       name: CommonValidators.str(255),
+      benefitIds: z.array(CommonValidators.id), // FIXME move to commob cosmetic validators
     }),
     parse: req => ({
       name: req.body.name,
+      benefitIds: req.body.benefitIds,
     }),
     handler: async (data, { prisma }) => {
       return CosmeticIngredientService.create(data, prisma);
@@ -172,10 +174,12 @@ export default new Controller<'cosmetic'>({
     validator: z.object({
       id: CommonValidators.id,
       name: CommonValidators.str(255),
+      benefitIds: z.array(CommonValidators.id), // FIXME move to common cosmetic validators
     }),
     parse: req => ({
-      id: req.params.ingredientId,
+      id: req.params.id,
       name: req.body.name,
+      benefitIds: req.body.benefitIds,
     }),
     handler: async ({ id, ...data }, { prisma }) => {
       return CosmeticIngredientService.update({ id, ...data }, prisma);
@@ -190,7 +194,7 @@ export default new Controller<'cosmetic'>({
       id: CommonValidators.id,
     }),
     parse: req => ({
-      id: req.params.ingredientId,
+      id: req.params.id,
     }),
     handler: async ({ id }, { prisma }) => {
       return CosmeticIngredientService.delete({ id }, prisma);
@@ -205,7 +209,7 @@ export default new Controller<'cosmetic'>({
       id: CommonValidators.id,
     }),
     parse: req => ({
-      id: req.params.ingredientId,
+      id: req.params.id,
     }),
     handler: async ({ id }, { prisma }) => {
       return CosmeticIngredientService.get({ id }, prisma);

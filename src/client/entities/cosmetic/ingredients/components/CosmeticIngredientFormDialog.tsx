@@ -7,16 +7,19 @@ import { FForm } from '#/client/components/FForm';
 import { Form } from '#/client/components/Form';
 import { z } from 'zod';
 import { useMemo } from 'react';
+import { CosmeticBenefitMultipleSelect } from '#/client/entities/cosmetic/benefits/components/CosmeticBenefitSelect';
 
 const schema = z.object({
   name: CommonValidators.str(255),
+  benefitIds: z
+    .array(CommonValidators.id)
+    .min(1, 'Укажите хотя бы одно направление действия'),
 });
 
 type FormValues = z.infer<typeof schema>;
 
 interface CosmeticIngredientFormDialogProps {
   ingredient?: CosmeticIngredient;
-  ingredients: CosmeticIngredient[];
   dialog: IUseDialog;
   onSubmit(values: FormValues): void;
 }
@@ -28,6 +31,7 @@ function getInitialValues({
 }): FormValues {
   return {
     name: ingredient?.name || '',
+    benefitIds: ingredient?.benefitIds || [],
   };
 }
 
@@ -47,11 +51,14 @@ export function CosmeticIngredientFormDialog({
           return (
             <>
               <Dialog.Header>
-                {ingredient ? 'Редактирование ингредиент' : 'Добавление ингредиент'}
+                {ingredient ? 'Редактирование ингредиента' : 'Добавление ингредиента'}
               </Dialog.Header>
               <Dialog.Content>
                 <Form.Content>
                   <FForm.Field name="name">{TextInput}</FForm.Field>
+                  <FForm.Field name="benefitIds">
+                    {CosmeticBenefitMultipleSelect}
+                  </FForm.Field>
                 </Form.Content>
               </Dialog.Content>
 

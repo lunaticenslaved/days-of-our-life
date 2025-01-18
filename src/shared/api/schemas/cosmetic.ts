@@ -84,7 +84,7 @@ export const CosmeticSchema = {
     UpdateCosmeticIngredientRequest,
     UpdateCosmeticIngredientResponse
   >({
-    path: ({ id }) => `/api/cosmetic/ingredients/:${id}`,
+    path: ({ id }) => `/api/cosmetic/ingredients/${id}`,
     method: 'PATCH',
     body: ({ id: _id, ...data }) => data,
   }),
@@ -92,14 +92,14 @@ export const CosmeticSchema = {
     DeleteCosmeticIngredientRequest,
     DeleteCosmeticIngredientResponse
   >({
-    path: ({ id }) => `/api/cosmetic/ingredients/:${id}`,
+    path: ({ id }) => `/api/cosmetic/ingredients/${id}`,
     method: 'DELETE',
   }),
   getCosmeticIngredient: createAction<
     GetCosmeticIngredientRequest,
     GetCosmeticIngredientResponse
   >({
-    path: ({ id }) => `/api/cosmetic/ingredients/:${id}`,
+    path: ({ id }) => `/api/cosmetic/ingredients/${id}`,
     method: 'GET',
   }),
   listCosmeticIngredients: createAction<

@@ -7,7 +7,7 @@ import { FForm } from '#/client/components/FForm';
 import { Form } from '#/client/components/Form';
 import { z } from 'zod';
 import { useMemo } from 'react';
-import { CosmeticBenefitSelect } from '../components/CosmeticBenefitSelect';
+import { CosmeticBenefitSingleSelect } from './CosmeticBenefitSelect';
 
 const schema = z.object({
   name: CommonValidators.str(255),
@@ -19,7 +19,6 @@ type FormValues = z.infer<typeof schema>;
 interface CosmeticBenefitFormDialogProps {
   benefit?: CosmeticBenefit;
   parentId?: string;
-  benefits: CosmeticBenefit[];
   dialog: IUseDialog;
   onSubmit(values: FormValues): void;
 }
@@ -41,7 +40,6 @@ export function CosmeticBenefitFormDialog({
   dialog,
   onSubmit,
   benefit,
-  benefits,
   parentId,
 }: CosmeticBenefitFormDialogProps) {
   const initialValues = useMemo(() => {
@@ -63,10 +61,9 @@ export function CosmeticBenefitFormDialog({
                   <FForm.Field name="parentId">
                     {fieldProps => {
                       return (
-                        <CosmeticBenefitSelect
+                        <CosmeticBenefitSingleSelect
                           {...fieldProps}
                           hiddenIds={benefit ? [benefit.id] : undefined}
-                          benefits={benefits}
                         />
                       );
                     }}

@@ -7,13 +7,16 @@ import {
 
 class CosmeticIngredientService {
   async create(
-    arg: { name: string },
+    arg: { name: string; benefitIds: string[] },
     trx: PrismaTransaction,
   ): Promise<CosmeticIngredient> {
     return trx.cosmeticIngredient
       .create({
         data: {
           name: arg.name,
+          benefits: {
+            connect: arg.benefitIds.map(id => ({ id })),
+          },
         },
         ...COSMETIC_INGREDIENT_SELECTOR,
       })
@@ -24,6 +27,7 @@ class CosmeticIngredientService {
     arg: {
       id: string;
       name: string;
+      benefitIds: string[];
     },
     trx: PrismaTransaction,
   ): Promise<CosmeticIngredient> {
@@ -34,6 +38,9 @@ class CosmeticIngredientService {
         },
         data: {
           name: arg.name,
+          benefits: {
+            set: arg.benefitIds.map(id => ({ id })),
+          },
         },
         ...COSMETIC_INGREDIENT_SELECTOR,
       })
