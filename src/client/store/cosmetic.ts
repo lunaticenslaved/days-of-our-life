@@ -15,31 +15,40 @@ import {
   CreateCosmeticIngredientResponse,
   CreateCosmeticProductRequest,
   CreateCosmeticProductResponse,
+  CreateCosmeticRecipeRequest,
+  CreateCosmeticRecipeResponse,
   DeleteCosmeticBenefitRequest,
   DeleteCosmeticBenefitResponse,
   DeleteCosmeticIngredientRequest,
   DeleteCosmeticIngredientResponse,
   DeleteCosmeticProductRequest,
   DeleteCosmeticProductResponse,
+  DeleteCosmeticRecipeRequest,
+  DeleteCosmeticRecipeResponse,
   GetCosmeticBenefitResponse,
   GetCosmeticIngredientResponse,
   GetCosmeticProductResponse,
+  GetCosmeticRecipeResponse,
   ListCosmeticBenefitsResponse,
   ListCosmeticIngredientsResponse,
   ListCosmeticProductsResponse,
+  ListCosmeticRecipesResponse,
   UpdateCosmeticBenefitRequest,
   UpdateCosmeticBenefitResponse,
   UpdateCosmeticIngredientRequest,
   UpdateCosmeticIngredientResponse,
   UpdateCosmeticProductRequest,
   UpdateCosmeticProductResponse,
+  UpdateCosmeticRecipeRequest,
+  UpdateCosmeticRecipeResponse,
 } from '#/shared/api/types/cosmetic';
 import {
   CosmeticIngredient,
   CosmeticBenefit,
   CosmeticProduct,
+  CosmeticRecipe,
 } from '#/shared/models/cosmetic';
-import { orderBy } from 'lodash';
+import { cloneDeep, orderBy } from 'lodash';
 
 const StoreKeys = {
   // Cosmetic Products
@@ -74,6 +83,13 @@ const StoreKeys = {
   createCosmeticBenefit: (): MutationKey => ['cosmetic', 'benefits', 'create'],
   deleteCosmeticBenefit: (): MutationKey => ['cosmetic', 'benefits', 'delete'],
   updateCosmeticBenefit: (): MutationKey => ['cosmetic', 'benefits', 'update'],
+
+  // Cosmetic Recipes
+  getCosmeticRecipe: (benefitId: string): QueryKey => ['cosmetic', 'recipes', benefitId],
+  listCosmeticRecipes: (): QueryKey => ['cosmetic', 'recipes'],
+  createCosmeticRecipe: (): MutationKey => ['cosmetic', 'recipes', 'create'],
+  deleteCosmeticRecipe: (): MutationKey => ['cosmetic', 'recipes', 'delete'],
+  updateCosmeticRecipe: (): MutationKey => ['cosmetic', 'recipes', 'update'],
 };
 
 // Cosmetic Products
@@ -706,6 +722,236 @@ function updateCosmeticBenefitsQueries(arg: {
 
       if (arg.addCosmeticBenefit) {
         old.push(arg.addCosmeticBenefit);
+      }
+
+      return old;
+    },
+  );
+}
+
+// Cosmetic Recipes
+export function useCreateCosmeticRecipeMutation(
+  handlers: MutationHandlers<CosmeticRecipe> = {},
+) {
+  return useMutation<
+    CreateCosmeticRecipeResponse,
+    DefaultError,
+    CreateCosmeticRecipeRequest,
+    {
+      createdItem: CosmeticRecipe;
+    }
+  >({
+    mutationKey: StoreKeys.createCosmeticRecipe(),
+    mutationFn: wrapApiAction<CreateCosmeticRecipeRequest, CreateCosmeticRecipeResponse>(
+      Schema.cosmetic.createCosmeticRecipe,
+    ),
+    onMutate: async request => {
+      await queryClient.cancelQueries({
+        queryKey: StoreKeys.listCosmeticRecipes(),
+      });
+
+      const createdItem: CosmeticRecipe = {
+        id: Date.now().toString(),
+        name: request.name,
+        description: request.description,
+        phases: cloneDeep(request.phases),
+      };
+
+      updateCosmeticRecipesQueries({
+        addCosmeticRecipe: createdItem,
+      });
+
+      handlers.onMutate?.();
+
+      return {
+        createdItem,
+      };
+    },
+    onError: (_error, _request, context) => {
+      handlers.onError?.();
+
+      if (context) {
+        updateCosmeticRecipesQueries({
+          removeCosmeticRecipeById: context.createdItem.id,
+        });
+      }
+    },
+    onSuccess: (response, _request, context) => {
+      handlers.onSuccess?.(response);
+
+      updateCosmeticRecipesQueries({
+        removeCosmeticRecipeById: context?.createdItem.id,
+        addCosmeticRecipe: response,
+      });
+
+      return response;
+    },
+  });
+}
+
+export function useDeleteCosmeticRecipeMutation(handlers: MutationHandlers = {}) {
+  return useMutation<
+    DeleteCosmeticRecipeResponse,
+    DefaultError,
+    CosmeticRecipe,
+    {
+      deletedItem?: CosmeticRecipe;
+    }
+  >({
+    mutationKey: StoreKeys.deleteCosmeticRecipe(),
+    mutationFn: data =>
+      wrapApiAction<DeleteCosmeticRecipeRequest, DeleteCosmeticRecipeResponse>(
+        Schema.cosmetic.deleteCosmeticRecipe,
+      )({ id: data.id }),
+    onMutate: async request => {
+      await queryClient.cancelQueries({ queryKey: StoreKeys.listCosmeticRecipes() });
+
+      const deletedItem = request;
+
+      updateCosmeticRecipesQueries({
+        removeCosmeticRecipeById: request.id,
+      });
+
+      handlers.onMutate?.();
+
+      return {
+        deletedItem,
+      };
+    },
+    onSuccess: () => {
+      handlers.onSuccess?.();
+    },
+    onError: (_error, _request, context) => {
+      handlers.onError?.();
+
+      if (context) {
+        updateCosmeticRecipesQueries({
+          addCosmeticRecipe: context.deletedItem,
+        });
+      }
+    },
+  });
+}
+
+export function useUpdateCosmeticRecipeMutation(handlers: MutationHandlers = {}) {
+  return useMutation<
+    UpdateCosmeticRecipeResponse,
+    DefaultError,
+    {
+      oldItem: CosmeticRecipe;
+      newData: Omit<UpdateCosmeticRecipeRequest, 'id'>;
+    },
+    {
+      oldItem: CosmeticRecipe;
+      newItem: CosmeticRecipe;
+    }
+  >({
+    mutationKey: StoreKeys.updateCosmeticRecipe(),
+    mutationFn: data =>
+      wrapApiAction<UpdateCosmeticRecipeRequest, UpdateCosmeticRecipeResponse>(
+        Schema.cosmetic.updateCosmeticRecipe,
+      )({ id: data.oldItem.id, ...data.newData }),
+    onMutate: async request => {
+      await queryClient.cancelQueries({
+        queryKey: StoreKeys.listCosmeticRecipes(),
+      });
+      await queryClient.cancelQueries({
+        queryKey: StoreKeys.getCosmeticRecipe(request.oldItem.id),
+      });
+
+      const newItem: CosmeticRecipe = {
+        id: request.oldItem.id,
+        name: request.newData.name,
+        description: request.newData.description,
+        phases: cloneDeep(request.newData.phases),
+      };
+
+      updateCosmeticRecipesQueries({
+        removeCosmeticRecipeById: request.oldItem.id,
+        addCosmeticRecipe: newItem,
+      });
+
+      handlers.onMutate?.();
+
+      return {
+        newItem,
+        oldItem: request.oldItem,
+      };
+    },
+    onSuccess: response => {
+      updateCosmeticRecipesQueries({
+        removeCosmeticRecipeById: response.id,
+        addCosmeticRecipe: response,
+      });
+    },
+    onError: (_error, _request, context) => {
+      handlers.onError?.();
+
+      if (context) {
+        updateCosmeticRecipesQueries({
+          removeCosmeticRecipeById: context.newItem.id,
+          addCosmeticRecipe: context.oldItem,
+        });
+      }
+    },
+  });
+}
+
+export function useGetCosmeticRecipeQuery(recipeId: string) {
+  return useQuery<GetCosmeticRecipeResponse, Error, GetCosmeticRecipeResponse>({
+    queryKey: StoreKeys.getCosmeticRecipe(recipeId),
+    queryFn: () => wrapApiAction(Schema.cosmetic.getCosmeticRecipe)({ id: recipeId }),
+  });
+}
+
+export function useListCosmeticRecipesQuery(enabled = true) {
+  return useQuery<ListCosmeticRecipesResponse, Error, ListCosmeticRecipesResponse>({
+    queryKey: StoreKeys.listCosmeticRecipes(),
+    queryFn: wrapApiAction(Schema.cosmetic.listCosmeticRecipes),
+    select: data => {
+      return orderBy(data, item => item.name, 'asc');
+    },
+    enabled,
+  });
+}
+
+function updateCosmeticRecipesQueries(arg: {
+  addCosmeticRecipe?: CosmeticRecipe;
+  removeCosmeticRecipeById?: string;
+}) {
+  if (
+    arg.removeCosmeticRecipeById &&
+    arg.addCosmeticRecipe?.id !== arg.removeCosmeticRecipeById
+  ) {
+    queryClient.removeQueries({
+      queryKey: StoreKeys.getCosmeticRecipe(arg.removeCosmeticRecipeById),
+    });
+  }
+
+  if (arg.addCosmeticRecipe) {
+    queryClient.setQueryData<GetCosmeticRecipeResponse>(
+      StoreKeys.getCosmeticRecipe(arg.addCosmeticRecipe.id),
+      () => {
+        return arg.addCosmeticRecipe;
+      },
+    );
+  }
+
+  queryClient.setQueryData<ListCosmeticRecipesResponse>(
+    StoreKeys.listCosmeticRecipes(),
+    _old => {
+      if (!_old) {
+        return _old;
+      }
+
+      let old = [..._old];
+
+      if (arg.removeCosmeticRecipeById) {
+        old = old.filter(item => item.id !== arg.removeCosmeticRecipeById);
+      }
+
+      if (arg.addCosmeticRecipe) {
+        old.push(arg.addCosmeticRecipe);
       }
 
       return old;

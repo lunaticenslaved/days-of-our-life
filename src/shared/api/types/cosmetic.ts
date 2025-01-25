@@ -2,6 +2,7 @@ import {
   CosmeticIngredient,
   CosmeticBenefit,
   CosmeticProduct,
+  CosmeticRecipe,
 } from '#/shared/models/cosmetic';
 
 export type CreateCosmeticProductResponse = CosmeticProduct;
@@ -57,7 +58,9 @@ export interface GetCosmeticIngredientRequest {
 export type ListCosmeticIngredientsResponse = CosmeticIngredient[];
 export interface ListCosmeticIngredientsRequest {}
 
-// Cosmetic Ingredient Benefits
+/*===================================================================
+  Cosmetic Ingredient Benefits
+  =================================================================== */
 export type CreateCosmeticBenefitResponse = CosmeticBenefit;
 export interface CreateCosmeticBenefitRequest {
   name: string;
@@ -83,3 +86,38 @@ export interface GetCosmeticBenefitRequest {
 
 export type ListCosmeticBenefitsResponse = CosmeticBenefit[];
 export interface ListCosmeticBenefitsRequest {}
+
+/*===================================================================
+  Cosmetic Recipe
+  =================================================================== */
+export type CreateCosmeticRecipeResponse = CosmeticRecipe;
+export interface CreateCosmeticRecipeRequest {
+  name: string;
+  description: string | null;
+  phases: Array<{
+    name: string;
+    ingredients: Array<{
+      ingredientId: string;
+      percent: number;
+      comment: string | null;
+    }>;
+  }>;
+}
+
+export type UpdateCosmeticRecipeResponse = CosmeticRecipe;
+export interface UpdateCosmeticRecipeRequest extends CreateCosmeticRecipeRequest {
+  id: string;
+}
+
+export type DeleteCosmeticRecipeResponse = void;
+export interface DeleteCosmeticRecipeRequest {
+  id: string;
+}
+
+export type GetCosmeticRecipeResponse = CosmeticRecipe;
+export interface GetCosmeticRecipeRequest {
+  id: string;
+}
+
+export type ListCosmeticRecipesResponse = CosmeticRecipe[];
+export interface ListCosmeticRecipesRequest {}

@@ -47,3 +47,25 @@ export function FForm<V, T extends ZodType<V>, VZ extends z.infer<T>>({
 
 FForm.Field = FField;
 FForm.FieldArray = FFieldArray;
+
+export function FinalForm<V, T extends ZodType<V>, VZ extends z.infer<T>>({
+  onSubmit,
+  children,
+  schema,
+  initialValues,
+}: FFormProps<V, T, VZ>) {
+  const validator = useMemo(() => new Validator(schema), [schema]);
+
+  return (
+    <Form<VZ>
+      onSubmit={onSubmit}
+      validate={validator.validate}
+      initialValues={initialValues}
+      mutators={{ ...arrayMutators }}>
+      {children}
+    </Form>
+  );
+}
+
+FinalForm.Field = FField;
+FinalForm.FieldArray = FFieldArray;

@@ -33,7 +33,7 @@ export function useMedicamentsPageParams() {
   return useParams<MedicamentId>();
 }
 
-export const useCosmeticNavigation = createNavigationHook(MEDICAMENTS_NAVIGATION);
+export const useMedicamentsNavigation = createNavigationHook(MEDICAMENTS_NAVIGATION);
 
 export default [
   <Route key="food" path={routes.root}>

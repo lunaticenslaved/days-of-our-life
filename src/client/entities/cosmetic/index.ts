@@ -20,4 +20,9 @@ export { CreateCosmeticIngredientAction } from './ingredients/components/CreateC
 export { CosmeticIngredientsList } from './ingredients/components/CosmeticIngredientsList';
 export { CosmeticIngredientActions } from './ingredients/components/CosmeticIngredientActions';
 
+// Recipes
+export { CosmeticRecipeForm } from './recipes/components/CosmeticRecipeForm';
+export { CosmeticRecipesList } from './recipes/containers/CosmeticRecipesList';
+export { CosmeticRecipeActions } from './recipes/containers/CosmeticRecipeActions';
+
 export * from './icons';

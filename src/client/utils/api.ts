@@ -6,7 +6,13 @@ import { Handlers } from '#/client/types';
 import axiosLib from 'axios';
 
 const axios = axiosLib.create();
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnMount: false,
+    },
+  },
+});
 
 export function wrapApiAction<
   T extends object,

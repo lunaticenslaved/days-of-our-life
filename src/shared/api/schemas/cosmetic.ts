@@ -29,6 +29,16 @@ import {
   GetCosmeticBenefitResponse,
   ListCosmeticBenefitsRequest,
   ListCosmeticBenefitsResponse,
+  CreateCosmeticRecipeRequest,
+  CreateCosmeticRecipeResponse,
+  UpdateCosmeticRecipeRequest,
+  UpdateCosmeticRecipeResponse,
+  DeleteCosmeticRecipeRequest,
+  DeleteCosmeticRecipeResponse,
+  GetCosmeticRecipeRequest,
+  GetCosmeticRecipeResponse,
+  ListCosmeticRecipesRequest,
+  ListCosmeticRecipesResponse,
 } from '#/shared/api/types/cosmetic';
 import { createAction } from '#/shared/api/utils';
 
@@ -147,4 +157,41 @@ export const CosmeticSchema = {
     path: () => `/api/cosmetic/benefits`,
     method: 'GET',
   }),
+
+  /* =============== Cosmetic Recipe Start =============== */
+  createCosmeticRecipe: createAction<
+    CreateCosmeticRecipeRequest,
+    CreateCosmeticRecipeResponse
+  >({
+    path: () => `/api/cosmetic/recipes`,
+    method: 'POST',
+    body: data => data,
+  }),
+  updateCosmeticRecipe: createAction<
+    UpdateCosmeticRecipeRequest,
+    UpdateCosmeticRecipeResponse
+  >({
+    path: ({ id }) => `/api/cosmetic/recipes/${id}`,
+    method: 'PATCH',
+    body: ({ id: _id, ...data }) => data,
+  }),
+  deleteCosmeticRecipe: createAction<
+    DeleteCosmeticRecipeRequest,
+    DeleteCosmeticRecipeResponse
+  >({
+    path: ({ id }) => `/api/cosmetic/recipes/${id}`,
+    method: 'DELETE',
+  }),
+  getCosmeticRecipe: createAction<GetCosmeticRecipeRequest, GetCosmeticRecipeResponse>({
+    path: ({ id }) => `/api/cosmetic/recipes/${id}`,
+    method: 'GET',
+  }),
+  listCosmeticRecipes: createAction<
+    ListCosmeticRecipesRequest,
+    ListCosmeticRecipesResponse
+  >({
+    path: () => `/api/cosmetic/recipes`,
+    method: 'GET',
+  }),
+  /* =============== Cosmetic Recipe End =============== */
 };

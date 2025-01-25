@@ -9,30 +9,40 @@ import {
   CreateCosmeticIngredientResponse,
   CreateCosmeticProductRequest,
   CreateCosmeticProductResponse,
+  CreateCosmeticRecipeRequest,
+  CreateCosmeticRecipeResponse,
   DeleteCosmeticBenefitRequest,
   DeleteCosmeticBenefitResponse,
   DeleteCosmeticIngredientRequest,
   DeleteCosmeticIngredientResponse,
   DeleteCosmeticProductRequest,
   DeleteCosmeticProductResponse,
+  DeleteCosmeticRecipeRequest,
+  DeleteCosmeticRecipeResponse,
   GetCosmeticBenefitRequest,
   GetCosmeticBenefitResponse,
   GetCosmeticIngredientRequest,
   GetCosmeticIngredientResponse,
   GetCosmeticProductRequest,
   GetCosmeticProductResponse,
+  GetCosmeticRecipeRequest,
+  GetCosmeticRecipeResponse,
   ListCosmeticBenefitsRequest,
   ListCosmeticBenefitsResponse,
   ListCosmeticIngredientsRequest,
   ListCosmeticIngredientsResponse,
   ListCosmeticProductsRequest,
   ListCosmeticProductsResponse,
+  ListCosmeticRecipesRequest,
+  ListCosmeticRecipesResponse,
   UpdateCosmeticBenefitRequest,
   UpdateCosmeticBenefitResponse,
   UpdateCosmeticIngredientRequest,
   UpdateCosmeticIngredientResponse,
   UpdateCosmeticProductRequest,
   UpdateCosmeticProductResponse,
+  UpdateCosmeticRecipeRequest,
+  UpdateCosmeticRecipeResponse,
 } from '#/shared/api/types/cosmetic';
 import { Controller } from '#/server/utils/Controller';
 
@@ -41,6 +51,8 @@ import { CommonValidators } from '#/shared/models/common';
 import { z } from 'zod';
 import CosmeticIngredientService from '#/server/services/CosmeticIngredientService';
 import CosmeticBenefitService from '#/server/services/CosmeticBenefitService';
+import CosmeticRecipeService from '#/server/services/CosmeticRecipeService';
+import { CosmeticRecipeValidators } from '#/shared/models/cosmetic';
 
 export default new Controller<'cosmetic'>({
   // Cosmetic Products
@@ -304,4 +316,79 @@ export default new Controller<'cosmetic'>({
       return CosmeticBenefitService.list(data, prisma);
     },
   }),
+
+  /* =============== Cosmetic Recipe START =============== */
+  'GET /cosmetic/recipes': Controller.handler<
+    ListCosmeticRecipesRequest,
+    ListCosmeticRecipesResponse
+  >({
+    validator: z.object({}),
+    parse: _req => ({}),
+    handler: async (data, { prisma }) => {
+      return CosmeticRecipeService.list(data, prisma);
+    },
+  }),
+
+  'GET /cosmetic/recipes/:id': Controller.handler<
+    GetCosmeticRecipeRequest,
+    GetCosmeticRecipeResponse
+  >({
+    validator: z.object({
+      id: CommonValidators.id,
+    }),
+    parse: req => ({
+      id: req.params.id,
+    }),
+    handler: async (data, { prisma }) => {
+      return CosmeticRecipeService.get(data, prisma);
+    },
+  }),
+
+  'POST /cosmetic/recipes': Controller.handler<
+    CreateCosmeticRecipeRequest,
+    CreateCosmeticRecipeResponse
+  >({
+    validator: z.object({
+      name: CosmeticRecipeValidators.name,
+      description: CosmeticRecipeValidators.description,
+      phases: CosmeticRecipeValidators.phases,
+    }),
+    parse: req => req.body,
+    handler: async (data, { prisma }) => {
+      return CosmeticRecipeService.create(data, prisma);
+    },
+  }),
+
+  'PATCH /cosmetic/recipes/:id': Controller.handler<
+    UpdateCosmeticRecipeRequest,
+    UpdateCosmeticRecipeResponse
+  >({
+    validator: z.object({
+      id: CosmeticRecipeValidators.id,
+      name: CosmeticRecipeValidators.name,
+      description: CosmeticRecipeValidators.description,
+      phases: CosmeticRecipeValidators.phases,
+    }),
+    parse: req => ({
+      ...req.body,
+      id: req.params.id,
+    }),
+    handler: async (data, { prisma }) => {
+      return CosmeticRecipeService.update(data, prisma);
+    },
+  }),
+
+  'DELETE /cosmetic/recipes/:id': Controller.handler<
+    DeleteCosmeticRecipeRequest,
+    DeleteCosmeticRecipeResponse
+  >({
+    validator: z.object({
+      id: CosmeticRecipeValidators.id,
+    }),
+    parse: req => ({ id: req.params.id }),
+    handler: async (data, { prisma }) => {
+      return CosmeticRecipeService.delete(data, prisma);
+    },
+  }),
+  /* =============== Cosmetic Recipe END =============== */
 });

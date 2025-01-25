@@ -260,6 +260,7 @@ model CosmeticIngredient {
   name String @db.Char(255)
 
   benefits CosmeticBenefit[]
+  recipes  CosmeticRecipeIngredient[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -282,4 +283,52 @@ model CosmeticBenefit {
   updatedAt DateTime @updatedAt
 
   @@unique([name])
+}
+
+model CosmeticRecipe {
+  id String @id @default(uuid()) @db.Uuid
+
+  name        String                @db.Char(255)
+  description String?               @db.VarChar(1000)
+  phases      CosmeticRecipePhase[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([name])
+}
+
+model CosmeticRecipePhase {
+  id String @id @default(uuid()) @db.Uuid
+
+  name String @db.Char(255)
+
+  recipe   CosmeticRecipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId String         @db.Uuid
+
+  ingredients CosmeticRecipeIngredient[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([recipeId, name])
+}
+
+model CosmeticRecipeIngredient {
+  id String @id @default(uuid()) @db.Uuid
+
+  percent Int @db.SmallInt
+
+  comment String? @db.VarChar(255)
+
+  ingredientId String             @db.Uuid
+  ingredient   CosmeticIngredient @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
+
+  phaseId String              @db.Uuid
+  phase   CosmeticRecipePhase @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([ingredientId, phaseId])
 }

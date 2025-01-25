@@ -2,15 +2,20 @@ import { Navigate, Outlet, Route, useParams } from 'react-router';
 
 import { createNavigationHook } from '#/client/hooks/navigation';
 
+import RecipesRoot from './recipes/Root';
+import RecipeCreate from './recipes/Create';
 import ProductCreate from './products/Create';
 import IngredientsRoot from './ingredients/Root';
 import ProductsRoot from './products/Root';
 import BenefitsRoot from './benefits/Root';
-import ProductOverview from './products/[productId]/Overivew';
+import RecipeOverview from './recipes/[recipeId]/Overview';
+import RecipeEdit from './recipes/[recipeId]/Edit';
+import ProductOverview from './products/[productId]/Overview';
 import ProductEdit from './products/[productId]/Edit';
 import { Link } from 'react-router-dom';
 
 type ProductId = { productId: string };
+type RecipeId = { recipeId: string };
 
 const routes = {
   root: '/cosmetic',
@@ -26,6 +31,12 @@ const routes = {
 
   // Ingredients
   ingredients: '/cosmetic/ingredients',
+
+  // Recipes
+  recipes: '/cosmetic/recipes',
+  recipeCreate: '/cosmetic/recipes/create',
+  recipeOverview: '/cosmetic/recipes/:recipeId',
+  recipeEdit: '/cosmetic/recipes/:recipeId/edit',
 } as const;
 
 export const COSMETIC_NAVIGATION = {
@@ -44,10 +55,18 @@ export const COSMETIC_NAVIGATION = {
 
   // Ingredients
   toIngredients: () => routes.ingredients,
+
+  // Recipes
+  toRecipes: () => routes.recipes,
+  toRecipeCreate: () => routes.recipeCreate,
+  toRecipeOverview: ({ recipeId }: RecipeId) =>
+    routes.recipeOverview.replace(':recipeId', recipeId),
+  toRecipeEdit: ({ recipeId }: RecipeId) =>
+    routes.recipeEdit.replace(':recipeId', recipeId),
 };
 
 export function useCosmeticPageParams() {
-  return useParams<ProductId>();
+  return useParams<ProductId & RecipeId>();
 }
 
 export const useCosmeticNavigation = createNavigationHook(COSMETIC_NAVIGATION);
@@ -62,6 +81,7 @@ export default [
           <Link to={COSMETIC_NAVIGATION.toProducts()}>Продукты</Link>
           <Link to={COSMETIC_NAVIGATION.toBenefits()}>Бенефиты</Link>
           <Link to={COSMETIC_NAVIGATION.toIngredients()}>Ингредиент</Link>
+          <Link to={COSMETIC_NAVIGATION.toRecipes()}>Рецепты</Link>
         </aside>
         <div style={{ flexGrow: 1, overflow: 'auto' }}>
           <Outlet />
@@ -80,6 +100,13 @@ export default [
     {/* Ingredients */}
     <Route path={routes.ingredients} element={<IngredientsRoot />} />
 
+    {/* Recipes */}
+    <Route path={routes.recipes} element={<RecipesRoot />} />
+    <Route path={routes.recipeCreate} element={<RecipeCreate />} />
+    <Route path={routes.recipeOverview} element={<RecipeOverview />} />
+    <Route path={routes.recipeEdit} element={<RecipeEdit />} />
+
+    {/* Others */}
     <Route
       path={routes.root}
       element={<Navigate to={COSMETIC_NAVIGATION.toProducts()} />}

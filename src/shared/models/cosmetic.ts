@@ -1,5 +1,8 @@
+import { CommonValidators } from './common';
 import { DateFormat } from '#/shared/models/date';
 import { orderBy } from 'lodash';
+import { z } from 'zod';
+import { ERROR_MESSAGES } from '#/shared/validation';
 
 export interface CosmeticProduct {
   id: string;
@@ -63,4 +66,66 @@ export const CosmeticUtils = {
   orderBenefits<T extends Pick<CosmeticBenefit, 'name'>>(benefits: T[]): T[] {
     return orderBy(benefits, benefit => benefit.name, 'asc');
   },
+  checkIngredientsPercents(recipe: Pick<CosmeticRecipe, 'phases'>) {
+    let sum = 0;
+
+    for (const phase of recipe.phases) {
+      for (const ingredient of phase.ingredients) {
+        sum += ingredient.percent || 0;
+      }
+    }
+
+    if (sum !== 100) {
+      throw new Error('Сумма процентов должна быть равна 100');
+    }
+  },
 };
+
+/* ================== Cosmetic Recipe start ================== */
+export interface CosmeticRecipe {
+  id: string;
+  name: string;
+  description: string | null;
+  phases: Array<{
+    name: string;
+    ingredients: Array<{
+      ingredientId: string;
+      percent: number;
+      comment: string | null;
+    }>;
+  }>;
+}
+
+export const CosmeticRecipeValidators = (() => {
+  const ingredientId = CommonValidators.id;
+  const ingredientPercent = CommonValidators.number({ min: 0, max: 100 });
+  const ingredientComment = CommonValidators.strNullable(255);
+  const ingredient = z.object({
+    ingredientId,
+    comment: ingredientComment,
+    percent: ingredientPercent,
+  });
+
+  const phaseName = CommonValidators.str(255);
+  const phaseIngredients = z.array(ingredient).min(1, ERROR_MESSAGES.required);
+  const phase = z.object({
+    name: phaseName,
+    ingredients: phaseIngredients,
+  });
+
+  return {
+    id: CommonValidators.id,
+    name: CommonValidators.str(255),
+    description: CommonValidators.strNullable(1000),
+
+    phaseName,
+    phaseIngredients,
+    phases: z.array(phase).min(1, ERROR_MESSAGES.required),
+
+    ingredientId,
+    ingredientPercent,
+    ingredientComment,
+    ingredient,
+  };
+})();
+/* ================== Cosmetic Recipe end ================== */

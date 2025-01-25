@@ -21,10 +21,10 @@ interface FormProps extends HTMLProps<HTMLFormElement> {
   disabled?: boolean;
 }
 
-export function Form({ style, disabled, ...props }: FormProps) {
+export function Form({ disabled, ...props }: FormProps) {
   return (
     <FormContext.Provider value={{ disabled: !!disabled }}>
-      <form style={{ display: 'contents', ...style }} {...props} />
+      <form {...props} />
     </FormContext.Provider>
   );
 }

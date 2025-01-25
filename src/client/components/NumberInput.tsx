@@ -19,8 +19,6 @@ export function NumberInput({
       onChange={e => {
         const value = Number(e.target.value);
 
-        console.log(e.target.value?.length, value);
-
         if (isNaN(value)) {
           onModelValueChange?.(undefined);
         } else {

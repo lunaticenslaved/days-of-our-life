@@ -6,18 +6,20 @@ import { useCreateCosmeticIngredientMutation } from '#/client/store';
 export function CreateCosmeticIngredientAction() {
   const dialog = useDialog();
 
-  const createCosmeticIngredientMutation = useCreateCosmeticIngredientMutation({
+  const { mutate, isPending } = useCreateCosmeticIngredientMutation({
     onMutate: dialog.close,
   });
 
   return (
     <>
-      <Button onClick={dialog.open}>Добавить ингредиент</Button>
+      <Button disabled={isPending} onClick={dialog.open}>
+        Добавить ингредиент
+      </Button>
 
       <CosmeticIngredientFormDialog
         dialog={dialog}
         onSubmit={async values => {
-          await createCosmeticIngredientMutation.mutate(values);
+          await mutate(values);
         }}
       />
     </>
