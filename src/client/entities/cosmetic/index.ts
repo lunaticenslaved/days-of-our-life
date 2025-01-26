@@ -25,4 +25,9 @@ export { CosmeticRecipeForm } from './recipes/components/CosmeticRecipeForm';
 export { CosmeticRecipesList } from './recipes/containers/CosmeticRecipesList';
 export { CosmeticRecipeActions } from './recipes/containers/CosmeticRecipeActions';
 
+// Recipe Comments
+export { CosmeticRecipeCommentList } from './recipe-comments/components/CosmeticRecipeCommentList';
+export { CosmeticRecipeCommentCreateAction } from './recipe-comments/containers/CosmeticRecipeCommentCreateAction';
+export { CosmeticRecipeCommentActions } from './recipe-comments/containers/CosmeticRecipeCommentActions';
+
 export * from './icons';

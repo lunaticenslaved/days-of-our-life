@@ -288,9 +288,11 @@ model CosmeticBenefit {
 model CosmeticRecipe {
   id String @id @default(uuid()) @db.Uuid
 
-  name        String                @db.Char(255)
-  description String?               @db.VarChar(1000)
-  phases      CosmeticRecipePhase[]
+  name        String  @db.Char(255)
+  description String? @db.VarChar(1000)
+
+  phases   CosmeticRecipePhase[]
+  comments CosmeticRecipeComment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -331,4 +333,16 @@ model CosmeticRecipeIngredient {
   updatedAt DateTime @updatedAt
 
   @@unique([ingredientId, phaseId])
+}
+
+model CosmeticRecipeComment {
+  id String @id @default(uuid()) @db.Uuid
+
+  text String @db.Char(1000)
+
+  recipe   CosmeticRecipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId String         @db.Uuid
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -81,7 +81,7 @@ export const CosmeticUtils = {
   },
 };
 
-/* ================== Cosmetic Recipe start ================== */
+/* ================== Cosmetic Recipe START ================== */
 export interface CosmeticRecipe {
   id: string;
   name: string;
@@ -128,4 +128,18 @@ export const CosmeticRecipeValidators = (() => {
     ingredient,
   };
 })();
-/* ================== Cosmetic Recipe end ================== */
+/* ================== Cosmetic Recipe END ================== */
+
+/* ================== Cosmetic Recipe Comment START ================== */
+export interface CosmeticRecipeComment {
+  id: string;
+  text: string;
+  createdAt: string; // FIXME datetime format
+}
+
+export const CosmeticRecipeCommentValidators = (() => {
+  return {
+    text: CommonValidators.str(1000),
+  };
+})();
+/* ================== Cosmetic Recipe Comment End ================== */

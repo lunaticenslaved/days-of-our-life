@@ -39,6 +39,16 @@ import {
   GetCosmeticRecipeResponse,
   ListCosmeticRecipesRequest,
   ListCosmeticRecipesResponse,
+  CreateCosmeticRecipeCommentRequest,
+  CreateCosmeticRecipeCommentResponse,
+  UpdateCosmeticRecipeCommentRequest,
+  UpdateCosmeticRecipeCommentResponse,
+  DeleteCosmeticRecipeCommentRequest,
+  DeleteCosmeticRecipeCommentResponse,
+  GetCosmeticRecipeCommentRequest,
+  GetCosmeticRecipeCommentResponse,
+  ListCosmeticRecipeCommentsRequest,
+  ListCosmeticRecipeCommentsResponse,
 } from '#/shared/api/types/cosmetic';
 import { createAction } from '#/shared/api/utils';
 
@@ -158,7 +168,7 @@ export const CosmeticSchema = {
     method: 'GET',
   }),
 
-  /* =============== Cosmetic Recipe Start =============== */
+  /* =============== Cosmetic Recipe === Start =============== */
   createCosmeticRecipe: createAction<
     CreateCosmeticRecipeRequest,
     CreateCosmeticRecipeResponse
@@ -193,5 +203,45 @@ export const CosmeticSchema = {
     path: () => `/api/cosmetic/recipes`,
     method: 'GET',
   }),
-  /* =============== Cosmetic Recipe End =============== */
+  /* =============== Cosmetic Recipe === End =============== */
+
+  /* =============== Cosmetic Recipe Comment === Start =============== */
+  createCosmeticRecipeComment: createAction<
+    CreateCosmeticRecipeCommentRequest,
+    CreateCosmeticRecipeCommentResponse
+  >({
+    path: ({ recipeId }) => `/api/cosmetic/recipes/${recipeId}/comments`,
+    method: 'POST',
+    body: ({ recipeId: _recipeId, ...data }) => data,
+  }),
+  updateCosmeticRecipeComment: createAction<
+    UpdateCosmeticRecipeCommentRequest,
+    UpdateCosmeticRecipeCommentResponse
+  >({
+    path: ({ recipeId, id }) => `/api/cosmetic/recipes/${recipeId}/comments/${id}`,
+    method: 'PATCH',
+    body: ({ id: _id, recipeId: _recipeId, ...data }) => data,
+  }),
+  deleteCosmeticRecipeComment: createAction<
+    DeleteCosmeticRecipeCommentRequest,
+    DeleteCosmeticRecipeCommentResponse
+  >({
+    path: ({ recipeId, id }) => `/api/cosmetic/recipes/${recipeId}/comments/${id}`,
+    method: 'DELETE',
+  }),
+  getCosmeticRecipeComment: createAction<
+    GetCosmeticRecipeCommentRequest,
+    GetCosmeticRecipeCommentResponse
+  >({
+    path: ({ recipeId, id }) => `/api/cosmetic/recipes/${recipeId}/comments/${id}`,
+    method: 'GET',
+  }),
+  listCosmeticRecipeComments: createAction<
+    ListCosmeticRecipeCommentsRequest,
+    ListCosmeticRecipeCommentsResponse
+  >({
+    path: ({ recipeId }) => `/api/cosmetic/recipes/${recipeId}/comments`,
+    method: 'GET',
+  }),
+  /* =============== Cosmetic Recipe Comment === End =============== */
 };

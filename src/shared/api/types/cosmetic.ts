@@ -3,6 +3,7 @@ import {
   CosmeticBenefit,
   CosmeticProduct,
   CosmeticRecipe,
+  CosmeticRecipeComment,
 } from '#/shared/models/cosmetic';
 
 export type CreateCosmeticProductResponse = CosmeticProduct;
@@ -87,9 +88,7 @@ export interface GetCosmeticBenefitRequest {
 export type ListCosmeticBenefitsResponse = CosmeticBenefit[];
 export interface ListCosmeticBenefitsRequest {}
 
-/*===================================================================
-  Cosmetic Recipe
-  =================================================================== */
+/*==================== Cosmetic Recipe START ====================  */
 export type CreateCosmeticRecipeResponse = CosmeticRecipe;
 export interface CreateCosmeticRecipeRequest {
   name: string;
@@ -121,3 +120,34 @@ export interface GetCosmeticRecipeRequest {
 
 export type ListCosmeticRecipesResponse = CosmeticRecipe[];
 export interface ListCosmeticRecipesRequest {}
+/*==================== Cosmetic Recipe END ====================  */
+
+/*==================== Cosmetic Recipe Comment START ====================  */
+export type CreateCosmeticRecipeCommentResponse = CosmeticRecipeComment;
+export type CreateCosmeticRecipeCommentRequest = {
+  recipeId: string;
+  text: string;
+};
+
+export type UpdateCosmeticRecipeCommentResponse = CosmeticRecipeComment;
+export type UpdateCosmeticRecipeCommentRequest = CreateCosmeticRecipeCommentRequest & {
+  id: string;
+};
+
+export type DeleteCosmeticRecipeCommentResponse = void;
+export type DeleteCosmeticRecipeCommentRequest = {
+  id: string;
+  recipeId: string;
+};
+
+export type GetCosmeticRecipeCommentResponse = CosmeticRecipeComment;
+export type GetCosmeticRecipeCommentRequest = {
+  id: string;
+  recipeId: string;
+};
+
+export type ListCosmeticRecipeCommentsResponse = CosmeticRecipeComment[];
+export type ListCosmeticRecipeCommentsRequest = {
+  recipeId: string;
+};
+/*==================== Cosmetic Recipe Comment END ====================  */

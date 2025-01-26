@@ -1,6 +1,7 @@
 import { Button } from '#/client/components/Button';
 import { ConfirmDialog } from '#/client/components/ConfirmDialog';
 import { useDialog } from '#/client/components/Dialog';
+import { CosmeticRecipeCommentFormDialog } from '../../recipe-comments/containers/CosmeticRecipeCommentFormDialog';
 import { useCosmeticNavigation } from '#/client/pages/cosmetic';
 import { useDeleteCosmeticRecipeMutation } from '#/client/store';
 import { CosmeticRecipe } from '#/shared/models/cosmetic';
@@ -18,6 +19,7 @@ export function CosmeticRecipeActions({ recipe, onDeleted }: CosmeticRecipeActio
   });
 
   const deletingConfirmDialog = useDialog();
+  const commentDialog = useDialog();
 
   return (
     <div style={{ display: 'flex' }}>
@@ -32,14 +34,19 @@ export function CosmeticRecipeActions({ recipe, onDeleted }: CosmeticRecipeActio
         }}
       />
 
+      <CosmeticRecipeCommentFormDialog dialog={commentDialog} recipeId={recipe.id} />
+
       <Button onClick={() => cosmeticNavigation.toRecipeEdit({ recipeId: recipe.id })}>
         Редактировать
       </Button>
+
       <Button
         onClick={deletingConfirmDialog.open}
         disabled={deleteRecipeMutation.isPending}>
         Удалить
       </Button>
+
+      <Button onClick={commentDialog.open}>Добавить комментарий</Button>
     </div>
   );
 }

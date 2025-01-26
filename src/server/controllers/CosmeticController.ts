@@ -9,6 +9,8 @@ import {
   CreateCosmeticIngredientResponse,
   CreateCosmeticProductRequest,
   CreateCosmeticProductResponse,
+  CreateCosmeticRecipeCommentRequest,
+  CreateCosmeticRecipeCommentResponse,
   CreateCosmeticRecipeRequest,
   CreateCosmeticRecipeResponse,
   DeleteCosmeticBenefitRequest,
@@ -17,6 +19,8 @@ import {
   DeleteCosmeticIngredientResponse,
   DeleteCosmeticProductRequest,
   DeleteCosmeticProductResponse,
+  DeleteCosmeticRecipeCommentRequest,
+  DeleteCosmeticRecipeCommentResponse,
   DeleteCosmeticRecipeRequest,
   DeleteCosmeticRecipeResponse,
   GetCosmeticBenefitRequest,
@@ -25,6 +29,8 @@ import {
   GetCosmeticIngredientResponse,
   GetCosmeticProductRequest,
   GetCosmeticProductResponse,
+  GetCosmeticRecipeCommentRequest,
+  GetCosmeticRecipeCommentResponse,
   GetCosmeticRecipeRequest,
   GetCosmeticRecipeResponse,
   ListCosmeticBenefitsRequest,
@@ -33,6 +39,8 @@ import {
   ListCosmeticIngredientsResponse,
   ListCosmeticProductsRequest,
   ListCosmeticProductsResponse,
+  ListCosmeticRecipeCommentsRequest,
+  ListCosmeticRecipeCommentsResponse,
   ListCosmeticRecipesRequest,
   ListCosmeticRecipesResponse,
   UpdateCosmeticBenefitRequest,
@@ -41,6 +49,8 @@ import {
   UpdateCosmeticIngredientResponse,
   UpdateCosmeticProductRequest,
   UpdateCosmeticProductResponse,
+  UpdateCosmeticRecipeCommentRequest,
+  UpdateCosmeticRecipeCommentResponse,
   UpdateCosmeticRecipeRequest,
   UpdateCosmeticRecipeResponse,
 } from '#/shared/api/types/cosmetic';
@@ -52,7 +62,11 @@ import { z } from 'zod';
 import CosmeticIngredientService from '#/server/services/CosmeticIngredientService';
 import CosmeticBenefitService from '#/server/services/CosmeticBenefitService';
 import CosmeticRecipeService from '#/server/services/CosmeticRecipeService';
-import { CosmeticRecipeValidators } from '#/shared/models/cosmetic';
+import {
+  CosmeticRecipeCommentValidators,
+  CosmeticRecipeValidators,
+} from '#/shared/models/cosmetic';
+import CosmeticRecipeCommentService from '#/server/services/CosmeticRecipeCommentService';
 
 export default new Controller<'cosmetic'>({
   // Cosmetic Products
@@ -391,4 +405,91 @@ export default new Controller<'cosmetic'>({
     },
   }),
   /* =============== Cosmetic Recipe END =============== */
+
+  /* =============== Cosmetic Recipe Comment START =============== */
+  'POST /cosmetic/recipes/:recipeId/comments': Controller.handler<
+    CreateCosmeticRecipeCommentRequest,
+    CreateCosmeticRecipeCommentResponse
+  >({
+    validator: z.object({
+      recipeId: CommonValidators.id,
+      text: CosmeticRecipeCommentValidators.text,
+    }),
+    parse: req => ({
+      recipeId: req.params.recipeId,
+      text: req.body.text,
+    }),
+    handler: async (data, { prisma }) => {
+      return CosmeticRecipeCommentService.create(data, prisma);
+    },
+  }),
+
+  'PATCH /cosmetic/recipes/:recipeId/comments/:id': Controller.handler<
+    UpdateCosmeticRecipeCommentRequest,
+    UpdateCosmeticRecipeCommentResponse
+  >({
+    validator: z.object({
+      id: CommonValidators.id,
+      recipeId: CommonValidators.id,
+      text: CosmeticRecipeCommentValidators.text,
+    }),
+    parse: req => ({
+      id: req.params.id,
+      recipeId: req.params.recipeId,
+      text: req.body.text,
+    }),
+    handler: async (data, { prisma }) => {
+      return CosmeticRecipeCommentService.update(data, prisma);
+    },
+  }),
+
+  'DELETE /cosmetic/recipes/:recipeId/comments/:id': Controller.handler<
+    DeleteCosmeticRecipeCommentRequest,
+    DeleteCosmeticRecipeCommentResponse
+  >({
+    validator: z.object({
+      id: CommonValidators.id,
+      recipeId: CommonValidators.id,
+    }),
+    parse: req => ({
+      id: req.params.id,
+      recipeId: req.params.recipeId,
+    }),
+    handler: async (data, { prisma }) => {
+      return CosmeticRecipeCommentService.delete(data, prisma);
+    },
+  }),
+
+  'GET /cosmetic/recipes/:recipeId/comments/:id': Controller.handler<
+    GetCosmeticRecipeCommentRequest,
+    GetCosmeticRecipeCommentResponse
+  >({
+    validator: z.object({
+      id: CommonValidators.id,
+      recipeId: CommonValidators.id,
+    }),
+    parse: req => ({
+      id: req.params.id,
+      recipeId: req.params.recipeId,
+    }),
+    handler: async (data, { prisma }) => {
+      return CosmeticRecipeCommentService.get(data, prisma);
+    },
+  }),
+
+  'GET /cosmetic/recipes/:recipeId/comments': Controller.handler<
+    ListCosmeticRecipeCommentsRequest,
+    ListCosmeticRecipeCommentsResponse
+  >({
+    validator: z.object({
+      recipeId: CommonValidators.id,
+    }),
+    parse: req => ({
+      recipeId: req.params.recipeId,
+    }),
+    handler: async (data, { prisma }) => {
+      return CosmeticRecipeCommentService.list(data, prisma);
+    },
+  }),
+  /* =============== Cosmetic Recipe Comment END =============== */
 });

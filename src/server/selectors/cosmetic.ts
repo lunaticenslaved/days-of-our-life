@@ -5,6 +5,7 @@ import {
   CosmeticBenefit,
   CosmeticProductApplication,
   CosmeticRecipe,
+  CosmeticRecipeComment,
 } from '#/shared/models/cosmetic';
 import { DAY_SELECTOR } from '#/server/selectors/days';
 import { DateUtils } from '#/shared/models/date';
@@ -81,10 +82,7 @@ export function convertCosmeticBenefitSelector(
   return { ...data, parentId: data.parentId || undefined };
 }
 
-/*
-  ======================= Cosmetic Recipe =======================
-*/
-
+/* ======================= Cosmetic Recipe START ======================= */
 export const COSMETIC_RECIPE_SELECTOR = {
   select: {
     id: true,
@@ -126,3 +124,24 @@ export function convertCosmeticRecipeSelector(
     }),
   };
 }
+/* ======================= Cosmetic Recipe END ======================= */
+
+/* ======================= Cosmetic Recipe Comment START ======================= */
+export const COSMETIC_RECIPE_COMMENT_SELECTOR = {
+  select: {
+    id: true,
+    text: true,
+    createdAt: true,
+  },
+} satisfies Prisma.CosmeticRecipeCommentDefaultArgs;
+
+export function convertCosmeticRecipeCommentSelector(
+  data: Prisma.CosmeticRecipeCommentGetPayload<typeof COSMETIC_RECIPE_COMMENT_SELECTOR>,
+): CosmeticRecipeComment {
+  return {
+    id: data.id,
+    text: data.text,
+    createdAt: data.createdAt.toISOString(),
+  };
+}
+/* ======================= Cosmetic Recipe Comment END ======================= */
