@@ -5,6 +5,8 @@ import {
 import {
   CreateCosmeticBenefitRequest,
   CreateCosmeticBenefitResponse,
+  CreateCosmeticINCIIngredientRequest,
+  CreateCosmeticINCIIngredientResponse,
   CreateCosmeticIngredientRequest,
   CreateCosmeticIngredientResponse,
   CreateCosmeticProductRequest,
@@ -15,6 +17,8 @@ import {
   CreateCosmeticRecipeResponse,
   DeleteCosmeticBenefitRequest,
   DeleteCosmeticBenefitResponse,
+  DeleteCosmeticINCIIngredientRequest,
+  DeleteCosmeticINCIIngredientResponse,
   DeleteCosmeticIngredientRequest,
   DeleteCosmeticIngredientResponse,
   DeleteCosmeticProductRequest,
@@ -25,6 +29,8 @@ import {
   DeleteCosmeticRecipeResponse,
   GetCosmeticBenefitRequest,
   GetCosmeticBenefitResponse,
+  GetCosmeticINCIIngredientRequest,
+  GetCosmeticINCIIngredientResponse,
   GetCosmeticIngredientRequest,
   GetCosmeticIngredientResponse,
   GetCosmeticProductRequest,
@@ -35,6 +41,8 @@ import {
   GetCosmeticRecipeResponse,
   ListCosmeticBenefitsRequest,
   ListCosmeticBenefitsResponse,
+  ListCosmeticINCIIngredientsRequest,
+  ListCosmeticINCIIngredientsResponse,
   ListCosmeticIngredientsRequest,
   ListCosmeticIngredientsResponse,
   ListCosmeticProductsRequest,
@@ -45,6 +53,8 @@ import {
   ListCosmeticRecipesResponse,
   UpdateCosmeticBenefitRequest,
   UpdateCosmeticBenefitResponse,
+  UpdateCosmeticINCIIngredientRequest,
+  UpdateCosmeticINCIIngredientResponse,
   UpdateCosmeticIngredientRequest,
   UpdateCosmeticIngredientResponse,
   UpdateCosmeticProductRequest,
@@ -63,10 +73,13 @@ import CosmeticIngredientService from '#/server/services/CosmeticIngredientServi
 import CosmeticBenefitService from '#/server/services/CosmeticBenefitService';
 import CosmeticRecipeService from '#/server/services/CosmeticRecipeService';
 import {
+  CosmeticINCIIngredientValidators,
+  CosmeticIngredientValidators,
   CosmeticRecipeCommentValidators,
   CosmeticRecipeValidators,
 } from '#/shared/models/cosmetic';
 import CosmeticRecipeCommentService from '#/server/services/CosmeticRecipeCommentService';
+import CosmeticINCIIngredientService from '#/server/services/CosmeticINCIIngredientService';
 
 export default new Controller<'cosmetic'>({
   // Cosmetic Products
@@ -181,11 +194,15 @@ export default new Controller<'cosmetic'>({
     CreateCosmeticIngredientResponse
   >({
     validator: z.object({
-      name: CommonValidators.str(255),
-      benefitIds: z.array(CommonValidators.id), // FIXME move to commob cosmetic validators
+      name: CosmeticIngredientValidators.name,
+      description: CosmeticIngredientValidators.description,
+      INCIIngredientIds: CosmeticIngredientValidators.INCIIngredientIds,
+      benefitIds: CosmeticIngredientValidators.benefitIds,
     }),
     parse: req => ({
       name: req.body.name,
+      description: req.body.description,
+      INCIIngredientIds: req.body.INCIIngredientIds,
       benefitIds: req.body.benefitIds,
     }),
     handler: async (data, { prisma }) => {
@@ -199,12 +216,16 @@ export default new Controller<'cosmetic'>({
   >({
     validator: z.object({
       id: CommonValidators.id,
-      name: CommonValidators.str(255),
-      benefitIds: z.array(CommonValidators.id), // FIXME move to common cosmetic validators
+      name: CosmeticIngredientValidators.name,
+      description: CosmeticIngredientValidators.description,
+      INCIIngredientIds: CosmeticIngredientValidators.INCIIngredientIds,
+      benefitIds: CosmeticIngredientValidators.benefitIds,
     }),
     parse: req => ({
       id: req.params.id,
       name: req.body.name,
+      description: req.body.description,
+      INCIIngredientIds: req.body.INCIIngredientIds,
       benefitIds: req.body.benefitIds,
     }),
     handler: async ({ id, ...data }, { prisma }) => {
@@ -253,7 +274,7 @@ export default new Controller<'cosmetic'>({
     },
   }),
 
-  // // Cosmetic Benefits
+  // Cosmetic Benefits
   'POST /cosmetic/benefits': Controller.handler<
     CreateCosmeticBenefitRequest,
     CreateCosmeticBenefitResponse
@@ -404,9 +425,8 @@ export default new Controller<'cosmetic'>({
       return CosmeticRecipeService.delete(data, prisma);
     },
   }),
-  /* =============== Cosmetic Recipe END =============== */
 
-  /* =============== Cosmetic Recipe Comment START =============== */
+  // Cosmetic Recipe Comment
   'POST /cosmetic/recipes/:recipeId/comments': Controller.handler<
     CreateCosmeticRecipeCommentRequest,
     CreateCosmeticRecipeCommentResponse
@@ -491,5 +511,82 @@ export default new Controller<'cosmetic'>({
       return CosmeticRecipeCommentService.list(data, prisma);
     },
   }),
-  /* =============== Cosmetic Recipe Comment END =============== */
+
+  // Cosmetic INCI Ingredients
+  'POST /cosmetic/inci-ingredients': Controller.handler<
+    CreateCosmeticINCIIngredientRequest,
+    CreateCosmeticINCIIngredientResponse
+  >({
+    validator: z.object({
+      name: CosmeticINCIIngredientValidators.name,
+      benefitIds: CosmeticINCIIngredientValidators.benefitIds,
+    }),
+    parse: req => ({
+      name: req.body.name,
+      benefitIds: req.body.benefitIds,
+    }),
+    handler: async (data, { prisma }) => {
+      return CosmeticINCIIngredientService.create(data, prisma);
+    },
+  }),
+
+  'PATCH /cosmetic/inci-ingredients/:id': Controller.handler<
+    UpdateCosmeticINCIIngredientRequest,
+    UpdateCosmeticINCIIngredientResponse
+  >({
+    validator: z.object({
+      id: CommonValidators.id,
+      name: CosmeticINCIIngredientValidators.name,
+      benefitIds: CosmeticINCIIngredientValidators.benefitIds,
+    }),
+    parse: req => ({
+      id: req.params.id,
+      name: req.body.name,
+      benefitIds: req.body.benefitIds,
+    }),
+    handler: async ({ id, ...data }, { prisma }) => {
+      return CosmeticINCIIngredientService.update({ id, ...data }, prisma);
+    },
+  }),
+
+  'DELETE /cosmetic/inci-ingredients/:id': Controller.handler<
+    DeleteCosmeticINCIIngredientRequest,
+    DeleteCosmeticINCIIngredientResponse
+  >({
+    validator: z.object({
+      id: CommonValidators.id,
+    }),
+    parse: req => ({
+      id: req.params.id,
+    }),
+    handler: async ({ id }, { prisma }) => {
+      return CosmeticINCIIngredientService.delete({ id }, prisma);
+    },
+  }),
+
+  'GET /cosmetic/inci-ingredients/:id': Controller.handler<
+    GetCosmeticINCIIngredientRequest,
+    GetCosmeticINCIIngredientResponse
+  >({
+    validator: z.object({
+      id: CommonValidators.id,
+    }),
+    parse: req => ({
+      id: req.params.id,
+    }),
+    handler: async ({ id }, { prisma }) => {
+      return CosmeticINCIIngredientService.get({ id }, prisma);
+    },
+  }),
+
+  'GET /cosmetic/inci-ingredients': Controller.handler<
+    ListCosmeticINCIIngredientsRequest,
+    ListCosmeticINCIIngredientsResponse
+  >({
+    validator: z.object({}),
+    parse: () => ({}),
+    handler: async (_, { prisma }) => {
+      return CosmeticINCIIngredientService.list({}, prisma);
+    },
+  }),
 });

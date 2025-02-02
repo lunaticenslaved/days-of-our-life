@@ -1,7 +1,7 @@
 import { Button } from '#/client/components/Button';
 import { ConfirmDialog } from '#/client/components/ConfirmDialog';
 import { useDialog } from '#/client/components/Dialog';
-import { CosmeticIngredientFormDialog } from './CosmeticIngredientFormDialog';
+import { CosmeticIngredientFormDialog } from './FormDialog';
 import {
   useDeleteCosmeticIngredientMutation,
   useUpdateCosmeticIngredientMutation,
@@ -44,7 +44,7 @@ export function CosmeticIngredientActions({
 
       {updateDialog.isOpen && (
         <CosmeticIngredientFormDialog
-          ingredient={ingredient}
+          entity={ingredient}
           dialog={updateDialog}
           onSubmit={values => {
             updateCosmeticIngredientMutation.mutate({

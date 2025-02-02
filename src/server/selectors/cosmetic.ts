@@ -6,6 +6,7 @@ import {
   CosmeticProductApplication,
   CosmeticRecipe,
   CosmeticRecipeComment,
+  CosmeticINCIIngredient,
 } from '#/shared/models/cosmetic';
 import { DAY_SELECTOR } from '#/server/selectors/days';
 import { DateUtils } from '#/shared/models/date';
@@ -31,6 +32,12 @@ export const COSMETIC_INGREDIENT_SELECTOR = {
   select: {
     id: true,
     name: true,
+    description: true,
+    INCIs: {
+      select: {
+        id: true,
+      },
+    },
     benefits: {
       select: {
         id: true,
@@ -66,12 +73,14 @@ export function convertCosmeticProductSelector(
 
 export function convertCosmeticIngredientSelector({
   benefits,
+  INCIs,
   ...data
 }: Prisma.CosmeticIngredientGetPayload<
   typeof COSMETIC_INGREDIENT_SELECTOR
 >): CosmeticIngredient {
   return {
     ...data,
+    INCIIngredientIds: INCIs.map(i => i.id),
     benefitIds: benefits.map(benefit => benefit.id),
   };
 }
@@ -126,7 +135,11 @@ export function convertCosmeticRecipeSelector(
 }
 /* ======================= Cosmetic Recipe END ======================= */
 
-/* ======================= Cosmetic Recipe Comment START ======================= */
+/* 
+======================================================================= 
+======================= Cosmetic Recipe Comment ======================= 
+======================================================================= 
+*/
 export const COSMETIC_RECIPE_COMMENT_SELECTOR = {
   select: {
     id: true,
@@ -144,4 +157,30 @@ export function convertCosmeticRecipeCommentSelector(
     createdAt: data.createdAt.toISOString(),
   };
 }
-/* ======================= Cosmetic Recipe Comment END ======================= */
+
+/* 
+======================================================================== 
+======================= Cosmetic INCI Ingredient ======================= 
+======================================================================== 
+*/
+export const COSMETIC_INCI_INGREDIENT_SELECTOR = {
+  select: {
+    id: true,
+    name: true,
+    benefits: {
+      select: {
+        id: true,
+      },
+    },
+  },
+} satisfies Prisma.CosmeticINCIIngredientDefaultArgs;
+
+export function convertCosmeticINCIIngredientSelector(
+  data: Prisma.CosmeticINCIIngredientGetPayload<typeof COSMETIC_INCI_INGREDIENT_SELECTOR>,
+): CosmeticINCIIngredient {
+  return {
+    id: data.id,
+    name: data.name,
+    benefitIds: data.benefits.map(benefit => benefit.id),
+  };
+}

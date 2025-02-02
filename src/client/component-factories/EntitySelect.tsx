@@ -75,7 +75,7 @@ export function createEntitySingleSelect<TEntity>(
     );
   });
 
-  Select.displayName = `${entityName}SingleSelect`;
+  Select.displayName = `${entityName}SingleSelectFactory`;
 
   return Select;
 }
@@ -109,7 +109,7 @@ export function createEntityMultipleSelect<TEntity>(
     );
   });
 
-  Select.displayName = `${entityName}MultipleSelect`;
+  Select.displayName = `${entityName}MultipleSelectFactory`;
 
   return Select;
 }

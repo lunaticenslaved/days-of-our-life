@@ -10,6 +10,7 @@ import {
   useListCosmeticIngredientsQuery,
   useListCosmeticRecipeCommentsQuery,
 } from '#/client/store';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function Overview() {
   const { recipeId = '' } = useCosmeticPageParams();
@@ -24,12 +25,16 @@ export default function Overview() {
   const cosmeticIngredients = listCosmeticIngredientsQuery.data;
   const comments = listCosmeticRecipeCommentsQuery.data;
 
+  const queryClient = useQueryClient();
+  const hasMutating = queryClient.isMutating() > 0;
+
   if (!recipe || !cosmeticIngredients || !comments) {
     return <div>Loading...</div>;
   }
 
   return (
     <>
+      {String(hasMutating)}
       <CosmeticRecipeActions recipe={recipe} onDeleted={cosmeticNavigation.toRecipes} />
       <div style={{ display: 'flex' }}>
         <div style={{ flexGrow: 1 }}>

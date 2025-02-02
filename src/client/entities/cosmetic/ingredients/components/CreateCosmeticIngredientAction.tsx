@@ -1,6 +1,6 @@
 import { Button } from '#/client/components/Button';
 import { useDialog } from '#/client/components/Dialog';
-import { CosmeticIngredientFormDialog } from './CosmeticIngredientFormDialog';
+import { CosmeticIngredientFormDialog } from './FormDialog';
 import { useCreateCosmeticIngredientMutation } from '#/client/store';
 
 export function CreateCosmeticIngredientAction() {

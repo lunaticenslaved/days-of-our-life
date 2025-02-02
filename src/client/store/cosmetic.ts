@@ -11,6 +11,8 @@ import {
 import {
   CreateCosmeticBenefitRequest,
   CreateCosmeticBenefitResponse,
+  CreateCosmeticINCIIngredientRequest,
+  CreateCosmeticINCIIngredientResponse,
   CreateCosmeticIngredientRequest,
   CreateCosmeticIngredientResponse,
   CreateCosmeticProductRequest,
@@ -21,6 +23,8 @@ import {
   CreateCosmeticRecipeResponse,
   DeleteCosmeticBenefitRequest,
   DeleteCosmeticBenefitResponse,
+  DeleteCosmeticINCIIngredientRequest,
+  DeleteCosmeticINCIIngredientResponse,
   DeleteCosmeticIngredientRequest,
   DeleteCosmeticIngredientResponse,
   DeleteCosmeticProductRequest,
@@ -30,17 +34,21 @@ import {
   DeleteCosmeticRecipeRequest,
   DeleteCosmeticRecipeResponse,
   GetCosmeticBenefitResponse,
+  GetCosmeticINCIIngredientResponse,
   GetCosmeticIngredientResponse,
   GetCosmeticProductResponse,
   GetCosmeticRecipeCommentResponse,
   GetCosmeticRecipeResponse,
   ListCosmeticBenefitsResponse,
+  ListCosmeticINCIIngredientsResponse,
   ListCosmeticIngredientsResponse,
   ListCosmeticProductsResponse,
   ListCosmeticRecipeCommentsResponse,
   ListCosmeticRecipesResponse,
   UpdateCosmeticBenefitRequest,
   UpdateCosmeticBenefitResponse,
+  UpdateCosmeticINCIIngredientRequest,
+  UpdateCosmeticINCIIngredientResponse,
   UpdateCosmeticIngredientRequest,
   UpdateCosmeticIngredientResponse,
   UpdateCosmeticProductRequest,
@@ -56,6 +64,7 @@ import {
   CosmeticProduct,
   CosmeticRecipe,
   CosmeticRecipeComment,
+  CosmeticINCIIngredient,
 } from '#/shared/models/cosmetic';
 import { cloneDeep, orderBy } from 'lodash';
 import dayjs from '#/shared/libs/dayjs';
@@ -118,6 +127,29 @@ const StoreKeys = {
   createCosmeticRecipeComment: (): MutationKey => ['cosmetic', 'recipes', 'create'],
   deleteCosmeticRecipeComment: (): MutationKey => ['cosmetic', 'recipes', 'delete'],
   updateCosmeticRecipeComment: (): MutationKey => ['cosmetic', 'recipes', 'update'],
+
+  // Cosmetic INCI Ingredients
+  getCosmeticINCIIngredient: (ingredientId: string): QueryKey => [
+    'cosmetic',
+    'inci-ingredients',
+    ingredientId,
+  ],
+  listCosmeticINCIIngredients: (): QueryKey => ['cosmetic', 'inci-ingredients'],
+  createCosmeticINCIIngredient: (): MutationKey => [
+    'cosmetic',
+    'inci-ingredients',
+    'create',
+  ],
+  deleteCosmeticINCIIngredient: (): MutationKey => [
+    'cosmetic',
+    'inci-ingredients',
+    'delete',
+  ],
+  updateCosmeticINCIIngredient: (): MutationKey => [
+    'cosmetic',
+    'inci-ingredients',
+    'update',
+  ],
 };
 
 // Cosmetic Products
@@ -359,6 +391,8 @@ export function useCreateCosmeticIngredientMutation(
       const createdItem: CosmeticIngredient = {
         id: Date.now().toString(),
         name: request.name,
+        description: request.description,
+        INCIIngredientIds: request.INCIIngredientIds,
         benefitIds: request.benefitIds,
       };
 
@@ -459,6 +493,8 @@ export function useUpdateCosmeticIngredientMutation(handlers: MutationHandlers =
       const newItem: CosmeticIngredient = {
         id: request.ingredient.id,
         name: request.newData.name,
+        description: request.newData.description,
+        INCIIngredientIds: request.newData.INCIIngredientIds,
         benefitIds: request.newData.benefitIds,
       };
 
@@ -987,7 +1023,7 @@ function updateCosmeticRecipesQueries(arg: {
   );
 }
 
-/* =============== Cosmetic Recipe Comment === Start =============== */
+/* =============== Cosmetic Recipe Comment =============== */
 export function useCreateCosmeticRecipeCommentMutation(
   recipeId: string,
   handlers: MutationHandlers<CosmeticRecipeComment> = {},
@@ -1279,4 +1315,230 @@ function updateCosmeticRecipeCommentsQueries({
     },
   );
 }
-/* =============== Cosmetic Recipe Comment === End =============== */
+
+// Cosmetic INCI Ingredients
+export function useCreateCosmeticINCIIngredientMutation(
+  handlers: MutationHandlers<CosmeticINCIIngredient> = {},
+) {
+  return useMutation<
+    CreateCosmeticINCIIngredientResponse,
+    DefaultError,
+    CreateCosmeticINCIIngredientRequest,
+    {
+      createdItem: CosmeticINCIIngredient;
+    }
+  >({
+    mutationKey: StoreKeys.createCosmeticINCIIngredient(),
+    mutationFn: wrapApiAction<
+      CreateCosmeticINCIIngredientRequest,
+      CreateCosmeticINCIIngredientResponse
+    >(Schema.cosmetic.createCosmeticINCIIngredient),
+    onMutate: async request => {
+      await queryClient.cancelQueries({
+        queryKey: StoreKeys.listCosmeticINCIIngredients(),
+      });
+
+      const createdItem: CosmeticINCIIngredient = {
+        id: Date.now().toString(),
+        name: request.name,
+        benefitIds: request.benefitIds,
+      };
+
+      updateCosmeticINCIIngredientsQueries({
+        addCosmeticINCIIngredient: createdItem,
+      });
+
+      handlers.onMutate?.();
+
+      return {
+        createdItem,
+      };
+    },
+    onError: (_error, _request, context) => {
+      handlers.onError?.();
+
+      if (context) {
+        updateCosmeticINCIIngredientsQueries({
+          removeCosmeticINCIIngredientById: context.createdItem.id,
+        });
+      }
+    },
+    onSuccess: (response, _request, context) => {
+      handlers.onSuccess?.(response);
+
+      updateCosmeticINCIIngredientsQueries({
+        removeCosmeticINCIIngredientById: context?.createdItem.id,
+        addCosmeticINCIIngredient: response,
+      });
+
+      return response;
+    },
+  });
+}
+
+export function useDeleteCosmeticINCIIngredientMutation(handlers: MutationHandlers = {}) {
+  return useMutation<
+    DeleteCosmeticINCIIngredientResponse,
+    DefaultError,
+    CosmeticINCIIngredient,
+    {
+      deletedItem?: CosmeticINCIIngredient;
+    }
+  >({
+    mutationKey: StoreKeys.deleteCosmeticINCIIngredient(),
+    mutationFn: data =>
+      wrapApiAction<
+        DeleteCosmeticINCIIngredientRequest,
+        DeleteCosmeticINCIIngredientResponse
+      >(Schema.cosmetic.deleteCosmeticINCIIngredient)({ id: data.id }),
+    onMutate: async request => {
+      await queryClient.cancelQueries({
+        queryKey: StoreKeys.listCosmeticINCIIngredients(),
+      });
+
+      const deletedItem = request;
+
+      updateCosmeticINCIIngredientsQueries({
+        removeCosmeticINCIIngredientById: request.id,
+      });
+
+      handlers.onMutate?.();
+
+      return {
+        deletedItem,
+      };
+    },
+    onError: (_error, _request, context) => {
+      handlers.onError?.();
+
+      if (context) {
+        updateCosmeticINCIIngredientsQueries({
+          addCosmeticINCIIngredient: context.deletedItem,
+        });
+      }
+    },
+  });
+}
+
+export function useUpdateCosmeticINCIIngredientMutation(handlers: MutationHandlers = {}) {
+  return useMutation<
+    UpdateCosmeticINCIIngredientResponse,
+    DefaultError,
+    {
+      ingredient: CosmeticINCIIngredient;
+      newData: Omit<UpdateCosmeticINCIIngredientRequest, 'id'>;
+    },
+    {
+      oldItem: CosmeticINCIIngredient;
+      newItem: CosmeticINCIIngredient;
+    }
+  >({
+    mutationKey: StoreKeys.updateCosmeticINCIIngredient(),
+    mutationFn: data =>
+      wrapApiAction<
+        UpdateCosmeticINCIIngredientRequest,
+        UpdateCosmeticINCIIngredientResponse
+      >(Schema.cosmetic.updateCosmeticINCIIngredient)({
+        ...data.newData,
+        id: data.ingredient.id,
+      }),
+    onMutate: async request => {
+      await queryClient.cancelQueries({
+        queryKey: StoreKeys.listCosmeticINCIIngredients(),
+      });
+
+      const newItem: CosmeticINCIIngredient = {
+        id: request.ingredient.id,
+        name: request.newData.name,
+        benefitIds: request.newData.benefitIds,
+      };
+
+      updateCosmeticINCIIngredientsQueries({
+        removeCosmeticINCIIngredientById: request.ingredient.id,
+        addCosmeticINCIIngredient: newItem,
+      });
+
+      handlers.onMutate?.();
+
+      return {
+        newItem,
+        oldItem: request.ingredient,
+      };
+    },
+    onError: (_error, _request, context) => {
+      handlers.onError?.();
+
+      if (context) {
+        updateCosmeticINCIIngredientsQueries({
+          removeCosmeticINCIIngredientById: context.newItem.id,
+          addCosmeticINCIIngredient: context.oldItem,
+        });
+      }
+    },
+  });
+}
+
+export function useGetCosmeticINCIIngredientQuery(ingredientId: string) {
+  return useQuery<
+    GetCosmeticINCIIngredientResponse,
+    Error,
+    GetCosmeticINCIIngredientResponse
+  >({
+    queryKey: StoreKeys.getCosmeticINCIIngredient(ingredientId),
+    queryFn: () =>
+      wrapApiAction(Schema.cosmetic.getCosmeticINCIIngredient)({ id: ingredientId }),
+  });
+}
+
+export function useListCosmeticINCIIngredientsQuery() {
+  return useQuery<
+    ListCosmeticINCIIngredientsResponse,
+    Error,
+    ListCosmeticINCIIngredientsResponse
+  >({
+    queryKey: StoreKeys.listCosmeticINCIIngredients(),
+    queryFn: wrapApiAction(Schema.cosmetic.listCosmeticINCIIngredients),
+    select: data => {
+      return orderBy(data, item => item.name, 'asc');
+    },
+  });
+}
+
+function updateCosmeticINCIIngredientsQueries(arg: {
+  addCosmeticINCIIngredient?: CosmeticINCIIngredient;
+  removeCosmeticINCIIngredientById?: string;
+}) {
+  if (arg.removeCosmeticINCIIngredientById) {
+    queryClient.removeQueries({
+      queryKey: StoreKeys.getCosmeticINCIIngredient(arg.removeCosmeticINCIIngredientById),
+    });
+  }
+
+  if (arg.addCosmeticINCIIngredient) {
+    queryClient.setQueryData(
+      StoreKeys.getCosmeticINCIIngredient(arg.addCosmeticINCIIngredient.id),
+      arg.addCosmeticINCIIngredient,
+    );
+  }
+
+  queryClient.setQueryData<ListCosmeticINCIIngredientsResponse>(
+    StoreKeys.listCosmeticINCIIngredients(),
+    _old => {
+      if (!_old) {
+        return _old;
+      }
+
+      let old = [..._old];
+
+      if (arg.removeCosmeticINCIIngredientById) {
+        old = old.filter(item => item.id !== arg.removeCosmeticINCIIngredientById);
+      }
+
+      if (arg.addCosmeticINCIIngredient) {
+        old.push(arg.addCosmeticINCIIngredient);
+      }
+
+      return old;
+    },
+  );
+}

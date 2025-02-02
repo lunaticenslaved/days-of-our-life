@@ -17,12 +17,6 @@ export interface CosmeticProductApplication {
   cosmeticProductId: string;
 }
 
-export interface CosmeticIngredient {
-  id: string;
-  name: string;
-  benefitIds: string[];
-}
-
 export interface CosmeticBenefit {
   id: string;
   name: string;
@@ -81,7 +75,29 @@ export const CosmeticUtils = {
   },
 };
 
-/* ================== Cosmetic Recipe START ================== */
+/* ==================================================================== */
+/* ================== Cosmetic Ingredient ============================= */
+/* ==================================================================== */
+export interface CosmeticIngredient {
+  id: string;
+  name: string;
+  description: string | null;
+  benefitIds: string[];
+  INCIIngredientIds: string[];
+}
+
+export const CosmeticIngredientValidators = (() => {
+  return {
+    name: CommonValidators.str(255),
+    description: CommonValidators.strNullable(1000),
+    INCIIngredientIds: z.array(CommonValidators.id).min(1, ERROR_MESSAGES.required),
+    benefitIds: z.array(CommonValidators.id),
+  };
+})();
+
+/* ==================================================================== */
+/* ================== Cosmetic Recipe ================================= */
+/* ==================================================================== */
 export interface CosmeticRecipe {
   id: string;
   name: string;
@@ -128,9 +144,10 @@ export const CosmeticRecipeValidators = (() => {
     ingredient,
   };
 })();
-/* ================== Cosmetic Recipe END ================== */
 
-/* ================== Cosmetic Recipe Comment START ================== */
+/* ==================================================================== */
+/* ================== Cosmetic Recipe Comment ========================= */
+/* ==================================================================== */
 export interface CosmeticRecipeComment {
   id: string;
   text: string;
@@ -142,4 +159,19 @@ export const CosmeticRecipeCommentValidators = (() => {
     text: CommonValidators.str(1000),
   };
 })();
-/* ================== Cosmetic Recipe Comment End ================== */
+
+/* ==================================================================== */
+/* ================== Cosmetic INCI Ingredient ======================== */
+/* ==================================================================== */
+export interface CosmeticINCIIngredient {
+  id: string;
+  name: string;
+  benefitIds: string[];
+}
+
+export const CosmeticINCIIngredientValidators = (() => {
+  return {
+    name: CommonValidators.str(255),
+    benefitIds: z.array(CommonValidators.id),
+  };
+})();

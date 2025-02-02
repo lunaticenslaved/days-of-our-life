@@ -15,7 +15,7 @@ export { CreateCosmeticBenefitAction } from './benefits/containers/CreateCosmeti
 export { CosmeticBenefitsList } from './benefits/containers/CosmeticBenefitsList';
 
 // Ingredients
-export { CosmeticIngredientFormDialog } from './ingredients/components/CosmeticIngredientFormDialog';
+export { CosmeticIngredientFormDialog } from './ingredients/components/FormDialog';
 export { CreateCosmeticIngredientAction } from './ingredients/components/CreateCosmeticIngredientAction';
 export { CosmeticIngredientsList } from './ingredients/components/CosmeticIngredientsList';
 export { CosmeticIngredientActions } from './ingredients/components/CosmeticIngredientActions';
@@ -29,5 +29,11 @@ export { CosmeticRecipeActions } from './recipes/containers/CosmeticRecipeAction
 export { CosmeticRecipeCommentList } from './recipe-comments/components/CosmeticRecipeCommentList';
 export { CosmeticRecipeCommentCreateAction } from './recipe-comments/containers/CosmeticRecipeCommentCreateAction';
 export { CosmeticRecipeCommentActions } from './recipe-comments/containers/CosmeticRecipeCommentActions';
+
+// INCI Ingredients
+export { CosmeticINCIIngredientFormDialog } from './inci-indgredients/components/FormDialog';
+export { CosmeticINCIIngredientsList } from './inci-indgredients/components/List';
+export { CosmeticINCIIngredientCreateAction } from './inci-indgredients/containers/CreateAction';
+export { CosmeticINCIIngredientActions } from './inci-indgredients/containers/Actions';
 
 export * from './icons';

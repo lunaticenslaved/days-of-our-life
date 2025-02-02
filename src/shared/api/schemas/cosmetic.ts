@@ -49,6 +49,16 @@ import {
   GetCosmeticRecipeCommentResponse,
   ListCosmeticRecipeCommentsRequest,
   ListCosmeticRecipeCommentsResponse,
+  CreateCosmeticINCIIngredientRequest,
+  CreateCosmeticINCIIngredientResponse,
+  UpdateCosmeticINCIIngredientRequest,
+  UpdateCosmeticINCIIngredientResponse,
+  DeleteCosmeticINCIIngredientRequest,
+  DeleteCosmeticINCIIngredientResponse,
+  GetCosmeticINCIIngredientRequest,
+  GetCosmeticINCIIngredientResponse,
+  ListCosmeticINCIIngredientsRequest,
+  ListCosmeticINCIIngredientsResponse,
 } from '#/shared/api/types/cosmetic';
 import { createAction } from '#/shared/api/utils';
 
@@ -243,5 +253,43 @@ export const CosmeticSchema = {
     path: ({ recipeId }) => `/api/cosmetic/recipes/${recipeId}/comments`,
     method: 'GET',
   }),
-  /* =============== Cosmetic Recipe Comment === End =============== */
+
+  // Cosmetic ICNI Ingredients
+  createCosmeticINCIIngredient: createAction<
+    CreateCosmeticINCIIngredientRequest,
+    CreateCosmeticINCIIngredientResponse
+  >({
+    path: () => `/api/cosmetic/inci-ingredients`,
+    method: 'POST',
+    body: data => data,
+  }),
+  updateCosmeticINCIIngredient: createAction<
+    UpdateCosmeticINCIIngredientRequest,
+    UpdateCosmeticINCIIngredientResponse
+  >({
+    path: ({ id }) => `/api/cosmetic/inci-ingredients/${id}`,
+    method: 'PATCH',
+    body: ({ id: _id, ...data }) => data,
+  }),
+  deleteCosmeticINCIIngredient: createAction<
+    DeleteCosmeticINCIIngredientRequest,
+    DeleteCosmeticINCIIngredientResponse
+  >({
+    path: ({ id }) => `/api/cosmetic/inci-ingredients/${id}`,
+    method: 'DELETE',
+  }),
+  getCosmeticINCIIngredient: createAction<
+    GetCosmeticINCIIngredientRequest,
+    GetCosmeticINCIIngredientResponse
+  >({
+    path: ({ id }) => `/api/cosmetic/inci-ingredients/${id}`,
+    method: 'GET',
+  }),
+  listCosmeticINCIIngredients: createAction<
+    ListCosmeticINCIIngredientsRequest,
+    ListCosmeticINCIIngredientsResponse
+  >({
+    path: () => `/api/cosmetic/inci-ingredients`,
+    method: 'GET',
+  }),
 };
