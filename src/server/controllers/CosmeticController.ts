@@ -206,7 +206,13 @@ export default new Controller<'cosmetic'>({
       benefitIds: req.body.benefitIds,
     }),
     handler: async (data, { prisma }) => {
-      return CosmeticIngredientService.create(data, prisma);
+      return CosmeticIngredientService.create(
+        {
+          ...data,
+          description: data.description || null,
+        },
+        prisma,
+      );
     },
   }),
 
@@ -229,7 +235,10 @@ export default new Controller<'cosmetic'>({
       benefitIds: req.body.benefitIds,
     }),
     handler: async ({ id, ...data }, { prisma }) => {
-      return CosmeticIngredientService.update({ id, ...data }, prisma);
+      return CosmeticIngredientService.update(
+        { id, ...data, description: data.description || null },
+        prisma,
+      );
     },
   }),
 

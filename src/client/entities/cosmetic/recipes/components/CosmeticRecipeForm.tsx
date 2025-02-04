@@ -32,23 +32,23 @@ const schema = z.object({
           .min(1, ERROR_MESSAGES.required),
       }),
     )
-    .min(1, ERROR_MESSAGES.required)
-    .refine(
-      phases => {
-        let sum = 0;
+    .min(1, ERROR_MESSAGES.required),
+  // .refine(
+  //   phases => {
+  //     let sum = 0;
 
-        for (const phase of phases) {
-          for (const ingredient of phase.ingredients) {
-            sum += ingredient?.percent || 0;
-          }
-        }
+  //     for (const phase of phases) {
+  //       for (const ingredient of phase.ingredients) {
+  //         sum += ingredient?.percent || 0;
+  //       }
+  //     }
 
-        return sum === 100;
-      },
-      {
-        message: 'Сумма всех ингредиентов должна быть равна 100%',
-      },
-    ),
+  //     return sum === 100;
+  //   },
+  //   {
+  //     message: 'Сумма всех ингредиентов должна быть равна 100%',
+  //   },
+  // ),
 });
 
 type CosmeticRecipeFormValues = z.infer<typeof schema>;
@@ -71,7 +71,7 @@ function getInitialValues(recipe?: CosmeticRecipe): CosmeticRecipeFormValues {
               {
                 ingredientId: '',
                 percent: null as unknown as number,
-                comment: '',
+                comment: null,
               },
             ],
           },
@@ -142,12 +142,12 @@ export function CosmeticRecipeForm({
                         name={`${name}.ingredients`}
                         addButtonText="Добавить ингредиент"
                         newElement={{}}
-                        renderField={({ name: ingredientName }) => {
+                        renderField={ingredientField => {
                           return (
                             <div style={{ marginBottom: '20px', display: 'flex' }}>
                               <FinalForm.Field
                                 required
-                                name={`${ingredientName}.ingredientId`}
+                                name={`${ingredientField.name}.ingredientId`}
                                 title="Ингредиент">
                                 {fieldProps => {
                                   return (
@@ -160,17 +160,25 @@ export function CosmeticRecipeForm({
                               </FinalForm.Field>
 
                               <FinalForm.Field
-                                name={`${ingredientName}.percent`}
+                                name={`${ingredientField.name}.percent`}
                                 title="Процент ввода"
                                 required>
                                 {NumberInput}
                               </FinalForm.Field>
 
                               <FinalForm.Field
-                                name={`${ingredientName}.comment`}
+                                name={`${ingredientField.name}.comment`}
                                 title="Комментарий">
                                 {TextInput}
                               </FinalForm.Field>
+
+                              <Button
+                                type="button"
+                                onClick={() =>
+                                  ingredientField.fields.remove(ingredientField.index)
+                                }>
+                                Удалить
+                              </Button>
                             </div>
                           );
                         }}

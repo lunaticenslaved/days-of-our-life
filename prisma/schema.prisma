@@ -337,7 +337,7 @@ model CosmeticRecipePhase {
 model CosmeticRecipeIngredient {
   id String @id @default(uuid()) @db.Uuid
 
-  percent Int @db.SmallInt
+  percent Float @db.Real
 
   comment String? @db.VarChar(255)
 

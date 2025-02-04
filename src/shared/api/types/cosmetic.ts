@@ -37,7 +37,7 @@ export interface ListCosmeticProductsRequest {}
 export type CreateCosmeticIngredientResponse = CosmeticIngredient;
 export interface CreateCosmeticIngredientRequest {
   name: string;
-  description: string | null;
+  description?: string | null;
   benefitIds: string[];
   INCIIngredientIds: string[];
 }

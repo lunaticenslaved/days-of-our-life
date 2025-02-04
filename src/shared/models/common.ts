@@ -13,7 +13,7 @@ export const CommonValidators = {
       .max(length, ERROR_MESSAGES.maxLengthStr(length)),
   strNullable: (length: number) =>
     z
-      .string({ message: ERROR_MESSAGES.required })
+      .string()
       .min(0, ERROR_MESSAGES.minLengthStr(0))
       .max(length, ERROR_MESSAGES.maxLengthStr(length))
       .nullable(),
@@ -30,7 +30,7 @@ export const CommonValidators = {
     let validator = z.number({ message: ERROR_MESSAGES.required });
 
     if (typeof arg.min === 'number') {
-      validator = validator.min(1, ERROR_MESSAGES.minNumber(1));
+      validator = validator.min(arg.min, ERROR_MESSAGES.minNumber(arg.min));
     }
 
     if (typeof arg.max === 'number') {

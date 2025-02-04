@@ -391,7 +391,7 @@ export function useCreateCosmeticIngredientMutation(
       const createdItem: CosmeticIngredient = {
         id: Date.now().toString(),
         name: request.name,
-        description: request.description,
+        description: request.description || null,
         INCIIngredientIds: request.INCIIngredientIds,
         benefitIds: request.benefitIds,
       };
@@ -493,7 +493,7 @@ export function useUpdateCosmeticIngredientMutation(handlers: MutationHandlers =
       const newItem: CosmeticIngredient = {
         id: request.ingredient.id,
         name: request.newData.name,
-        description: request.newData.description,
+        description: request.newData.description || null,
         INCIIngredientIds: request.newData.INCIIngredientIds,
         benefitIds: request.newData.benefitIds,
       };
