@@ -1,7 +1,7 @@
 import {
   FoodProductSingleSelect,
   FoodProductSingleSelectProps,
-} from '#/client/entities/food/components/ProductSelect';
+} from '#/client/entities/food/products/components/ProductSelect';
 import { useListFoodProductsQuery } from '#/client/store';
 
 interface FoodProductSearchProps

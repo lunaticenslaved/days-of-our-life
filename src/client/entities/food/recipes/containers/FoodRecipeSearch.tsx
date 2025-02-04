@@ -1,7 +1,7 @@
 import {
   FoodRecipeSingleSelect,
   FoodRecipeSingleSelectProps,
-} from '#/client/entities/food/components/RecipeSelect';
+} from '#/client/entities/food/recipes/components/RecipeSelect';
 import { useListFoodRecipesQuery } from '#/client/store';
 
 interface FoodRecipeSearchProps extends Omit<FoodRecipeSingleSelectProps, 'entities'> {}
