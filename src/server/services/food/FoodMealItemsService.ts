@@ -56,13 +56,19 @@ class FoodMealItemService {
     data: CreateMealItemArg & { id: string },
     trx: PrismaTransaction,
   ): Promise<FoodMealItem> {
-    const { id, dayId, dayPartId, food: item } = data;
-    const mealItem = trx.foodMealItem.findFirstOrThrow({
+    const { id, dayId, dayPartId, food: item, quantity } = data;
+    const mealItem = await trx.foodMealItem.findFirstOrThrow({
       where: { id },
       select: {
         nutrientsId: true,
       },
     });
+
+    const quantityConverter = await trx.foodQuantityConverter.findFirstOrThrow({
+      where: { id: quantity.converterId },
+    });
+
+    
 
     const { id: nutrientsId } = await FoodNutrientsService.createForIngredientAndQuantity(
       {
@@ -81,7 +87,6 @@ class FoodMealItemService {
         data: {
           dayId,
           dayPartId,
-          nutrientsId,
           productId: item.type === 'product' ? item.productId : undefined,
           recipeId: item.type === 'recipe' ? item.recipeId : undefined,
           quantity: data.quantity.value,
@@ -92,7 +97,7 @@ class FoodMealItemService {
       .then(convertFoodMealItemSelector);
 
     await trx.foodNutrients.delete({
-      where: { id: (await mealItem).nutrientsId },
+      where: { id: mealItem.nutrientsId },
     });
 
     return updated;

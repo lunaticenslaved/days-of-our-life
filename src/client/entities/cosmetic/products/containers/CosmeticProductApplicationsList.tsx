@@ -1,9 +1,9 @@
 import { Button } from '#/client/components/Button';
 import { CosmeticProductsList } from '#/client/entities/cosmetic';
-import { useListDayPartsQuery } from '#/client/entities/day-parts';
 import { COSMETIC_NAVIGATION } from '#/client/pages/cosmetic';
 import {
   useListCosmeticProductsQuery,
+  useListDayPartsQuery,
   useRemoveCosmeticProductFromDateMutation,
 } from '#/client/store';
 import { CosmeticProduct, CosmeticProductApplication } from '#/shared/models/cosmetic';

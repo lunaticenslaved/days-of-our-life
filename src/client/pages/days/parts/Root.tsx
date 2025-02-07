@@ -1,12 +1,9 @@
 import { DayPart } from '#/shared/models/day';
 import { Button } from '#/client/components/Button';
 import { useDialog } from '#/client/components/Dialog';
-import {
-  useDeleteDayPartMutation,
-  useListDayPartsQuery,
-} from '#/client/entities/day-parts';
 import { DayPartFormDialog } from '#/client/entities/day-parts/containers/DayPartFormDialog';
 import { useEffect, useState } from 'react';
+import { useDeleteDayPartMutation, useListDayPartsQuery } from '#/client/store/days';
 
 export default function Page() {
   const dialog = useDialog();
@@ -37,20 +34,20 @@ export default function Page() {
       <Button onClick={dialog.open}>Добавить</Button>
 
       <ul>
-        {dayParts.data.map(part => {
+        {dayParts.data.map(dayPart => {
           return (
-            <li key={part.id} style={{ display: 'flex' }}>
-              <div>{part.name}</div>
+            <li key={dayPart.id} style={{ display: 'flex' }}>
+              <div>{dayPart.name}</div>
               <Button
                 onClick={() => {
-                  setDayPartToEdit(part);
+                  setDayPartToEdit(dayPart);
                   dialog.open();
                 }}>
                 Редактировать
               </Button>
               <Button
                 onClick={() => {
-                  deleting.mutate({ id: part.id });
+                  deleting.mutate(dayPart);
                 }}>
                 Удалить
               </Button>

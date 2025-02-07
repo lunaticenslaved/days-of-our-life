@@ -1,5 +1,5 @@
-import { useListDayPartsQuery } from '#/client/entities/day-parts';
 import { FoodMealItemCreatingAction, FoodNutrientsList } from '#/client/entities/food';
+import { useListDayPartsQuery } from '#/client/store/days';
 import {
   useListFoodMealItemQuery,
   useListFoodProductsQuery,

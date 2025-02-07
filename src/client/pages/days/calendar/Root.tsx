@@ -2,11 +2,11 @@ import { DateFormat, DateUtils } from '#/shared/models/date';
 import { DayPart } from '#/shared/models/day';
 import { DatePicker, DatePickerRangeModelValue } from '#/client/components/DatePicker';
 import { useDialog } from '#/client/components/Dialog';
-import { useListDayPartsQuery } from '#/client/entities/day-parts';
 import { MedicamentIntakeFormDialog } from '#/client/entities/medicament/components';
 import {
   useCreateMedicamentIntakeMutation,
   useDeleteMedicamentIntakeMutation,
+  useListDayPartsQuery,
   useListDaysQuery,
   useListMedicamentsQuery,
 } from '#/client/store';

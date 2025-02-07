@@ -1,10 +1,7 @@
 import { ComponentProps } from 'react';
 import { DayPartFormDialog as BaseDayPartFormDialog } from '../components/DayPartFormDialog';
-import {
-  useCreateDayPartMutation,
-  useUpdateDayPartMutation,
-} from '#/client/entities/day-parts/api';
 import { DayPart } from '#/shared/models/day';
+import { useCreateDayPartMutation, useUpdateDayPartMutation } from '#/client/store/days';
 
 type DayPartFormDialogProps = Pick<
   ComponentProps<typeof BaseDayPartFormDialog>,
@@ -28,7 +25,12 @@ export function DayPartFormDialog({ closeOnSubmit, ...props }: DayPartFormDialog
     <BaseDayPartFormDialog
       {...props}
       onSubmit={values =>
-        dayPart ? updating.mutate({ id: dayPart.id, ...values }) : creating.mutate(values)
+        dayPart
+          ? updating.mutate({
+              oldItem: dayPart,
+              newValues: values,
+            })
+          : creating.mutate(values)
       }
     />
   );

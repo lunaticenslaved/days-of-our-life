@@ -1,5 +1,11 @@
 import { queryClient, wrapApiAction } from '#/client/utils/api';
-import { DefaultError, QueryKey, useMutation, useQuery } from '@tanstack/react-query';
+import {
+  DefaultError,
+  MutationKey,
+  QueryKey,
+  useMutation,
+  useQuery,
+} from '@tanstack/react-query';
 import { Schema } from '#/shared/api/schemas';
 import {
   ListDaysRequest,
@@ -26,7 +32,15 @@ import {
   RemoveFoodMealItemFromDateRequest,
   RemoveFoodMealItemFromDateResponse,
   ListFoodMealItemsForDateResponse,
+  CreateDayPartRequest,
+  CreateDayPartResponse,
+  DeleteDayPartResponse,
+  ListDayPartsResponse,
+  UpdateDayPartRequest,
+  UpdateDayPartResponse,
 } from '#/shared/api/types/days';
+
+import { DayPart } from '#/shared/models/day';
 import { MutationHandlers } from '#/client/types';
 import { DateFormat } from '#/shared/models/date';
 import { MedicamentIntake } from '#/shared/models/medicament';
@@ -36,7 +50,7 @@ import { FemalePeriod } from '#/shared/models/female-period';
 import { FoodMealItem, sumNutrients } from '#/shared/models/food';
 import { DayUtils } from '#/shared/models/day';
 
-const StoreKeys = {
+const StoreKey = {
   getDayQuery: (): QueryKey => ['getDayQuery'],
   listDaysQuery: (): QueryKey => ['listDaysQuery'],
   createBodyWeightMutation: (): QueryKey => ['createBodyWeightMutation'],
@@ -50,10 +64,17 @@ const StoreKeys = {
   ],
 
   // Food
-  addFoodToDate: (): QueryKey => ['addFoodToDate'],
-  updateFoodForDate: (): QueryKey => ['updateFoodForDate'],
-  deleteFoodFromDate: (): QueryKey => ['deleteFoodFromDate'],
+  addFoodToDate: (): MutationKey => ['addFoodToDate'],
+  updateFoodForDate: (): MutationKey => ['updateFoodForDate'],
+  deleteFoodFromDate: (): MutationKey => ['deleteFoodFromDate'],
   listFoodForDate: (): QueryKey => ['listFoodForDate'],
+
+  // Day Parts
+  listDayParts: (): QueryKey => ['days', 'parts', 'list'],
+  getDayPart: (dayPartId: string): QueryKey => ['days', 'parts', dayPartId, 'get'],
+  createDayPart: (): MutationKey => ['days', 'parts', 'create'],
+  updateDayPart: (): MutationKey => ['days', 'parts', 'update'],
+  deleteDayPart: (): MutationKey => ['days', 'parts', 'delete'],
 };
 
 // Days
@@ -73,7 +94,7 @@ function setDaysQueryData(
 ) {
   // FIXME set data for getDay request
 
-  queryClient.setQueryData<ListDaysResponse>(StoreKeys.listDaysQuery(), _old => {
+  queryClient.setQueryData<ListDaysResponse>(StoreKey.listDaysQuery(), _old => {
     if (!_old) {
       return _old;
     }
@@ -148,14 +169,14 @@ function setDaysQueryData(
 
 export function useListDaysQuery(data: ListDaysRequest) {
   return useQuery<ListDaysResponse, DefaultError, ListDaysResponse>({
-    queryKey: StoreKeys.listDaysQuery(),
+    queryKey: StoreKey.listDaysQuery(),
     queryFn: () => wrapApiAction(Schema.days.listDays)(data),
   });
 }
 
 export function useGetDayQuery(date: DateFormat) {
   return useQuery<GetDayResponse, DefaultError, GetDayResponse>({
-    queryKey: StoreKeys.getDayQuery(),
+    queryKey: StoreKey.getDayQuery(),
     queryFn: () => wrapApiAction(Schema.days.getDay)({ date }),
   });
 }
@@ -171,10 +192,10 @@ export function useCreateBodyWeightMutation(handlers: MutationHandlers = {}) {
       oldWeight?: number;
     }
   >({
-    mutationKey: StoreKeys.createBodyWeightMutation(),
+    mutationKey: StoreKey.createBodyWeightMutation(),
     mutationFn: wrapApiAction(Schema.days.createBodyWeight),
     onMutate: async request => {
-      await queryClient.cancelQueries({ queryKey: StoreKeys.listDaysQuery() });
+      await queryClient.cancelQueries({ queryKey: StoreKey.listDaysQuery() });
 
       const response: CreateBodyWeightResponse = {
         date: request.date,
@@ -182,7 +203,7 @@ export function useCreateBodyWeightMutation(handlers: MutationHandlers = {}) {
       };
 
       const oldWeight = queryClient.getQueryData<ListDaysResponse>(
-        StoreKeys.listDaysQuery(),
+        StoreKey.listDaysQuery(),
       )?.[response.date]?.weight;
 
       setDaysQueryData(response.date, response);
@@ -207,7 +228,7 @@ export function useCreateBodyWeightMutation(handlers: MutationHandlers = {}) {
       handlers.onSuccess?.();
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: StoreKeys.listDaysQuery() });
+      queryClient.invalidateQueries({ queryKey: StoreKey.listDaysQuery() });
     },
   });
 }
@@ -220,12 +241,12 @@ export function useCreateMedicamentIntakeMutation(handlers: MutationHandlers = {
     AddMedicamentToDateRequest,
     { createdItem: MedicamentIntake }
   >({
-    mutationKey: StoreKeys.createMedicamentIntakeMutation(),
+    mutationKey: StoreKey.createMedicamentIntakeMutation(),
     mutationFn: wrapApiAction<AddMedicamentToDateRequest, AddMedicamentToDateResponse>(
       Schema.days.createMedicamentIntake,
     ),
     onMutate: async request => {
-      await queryClient.cancelQueries({ queryKey: StoreKeys.listDaysQuery() });
+      await queryClient.cancelQueries({ queryKey: StoreKey.listDaysQuery() });
 
       const createdItem: MedicamentIntake = {
         id: Date.now().toString(),
@@ -262,7 +283,7 @@ export function useCreateMedicamentIntakeMutation(handlers: MutationHandlers = {
       });
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: StoreKeys.listDaysQuery() });
+      queryClient.invalidateQueries({ queryKey: StoreKey.listDaysQuery() });
     },
   });
 }
@@ -276,7 +297,7 @@ export function useDeleteMedicamentIntakeMutation(handlers: MutationHandlers = {
       deletedItem: MedicamentIntake;
     }
   >({
-    mutationKey: StoreKeys.deleteMedicamentIntakeMutation(),
+    mutationKey: StoreKey.deleteMedicamentIntakeMutation(),
     mutationFn: data =>
       wrapApiAction<DeleteMedicamentInDateRequest, DeleteMedicamentInDateResponse>(
         Schema.days.deleteMedicamentIntake,
@@ -286,7 +307,7 @@ export function useDeleteMedicamentIntakeMutation(handlers: MutationHandlers = {
         medicamentId: data.medicamentId,
       }),
     onMutate: async request => {
-      await queryClient.cancelQueries({ queryKey: StoreKeys.listDaysQuery() });
+      await queryClient.cancelQueries({ queryKey: StoreKey.listDaysQuery() });
 
       setDaysQueryData(request.date, {
         removeMedicamentIntakeId: request.id,
@@ -308,7 +329,7 @@ export function useDeleteMedicamentIntakeMutation(handlers: MutationHandlers = {
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: StoreKeys.listDaysQuery() });
+      queryClient.invalidateQueries({ queryKey: StoreKey.listDaysQuery() });
     },
   });
 }
@@ -322,10 +343,10 @@ export function useStartFemalePeriodMutation(handlers: MutationHandlers = {}) {
     StartFemalePeriodRequest,
     FemalePeriod
   >({
-    mutationKey: StoreKeys.startFemalePeriodMutation(),
+    mutationKey: StoreKey.startFemalePeriodMutation(),
     mutationFn: wrapApiAction(Schema.days.startFemalePeriod, handlers),
     onMutate: async request => {
-      await queryClient.cancelQueries({ queryKey: StoreKeys.listDaysQuery() });
+      await queryClient.cancelQueries({ queryKey: StoreKey.listDaysQuery() });
 
       const createdItem: FemalePeriod = {
         startDate: request.startDate,
@@ -367,10 +388,10 @@ export function useDeleteFemalePeriodMutation(handlers: MutationHandlers = {}) {
       removedItem: FemalePeriod;
     }
   >({
-    mutationKey: StoreKeys.deleteFemalePeriodMutation(),
+    mutationKey: StoreKey.deleteFemalePeriodMutation(),
     mutationFn: wrapApiAction(Schema.days.deleteFemalePeriod, handlers),
     onMutate: async request => {
-      await queryClient.cancelQueries({ queryKey: StoreKeys.listDaysQuery() });
+      await queryClient.cancelQueries({ queryKey: StoreKey.listDaysQuery() });
 
       const removedItem: FemalePeriod = {
         startDate: request.startDate,
@@ -410,13 +431,13 @@ export function useAddCosmeticProductToDateMutation(handlers: MutationHandlers =
     AddCosmeticProductToDateRequest,
     { createdItem: CosmeticProductApplication }
   >({
-    mutationKey: StoreKeys.addCosmeticProductToDateMutation(),
+    mutationKey: StoreKey.addCosmeticProductToDateMutation(),
     mutationFn: wrapApiAction<
       AddCosmeticProductToDateRequest,
       AddCosmeticProductToDateResponse
     >(Schema.days.addCosmeticProduct),
     onMutate: async request => {
-      await queryClient.cancelQueries({ queryKey: StoreKeys.listDaysQuery() });
+      await queryClient.cancelQueries({ queryKey: StoreKey.listDaysQuery() });
 
       const createdItem: CosmeticProductApplication = {
         id: Date.now().toString(),
@@ -451,7 +472,7 @@ export function useAddCosmeticProductToDateMutation(handlers: MutationHandlers =
       });
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: StoreKeys.listDaysQuery() });
+      queryClient.invalidateQueries({ queryKey: StoreKey.listDaysQuery() });
     },
   });
 }
@@ -465,7 +486,7 @@ export function useRemoveCosmeticProductFromDateMutation(
     CosmeticProductApplication,
     { removedItem: CosmeticProductApplication }
   >({
-    mutationKey: StoreKeys.deleteCosmeticProductFromDateMutation(),
+    mutationKey: StoreKey.deleteCosmeticProductFromDateMutation(),
     mutationFn: data =>
       wrapApiAction<
         RemoveCosmeticProductFromDateRequest,
@@ -476,7 +497,7 @@ export function useRemoveCosmeticProductFromDateMutation(
         cosmeticProductId: data.cosmeticProductId,
       }),
     onMutate: async request => {
-      await queryClient.cancelQueries({ queryKey: StoreKeys.listDaysQuery() });
+      await queryClient.cancelQueries({ queryKey: StoreKey.listDaysQuery() });
 
       setDaysQueryData(request.date, {
         removeCosmeticProductApplicationId: request.id,
@@ -501,7 +522,7 @@ export function useRemoveCosmeticProductFromDateMutation(
       handlers.onSuccess?.();
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: StoreKeys.listDaysQuery() });
+      queryClient.invalidateQueries({ queryKey: StoreKey.listDaysQuery() });
     },
   });
 }
@@ -513,12 +534,12 @@ export function useListFoodForDateQuery(date: DateFormat) {
     DefaultError,
     ListFoodMealItemsForDateResponse
   >({
-    queryKey: StoreKeys.listFoodForDate(),
+    queryKey: StoreKey.listFoodForDate(),
     queryFn: () => wrapApiAction(Schema.days.listFoodMealItems)({ date }),
   });
 }
 
-// FIXME refactor dublicates useCreateMealItem
+// FIXME remove
 export function useAddFoodToDateMutation(handlers: MutationHandlers = {}) {
   return useMutation<
     AddFoodMealItemToDateResponse,
@@ -526,7 +547,7 @@ export function useAddFoodToDateMutation(handlers: MutationHandlers = {}) {
     Omit<FoodMealItem, 'id'>,
     { createdItem: FoodMealItem }
   >({
-    mutationKey: StoreKeys.addFoodToDate(),
+    mutationKey: StoreKey.addFoodToDate(),
     mutationFn: item => {
       return wrapApiAction<AddFoodMealItemToDateRequest, AddFoodMealItemToDateResponse>(
         Schema.days.addFoodMealItem,
@@ -548,7 +569,7 @@ export function useAddFoodToDateMutation(handlers: MutationHandlers = {}) {
       });
     },
     onMutate: async request => {
-      await queryClient.cancelQueries({ queryKey: StoreKeys.listFoodForDate() });
+      await queryClient.cancelQueries({ queryKey: StoreKey.listFoodForDate() });
 
       const createdItem: FoodMealItem = {
         id: Date.now().toString(),
@@ -585,6 +606,7 @@ export function useAddFoodToDateMutation(handlers: MutationHandlers = {}) {
   });
 }
 
+// FIXME remove
 export function useUpdateFoodForDateMutation(handlers: MutationHandlers = {}) {
   return useMutation<
     UpdateFoodMealItemForDateResponse,
@@ -592,7 +614,7 @@ export function useUpdateFoodForDateMutation(handlers: MutationHandlers = {}) {
     FoodMealItem,
     { oldItem: FoodMealItem }
   >({
-    mutationKey: StoreKeys.updateFoodForDate(),
+    mutationKey: StoreKey.updateFoodForDate(),
     mutationFn: item => {
       return wrapApiAction<
         UpdateFoodMealItemForDateRequest,
@@ -616,7 +638,7 @@ export function useUpdateFoodForDateMutation(handlers: MutationHandlers = {}) {
       });
     },
     onMutate: async request => {
-      await queryClient.cancelQueries({ queryKey: StoreKeys.listFoodForDate() });
+      await queryClient.cancelQueries({ queryKey: StoreKey.listFoodForDate() });
 
       const oldItem: FoodMealItem = {
         ...request,
@@ -654,6 +676,7 @@ export function useUpdateFoodForDateMutation(handlers: MutationHandlers = {}) {
   });
 }
 
+// FIXME remove
 export function useRemoveFoodFromDateMutation(handlers: MutationHandlers = {}) {
   return useMutation<
     RemoveFoodMealItemFromDateResponse,
@@ -661,7 +684,7 @@ export function useRemoveFoodFromDateMutation(handlers: MutationHandlers = {}) {
     FoodMealItem,
     { oldItem: FoodMealItem }
   >({
-    mutationKey: StoreKeys.deleteFoodFromDate(),
+    mutationKey: StoreKey.deleteFoodFromDate(),
     mutationFn: item => {
       return wrapApiAction<
         RemoveFoodMealItemFromDateRequest,
@@ -673,7 +696,7 @@ export function useRemoveFoodFromDateMutation(handlers: MutationHandlers = {}) {
       });
     },
     onMutate: async request => {
-      await queryClient.cancelQueries({ queryKey: StoreKeys.listFoodForDate() });
+      await queryClient.cancelQueries({ queryKey: StoreKey.listFoodForDate() });
 
       const oldItem: FoodMealItem = {
         ...request,
@@ -706,5 +729,196 @@ export function useRemoveFoodFromDateMutation(handlers: MutationHandlers = {}) {
         removeFoodMealItemId: context.oldItem.id,
       });
     },
+  });
+}
+
+//
+//
+// --- Day Part ---
+export function useCreateDayPartMutation(handlers: MutationHandlers = {}) {
+  return useMutation<
+    CreateDayPartResponse,
+    DefaultError,
+    CreateDayPartRequest,
+    {
+      createdItem: CreateDayPartResponse;
+    }
+  >({
+    mutationKey: StoreKey.createDayPart(),
+    mutationFn: wrapApiAction(Schema.days.parts.create),
+    onMutate: async (variables: CreateDayPartRequest) => {
+      await queryClient.cancelQueries({ queryKey: StoreKey.listDayParts() });
+
+      const createdItem: CreateDayPartResponse = {
+        id: new Date().toISOString(),
+        order: 0,
+        ...variables,
+      };
+
+      updateDayPartQueries({
+        addDayPart: createdItem,
+      });
+
+      handlers.onMutate?.();
+
+      return {
+        createdItem,
+      };
+    },
+    onSuccess: (response, _request, context) => {
+      updateDayPartQueries({
+        addDayPart: response,
+        removeDayPartId: context.createdItem.id,
+      });
+
+      handlers.onSuccess?.();
+    },
+    onError: (_error, _request, context) => {
+      updateDayPartQueries({
+        removeDayPartId: context?.createdItem.id,
+      });
+
+      handlers.onError?.();
+    },
+  });
+}
+
+export function useUpdateDayPartMutation(handlers: MutationHandlers = {}) {
+  return useMutation<
+    UpdateDayPartResponse,
+    DefaultError,
+    {
+      oldItem: DayPart;
+      newValues: Omit<UpdateDayPartRequest, 'id'>;
+    },
+    {
+      oldItem: DayPart;
+      newItem: DayPart;
+    }
+  >({
+    mutationKey: StoreKey.updateDayPart(),
+    mutationFn: data =>
+      wrapApiAction(Schema.days.parts.update)({
+        ...data.newValues,
+        id: data.oldItem.id,
+      }),
+    onMutate: async request => {
+      await queryClient.cancelQueries({ queryKey: StoreKey.listDayParts() });
+
+      const newItem: DayPart = {
+        ...request.newValues,
+        id: Date.now().toString(),
+        order: 0,
+      };
+
+      updateDayPartQueries({
+        removeDayPartId: request.oldItem.id,
+        addDayPart: newItem,
+      });
+
+      handlers.onMutate?.();
+
+      return {
+        newItem,
+        oldItem: request.oldItem,
+      };
+    },
+    onSuccess: (response, _request, context) => {
+      updateDayPartQueries({
+        removeDayPartId: context.newItem.id,
+        addDayPart: response,
+      });
+
+      handlers.onSuccess?.();
+    },
+    onError: (_error, _request, context) => {
+      updateDayPartQueries({
+        removeDayPartId: context?.newItem.id,
+        addDayPart: context?.oldItem,
+      });
+
+      handlers.onError?.();
+    },
+  });
+}
+
+export function useDeleteDayPartMutation(handlers: MutationHandlers = {}) {
+  return useMutation<
+    DeleteDayPartResponse,
+    DefaultError,
+    DayPart,
+    {
+      removedItem: DayPart;
+    }
+  >({
+    mutationKey: StoreKey.deleteDayPart(),
+    mutationFn: wrapApiAction(Schema.days.parts.delete),
+    onMutate: async request => {
+      await queryClient.cancelQueries({ queryKey: StoreKey.listDayParts() });
+
+      updateDayPartQueries({
+        removeDayPartId: request.id,
+      });
+
+      handlers.onMutate?.();
+
+      return {
+        removedItem: request,
+      };
+    },
+    onSuccess: (_response, _request, _context) => {
+      handlers.onSuccess?.();
+    },
+    onError: (_error, _request, context) => {
+      updateDayPartQueries({
+        addDayPart: context?.removedItem,
+      });
+
+      handlers.onError?.();
+    },
+  });
+}
+
+export function useGetDayPartQuery(id: string) {
+  return useQuery({
+    queryKey: StoreKey.getDayPart(id),
+    queryFn: () => wrapApiAction(Schema.days.parts.get)({ id }),
+  });
+}
+
+export function useListDayPartsQuery() {
+  return useQuery({
+    queryKey: StoreKey.listDayParts(),
+    queryFn: () => wrapApiAction(Schema.days.parts.list)({}),
+  });
+}
+
+function updateDayPartQueries(arg: { addDayPart?: DayPart; removeDayPartId?: string }) {
+  if (arg.removeDayPartId) {
+    queryClient.removeQueries({
+      queryKey: StoreKey.getDayPart(arg.removeDayPartId),
+    });
+  }
+
+  if (arg.addDayPart) {
+    queryClient.setQueryData(StoreKey.getDayPart(arg.addDayPart.id), arg.addDayPart);
+  }
+
+  queryClient.setQueryData<ListDayPartsResponse>(StoreKey.listDayParts(), _old => {
+    if (!_old) {
+      return _old;
+    }
+
+    let old = [..._old];
+
+    if (arg.removeDayPartId) {
+      old = old.filter(item => item.id !== arg.removeDayPartId);
+    }
+
+    if (arg.addDayPart) {
+      old.push(arg.addDayPart);
+    }
+
+    return old;
   });
 }
