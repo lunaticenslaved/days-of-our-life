@@ -1,27 +1,61 @@
 import { ComponentProps } from 'react';
 import { ActionsComponent } from '../components/Actions';
-import { nonReachable } from '#/shared/utils';
-import { useDeleteFoodMealItem, useUpdateFoodMealItem } from '#/client/store/food';
+import { assertDefined, nonReachable } from '#/shared/utils';
+import {
+  useDeleteFoodMealItem,
+  useListFoodProductsQuery,
+  useListFoodRecipesQuery,
+  useUpdateFoodMealItem,
+} from '#/client/store/food';
 import { useDialog } from '#/client/components/Dialog';
-import { FormDialogContainer } from './FormDialog';
+import { FoodMealItemFormDialog as FormDialogComponent } from '../components/FormDialog';
+import { findNutrients } from '#/client/entities/food/meal-items/utils';
 
 type ActionsComponentProps = ComponentProps<typeof ActionsComponent>;
 
 type ActionsContainerProps = Pick<ActionsComponentProps, 'entity'>;
 
 export function ActionsContainer({ entity, ...props }: ActionsContainerProps) {
+  const editingDialog = useDialog();
+
   const deletingMutation = useDeleteFoodMealItem();
   const updatingMutation = useUpdateFoodMealItem();
-  const editingDialog = useDialog();
+
+  const listProducts = useListFoodProductsQuery();
+  const listRecipes = useListFoodRecipesQuery();
+
+  const products = listProducts.data || [];
+  const recipes = listRecipes.data || [];
+
+  const updateMealItem = useUpdateFoodMealItem({
+    onMutate: editingDialog.close,
+  });
 
   return (
     <>
       {editingDialog.isOpen && (
-        <FormDialogContainer
-          type="update"
-          mealItem={entity}
-          onUpdated={editingDialog.close}
+        <FormDialogComponent
           dialog={editingDialog}
+          isPending={updateMealItem.isPending}
+          entity={entity}
+          onSubmit={values => {
+            const nutrients = findNutrients(values, { products, recipes });
+
+            assertDefined(nutrients);
+
+            updateMealItem.mutate({
+              oldItem: entity,
+              newValues: {
+                nutrients,
+                date: entity.date,
+                dayPartId: entity.dayPartId,
+                quantity: values.quantity,
+                food: values.food,
+              },
+            });
+          }}
+          products={products}
+          recipes={recipes}
         />
       )}
 

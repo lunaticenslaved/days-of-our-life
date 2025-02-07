@@ -1,11 +1,12 @@
 import { useListDayPartsQuery } from '#/client/entities/day-parts';
-import { FoodMealItemCreatingAction } from '#/client/entities/food';
+import { FoodMealItemCreatingAction, FoodNutrientsList } from '#/client/entities/food';
 import {
   useListFoodMealItemQuery,
   useListFoodProductsQuery,
   useListFoodRecipesQuery,
 } from '#/client/store/food';
 import { DateFormat } from '#/shared/models/date';
+import { sumNutrients } from '#/shared/models/food';
 import { ListComponent } from '../components/List';
 import { ActionsContainer } from './Actions';
 
@@ -34,10 +35,16 @@ export function ListContainer({ date }: ListContainerProps) {
         return (
           <li key={dayPart.id}>
             <section>
-              <h6>
-                <div>{dayPart.name}</div>
+              <h4>
+                <span>{dayPart.name}</span>
                 <FoodMealItemCreatingAction date={date} dayPartId={dayPart.id} />
-              </h6>
+              </h4>
+
+              <FoodNutrientsList
+                nutrients={sumNutrients(mealItemsForDayPart.map(item => item.nutrients))}
+              />
+
+              <h5>Продукты</h5>
 
               <ListComponent
                 recipes={recipes}
@@ -48,6 +55,8 @@ export function ListContainer({ date }: ListContainerProps) {
                 }}
               />
             </section>
+
+            <hr></hr>
           </li>
         );
       })}

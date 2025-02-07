@@ -8,23 +8,23 @@ import {
   FoodProductSearch,
   FoodRecipeSearch,
 } from '#/client/entities/food';
-import { getNutrientsPerGram } from '../utils';
+import { findNutrients, findQuantities, findQuantityConverter } from '../utils';
 import { CommonValidators } from '#/shared/models/common';
 import {
   FoodMealItem,
   FoodProduct,
   FoodRecipe,
   FoodValidators,
-  multiplyNutrients,
 } from '#/shared/models/food';
 import { cloneDeep } from 'lodash';
 import { ComponentProps } from 'react';
 import { z } from 'zod';
-import { undefinedOnError } from '#/shared/utils';
 
 const schema = z.object({
-  quantity: FoodValidators.quantity,
-  quantityConverterId: FoodValidators.quantityConverterId,
+  quantity: z.object({
+    value: FoodValidators.quantity,
+    converterId: FoodValidators.quantityConverterId,
+  }),
   food: z
     .object({
       type: z.literal('product'),
@@ -61,25 +61,11 @@ export const FoodMealItemFormDialog = createEntityFormDialog<
     create: 'Добавить',
     update: 'Редактировать',
   },
-  renderFields({ values }, { products, recipes }) {
+  renderFields({ values }, props) {
     const { food } = values;
-    const quantities =
-      food.type === 'product'
-        ? products.find(product => product.id === food.productId)?.quantities || []
-        : food.type === 'recipe'
-        ? recipes.find(recipe => recipe.id === food.recipeId)?.quantities || []
-        : [];
-    const quantityConverter = quantities.find(q => q.id === values.quantityConverterId);
-
-    const nutrientsPerGram = undefinedOnError(getNutrientsPerGram)(
-      { food },
-      {
-        recipes,
-        products,
-      },
-    );
-
-    console.log(values);
+    const quantities = findQuantities(values, props) || [];
+    const quantityConverter = findQuantityConverter(values, props);
+    const nutrients = findNutrients(values, props);
 
     return (
       <>
@@ -102,7 +88,7 @@ export const FoodMealItemFormDialog = createEntityFormDialog<
           </FinalForm.Field>
         )}
 
-        <FinalForm.Field name="quantityConverterId" title="Количество">
+        <FinalForm.Field name="quantity.converterId" title="Количество">
           {inputProps => (
             <Select {...inputProps}>
               {quantities.map(quantity => {
@@ -117,19 +103,12 @@ export const FoodMealItemFormDialog = createEntityFormDialog<
         </FinalForm.Field>
 
         {quantityConverter && (
-          <FinalForm.Field title={quantityConverter.name} name="quantity" required>
+          <FinalForm.Field title={quantityConverter.name} name="quantity.value" required>
             {NumberInput}
           </FinalForm.Field>
         )}
 
-        {nutrientsPerGram && quantityConverter && values.quantity && (
-          <FoodNutrientsList
-            nutrients={multiplyNutrients(
-              nutrientsPerGram,
-              quantityConverter.grams * values.quantity,
-            )}
-          />
-        )}
+        {nutrients && <FoodNutrientsList nutrients={nutrients} />}
       </>
     );
   },
@@ -147,8 +126,10 @@ export const FoodMealItemFormDialog = createEntityFormDialog<
 
     return {
       food,
-      quantityConverterId: mealItem?.quantity.converterId || '',
-      quantity: mealItem?.quantity.value || 100,
+      quantity: {
+        converterId: mealItem?.quantity.converterId || '',
+        value: mealItem?.quantity.value || 100,
+      },
     };
   },
 });

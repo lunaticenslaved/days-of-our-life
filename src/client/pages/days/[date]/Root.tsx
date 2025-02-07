@@ -1,10 +1,11 @@
-import { FoodMealItemsList } from '#/client/entities/food';
+import { FoodMealItemsList, FoodNutrientsList } from '#/client/entities/food';
 import { DAYS_NAVIGATION, useDaysPageParams } from '#/client/pages/days';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { DatePicker } from '#/client/components/DatePicker';
 import { DateUtils } from '#/shared/models/date';
-import { useGetDayQuery } from '#/client/store';
+import { useGetDayQuery, useListFoodMealItemQuery } from '#/client/store';
+import { sumNutrients } from '#/shared/models/food';
 
 export default function Page() {
   const params = useDaysPageParams();
@@ -20,8 +21,9 @@ export default function Page() {
   }, [date, navigate]);
 
   const dayQuery = useGetDayQuery(formattedDate);
+  const listMealItemsQuery = useListFoodMealItemQuery(DateUtils.toDateFormat(date));
 
-  if (!dayQuery.data) {
+  if (!dayQuery.data || !listMealItemsQuery.data) {
     return <div>Loading...</div>;
   }
 
@@ -35,6 +37,10 @@ export default function Page() {
 
       <section>
         <h2>Еда</h2>
+
+        <FoodNutrientsList
+          nutrients={sumNutrients(listMealItemsQuery.data.map(item => item.nutrients))}
+        />
 
         <FoodMealItemsList date={DateUtils.toDateFormat(date)} />
       </section>
