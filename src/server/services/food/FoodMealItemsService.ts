@@ -3,14 +3,17 @@ import {
   convertFoodMealItemSelector,
   FOOD_MEAL_ITEM_SELECTOR,
 } from '#/server/selectors/food';
-import FoodNutrientsService from '#/server/services/FoodNutrientsService';
+import FoodNutrientsService from '#/server/services/food/FoodNutrientsService';
+import { FoodMealItem } from '#/shared/models/food';
 
 interface CreateMealItemArg {
   dayId: string;
   dayPartId: string;
-  quantityConverterId: string;
-  quantity: number;
-  item:
+  quantity: {
+    value: number;
+    converterId: string;
+  };
+  food:
     | {
         type: 'product';
         productId: string;
@@ -21,16 +24,14 @@ interface CreateMealItemArg {
       };
 }
 
-class FoodMealService {
-  async create(
-    { dayId, dayPartId, item, quantityConverterId, quantity }: CreateMealItemArg,
-    trx: PrismaTransaction,
-  ) {
+class FoodMealItemService {
+  async create(data: CreateMealItemArg, trx: PrismaTransaction): Promise<FoodMealItem> {
+    const { food, dayId, dayPartId, quantity } = data;
     const { id: nutrientsId } = await FoodNutrientsService.createForIngredientAndQuantity(
       {
-        quantityConverterId,
-        quantity,
-        item,
+        quantityConverterId: quantity.converterId,
+        quantity: quantity.value,
+        item: food,
       },
       trx,
     );
@@ -41,10 +42,10 @@ class FoodMealService {
           dayId,
           dayPartId,
           nutrientsId,
-          productId: item.type === 'product' ? item.productId : undefined,
-          recipeId: item.type === 'recipe' ? item.recipeId : undefined,
-          quantity,
-          quantityConverterId,
+          productId: food.type === 'product' ? food.productId : undefined,
+          recipeId: food.type === 'recipe' ? food.recipeId : undefined,
+          quantity: quantity.value,
+          quantityConverterId: quantity.converterId,
         },
         ...FOOD_MEAL_ITEM_SELECTOR,
       })
@@ -52,18 +53,12 @@ class FoodMealService {
   }
 
   async update(
-    {
-      mealItemId,
-      dayId,
-      dayPartId,
-      item,
-      quantityConverterId,
-      quantity,
-    }: CreateMealItemArg & { mealItemId: string },
+    data: CreateMealItemArg & { id: string },
     trx: PrismaTransaction,
-  ) {
+  ): Promise<FoodMealItem> {
+    const { id, dayId, dayPartId, food: item } = data;
     const mealItem = trx.foodMealItem.findFirstOrThrow({
-      where: { id: mealItemId },
+      where: { id },
       select: {
         nutrientsId: true,
       },
@@ -71,8 +66,8 @@ class FoodMealService {
 
     const { id: nutrientsId } = await FoodNutrientsService.createForIngredientAndQuantity(
       {
-        quantityConverterId,
-        quantity,
+        quantityConverterId: data.quantity.converterId,
+        quantity: data.quantity.value,
         item,
       },
       trx,
@@ -81,7 +76,7 @@ class FoodMealService {
     const updated = await trx.foodMealItem
       .update({
         where: {
-          id: mealItemId,
+          id,
         },
         data: {
           dayId,
@@ -89,8 +84,8 @@ class FoodMealService {
           nutrientsId,
           productId: item.type === 'product' ? item.productId : undefined,
           recipeId: item.type === 'recipe' ? item.recipeId : undefined,
-          quantity,
-          quantityConverterId,
+          quantity: data.quantity.value,
+          quantityConverterId: data.quantity.converterId,
         },
         ...FOOD_MEAL_ITEM_SELECTOR,
       })
@@ -103,13 +98,25 @@ class FoodMealService {
     return updated;
   }
 
-  async delete({ mealItemId }: { mealItemId: string }, trx: PrismaTransaction) {
+  async delete({ id }: { id: string }, trx: PrismaTransaction): Promise<void> {
     await trx.foodMealItem.delete({
-      where: { id: mealItemId },
+      where: { id },
     });
   }
 
-  async list({ dayId }: { dayId: string }, trx: PrismaTransaction) {
+  async get({ id }: { id: string }, trx: PrismaTransaction): Promise<FoodMealItem> {
+    return await trx.foodMealItem
+      .findFirstOrThrow({
+        where: { id },
+        ...FOOD_MEAL_ITEM_SELECTOR,
+      })
+      .then(convertFoodMealItemSelector);
+  }
+
+  async list(
+    { dayId }: { dayId: string },
+    trx: PrismaTransaction,
+  ): Promise<FoodMealItem[]> {
     return await trx.foodMealItem
       .findMany({
         where: {
@@ -121,4 +128,4 @@ class FoodMealService {
   }
 }
 
-export default new FoodMealService();
+export default new FoodMealItemService();

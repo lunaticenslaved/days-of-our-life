@@ -518,6 +518,7 @@ export function useListFoodForDateQuery(date: DateFormat) {
   });
 }
 
+// FIXME refactor dublicates useCreateMealItem
 export function useAddFoodToDateMutation(handlers: MutationHandlers = {}) {
   return useMutation<
     AddFoodMealItemToDateResponse,
@@ -533,17 +534,17 @@ export function useAddFoodToDateMutation(handlers: MutationHandlers = {}) {
         date: item.date,
         dayPartId: item.dayPartId,
         item:
-          item.ingredient.type === 'product'
+          item.food.type === 'product'
             ? {
                 type: 'product',
-                productId: item.ingredient.product.id,
+                productId: item.food.productId,
               }
             : {
                 type: 'recipe',
-                recipeId: item.ingredient.recipe.id,
+                recipeId: item.food.recipeId,
               },
-        quantity: item.quantity,
-        quantityConverterId: item.quantityConverter.id,
+        quantity: item.quantity.value,
+        quantityConverterId: item.quantity.converterId,
       });
     },
     onMutate: async request => {
@@ -601,17 +602,17 @@ export function useUpdateFoodForDateMutation(handlers: MutationHandlers = {}) {
         date: item.date,
         dayPartId: item.dayPartId,
         item:
-          item.ingredient.type === 'product'
+          item.food.type === 'product'
             ? {
                 type: 'product',
-                productId: item.ingredient.product.id,
+                productId: item.food.productId,
               }
             : {
                 type: 'recipe',
-                recipeId: item.ingredient.recipe.id,
+                recipeId: item.food.recipeId,
               },
-        quantity: item.quantity,
-        quantityConverterId: item.quantityConverter.id,
+        quantity: item.quantity.value,
+        quantityConverterId: item.quantity.converterId,
       });
     },
     onMutate: async request => {

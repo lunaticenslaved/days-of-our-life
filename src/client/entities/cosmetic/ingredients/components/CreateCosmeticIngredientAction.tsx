@@ -17,6 +17,7 @@ export function CreateCosmeticIngredientAction() {
       </Button>
 
       <CosmeticIngredientFormDialog
+        isPending={isPending}
         dialog={dialog}
         onSubmit={async values => {
           await mutate(values);

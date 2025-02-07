@@ -5,7 +5,11 @@ import { Form } from '#/client/components/Form';
 import { ReactNode, useMemo } from 'react';
 import { z } from 'zod';
 
-interface CreateEntityFormDialogProps<TEntity, TSchema extends Zod.SomeZodObject> {
+interface CreateEntityFormDialogProps<
+  TEntity,
+  TSchema extends Zod.SomeZodObject,
+  TAdditionalProps,
+> {
   schema: TSchema;
   titleText: {
     create: string;
@@ -15,33 +19,43 @@ interface CreateEntityFormDialogProps<TEntity, TSchema extends Zod.SomeZodObject
     create: string;
     update: string;
   };
-  renderFields(): ReactNode;
-  getInitialValues(entity?: TEntity): z.infer<TSchema>;
+  renderFields(arg: { values: z.infer<TSchema> }, props: TAdditionalProps): ReactNode;
+  getInitialValues(
+    entity: TEntity | undefined,
+    props: TAdditionalProps,
+  ): z.infer<TSchema>;
 }
 
-interface ComponentProps<TEntity, TSchema extends Zod.SomeZodObject> {
+type ComponentProps<TEntity, TSchema extends Zod.SomeZodObject> = {
   dialog: IUseDialog;
   onSubmit(values: z.infer<TSchema>): void;
   entity?: TEntity;
-  isPending?: boolean;
-}
+  isPending: boolean;
+};
 
-export function createEntityFormDialog<TEntity, TSchema extends Zod.SomeZodObject>({
+export function createEntityFormDialog<
+  TEntity,
+  TSchema extends Zod.SomeZodObject,
+  TAdditionalProps = object,
+>({
   renderFields,
   getInitialValues,
   titleText,
   submitText,
   schema,
-}: CreateEntityFormDialogProps<TEntity, TSchema>) {
+}: CreateEntityFormDialogProps<TEntity, TSchema, TAdditionalProps>) {
   const Component = ({
     dialog,
     onSubmit,
     entity,
     isPending,
-  }: ComponentProps<TEntity, TSchema>) => {
+    ...otherProps
+  }: ComponentProps<TEntity, TSchema> & TAdditionalProps) => {
+    const additionalProp = otherProps as TAdditionalProps;
     const initialValues = useMemo(() => {
-      return getInitialValues(entity);
-    }, [entity]);
+      return getInitialValues(entity, additionalProp);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
       <Dialog dialog={dialog}>
@@ -50,14 +64,14 @@ export function createEntityFormDialog<TEntity, TSchema extends Zod.SomeZodObjec
           onSubmit={onSubmit}
           initialValues={initialValues}
           disabled={isPending}>
-          {({ handleSubmit }) => {
+          {({ handleSubmit, values }) => {
             return (
               <Form onSubmit={handleSubmit}>
                 <Dialog.Header>
                   {entity ? titleText.update : titleText.create}
                 </Dialog.Header>
                 <Dialog.Content>
-                  <Form.Content>{renderFields()}</Form.Content>
+                  <Form.Content>{renderFields({ values }, additionalProp)}</Form.Content>
                 </Dialog.Content>
 
                 <Dialog.Footer>

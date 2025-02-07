@@ -57,7 +57,7 @@ import {
   convertCosmeticProductApplicationSelector,
   COSMETIC_PRODUCT_APPLY_SELECTOR,
 } from '#/server/selectors/cosmetic';
-import FoodMealService from '#/server/services/FoodMealService';
+import FoodMealItemService from '#/server/services/food/FoodMealItemsService';
 
 export default new Controller<'days'>({
   // Day parts
@@ -406,7 +406,7 @@ export default new Controller<'days'>({
       return await prisma.$transaction(async trx => {
         const day = await DayService.getDay(date, trx);
 
-        return await FoodMealService.list({ dayId: day.id }, trx);
+        return await FoodMealItemService.list({ dayId: day.id }, trx);
       });
     },
   }),
@@ -447,13 +447,15 @@ export default new Controller<'days'>({
       return await prisma.$transaction(async trx => {
         const day = await DayService.getDay(date, trx);
 
-        return await FoodMealService.create(
+        return await FoodMealItemService.create(
           {
-            dayId: day.id,
             dayPartId,
-            quantity,
-            quantityConverterId,
-            item,
+            dayId: day.id,
+            food: item,
+            quantity: {
+              value: quantity,
+              converterId: quantityConverterId,
+            },
           },
           trx,
         );
@@ -499,14 +501,16 @@ export default new Controller<'days'>({
       return await prisma.$transaction(async trx => {
         const day = await DayService.getDay(date, trx);
 
-        return await FoodMealService.update(
+        return await FoodMealItemService.update(
           {
-            dayId: day.id,
-            mealItemId,
             dayPartId,
-            quantity,
-            quantityConverterId,
-            item,
+            dayId: day.id,
+            id: mealItemId,
+            food: item,
+            quantity: {
+              value: quantity,
+              converterId: quantityConverterId,
+            },
           },
           trx,
         );
@@ -530,7 +534,7 @@ export default new Controller<'days'>({
     }),
     handler: async ({ mealItemId }, { prisma }) => {
       await prisma.$transaction(async trx => {
-        return await FoodMealService.delete({ mealItemId }, trx);
+        return await FoodMealItemService.delete({ id: mealItemId }, trx);
       });
     },
   }),

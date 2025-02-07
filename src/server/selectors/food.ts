@@ -84,12 +84,12 @@ export const SELECT_PRODUCT = {
 export const FOOD_MEAL_ITEM_SELECTOR = {
   select: {
     id: true,
-    quantity: true,
-    dayPartId: true,
-    product: { select: { id: true, name: true, manufacturer: true } },
-    recipe: { select: { id: true, name: true } },
+    productId: true,
+    recipeId: true,
     nutrients: NUTRIENTS_SELECT,
-    quantityConverter: QUANTITY_CONVERTER,
+    quantity: true,
+    quantityConverterId: true,
+    dayPartId: true,
     day: {
       select: {
         id: true,
@@ -149,31 +149,33 @@ export function convertFoodProduct(data: DBFoodProduct): FoodProduct {
 }
 
 export function convertFoodMealItemSelector(data: DBFoodMealItem): FoodMealItem {
-  let ingredient: FoodMealItem['ingredient'] | undefined = undefined;
+  let food: FoodMealItem['food'] | undefined = undefined;
 
-  if (data.product) {
-    ingredient = {
+  if (data.productId) {
+    food = {
       type: 'product',
-      product: data.product,
+      productId: data.productId,
     };
-  } else if (data.recipe) {
-    ingredient = {
+  } else if (data.recipeId) {
+    food = {
       type: 'recipe',
-      recipe: data.recipe,
+      recipeId: data.recipeId,
     };
   }
 
-  if (!ingredient) {
+  if (!food) {
     throw new Error('Unknown source');
   }
 
   return {
     id: data.id,
-    quantity: data.quantity,
+    quantity: {
+      value: data.quantity,
+      converterId: data.quantityConverterId,
+    },
     nutrients: data.nutrients,
-    quantityConverter: data.quantityConverter,
     date: DateUtils.toDateFormat(data.day.date),
     dayPartId: data.dayPartId,
-    ingredient,
+    food,
   };
 }

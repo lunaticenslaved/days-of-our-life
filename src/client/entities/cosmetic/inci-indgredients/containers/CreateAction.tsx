@@ -17,11 +17,13 @@ export function CosmeticINCIIngredientCreateAction(
   return (
     <>
       <CosmeticINCIIngredientFormDialog
+        isPending={creatingMutation.isPending}
         dialog={dialog}
         onSubmit={values => {
           creatingMutation.mutate(values);
         }}
       />
+
       <Button onClick={dialog.open}>Создать</Button>
     </>
   );

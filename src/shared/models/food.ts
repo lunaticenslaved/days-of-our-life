@@ -136,23 +136,47 @@ export interface FoodDay {
   nutrients: FoodNutrients;
 }
 
+//
+//
+//
+// --- Food Meal Item
 export interface FoodMealItem {
   id: string;
   date: DateFormat;
   dayPartId: string;
-  quantity: number;
-  quantityConverter: FoodQuantityConverter;
+  quantity: {
+    value: number;
+    converterId: string;
+  };
   nutrients: FoodNutrients;
-  ingredient:
+  food:
     | {
         type: 'product';
-        product: Pick<FoodProduct, 'id' | 'name' | 'manufacturer'>;
+        productId: string;
       }
     | {
         type: 'recipe';
-        recipe: Pick<FoodRecipe, 'id' | 'name'>;
+        recipeId: string;
       };
 }
+
+export const FoodMealItemValidators = {
+  food: z
+    .object({
+      type: z.enum(['product']),
+      productId: CommonValidators.id,
+    })
+    .or(
+      z.object({
+        type: z.enum(['recipe']),
+        recipeId: CommonValidators.id,
+      }),
+    ),
+};
+
+//
+//
+//
 
 export function sumNutrients(nutrientsArr: FoodNutrients[]): FoodNutrients {
   const result = {} as FoodNutrients;

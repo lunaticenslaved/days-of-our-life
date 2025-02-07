@@ -17,8 +17,8 @@ import _ from 'lodash';
 import { divideNutrients, FoodValidators } from '#/shared/models/food';
 import { z } from 'zod';
 import { CommonValidators } from '#/shared/models/common';
-import FoodNutrientsService from '#/server/services/FoodNutrientsService';
-import FoodQuantityConverterService from '#/server/services/FoodQuantityConverterService';
+import FoodNutrientsService from '#/server/services/food/FoodNutrientsService';
+import FoodQuantityConverterService from '#/server/services/food/FoodQuantityConverterService';
 
 async function insertParts(
   { id: recipeId, parts }: Pick<UpdateFoodRecipeRequest, 'parts' | 'id'>,

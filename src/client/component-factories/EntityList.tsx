@@ -1,13 +1,13 @@
 import { capitalize } from 'lodash';
 import React, { ReactNode } from 'react';
 
-interface CreateEntityList<TEntity> {
+interface CreateEntityList<TEntity, TProps> {
   entityName: string;
   placeholder: {
     empty: string;
   };
   getEntityKey(item: TEntity): string;
-  renderEntity(item: TEntity): ReactNode;
+  renderEntity(item: TEntity, props: TProps): ReactNode;
 }
 
 interface EntityListProps<TEntity> {
@@ -15,15 +15,16 @@ interface EntityListProps<TEntity> {
   renderActions?(item: TEntity): ReactNode;
 }
 
-export function createEntityList<TEntity>({
+export function createEntityList<TEntity, TProps = object>({
   entityName,
   placeholder,
   getEntityKey,
   renderEntity,
-}: CreateEntityList<TEntity>) {
-  const EntityList: React.FC<EntityListProps<TEntity>> = ({
+}: CreateEntityList<TEntity, TProps>) {
+  const EntityList: React.FC<EntityListProps<TEntity> & TProps> = ({
     entities,
     renderActions,
+    ...props
   }) => {
     if (!entities.length) {
       return <div>{placeholder.empty}</div>;
@@ -34,7 +35,7 @@ export function createEntityList<TEntity>({
         {entities.map(entity => {
           return (
             <li key={getEntityKey(entity)} style={{ display: 'flex' }}>
-              <div>{renderEntity(entity)}</div>
+              <div>{renderEntity(entity, props as TProps)}</div>
               <div>{!!renderActions && renderActions(entity)}</div>
             </li>
           );

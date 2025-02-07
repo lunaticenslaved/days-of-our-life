@@ -47,6 +47,7 @@ export function CosmeticINCIIngredientActions({
       <CosmeticINCIIngredientFormDialog
         dialog={editingDialog}
         entity={ingredient}
+        isPending={updatingMutation.isPending}
         onSubmit={newValues => {
           updatingMutation.mutate({
             ingredient,
@@ -54,7 +55,12 @@ export function CosmeticINCIIngredientActions({
           });
         }}
       />
+
       <BaseComponent
+        disabled={{
+          delete: deletingMutation.isPending,
+          edit: updatingMutation.isPending,
+        }}
         entity={ingredient}
         onAction={action => {
           if (action === 'delete') {

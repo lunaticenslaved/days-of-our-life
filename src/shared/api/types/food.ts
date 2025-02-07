@@ -1,6 +1,6 @@
 import { DateFormat } from '#/shared/models/date';
 import {
-  FoodMealIngredientType,
+  FoodMealItem,
   FoodNutrients,
   FoodProduct,
   FoodRecipe,
@@ -11,7 +11,7 @@ interface Id {
   id: string;
 }
 
-// Products
+// ------ Food Products ------
 export type CreateFoodProductResponse = FoodProduct;
 export interface CreateFoodProductRequest {
   name: string;
@@ -31,7 +31,7 @@ export interface GetFoodProductRequest extends Id {}
 export type ListFoodProductsResponse = FoodProduct[];
 export interface ListFoodProductsRequest {}
 
-// Recipes
+// ------ Food Recipes ------
 export type CreateFoodRecipeResponse = FoodRecipe;
 export interface CreateFoodRecipeRequest {
   name: string;
@@ -60,26 +60,36 @@ export interface ListFoodRecipesRequest {}
 export type DeleteFoodRecipeResponse = void;
 export interface DeleteFoodRecipeRequest extends Id {}
 
-// Tracker
-// FIXME delete
-export type CreateFoodMealItemResponse = void;
+// ------ Food Meal Items ------
+export type CreateFoodMealItemResponse = FoodMealItem;
 export interface CreateFoodMealItemRequest {
-  ingredient: {
-    type: FoodMealIngredientType;
-    id: string;
+  date: DateFormat;
+  dayPartId: string;
+  quantity: {
+    value: number;
+    converterId: string;
   };
-  quantityConverterId: string;
-  quantity: number;
+  food:
+    | {
+        type: 'product';
+        productId: string;
+      }
+    | {
+        type: 'recipe';
+        recipeId: string;
+      };
+}
+
+export type ListFoodMealItemsResponse = FoodMealItem[];
+export interface ListFoodMealItemsRequest {
   date: DateFormat;
 }
 
-export type UpdateFoodMealItemResponse = void;
-export interface UpdateFoodMealItemRequest extends CreateFoodMealItemRequest {
-  itemId: string;
-}
+export type UpdateFoodMealItemResponse = FoodMealItem;
+export type UpdateFoodMealItemRequest = CreateFoodMealItemRequest & Id;
 
 export type DeleteFoodMealItemResponse = void;
-export interface DeleteFoodMealItemRequest {
-  date: DateFormat;
-  itemId: string;
-}
+export type DeleteFoodMealItemRequest = Id;
+
+export type GetFoodMealItemResponse = FoodMealItem;
+export type GetFoodMealItemRequest = Id;

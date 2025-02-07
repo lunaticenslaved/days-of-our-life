@@ -1,4 +1,4 @@
-import { DirectionProp } from '#/client/types';
+import { DirectionProp, ModelValueProps } from '#/client/types';
 import {
   ChangeEvent,
   createContext,
@@ -10,21 +10,62 @@ import {
   FocusEvent,
 } from 'react';
 
-interface RadioGroupContext {
-  value?: string;
+//
+//
+// --- Radio Group Context ---
+interface RadioGroupContext extends ModelValueProps<string | undefined> {
   onChange?(e: ChangeEvent<HTMLInputElement>): void;
   onBlur?(e: FocusEvent<HTMLInputElement>): void;
 }
 
 const RadioGroupContext = createContext<RadioGroupContext | null>(null);
 
+//
+//
+// --- Radio Group ---
 // TODO add aria attributes
+interface RadioGroupProps extends PropsWithChildren, DirectionProp, RadioGroupContext {}
 
-interface RadioProps extends HTMLProps<HTMLInputElement>, DirectionProp {
-  title?: string;
+function RadioGroup({
+  children,
+  direction = 'column',
+  modelValue,
+  onChange,
+  onModelValueChange,
+}: RadioGroupProps) {
+  const [value, setValue] = useState(modelValue);
+
+  useEffect(() => {
+    setValue(modelValue);
+  }, [modelValue]);
+
+  return (
+    <RadioGroupContext.Provider
+      value={{
+        modelValue: value,
+        onChange,
+        onModelValueChange: value => {
+          onModelValueChange?.(value);
+          setValue(value);
+        },
+      }}>
+      <div style={{ display: 'flex', flexDirection: direction }}>{children}</div>
+    </RadioGroupContext.Provider>
+  );
 }
 
-export function Radio({ title, direction = 'row', ...props }: RadioProps) {
+RadioGroup.displayName = 'RadioGroup';
+
+//
+//
+// --- Radio Button ---
+// TODO add aria attributes
+interface RadioProps extends Omit<HTMLProps<HTMLInputElement>, 'value'>, DirectionProp {
+  title?: string;
+  value?: string;
+}
+
+function RadioButton({ title, direction = 'row', ...props }: RadioProps) {
   const context = useContext(RadioGroupContext);
 
   return (
@@ -32,10 +73,11 @@ export function Radio({ title, direction = 'row', ...props }: RadioProps) {
       <input
         {...props}
         type="radio"
-        checked={props.value === context?.value}
+        checked={props.value === context?.modelValue}
         onChange={e => {
           props.onChange?.(e);
           context?.onChange?.(e);
+          context?.onModelValueChange?.(props.value);
         }}
         onBlur={e => {
           props.onBlur?.(e);
@@ -47,34 +89,8 @@ export function Radio({ title, direction = 'row', ...props }: RadioProps) {
   );
 }
 
-// TODO add aria attributes
+RadioButton.displayName = 'RadioGroup.Button';
 
-interface RadioGroupProps extends PropsWithChildren, DirectionProp, RadioGroupContext {}
+RadioGroup.Button = RadioButton;
 
-function RadioGroup({
-  children,
-  direction = 'column',
-  value: valueProp,
-  onChange,
-}: RadioGroupProps) {
-  const [value, setValue] = useState(valueProp);
-
-  useEffect(() => {
-    setValue(valueProp);
-  }, [valueProp]);
-
-  return (
-    <RadioGroupContext.Provider
-      value={{
-        value,
-        onChange: e => {
-          onChange?.(e);
-          setValue(e.target.value);
-        },
-      }}>
-      <div style={{ display: 'flex', flexDirection: direction }}>{children}</div>
-    </RadioGroupContext.Provider>
-  );
-}
-
-Radio.Group = RadioGroup;
+export { RadioGroup };

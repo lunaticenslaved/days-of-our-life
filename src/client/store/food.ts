@@ -1,15 +1,21 @@
 import {
+  CreateFoodMealItemRequest,
+  CreateFoodMealItemResponse,
   CreateFoodProductRequest,
   CreateFoodProductResponse,
   CreateFoodRecipeRequest,
   CreateFoodRecipeResponse,
+  DeleteFoodMealItemResponse,
   DeleteFoodProductRequest,
   DeleteFoodProductResponse,
   DeleteFoodRecipeRequest,
   DeleteFoodRecipeResponse,
   GetFoodProductRequest,
   GetFoodProductResponse,
+  ListFoodMealItemsResponse,
   ListFoodProductsResponse,
+  UpdateFoodMealItemRequest,
+  UpdateFoodMealItemResponse,
   UpdateFoodProductRequest,
   UpdateFoodProductResponse,
   UpdateFoodRecipeRequest,
@@ -19,8 +25,14 @@ import { MutationHandlers } from '#/client/types';
 import { queryClient, wrapApiAction } from '#/client/utils/api';
 import { Schema } from '#/shared/api/schemas';
 import { QueryKey, useMutation, useQuery } from '@tanstack/react-query';
-import { FoodProduct, FoodRecipe } from '#/shared/models/food';
-import { cloneDeep, orderBy } from 'lodash';
+import {
+  FoodMealItem,
+  FoodNutrients,
+  FoodProduct,
+  FoodRecipe,
+} from '#/shared/models/food';
+import { cloneDeep, omit, orderBy } from 'lodash';
+import { DateFormat } from '#/shared/models/date';
 
 const StoreKeys = {
   // Product
@@ -36,6 +48,13 @@ const StoreKeys = {
   createRecipe: (): QueryKey => ['food', 'recipes', 'create'],
   updateRecipe: (): QueryKey => ['food', 'recipes', 'update'],
   deleteRecipe: (): QueryKey => ['food', 'recipes', 'delete'],
+
+  // Meal Item
+  listMealItems: (date: DateFormat): QueryKey => ['food', 'meal-items', date, 'list'],
+  getMealItem: (mealItemId: string): QueryKey => ['food', 'meal-items', mealItemId],
+  createMealItem: (): QueryKey => ['food', 'meal-items', 'create'],
+  updateMealItem: (): QueryKey => ['food', 'meal-items', 'update'],
+  deleteMealItem: (): QueryKey => ['food', 'meal-items', 'delete'],
 };
 
 async function onProductsChange(arg: {
@@ -93,7 +112,7 @@ async function onProductsChange(arg: {
 export function useListFoodProductsQuery() {
   return useQuery<ListFoodProductsResponse, Error, ListFoodProductsResponse>({
     queryKey: StoreKeys.listProducts(),
-    queryFn: wrapApiAction(Schema.food.products.list),
+    queryFn: wrapApiAction(Schema.food.listFoodProducts),
     select: data => {
       return orderBy(data, product => product.name.toLocaleLowerCase(), 'asc');
     },
@@ -103,7 +122,7 @@ export function useListFoodProductsQuery() {
 export function useGetFoodProductQuery(data: GetFoodProductRequest) {
   return useQuery<GetFoodProductResponse, Error, GetFoodProductResponse>({
     queryKey: StoreKeys.getProduct(data.id),
-    queryFn: () => wrapApiAction(Schema.food.products.get)(data),
+    queryFn: () => wrapApiAction(Schema.food.getFoodProduct)(data),
   });
 }
 
@@ -119,7 +138,7 @@ export function useCreateFoodProductMutation(
     }
   >({
     mutationKey: StoreKeys.createProduct(),
-    mutationFn: wrapApiAction(Schema.food.products.create, handlers),
+    mutationFn: wrapApiAction(Schema.food.createFoodProduct, handlers),
     async onMutate(variables) {
       const createdProduct: FoodProduct = {
         id: Date.now().toString(),
@@ -176,7 +195,7 @@ export function useUpdateFoodProductMutation(
     }
   >({
     mutationKey: StoreKeys.updateProduct(),
-    mutationFn: wrapApiAction(Schema.food.products.update),
+    mutationFn: wrapApiAction(Schema.food.updateFoodProduct),
     async onMutate(variables) {
       const createdProduct: FoodProduct = {
         id: variables.id,
@@ -240,7 +259,7 @@ export function useDeleteFoodProductMutation(
     }
   >({
     mutationKey: StoreKeys.deleteProduct(),
-    mutationFn: wrapApiAction(Schema.food.products.delete),
+    mutationFn: wrapApiAction(Schema.food.deleteFoodProduct),
     async onMutate(variables) {
       const products = queryClient.getQueryData<ListFoodProductsResponse>(
         StoreKeys.listProducts(),
@@ -274,21 +293,21 @@ export function useDeleteFoodProductMutation(
 export function useListFoodRecipesQuery() {
   return useQuery({
     queryKey: ['FoodSchema.recipes.list'],
-    queryFn: wrapApiAction(Schema.food.recipes.list),
+    queryFn: wrapApiAction(Schema.food.listFoodRecipes),
   });
 }
 
 export function useGetFoodRecipeQuery(recipeId: string) {
   return useQuery({
     queryKey: StoreKeys.getRecipe(recipeId),
-    queryFn: () => wrapApiAction(Schema.food.recipes.get)({ id: recipeId }),
+    queryFn: () => wrapApiAction(Schema.food.getFoodRecipe)({ id: recipeId }),
   });
 }
 
 export function useCreateFoodRecipeMutation(handlers: MutationHandlers<FoodRecipe> = {}) {
   return useMutation<CreateFoodRecipeResponse, Error, CreateFoodRecipeRequest>({
     mutationKey: StoreKeys.createRecipe(),
-    mutationFn: wrapApiAction(Schema.food.recipes.create),
+    mutationFn: wrapApiAction(Schema.food.createFoodRecipe),
     onMutate() {
       handlers.onMutate?.();
     },
@@ -309,7 +328,7 @@ export function useCreateFoodRecipeMutation(handlers: MutationHandlers<FoodRecip
 export function useUpdateFoodRecipeMutation(handlers: MutationHandlers<FoodRecipe> = {}) {
   return useMutation<UpdateFoodRecipeResponse, Error, UpdateFoodRecipeRequest>({
     mutationKey: StoreKeys.updateRecipe(),
-    mutationFn: wrapApiAction(Schema.food.recipes.update),
+    mutationFn: wrapApiAction(Schema.food.updateFoodRecipe),
     onMutate() {
       handlers.onMutate?.();
     },
@@ -330,7 +349,7 @@ export function useUpdateFoodRecipeMutation(handlers: MutationHandlers<FoodRecip
 export function useDeleteFoodRecipeMutation(handlers: MutationHandlers<void> = {}) {
   return useMutation<DeleteFoodRecipeResponse, Error, DeleteFoodRecipeRequest>({
     mutationKey: StoreKeys.deleteRecipe(),
-    mutationFn: wrapApiAction(Schema.food.recipes.delete),
+    mutationFn: wrapApiAction(Schema.food.deleteFoodRecipe),
     onMutate() {
       handlers.onMutate?.();
     },
@@ -346,4 +365,202 @@ export function useDeleteFoodRecipeMutation(handlers: MutationHandlers<void> = {
       });
     },
   });
+}
+
+//
+//
+//
+// Food Meal Item
+// FIXME add cache update
+export function useListFoodMealItemQuery(date: DateFormat) {
+  return useQuery({
+    queryKey: StoreKeys.listMealItems(date),
+    queryFn: () => wrapApiAction(Schema.food.listFoodMealItems)({ date }),
+  });
+}
+
+export function useCreateFoodMealItem(handlers: MutationHandlers<FoodMealItem> = {}) {
+  return useMutation<
+    CreateFoodMealItemResponse,
+    Error,
+    CreateFoodMealItemRequest & { nutrients: FoodNutrients },
+    {
+      createdItem: FoodMealItem;
+    }
+  >({
+    mutationKey: StoreKeys.createMealItem(),
+    mutationFn: wrapApiAction(Schema.food.createFoodMealItem),
+    onMutate(request) {
+      const createdItem: FoodMealItem = {
+        id: Date.now().toString(),
+        date: request.date,
+        dayPartId: request.dayPartId,
+        quantity: request.quantity,
+        nutrients: request.nutrients,
+        food: request.food,
+      };
+
+      handlers.onMutate?.();
+
+      updateFoodMealItemsQueries({ addFoodMealItem: createdItem });
+
+      return { createdItem };
+    },
+    onError: (_error, _request, context) => {
+      handlers.onError?.();
+
+      updateFoodMealItemsQueries({
+        removeFoodMealItem: context?.createdItem,
+      });
+    },
+    onSuccess: (response, _request, context) => {
+      handlers.onSuccess?.(response);
+
+      updateFoodMealItemsQueries({
+        removeFoodMealItem: context.createdItem,
+        addFoodMealItem: response,
+      });
+    },
+  });
+}
+
+export function useUpdateFoodMealItem(handlers: MutationHandlers<FoodMealItem> = {}) {
+  return useMutation<
+    UpdateFoodMealItemResponse,
+    Error,
+    {
+      oldItem: FoodMealItem;
+      newValues: Omit<UpdateFoodMealItemRequest, 'id'> & { nutrients: FoodNutrients };
+    },
+    {
+      oldItem: FoodMealItem;
+      newItem: FoodMealItem;
+    }
+  >({
+    mutationKey: StoreKeys.updateMealItem(),
+    mutationFn: data =>
+      wrapApiAction(Schema.food.updateFoodMealItem)({
+        id: data.oldItem.id,
+        ...omit(data.newValues, 'nutrients'),
+      }),
+    onMutate(request) {
+      const newItem: FoodMealItem = {
+        ...request.oldItem,
+        id: Date.now().toString(),
+      };
+
+      handlers.onMutate?.();
+
+      updateFoodMealItemsQueries({
+        removeFoodMealItem: request.oldItem,
+        addFoodMealItem: newItem,
+      });
+
+      return {
+        newItem,
+        oldItem: request.oldItem,
+      };
+    },
+    onError: (_error, _request, context) => {
+      handlers.onError?.();
+
+      updateFoodMealItemsQueries({
+        removeFoodMealItem: context?.newItem,
+        addFoodMealItem: context?.oldItem,
+      });
+    },
+    onSuccess: (response, _request, context) => {
+      handlers.onSuccess?.(response);
+
+      updateFoodMealItemsQueries({
+        removeFoodMealItem: context?.newItem,
+        addFoodMealItem: response,
+      });
+    },
+  });
+}
+
+export function useDeleteFoodMealItem(handlers: MutationHandlers<void> = {}) {
+  return useMutation<
+    DeleteFoodMealItemResponse,
+    Error,
+    FoodMealItem & { nutrients: FoodNutrients },
+    {
+      removedItem: FoodMealItem & { nutrients: FoodNutrients };
+    }
+  >({
+    mutationKey: StoreKeys.deleteMealItem(),
+    mutationFn: data => wrapApiAction(Schema.food.deleteFoodMealItem)({ id: data.id }),
+    onMutate(request) {
+      handlers.onMutate?.();
+
+      updateFoodMealItemsQueries({
+        removeFoodMealItem: request,
+      });
+
+      return {
+        removedItem: request,
+      };
+    },
+    onError: (_error, _request, context) => {
+      handlers.onError?.();
+
+      updateFoodMealItemsQueries({
+        addFoodMealItem: context?.removedItem,
+      });
+    },
+    onSuccess: (response, _request, _context) => {
+      handlers.onSuccess?.(response);
+    },
+  });
+}
+
+function updateFoodMealItemsQueries(arg: {
+  addFoodMealItem?: FoodMealItem;
+  removeFoodMealItem?: Pick<FoodMealItem, 'id' | 'date'>;
+}) {
+  if (arg.removeFoodMealItem) {
+    queryClient.removeQueries({
+      queryKey: StoreKeys.getMealItem(arg.removeFoodMealItem.id),
+    });
+
+    queryClient.setQueryData<ListFoodMealItemsResponse>(
+      StoreKeys.listMealItems(arg.removeFoodMealItem.date),
+      _old => {
+        if (!_old) {
+          return _old;
+        }
+
+        let old = [..._old];
+
+        old = old.filter(item => item.id !== arg.removeFoodMealItem?.id);
+
+        return old;
+      },
+    );
+  }
+
+  if (arg.addFoodMealItem) {
+    queryClient.setQueryData(
+      StoreKeys.getMealItem(arg.addFoodMealItem.id),
+      arg.addFoodMealItem,
+    );
+
+    queryClient.setQueryData<ListFoodMealItemsResponse>(
+      StoreKeys.listMealItems(arg.addFoodMealItem.date),
+      _old => {
+        if (!_old) {
+          return _old;
+        }
+
+        const old = [..._old];
+
+        if (arg.addFoodMealItem) {
+          old.push(arg.addFoodMealItem);
+        }
+
+        return old;
+      },
+    );
+  }
 }

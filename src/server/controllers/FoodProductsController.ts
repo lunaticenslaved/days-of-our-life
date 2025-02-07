@@ -1,5 +1,5 @@
 import { convertFoodProduct, SELECT_PRODUCT } from '#/server/selectors/food';
-import FoodQuantityConverterService from '#/server/services/FoodQuantityConverterService';
+import FoodQuantityConverterService from '#/server/services/food/FoodQuantityConverterService';
 import { Controller } from '#/server/utils/Controller';
 import {
   CreateFoodProductRequest,

@@ -21,6 +21,7 @@ interface CreateEntityActionsProps<TEntity, TAction extends string> {
 interface EntityActionsProps<TEntity, TAction extends string> {
   entity: TEntity;
   onAction(action: TAction, entity: TEntity): void;
+  disabled: Record<TAction, boolean>;
 }
 
 export function createEntityActions<TEntity, TAction extends string>({
@@ -28,7 +29,11 @@ export function createEntityActions<TEntity, TAction extends string>({
   actions,
   getActions,
 }: CreateEntityActionsProps<TEntity, TAction>) {
-  const Component: FC<EntityActionsProps<TEntity, TAction>> = ({ entity, onAction }) => {
+  const Component: FC<EntityActionsProps<TEntity, TAction>> = ({
+    entity,
+    onAction,
+    disabled,
+  }) => {
     const confirmingDialog = useDialog();
     const actionKeys = getActions(entity);
 
@@ -56,6 +61,7 @@ export function createEntityActions<TEntity, TAction extends string>({
                 />
               )}
               <Button
+                disabled={disabled[key]}
                 onClick={() => {
                   if (confirm) {
                     confirmingDialog.open();

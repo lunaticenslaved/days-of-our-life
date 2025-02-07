@@ -21,6 +21,8 @@ export { FoodRecipeSearch } from './recipes/containers/FoodRecipeSearch';
 export { FoodNutrientsList } from './nutrients/components/NutrientsList';
 
 // Food Meal Item
-export { MealItemFormDialog } from './meals/components/MealItemFormDialog';
+export { FormDialogContainer as FoodMealItemFormDialog } from './meal-items/containers/FormDialog';
+export { CreatingAction as FoodMealItemCreatingAction } from './meal-items/containers/CreatingAction';
+export { ListContainer as FoodMealItemsList } from './meal-items/containers/List';
 
 export * from './icons';

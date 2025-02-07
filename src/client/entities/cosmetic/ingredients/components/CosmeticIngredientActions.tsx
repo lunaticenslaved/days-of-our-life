@@ -46,6 +46,7 @@ export function CosmeticIngredientActions({
         <CosmeticIngredientFormDialog
           entity={ingredient}
           dialog={updateDialog}
+          isPending={updateCosmeticIngredientMutation.isPending}
           onSubmit={values => {
             updateCosmeticIngredientMutation.mutate({
               ingredient,
