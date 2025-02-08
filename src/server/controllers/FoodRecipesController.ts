@@ -13,7 +13,7 @@ import {
   UpdateFoodRecipeRequest,
   UpdateFoodRecipeResponse,
 } from '#/shared/api/types/food';
-import _ from 'lodash';
+import _, { flatMap } from 'lodash';
 import { divideNutrients, FoodValidators } from '#/shared/models/food';
 import { z } from 'zod';
 import { CommonValidators } from '#/shared/models/common';
@@ -89,7 +89,7 @@ export default new Controller<'food/recipes'>({
     handler: async ({ name, description, output, parts }, { prisma }) => {
       return prisma.$transaction(async trx => {
         const nutrients = await FoodNutrientsService.calculate(
-          _.flatMap(parts, p => p.ingredients),
+          flatMap(parts, p => p.ingredients),
           trx,
         );
 

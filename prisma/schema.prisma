@@ -85,9 +85,9 @@ model FoodNutrients {
   carbs    Float @default(0) @db.Real
   fibers   Float @default(0) @db.Real
 
-  product         FoodProduct?
-  recipe          FoodRecipe?
-  trackerMealItem FoodMealItem?
+  product  FoodProduct?
+  recipe   FoodRecipe?
+  mealItem FoodMealItem?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

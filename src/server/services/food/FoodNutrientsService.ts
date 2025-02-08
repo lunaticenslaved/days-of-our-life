@@ -1,5 +1,5 @@
 import { PrismaTransaction } from '#/server/prisma';
-import { ONLY_NUTRIENTS_SELECT } from '#/server/selectors/food';
+import { NUTRIENTS_WITH_ID_SELECT, ONLY_NUTRIENTS_SELECT } from '#/server/selectors/food';
 import { FoodNutrients, multiplyNutrients, sumNutrients } from '#/shared/models/food';
 import { nonReachable } from '#/shared/utils';
 
@@ -31,14 +31,14 @@ class FoodNutrientsService {
     return sumNutrients(items);
   }
 
-  async createForIngredientAndQuantity(
+  async calculateForFood(
     {
-      item,
+      food,
       ...arg
     }: {
       quantityConverterId: string;
       quantity: number;
-      item:
+      food:
         | {
             type: 'product';
             productId: string;
@@ -57,31 +57,33 @@ class FoodNutrientsService {
       })
       .then(data => data.grams * arg.quantity);
 
-    if (item.type === 'product') {
-      const nutrients = await trx.foodNutrients
+    if (food.type === 'product') {
+      return await trx.foodNutrients
         .findFirstOrThrow({
-          where: { product: { id: item.productId } },
+          where: { product: { id: food.productId } },
           ...ONLY_NUTRIENTS_SELECT,
         })
         .then(data => multiplyNutrients(data, grams));
-
-      return await trx.foodNutrients.create({
-        data: nutrients,
-      });
-    } else if (item.type === 'recipe') {
-      const nutrients = await trx.foodNutrients
+    } else if (food.type === 'recipe') {
+      return await trx.foodNutrients
         .findFirstOrThrow({
-          where: { recipe: { id: item.recipeId } },
+          where: { recipe: { id: food.recipeId } },
           ...ONLY_NUTRIENTS_SELECT,
         })
         .then(data => multiplyNutrients(data, grams));
-
-      return await trx.foodNutrients.create({
-        data: nutrients,
-      });
     } else {
-      nonReachable(item);
+      nonReachable(food);
     }
+  }
+
+  async create(
+    data: FoodNutrients,
+    trx: PrismaTransaction,
+  ): Promise<FoodNutrients & { id: string }> {
+    return trx.foodNutrients.create({
+      data,
+      ...NUTRIENTS_WITH_ID_SELECT,
+    });
   }
 }
 

@@ -27,14 +27,15 @@ interface CreateMealItemArg {
 class FoodMealItemService {
   async create(data: CreateMealItemArg, trx: PrismaTransaction): Promise<FoodMealItem> {
     const { food, dayId, dayPartId, quantity } = data;
-    const { id: nutrientsId } = await FoodNutrientsService.createForIngredientAndQuantity(
+
+    const { id: nutrientsId } = await FoodNutrientsService.calculateForFood(
       {
-        quantityConverterId: quantity.converterId,
+        food,
         quantity: quantity.value,
-        item: food,
+        quantityConverterId: quantity.converterId,
       },
       trx,
-    );
+    ).then(nutrients => FoodNutrientsService.create(nutrients, trx));
 
     return await trx.foodMealItem
       .create({
@@ -64,20 +65,14 @@ class FoodMealItemService {
       },
     });
 
-    const quantityConverter = await trx.foodQuantityConverter.findFirstOrThrow({
-      where: { id: quantity.converterId },
-    });
-
-    
-
-    const { id: nutrientsId } = await FoodNutrientsService.createForIngredientAndQuantity(
+    const { id: nutrientsId } = await FoodNutrientsService.calculateForFood(
       {
-        quantityConverterId: data.quantity.converterId,
-        quantity: data.quantity.value,
-        item,
+        food: item,
+        quantity: quantity.value,
+        quantityConverterId: quantity.converterId,
       },
       trx,
-    );
+    ).then(nutrients => FoodNutrientsService.create(nutrients, trx));
 
     const updated = await trx.foodMealItem
       .update({
@@ -87,6 +82,7 @@ class FoodMealItemService {
         data: {
           dayId,
           dayPartId,
+          nutrientsId,
           productId: item.type === 'product' ? item.productId : undefined,
           recipeId: item.type === 'recipe' ? item.recipeId : undefined,
           quantity: data.quantity.value,

@@ -15,8 +15,9 @@ const QUANTITY_CONVERTER = {
   },
 } satisfies Prisma.FoodQuantityConverterDefaultArgs;
 
-const NUTRIENTS_SELECT = {
+export const NUTRIENTS_WITH_ID_SELECT = {
   select: {
+    id: true,
     calories: true,
     carbs: true,
     proteins: true,
@@ -26,7 +27,15 @@ const NUTRIENTS_SELECT = {
 } satisfies Prisma.FoodNutrientsDefaultArgs;
 
 /**  It's important to not return id, createdAt, updatedAt and other fields*/
-export const ONLY_NUTRIENTS_SELECT = NUTRIENTS_SELECT;
+export const ONLY_NUTRIENTS_SELECT = {
+  select: {
+    calories: true,
+    carbs: true,
+    proteins: true,
+    fats: true,
+    fibers: true,
+  },
+} satisfies Prisma.FoodNutrientsDefaultArgs;
 
 export const SELECT_RECIPE = {
   select: {
@@ -64,7 +73,7 @@ export const SELECT_RECIPE = {
       ...QUANTITY_CONVERTER,
       where: { isDeleted: false },
     },
-    nutrientsPerGram: NUTRIENTS_SELECT,
+    nutrientsPerGram: ONLY_NUTRIENTS_SELECT,
   },
 } satisfies Prisma.FoodRecipeDefaultArgs;
 
@@ -73,7 +82,7 @@ export const SELECT_PRODUCT = {
     id: true,
     name: true,
     manufacturer: true,
-    nutrientsPerGram: NUTRIENTS_SELECT,
+    nutrientsPerGram: ONLY_NUTRIENTS_SELECT,
     quantities: {
       ...QUANTITY_CONVERTER,
       where: { isDeleted: false },
@@ -86,7 +95,7 @@ export const FOOD_MEAL_ITEM_SELECTOR = {
     id: true,
     productId: true,
     recipeId: true,
-    nutrients: NUTRIENTS_SELECT,
+    nutrients: ONLY_NUTRIENTS_SELECT,
     quantity: true,
     quantityConverterId: true,
     dayPartId: true,
