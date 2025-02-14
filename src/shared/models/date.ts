@@ -53,6 +53,7 @@ export const DateUtils = {
     return dayjs(date, 'DD-MM-YYYY').startOf('day').add(offsetMinutes, 'minute').toDate();
   },
   toDateFormat(date: string | Date | Dayjs) {
+    // FIXME check if date format
     return dayjs(date)
       .startOf('day')
       .format('DD-MM-YYYY') as `${number}-${number}-${number}`;
