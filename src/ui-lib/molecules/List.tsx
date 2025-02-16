@@ -1,4 +1,4 @@
-import { Input } from '#/ui-lib/atoms/Input';
+import { Input, InputProps } from '#/ui-lib/atoms/Input';
 import {
   createContext,
   PropsWithChildren,
@@ -187,10 +187,17 @@ function ListItem({
 }
 
 // --- List Search --------------------------------------------------------------------------
-function ListSearch() {
+function ListSearch(props: Pick<InputProps, 'placeholder'>) {
   const { search, setSearch } = useListContext();
 
-  return <Input modelValue={search} onModelValueChange={setSearch} debounceMs={500} />;
+  return (
+    <Input
+      {...props}
+      modelValue={search}
+      onModelValueChange={setSearch}
+      debounceMs={500}
+    />
+  );
 }
 
 // --- List Group ---------------------------------------------------------------------------

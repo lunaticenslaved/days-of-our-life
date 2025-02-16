@@ -1,7 +1,9 @@
 import { ModelValueProps } from '#/client/types';
-import { HTMLAttributes, useEffect, useRef, useState } from 'react';
+import { useNullableFieldContext } from '#/ui-lib/atoms/Field';
+import { getSize } from '#/ui-lib/utils/size';
+import { InputHTMLAttributes, useEffect, useRef, useState } from 'react';
 
-type InputProps = HTMLAttributes<HTMLInputElement> &
+export type InputProps = InputHTMLAttributes<HTMLInputElement> &
   ModelValueProps<string | undefined> & {
     debounceMs?: number;
   };
@@ -13,6 +15,8 @@ export function Input({
   ...props
 }: InputProps) {
   const [localValue, setLocalValue] = useState(modelValue);
+
+  const fieldContext = useNullableFieldContext();
 
   useEffect(() => {
     setLocalValue(modelValue);
@@ -31,6 +35,12 @@ export function Input({
   return (
     <input
       {...props}
+      id={props.id || fieldContext?.id}
+      style={{
+        height: getSize(10),
+        padding: getSize(2),
+        borderRadius: getSize(1),
+      }}
       value={localValue || ''}
       onChange={e => {
         setLocalValue(e.target.value || undefined);
