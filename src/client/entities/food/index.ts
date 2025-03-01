@@ -1,6 +1,6 @@
 // Food Product
-export { FoodProductForm } from './products/components/ProductForm';
-export { FoodProductList } from './products/components/ProductList';
+export { FoodProductForm } from './products/containers/Form';
+export { FoodProductList } from './products/components/List';
 export { FoodProductsTable } from './products/components/ProductsTable';
 export {
   FoodProductSingleSelect,

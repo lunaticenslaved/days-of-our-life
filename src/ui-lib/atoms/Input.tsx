@@ -1,54 +1,65 @@
-import { ModelValueProps } from '#/client/types';
-import { useNullableFieldContext } from '#/ui-lib/atoms/Field';
+import { InputProps as BaseInputProps } from '#/ui-lib/types';
 import { getSize } from '#/ui-lib/utils/size';
-import { InputHTMLAttributes, useEffect, useRef, useState } from 'react';
+import {
+  forwardRef,
+  InputHTMLAttributes,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
-export type InputProps = InputHTMLAttributes<HTMLInputElement> &
-  ModelValueProps<string | undefined> & {
+type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, keyof BaseInputProps> &
+  BaseInputProps<string | null> & {
     debounceMs?: number;
+    convertValue?: (value: string | null) => string | undefined;
   };
 
-export function Input({
-  debounceMs = 0,
-  modelValue,
-  onModelValueChange,
-  ...props
-}: InputProps) {
-  const [localValue, setLocalValue] = useState(modelValue);
+export const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ debounceMs = 0, value, onValueUpdate, convertValue, ...props }, ref) => {
+    const [localValue, _setLocalValue] = useState(() => {
+      return convertValue ? convertValue(value) : value;
+    });
 
-  const fieldContext = useNullableFieldContext();
+    const setLocalValue = useCallback(
+      (newValue: string = '') => {
+        _setLocalValue(convertValue ? convertValue(newValue) : newValue);
+      },
+      [convertValue],
+    );
 
-  useEffect(() => {
-    setLocalValue(modelValue);
-  }, [modelValue]);
+    useDebounce(
+      () => {
+        onValueUpdate?.(localValue || '');
+      },
+      [localValue],
+      {
+        ms: debounceMs,
+      },
+    );
 
-  useDebounce(
-    () => {
-      onModelValueChange?.(localValue);
-    },
-    [localValue],
-    {
-      ms: debounceMs,
-    },
-  );
-
-  return (
-    <input
-      {...props}
-      id={props.id || fieldContext?.id}
-      style={{
-        height: getSize(10),
-        padding: getSize(2),
-        borderRadius: getSize(1),
-      }}
-      value={localValue || ''}
-      onChange={e => {
-        setLocalValue(e.target.value || undefined);
-        props.onChange?.(e);
-      }}
-    />
-  );
-}
+    return (
+      <input
+        ref={ref}
+        {...props}
+        style={{
+          height: '100%',
+          width: '100%',
+          padding: getSize(2),
+          outlineWidth: '0',
+          margin: '0',
+          border: 'none',
+          ...props.style,
+        }}
+        value={localValue || ''}
+        onChange={e => {
+          setLocalValue(e.target.value);
+          props.onChange?.(e);
+        }}
+      />
+    );
+  },
+);
 
 function useDebounce(
   cb: () => void,

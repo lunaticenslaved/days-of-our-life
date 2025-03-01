@@ -1,30 +1,16 @@
+export { type FoodProduct, FoodProductValidators } from './product';
+export { type FoodNutrients, FoodNutrientsValidators } from './nutrients';
+export { type FoodQuantityConverter, FoodQuantityConverterValidators } from './quantity';
+
+// ---- OLD ----------
+import { FoodProduct } from './product';
+import { FoodNutrients } from './nutrients';
+import { FoodQuantityConverter } from './quantity';
 import { CommonValidators } from '#/shared/models/common';
 import { DateFormat } from '#/shared/models/date';
 import { ERROR_MESSAGES } from '#/shared/validation';
 import _ from 'lodash';
 import { z } from 'zod';
-
-export interface FoodProduct {
-  id: string;
-  name: string;
-  manufacturer?: string | null;
-  nutrientsPerGram: FoodNutrients;
-  quantities: FoodQuantityConverter[];
-}
-
-export interface FoodNutrients {
-  calories: number;
-  proteins: number;
-  fats: number;
-  carbs: number;
-  fibers: number;
-}
-
-export interface FoodQuantityConverter {
-  id: string;
-  name: string;
-  grams: number;
-}
 
 export interface FoodRecipeOutput {
   grams: number;
@@ -78,7 +64,13 @@ const quantityValidator = z.coerce
   .gt(0, ERROR_MESSAGES.gt(0));
 
 export const FoodValidators = {
-  name: CommonValidators.str(255),
+  name: z
+    .string({
+      message: ERROR_MESSAGES.required,
+      invalid_type_error: ERROR_MESSAGES.required,
+    })
+    .min(1, ERROR_MESSAGES.minLengthStr(1))
+    .max(255, ERROR_MESSAGES.maxLengthStr(255)),
   manufacturer: z
     .string({ message: ERROR_MESSAGES.required })
     .max(255, ERROR_MESSAGES.maxLengthStr(255))

@@ -1,12 +1,70 @@
+import { useFormFieldContext } from '#/ui-lib/atoms/Form';
+import {
+  FieldDirection,
+  FieldState,
+  FieldContext as IFieldContextBase,
+} from '#/ui-lib/types';
 import { getSize } from '#/ui-lib/utils/size';
-import { createContext, PropsWithChildren, ReactNode, useContext, useId } from 'react';
+import { merge } from 'lodash';
+import {
+  createContext,
+  CSSProperties,
+  PropsWithChildren,
+  ReactNode,
+  useContext,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 
+const DEFAULT_DIRECTION: FieldDirection = 'vertical';
+
+const DIRECTION_TO_FLEX: Record<
+  FieldDirection,
+  {
+    alignItems: CSSProperties['alignItems'];
+    flexDirection: CSSProperties['flexDirection'];
+  }
+> = {
+  horizontal: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  vertical: {
+    flexDirection: 'column',
+    alignItems: undefined,
+  },
+};
+
+const STATE_TO_COLOR: Record<
+  FieldState,
+  {
+    message: string;
+    label: string;
+    border: string;
+  }
+> = {
+  valid: {
+    message: 'rgba(0,0,0,0.5)',
+    label: '',
+    border: 'black',
+  },
+  invalid: {
+    message: 'red',
+    label: 'red',
+    border: 'red',
+  },
+};
+//
+//
+//
 // --- Context --------------------------------------------------------------------------
-
-interface IFieldContext {
-  direction: 'column' | 'row';
-  id: string;
-}
+type IFieldContext = IFieldContextBase &
+  Required<Pick<IFieldContextBase, 'direction' | 'state'>> & {
+    id: string;
+    visibleState: FieldState;
+  };
 
 const Context = createContext<IFieldContext | null>(null);
 
@@ -25,21 +83,39 @@ function useNullableFieldContext() {
 
   return context;
 }
+/**
 
-// --- Field --------------------------------------------------------------------------
+
+// --- Field --------------------------------------------------------------------------  */
 function Field({
   children,
-  direction = 'column',
   inputId,
-}: PropsWithChildren & {
-  direction?: 'column' | 'row';
+  ...props
+}: IFieldContextBase & {
+  children: ReactNode;
   inputId?: string;
 }) {
+  const formFieldContext = useFormFieldContext();
+
   const id = useId();
   const contextValue: IFieldContext = {
-    direction,
     id: inputId || id,
+    visibleState: 'valid',
+    ...merge(
+      {
+        state: 'valid',
+        direction: DEFAULT_DIRECTION,
+      } satisfies Partial<IFieldContextBase>,
+      formFieldContext,
+      props,
+    ),
   };
+
+  if (contextValue.isTouched) {
+    contextValue.visibleState = contextValue.state;
+  } else {
+    contextValue.visibleState = 'valid';
+  }
 
   return (
     <Context.Provider value={contextValue}>
@@ -47,41 +123,122 @@ function Field({
         style={{
           display: 'flex',
           gap: getSize(1),
-          flexDirection: contextValue.direction,
-          alignItems: contextValue.direction === 'row' ? 'center' : undefined,
+          ...DIRECTION_TO_FLEX[contextValue.direction],
         }}>
         {children}
       </div>
     </Context.Provider>
   );
 }
+/**
 
-// --- Field Label --------------------------------------------------------------------------
+
+// --- Field Label --------------------------------------------------------------------  */
 function FieldLabel({ children }: PropsWithChildren) {
-  const { direction, id } = useFieldContext();
+  const { direction, id, visibleState, required } = useFieldContext();
+  const color = STATE_TO_COLOR[visibleState].label;
 
   return (
     <div
       style={{
-        minWidth: direction === 'row' ? getSize(24) : undefined,
+        minWidth: direction === 'horizontal' ? getSize(24) : undefined,
       }}>
-      <label htmlFor={id}>{children}</label>
+      <label htmlFor={id}>
+        <span style={{ color }}>{children}</span>
+        {required && <span style={{ color: 'red' }}>*</span>}
+      </label>
     </div>
   );
 }
+/**
 
-// --- Field Input --------------------------------------------------------------------------
+
+// --- Field Message ------------------------------------------------------------------  */
+function FieldMessage({ children }: PropsWithChildren) {
+  const { visibleState, error } = useFieldContext();
+  const color = STATE_TO_COLOR[visibleState].message;
+
+  return (
+    <div style={{ color, height: getSize(5) }}>
+      {visibleState === 'valid' ? null : <span>{error || children}</span>}
+    </div>
+  );
+}
+/**
+
+
+// --- Field Input --------------------------------------------------------------------  */
 function FieldInput({
   children,
 }: {
   children: ReactNode | ((context: IFieldContext) => ReactNode);
 }) {
-  const context = useFieldContext();
+  const ref = useRef<HTMLDivElement>(null);
+  const fieldContext = useFieldContext();
+  const isFocusWithin = useFocusWithin(ref);
 
-  return <div>{typeof children === 'function' ? children(context) : children}</div>;
+  const borderColor = STATE_TO_COLOR[fieldContext.visibleState].border;
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        height: getSize(8),
+        borderRadius: getSize(1),
+        overflow: 'hidden',
+        ...(isFocusWithin
+          ? {
+              border: `2px solid ${borderColor}`,
+            }
+          : {
+              border: `1px solid ${borderColor}`,
+            }),
+      }}>
+      {typeof children === 'function' ? children(fieldContext) : children}
+    </div>
+  );
 }
 
 Field.Label = FieldLabel;
 Field.Input = FieldInput;
+Field.Message = FieldMessage;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function useFocusWithin(ref: React.RefObject<Element>) {
+  const [isFocused, setIsFocused] = useState<boolean | undefined>(false);
+
+  useEffect(() => {
+    const el = ref.current;
+
+    function hasFocusWithin(element: Element | null): boolean {
+      if (!element || !document) return false;
+      return element?.contains(document.activeElement);
+    }
+
+    function onFocusIn() {
+      if (!el) {
+        setIsFocused(false);
+      } else {
+        const newIsFocusWithin = hasFocusWithin(el);
+
+        setIsFocused(newIsFocusWithin);
+      }
+    }
+
+    function onFocusOut() {
+      setIsFocused(false);
+    }
+
+    el?.addEventListener('focusin', onFocusIn, false);
+    el?.addEventListener('focusout', onFocusOut, false);
+
+    return () => {
+      el?.removeEventListener('focusin', onFocusIn, false);
+      el?.removeEventListener('focusout', onFocusOut, false);
+    };
+  }, [ref]);
+
+  return isFocused;
+}
 
 export { Field, useFieldContext, useNullableFieldContext };
