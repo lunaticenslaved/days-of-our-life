@@ -1,10 +1,10 @@
-import { Dialog, IUseDialog } from '#/client/components/Dialog';
 import { useCreateCosmeticRecipeCommentMutation } from '#/client/store';
+import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
 import { CosmeticRecipeCommentForm } from '../components/CosmeticRecipeCommentForm';
 
 interface CosmeticRecipeCommentFormDialogProps {
   recipeId: string;
-  dialog: IUseDialog;
+  dialog: IDialog;
   onCreated?(): void;
 }
 

@@ -4,7 +4,7 @@ import {
   FieldState,
   FieldContext as IFieldContextBase,
 } from '#/ui-lib/types';
-import { getSize } from '#/ui-lib/utils/size';
+import { getDimensions } from '#/ui-lib/utils/dimensions';
 import { merge } from 'lodash';
 import {
   createContext,
@@ -122,7 +122,7 @@ function Field({
       <div
         style={{
           display: 'flex',
-          gap: getSize(1),
+          gap: getDimensions(1),
           ...DIRECTION_TO_FLEX[contextValue.direction],
         }}>
         {children}
@@ -141,7 +141,7 @@ function FieldLabel({ children }: PropsWithChildren) {
   return (
     <div
       style={{
-        minWidth: direction === 'horizontal' ? getSize(24) : undefined,
+        minWidth: direction === 'horizontal' ? getDimensions(24) : undefined,
       }}>
       <label htmlFor={id}>
         <span style={{ color }}>{children}</span>
@@ -159,7 +159,7 @@ function FieldMessage({ children }: PropsWithChildren) {
   const color = STATE_TO_COLOR[visibleState].message;
 
   return (
-    <div style={{ color, height: getSize(5) }}>
+    <div style={{ color, height: getDimensions(5) }}>
       {visibleState === 'valid' ? null : <span>{error || children}</span>}
     </div>
   );
@@ -183,8 +183,8 @@ function FieldInput({
     <div
       ref={ref}
       style={{
-        height: getSize(8),
-        borderRadius: getSize(1),
+        height: getDimensions(8),
+        borderRadius: getDimensions(1),
         overflow: 'hidden',
         ...(isFocusWithin
           ? {

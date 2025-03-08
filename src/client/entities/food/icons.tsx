@@ -1,1 +1,1 @@
-export { PiBowlFoodBold as FoodIcon } from 'react-icons/pi';
+export { MdRestaurant as FoodIcon } from 'react-icons/md';

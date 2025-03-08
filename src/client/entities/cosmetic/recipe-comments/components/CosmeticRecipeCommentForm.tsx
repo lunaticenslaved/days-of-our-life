@@ -1,4 +1,4 @@
-import { Button } from '#/client/components/Button';
+import { Button } from '#/ui-lib/atoms/Button';
 import { FinalForm } from '#/client/components/FForm';
 import { Form } from '#/client/components/Form';
 import { TextArea } from '#/client/components/TextArea';

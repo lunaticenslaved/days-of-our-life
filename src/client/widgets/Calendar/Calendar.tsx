@@ -2,7 +2,7 @@ import dayjs from '#/shared/libs/dayjs';
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { DayInfo, DayPart } from '#/shared/models/day';
 import { Medicament, MedicamentIntake } from '#/shared/models/medicament';
-import { Button } from '#/client/components/Button';
+import { Button } from '#/ui-lib/atoms/Button';
 import { AddWeightAction } from '#/client/entities/body-statistics';
 import { FoodNutrientsList } from '#/client/entities/food';
 import {

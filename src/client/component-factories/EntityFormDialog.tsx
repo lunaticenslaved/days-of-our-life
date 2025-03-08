@@ -1,7 +1,7 @@
-import { Button } from '#/client/components/Button';
-import { Dialog, IUseDialog } from '#/client/components/Dialog';
+import { Button } from '#/ui-lib/atoms/Button';
 import { FinalForm } from '#/client/components/FForm';
 import { Form } from '#/client/components/Form';
+import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
 import { ReactNode, useMemo } from 'react';
 import { z } from 'zod';
 
@@ -27,7 +27,7 @@ interface CreateEntityFormDialogProps<
 }
 
 type ComponentProps<TEntity, TSchema extends Zod.SomeZodObject> = {
-  dialog: IUseDialog;
+  dialog: IDialog;
   onSubmit(values: z.infer<TSchema>): void;
   entity?: TEntity;
   isPending: boolean;

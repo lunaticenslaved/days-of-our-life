@@ -1,4 +1,3 @@
-import { NavigationBar } from '#/client/components/NavigationBar';
 import { CosmeticIcon } from '#/client/entities/cosmetic';
 import { DaysIcon } from '#/client/entities/days';
 import { FoodIcon } from '#/client/entities/food';
@@ -7,7 +6,10 @@ import { COSMETIC_NAVIGATION } from '#/client/pages/cosmetic';
 import { DAYS_NAVIGATION } from '#/client/pages/days';
 import { FOOD_NAVIGATION } from '#/client/pages/food';
 import { MEDICAMENTS_NAVIGATION } from '#/client/pages/medicaments';
-import { useLocation, useNavigate } from 'react-router';
+import { Button } from '#/ui-lib/atoms/Button';
+import { Flex } from '#/ui-lib/atoms/Flex';
+import { Selectable } from '#/ui-lib/molecules/Selectable';
+import { useLocation } from 'react-router';
 
 const LINKS = [
   {
@@ -34,21 +36,30 @@ const LINKS = [
 
 export function TheLeftNavigation() {
   const location = useLocation();
-  const navigate = useNavigate();
 
   const value = LINKS.find(link => location.pathname.startsWith(link.to))?.to;
 
   return (
-    <NavigationBar
-      value={value}
-      onChange={newPathname => {
-        if (newPathname && !location.pathname.startsWith(newPathname)) {
-          navigate(newPathname);
-        }
-      }}>
-      {LINKS.map(({ icon, title, to }) => {
-        return <NavigationBar.Action key={to} title={title} value={to} icon={icon} />;
-      })}
-    </NavigationBar>
+    <Selectable value={value}>
+      <Flex direction="column" gap={4} spacing={{ py: 4, px: 2 }}>
+        {LINKS.map(({ icon, to }) => {
+          return (
+            <Selectable.Item key={to} value={to}>
+              {({ isActive }) => {
+                return (
+                  <Button
+                    to={to}
+                    component="router-link"
+                    view="clear"
+                    color={isActive ? 'primary' : 'secondary'}>
+                    {icon}
+                  </Button>
+                );
+              }}
+            </Selectable.Item>
+          );
+        })}
+      </Flex>
+    </Selectable>
   );
 }

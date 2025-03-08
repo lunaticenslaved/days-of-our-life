@@ -7,9 +7,9 @@ import {
   useListFoodRecipesQuery,
   useUpdateFoodMealItem,
 } from '#/client/store/food';
-import { useDialog } from '#/client/components/Dialog';
 import { FoodMealItemFormDialog as FormDialogComponent } from '../components/FormDialog';
 import { findNutrients } from '#/client/entities/food/meal-items/utils';
+import { useDialog } from '#/ui-lib/atoms/Dialog';
 
 type ActionsComponentProps = ComponentProps<typeof ActionsComponent>;
 

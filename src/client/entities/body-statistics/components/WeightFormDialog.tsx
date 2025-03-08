@@ -1,10 +1,10 @@
 import { BodyStatisticsValidators } from '#/shared/models/body';
-import { Button } from '#/client/components/Button';
-import { Dialog, IUseDialog } from '#/client/components/Dialog';
+import { Button } from '#/ui-lib/atoms/Button';
 import { FForm } from '#/client/components/FForm';
 import { Form } from '#/client/components/Form';
 import { NumberInput } from '#/client/components/NumberInput';
 import { z } from 'zod';
+import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
 
 const schema = z.object({
   weight: BodyStatisticsValidators.weight,
@@ -15,7 +15,7 @@ type FormValues = z.infer<typeof schema>;
 interface BodyWeightFormDialogProps {
   disabled?: boolean;
   weight?: number;
-  dialog: IUseDialog;
+  dialog: IDialog;
   onSubmit(values: FormValues): void;
 }
 

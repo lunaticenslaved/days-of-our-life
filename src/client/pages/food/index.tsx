@@ -1,4 +1,4 @@
-import { Navigate, Outlet, Route, useParams } from 'react-router';
+import { matchPath, Navigate, Outlet, Route, useLocation, useParams } from 'react-router';
 
 import { createNavigationHook } from '#/client/hooks/navigation';
 
@@ -10,7 +10,9 @@ import RecipesRoot from './recipes/Root';
 import RecipeCreate from './recipes/Create';
 import RecipeOverview from './recipes/[recipeId]/Overview';
 import RecipeEdit from './recipes/[recipeId]/Edit';
-import { Link } from 'react-router-dom';
+import { Button } from '#/ui-lib/atoms/Button';
+import { Flex } from '#/ui-lib/atoms/Flex';
+import { Selectable } from '#/ui-lib/molecules/Selectable';
 
 type RecipeId = { recipeId: string };
 type ProductId = { productId: string };
@@ -63,10 +65,7 @@ export default [
     path={routes.root}
     element={
       <div style={{ display: 'flex' }}>
-        <aside style={{ width: '100px', display: 'flex', flexDirection: 'column' }}>
-          <Link to={FOOD_NAVIGATION.toProducts()}>Продукты</Link>
-          <Link to={FOOD_NAVIGATION.toRecipes()}>Рецепты</Link>
-        </aside>
+        <Navigation />
         <div style={{ flexGrow: 1, overflow: 'auto' }}>
           <Outlet />
         </div>
@@ -84,3 +83,44 @@ export default [
     <Route path={routes.recipeEdit} element={<RecipeEdit />} />
   </Route>,
 ];
+
+function Navigation() {
+  const links = [
+    {
+      to: FOOD_NAVIGATION.toProducts(),
+      title: 'Продукты',
+    },
+    {
+      to: FOOD_NAVIGATION.toRecipes(),
+      title: 'Рецепты',
+    },
+  ];
+
+  const { pathname } = useLocation();
+
+  const currentLink = links.find(link => matchPath(link.to, pathname));
+
+  return (
+    <Selectable value={currentLink?.to}>
+      <Flex direction="column" gap={4} spacing={{ py: 0, px: 2 }}>
+        {links.map(link => {
+          return (
+            <Selectable.Item key={link.to} value={link.to}>
+              {({ isActive }) => {
+                return (
+                  <Button
+                    component="router-link"
+                    view="clear"
+                    color={isActive ? 'primary' : 'secondary'}
+                    to={link.to}>
+                    {link.title}
+                  </Button>
+                );
+              }}
+            </Selectable.Item>
+          );
+        })}
+      </Flex>
+    </Selectable>
+  );
+}

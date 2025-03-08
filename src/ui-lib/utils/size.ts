@@ -1,7 +1,11 @@
-// const BASE_SIZE = '5px';
-const BASE_SIZE_NUM = 5;
-const BASE_SIZE_UNIT = 'px';
+export const DEFAULT_SIZE: Size = 'm';
 
-export function getSize(space: number): string {
-  return `${BASE_SIZE_NUM * space}${BASE_SIZE_UNIT}`;
+export type Size = 's' | 'm' | 'l';
+
+export function recordSize<T>(fn: (size: Size) => T): Record<Size, T> {
+  return {
+    s: fn('s'),
+    m: fn('m'),
+    l: fn('l'),
+  };
 }

@@ -1,6 +1,5 @@
 import { Medicament } from '#/shared/models/medicament';
-import { Button } from '#/client/components/Button';
-import { useDialog } from '#/client/components/Dialog';
+import { Button } from '#/ui-lib/atoms/Button';
 import {
   useCreateMedicamentMutation,
   useDeleteMedicamentMutation,
@@ -13,6 +12,7 @@ import {
   MedicamentsList,
 } from '#/client/entities/medicament/components';
 import { useState } from 'react';
+import { useDialog } from '#/ui-lib/atoms/Dialog';
 
 export default function Page() {
   const medicamentFormDialog = useDialog();

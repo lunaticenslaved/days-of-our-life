@@ -1,12 +1,12 @@
-import { Button } from '#/client/components/Button';
+import { Button } from '#/ui-lib/atoms/Button';
 import { ConfirmDialog } from '#/client/components/ConfirmDialog';
-import { useDialog } from '#/client/components/Dialog';
 import { CosmeticIngredientFormDialog } from './FormDialog';
 import {
   useDeleteCosmeticIngredientMutation,
   useUpdateCosmeticIngredientMutation,
 } from '#/client/store';
 import { CosmeticIngredient } from '#/shared/models/cosmetic';
+import { useDialog } from '#/ui-lib/atoms/Dialog';
 
 interface CosmeticIngredientActionsProps {
   ingredient: CosmeticIngredient;

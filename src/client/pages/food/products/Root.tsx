@@ -1,7 +1,8 @@
-import { Link } from 'react-router-dom';
 import { FOOD_NAVIGATION } from '../index';
-import { FoodProductsTable } from '#/client/entities/food';
+import { FoodProductCreatingAction, FoodProductsTable } from '#/client/entities/food';
 import { useDeleteFoodProductMutation, useListFoodProductsQuery } from '#/client/store';
+import { Flex } from '#/ui-lib/atoms/Flex';
+import { Text } from '#/ui-lib/atoms/Text';
 
 export default function Page() {
   const { data: products = [] } = useListFoodProductsQuery();
@@ -9,7 +10,11 @@ export default function Page() {
 
   return (
     <div>
-      <Link to={FOOD_NAVIGATION.toProductCreate()}>Создать продукт</Link>
+      <Flex direction="row" alignItems="center" justifyContent="space-between" gap={2}>
+        <Text variant="header-m">Продукты</Text>
+        <FoodProductCreatingAction />
+      </Flex>
+
       <FoodProductsTable
         products={products}
         onDelete={p => deleting.mutate({ id: p.id })}

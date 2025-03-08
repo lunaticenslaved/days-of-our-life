@@ -1,7 +1,6 @@
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { DayPart } from '#/shared/models/day';
 import { DatePicker, DatePickerRangeModelValue } from '#/client/components/DatePicker';
-import { useDialog } from '#/client/components/Dialog';
 import { MedicamentIntakeFormDialog } from '#/client/entities/medicament/components';
 import {
   useCreateMedicamentIntakeMutation,
@@ -12,6 +11,7 @@ import {
 } from '#/client/store';
 import { Calendar } from '#/client/widgets/Calendar';
 import { useEffect, useMemo, useState } from 'react';
+import { useDialog } from '#/ui-lib/atoms/Dialog';
 
 export default function PageView() {
   const [dateRange, setDateRange] = useState(() => {

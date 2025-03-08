@@ -1,10 +1,10 @@
-import { Button } from '#/client/components/Button';
+import { Button } from '#/ui-lib/atoms/Button';
 import { ConfirmDialog } from '#/client/components/ConfirmDialog';
-import { useDialog } from '#/client/components/Dialog';
 import { CosmeticRecipeCommentFormDialog } from '../../recipe-comments/containers/CosmeticRecipeCommentFormDialog';
 import { useCosmeticNavigation } from '#/client/pages/cosmetic';
 import { useDeleteCosmeticRecipeMutation } from '#/client/store';
 import { CosmeticRecipe } from '#/shared/models/cosmetic';
+import { useDialog } from '#/ui-lib/atoms/Dialog';
 
 interface CosmeticRecipeActionsProps {
   recipe: CosmeticRecipe;

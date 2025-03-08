@@ -1,7 +1,7 @@
-import { Button } from '#/client/components/Button';
-import { useDialog } from '#/client/components/Dialog';
+import { Button } from '#/ui-lib/atoms/Button';
 import { CosmeticBenefitFormDialog } from '#/client/entities/cosmetic/benefits/components/CosmeticBenefitFormDialog';
 import { useCreateCosmeticBenefitMutation } from '#/client/store';
+import { useDialog } from '#/ui-lib/atoms/Dialog';
 
 export function CreateCosmeticBenefitAction() {
   const createDialog = useDialog();

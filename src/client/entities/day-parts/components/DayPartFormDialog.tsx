@@ -1,11 +1,11 @@
 import { CommonValidators } from '#/shared/models/common';
 import { DayPart } from '#/shared/models/day';
-import { Button } from '#/client/components/Button';
-import { Dialog, IUseDialog } from '#/client/components/Dialog';
+import { Button } from '#/ui-lib/atoms/Button';
 import { FForm } from '#/client/components/FForm';
 import { Form } from '#/client/components/Form';
 import { TextInput } from '#/client/components/TextInput';
 import { z } from 'zod';
+import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
 
 const schema = z.object({
   name: CommonValidators.str(255),
@@ -14,7 +14,7 @@ const schema = z.object({
 type DayPartFormValues = z.infer<typeof schema>;
 
 interface DayPartFromDialogProps {
-  dialog: IUseDialog;
+  dialog: IDialog;
   onSubmit(values: DayPartFormValues): void;
   dayPart?: Pick<DayPart, 'name'>;
 }

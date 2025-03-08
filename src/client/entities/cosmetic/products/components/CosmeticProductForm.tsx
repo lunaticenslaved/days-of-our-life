@@ -1,5 +1,5 @@
 import { CommonValidators } from '#/shared/models/common';
-import { Button } from '#/client/components/Button';
+import { Button } from '#/ui-lib/atoms/Button';
 import { FForm } from '#/client/components/FForm';
 import { Form } from '#/client/components/Form';
 import { TextInput } from '#/client/components/TextInput';

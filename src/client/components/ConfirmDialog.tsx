@@ -1,8 +1,8 @@
-import { Button } from '#/client/components/Button';
-import { Dialog, IUseDialog } from '#/client/components/Dialog';
+import { Button } from '#/ui-lib/atoms/Button';
+import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
 
 interface ConfirmDialogProps {
-  dialog: IUseDialog;
+  dialog: IDialog;
   title: string;
   text: string;
   submitText: string;

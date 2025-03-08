@@ -41,9 +41,8 @@ function Form<TSchema extends Zod.SomeZodObject>({
       mutators={{ ...arrayMutators }}>
       {formRenderProps => {
         return (
-          <form onSubmit={formRenderProps.handleSubmit}>
-            <div>{children(formRenderProps)}</div>
-            {formRenderProps.submitting && <div>Submitting...</div>}
+          <form onSubmit={formRenderProps.handleSubmit} style={{ display: 'contents' }}>
+            {children(formRenderProps)}
           </form>
         );
       }}
@@ -117,6 +116,7 @@ function Field<TValue = any>({
 
 Field.displayName = 'Form.Field';
 
+// --- Exports --------------------------------------------------------------
 Form.Field = Field;
 
 export { Form, useFormFieldContext };

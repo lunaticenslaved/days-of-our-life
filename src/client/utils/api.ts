@@ -54,12 +54,12 @@ export function wrapApiAction<
     localHandlers: Handlers<R> = {},
   ): Promise<R> => {
     // FIXME remove
-    await new Promise(resolve => {
-      setTimeout(() => {
-        console.log('resolving');
-        resolve(undefined);
-      }, 1000);
-    });
+    // await new Promise(resolve => {
+    //   setTimeout(() => {
+    //     console.log('resolving');
+    //     resolve(undefined);
+    //   }, 1000);
+    // });
 
     const response = await fn({ ...(passArg || {}), ...arg } as unknown as T);
 

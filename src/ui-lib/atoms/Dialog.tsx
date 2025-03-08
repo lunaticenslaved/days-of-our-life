@@ -1,5 +1,7 @@
+import { Button } from '#/ui-lib/atoms/Button';
 import {
   createContext,
+  HTMLAttributes,
   PropsWithChildren,
   ReactNode,
   useContext,
@@ -33,10 +35,10 @@ export function useDialog() {
   );
 }
 
-export type IUseDialog = ReturnType<typeof useDialog>;
+export type IDialog = ReturnType<typeof useDialog>;
 
 interface DialogProps extends PropsWithChildren {
-  dialog: IUseDialog;
+  dialog: IDialog;
 }
 
 export function Dialog({ dialog, children }: DialogProps) {
@@ -61,8 +63,8 @@ function DialogHeader({ children }: PropsWithChildren) {
   );
 }
 
-function DialogContent({ children }: PropsWithChildren) {
-  return <div style={{ padding: '20px' }}>{children}</div>;
+function DialogContent(props: HTMLAttributes<HTMLDivElement>) {
+  return <div {...props} style={{ padding: '20px', ...props.style }} />;
 }
 
 function DialogFooter({ children }: PropsWithChildren) {
@@ -84,7 +86,7 @@ const DialogContext = createContext<IDialogContext | null>(null);
 interface DialogItem {
   id: string;
   content: ReactNode;
-  interface: IUseDialog;
+  interface: IDialog;
 }
 
 export function DialogContextProvider({ children }: PropsWithChildren) {
@@ -130,11 +132,12 @@ export function DialogContextProvider({ children }: PropsWithChildren) {
               backgroundColor: 'rgba(0,0,0,0.1)',
             }}>
             <dialog open style={{ position: 'relative', padding: '0', border: 'none' }}>
-              <button
+              <Button
+                view="clear"
                 style={{ position: 'absolute', right: '-40px' }}
                 onClick={currentOpenDialog.interface.close}>
                 X
-              </button>
+              </Button>
 
               <div>
                 {dialogs.map(({ id, content }) => {

@@ -1,4 +1,4 @@
-import { Button } from '#/client/components/Button';
+import { Button } from '#/ui-lib/atoms/Button';
 import { CosmeticProductsList } from '#/client/entities/cosmetic';
 import { COSMETIC_NAVIGATION } from '#/client/pages/cosmetic';
 import {

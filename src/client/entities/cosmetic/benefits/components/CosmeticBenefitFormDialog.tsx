@@ -1,13 +1,13 @@
 import { CommonValidators } from '#/shared/models/common';
 import { CosmeticBenefit } from '#/shared/models/cosmetic';
 import { TextInput } from '#/client/components/TextInput';
-import { Button } from '#/client/components/Button';
-import { Dialog, IUseDialog } from '#/client/components/Dialog';
+import { Button } from '#/ui-lib/atoms/Button';
 import { FForm } from '#/client/components/FForm';
 import { Form } from '#/client/components/Form';
 import { z } from 'zod';
 import { useMemo } from 'react';
 import { CosmeticBenefitSingleSelect } from './CosmeticBenefitSelect';
+import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
 
 const schema = z.object({
   name: CommonValidators.str(255),
@@ -19,7 +19,7 @@ type FormValues = z.infer<typeof schema>;
 interface CosmeticBenefitFormDialogProps {
   benefit?: CosmeticBenefit;
   parentId?: string;
-  dialog: IUseDialog;
+  dialog: IDialog;
   onSubmit(values: FormValues): void;
 }
 

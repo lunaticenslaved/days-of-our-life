@@ -1,5 +1,5 @@
 import { InputProps as BaseInputProps } from '#/ui-lib/types';
-import { getSize } from '#/ui-lib/utils/size';
+import { getDimensions } from '#/ui-lib/utils/dimensions';
 import {
   forwardRef,
   InputHTMLAttributes,
@@ -45,7 +45,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         style={{
           height: '100%',
           width: '100%',
-          padding: getSize(2),
+          padding: getDimensions(2),
           outlineWidth: '0',
           margin: '0',
           border: 'none',

@@ -1,11 +1,11 @@
 import { CommonValidators } from '#/shared/models/common';
 import { Medicament } from '#/shared/models/medicament';
 import { TextInput } from '#/client/components/TextInput';
-import { Button } from '#/client/components/Button';
-import { Dialog, IUseDialog } from '#/client/components/Dialog';
+import { Button } from '#/ui-lib/atoms/Button';
 import { FForm } from '#/client/components/FForm';
 import { Form } from '#/client/components/Form';
 import { z } from 'zod';
+import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
 
 const schema = z.object({
   name: CommonValidators.str(255),
@@ -15,7 +15,7 @@ type FormValues = z.infer<typeof schema>;
 
 interface MedicamentFormDialogProps {
   medicament?: Medicament;
-  dialog: IUseDialog;
+  dialog: IDialog;
   onSubmit(values: FormValues): void;
 }
 

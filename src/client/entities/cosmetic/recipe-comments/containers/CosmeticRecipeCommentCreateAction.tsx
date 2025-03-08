@@ -1,5 +1,5 @@
-import { Button } from '#/client/components/Button';
-import { useDialog } from '#/client/components/Dialog';
+import { Button } from '#/ui-lib/atoms/Button';
+import { useDialog } from '#/ui-lib/atoms/Dialog';
 
 import { CosmeticRecipeCommentFormDialog } from './CosmeticRecipeCommentFormDialog';
 

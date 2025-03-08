@@ -1,5 +1,4 @@
-import { Button } from '#/client/components/Button';
-import { Dialog, useDialog } from '#/client/components/Dialog';
+import { Button } from '#/ui-lib/atoms/Button';
 import { FForm } from '#/client/components/FForm';
 import { Form } from '#/client/components/Form';
 import {
@@ -11,6 +10,7 @@ import { z } from 'zod';
 import { CosmeticProductSingleSelect } from '../components/CosmeticProductSelect';
 import { useMemo } from 'react';
 import { CommonValidators } from '#/shared/models/common';
+import { Dialog, useDialog } from '#/ui-lib/atoms/Dialog';
 
 const schema = z.object({
   cosmeticProductId: CommonValidators.id,

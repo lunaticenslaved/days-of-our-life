@@ -2,11 +2,11 @@ import { CommonValidators } from '#/shared/models/common';
 import { DateFormat } from '#/shared/models/date';
 import { Medicament } from '#/shared/models/medicament';
 import { MedicamentSingleSelect } from '#/client/entities/medicament/components/MedicamentSelect';
-import { Button } from '#/client/components/Button';
-import { Dialog, IUseDialog } from '#/client/components/Dialog';
+import { Button } from '#/ui-lib/atoms/Button';
 import { FForm } from '#/client/components/FForm';
 import { Form } from '#/client/components/Form';
 import { z } from 'zod';
+import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
 
 const schema = z.object({
   date: CommonValidators.dateFormat,
@@ -18,7 +18,7 @@ type FormValues = z.infer<typeof schema>;
 
 export type MedicamentIntakeFormDialogProps = {
   medicaments: Medicament[];
-  dialog: IUseDialog;
+  dialog: IDialog;
   onSubmit(values: FormValues): void;
   date: DateFormat;
   dayPartId: string;

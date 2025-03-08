@@ -1,6 +1,6 @@
-import { Button } from '#/client/components/Button';
+import { Button } from '#/ui-lib/atoms/Button';
 import { ConfirmDialog } from '#/client/components/ConfirmDialog';
-import { useDialog } from '#/client/components/Dialog';
+import { useDialog } from '#/ui-lib/atoms/Dialog';
 import { FC, Fragment } from 'react';
 
 interface ActionConfig {

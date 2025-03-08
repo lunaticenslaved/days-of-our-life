@@ -2,7 +2,6 @@ import {
   createEntityActions,
   EntityActionsTemplate,
 } from '#/client/component-factories/EntityActions';
-import { useDialog } from '#/client/components/Dialog';
 import { CosmeticINCIIngredientFormDialog } from '#/client/entities/cosmetic/inci-indgredients/components/FormDialog';
 import {
   useDeleteCosmeticINCIIngredientMutation,
@@ -10,6 +9,7 @@ import {
 } from '#/client/store';
 import { CosmeticINCIIngredient } from '#/shared/models/cosmetic';
 import { nonReachable } from '#/shared/utils';
+import { useDialog } from '#/ui-lib/atoms/Dialog';
 
 type Actions = 'edit' | 'delete';
 

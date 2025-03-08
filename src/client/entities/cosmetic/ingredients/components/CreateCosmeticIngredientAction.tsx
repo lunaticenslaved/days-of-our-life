@@ -1,7 +1,7 @@
-import { Button } from '#/client/components/Button';
-import { useDialog } from '#/client/components/Dialog';
+import { Button } from '#/ui-lib/atoms/Button';
 import { CosmeticIngredientFormDialog } from './FormDialog';
 import { useCreateCosmeticIngredientMutation } from '#/client/store';
+import { useDialog } from '#/ui-lib/atoms/Dialog';
 
 export function CreateCosmeticIngredientAction() {
   const dialog = useDialog();
