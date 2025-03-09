@@ -1,6 +1,11 @@
-import { createContext, ReactNode, useContext, useMemo } from 'react';
+import { SubNavigationItem } from '#/client/widgets/navigation/types';
+import { createContext, ReactNode, useContext, useMemo, useState } from 'react';
 
-interface NavigationContext {}
+interface NavigationContext {
+  subNavigationItems: SubNavigationItem[];
+  setSubNavigation: (items: SubNavigationItem[]) => void;
+  removeSubNavigation: () => void;
+}
 
 const Context = createContext<NavigationContext | null>(null);
 
@@ -19,9 +24,19 @@ interface NavigationContextProviderProps {
 }
 
 export function NavigationContextProvider({ children }: NavigationContextProviderProps) {
+  const [subNavigationItems, setSubNavigationItems] = useState<SubNavigationItem[]>([]);
+
   const value = useMemo((): NavigationContext => {
-    return {};
-  }, []);
+    return {
+      subNavigationItems,
+      setSubNavigation(items) {
+        setSubNavigationItems(items);
+      },
+      removeSubNavigation() {
+        setSubNavigationItems([]);
+      },
+    };
+  }, [subNavigationItems]);
 
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }

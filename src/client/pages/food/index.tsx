@@ -1,4 +1,4 @@
-import { matchPath, Navigate, Outlet, Route, useLocation, useParams } from 'react-router';
+import { Navigate, Outlet, Route, useParams } from 'react-router';
 
 import { createNavigationHook } from '#/client/hooks/navigation';
 
@@ -10,9 +10,8 @@ import RecipesRoot from './recipes/Root';
 import RecipeCreate from './recipes/Create';
 import RecipeOverview from './recipes/[recipeId]/Overview';
 import RecipeEdit from './recipes/[recipeId]/Edit';
-import { Button } from '#/ui-lib/atoms/Button';
-import { Flex } from '#/ui-lib/atoms/Flex';
-import { Selectable } from '#/ui-lib/molecules/Selectable';
+import { SubNavigationItem, useNavigationContext } from '#/client/widgets/navigation';
+import { useEffect } from 'react';
 
 type RecipeId = { recipeId: string };
 type ProductId = { productId: string };
@@ -84,43 +83,28 @@ export default [
   </Route>,
 ];
 
+const SUBNAVIGATION_ITEMS: SubNavigationItem[] = [
+  {
+    to: FOOD_NAVIGATION.toProducts(),
+    title: 'Продукты',
+  },
+  {
+    to: FOOD_NAVIGATION.toRecipes(),
+    title: 'Рецепты',
+  },
+];
+
 function Navigation() {
-  const links = [
-    {
-      to: FOOD_NAVIGATION.toProducts(),
-      title: 'Продукты',
-    },
-    {
-      to: FOOD_NAVIGATION.toRecipes(),
-      title: 'Рецепты',
-    },
-  ];
+  const navigationContext = useNavigationContext();
 
-  const { pathname } = useLocation();
+  useEffect(() => {
+    navigationContext.setSubNavigation(SUBNAVIGATION_ITEMS);
 
-  const currentLink = links.find(link => matchPath(link.to, pathname));
+    return () => {
+      navigationContext.removeSubNavigation();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  return (
-    <Selectable value={currentLink?.to}>
-      <Flex direction="column" gap={4} spacing={{ py: 0, px: 2 }}>
-        {links.map(link => {
-          return (
-            <Selectable.Item key={link.to} value={link.to}>
-              {({ isActive }) => {
-                return (
-                  <Button
-                    component="router-link"
-                    view="clear"
-                    color={isActive ? 'primary' : 'secondary'}
-                    to={link.to}>
-                    {link.title}
-                  </Button>
-                );
-              }}
-            </Selectable.Item>
-          );
-        })}
-      </Flex>
-    </Selectable>
-  );
+  return null;
 }

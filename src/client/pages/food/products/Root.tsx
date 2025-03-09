@@ -1,25 +1,19 @@
 import { FOOD_NAVIGATION } from '../index';
 import { FoodProductCreatingAction, FoodProductsTable } from '#/client/entities/food';
 import { useDeleteFoodProductMutation, useListFoodProductsQuery } from '#/client/store';
-import { Flex } from '#/ui-lib/atoms/Flex';
-import { Text } from '#/ui-lib/atoms/Text';
+import { Page as PageWidget } from '#/client/widgets/Page';
 
 export default function Page() {
   const { data: products = [] } = useListFoodProductsQuery();
   const deleting = useDeleteFoodProductMutation();
 
   return (
-    <div>
-      <Flex direction="row" alignItems="center" justifyContent="space-between" gap={2}>
-        <Text variant="header-m">Продукты</Text>
-        <FoodProductCreatingAction />
-      </Flex>
-
+    <PageWidget title="Продукты" actions={<FoodProductCreatingAction />}>
       <FoodProductsTable
         products={products}
         onDelete={p => deleting.mutate({ id: p.id })}
         createHref={p => FOOD_NAVIGATION.toProductOverview({ productId: p.id })}
       />
-    </div>
+    </PageWidget>
   );
 }

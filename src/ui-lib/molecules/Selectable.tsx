@@ -61,6 +61,7 @@ function SelectableItem({ value, children }: SelectableItemProps) {
   const context = useSelectableContext();
 
   return (
+    // FIXME мне не нравится этот стиль
     <div
       style={{ display: 'contents' }}
       onClick={() => {
