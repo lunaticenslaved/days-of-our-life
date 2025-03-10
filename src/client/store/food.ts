@@ -14,6 +14,7 @@ import {
   GetFoodProductResponse,
   ListFoodMealItemsResponse,
   ListFoodProductsResponse,
+  ListFoodRecipesResponse,
   UpdateFoodMealItemRequest,
   UpdateFoodMealItemResponse,
   UpdateFoodProductRequest,
@@ -291,9 +292,12 @@ export function useDeleteFoodProductMutation(
 // Recipe
 // FIXME add relavidation and cache updates
 export function useListFoodRecipesQuery() {
-  return useQuery({
+  return useQuery<ListFoodRecipesResponse>({
     queryKey: ['FoodSchema.recipes.list'],
     queryFn: wrapApiAction(Schema.food.listFoodRecipes),
+    select: data => {
+      return orderBy(data, recipe => recipe.name.toLocaleLowerCase(), 'asc');
+    },
   });
 }
 

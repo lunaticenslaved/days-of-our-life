@@ -29,6 +29,7 @@ function getStyle({
   const styles: StyledObject = {
     border: 'none',
     cursor: 'pointer',
+    display: 'inline-block',
   };
 
   if (size === 's') {

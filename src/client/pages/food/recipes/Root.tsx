@@ -1,24 +1,36 @@
 import { FOOD_NAVIGATION } from '#/client/pages/food';
 import { useListFoodRecipesQuery } from '#/client/store';
-import { Link } from 'react-router-dom';
+import { Button } from '#/ui-lib/atoms/Button';
+import { Page as PageWidget } from '#/client/widgets/Page';
+import {
+  FoodRecipeFilters,
+  FoodRecipesTable,
+  useFoodRecipeFilters,
+} from '#/client/entities/food/recipes';
 
 export default function Page() {
-  const { data: recipes } = useListFoodRecipesQuery();
+  const { data: recipes = [] } = useListFoodRecipesQuery();
+
+  const filters = useFoodRecipeFilters();
 
   return (
-    <div>
-      <Link to={FOOD_NAVIGATION.toRecipeCreate()}>Создать рецепт</Link>
-      <ul>
-        {recipes?.map(recipe => {
-          return (
-            <li key={recipe.id}>
-              <Link to={FOOD_NAVIGATION.toRecipeOverview({ recipeId: recipe.id })}>
-                {recipe.name}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+    <PageWidget
+      title="Рецепты"
+      actions={
+        <Button
+          view="outlined"
+          component="router-link"
+          to={FOOD_NAVIGATION.toRecipeCreate()}>
+          Создать рецепт
+        </Button>
+      }
+      filters={
+        <FoodRecipeFilters value={filters.value} onValueUpdate={filters.onValueUpdate} />
+      }>
+      <FoodRecipesTable
+        recipes={filters.filter(recipes)}
+        to={recipe => FOOD_NAVIGATION.toRecipeOverview({ recipeId: recipe.id })}
+      />
+    </PageWidget>
   );
 }
