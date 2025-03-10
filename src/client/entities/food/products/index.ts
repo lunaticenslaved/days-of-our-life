@@ -4,3 +4,5 @@ export { FoodProductCreatingAction } from './containers/CreatingAction';
 export { FoodProductsTable } from './components/Table';
 export { FoodProductSingleSelect, FoodProductMultipleSelect } from './components/Select';
 export { FoodProductSearch } from './containers/FoodProductSearch';
+
+export { FoodProductFilters, useFoodProductFilters } from './components/Filters';

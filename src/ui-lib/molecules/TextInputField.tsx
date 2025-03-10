@@ -23,3 +23,5 @@ export function TextInputField({ label, ...props }: TextInputFieldProps) {
     </Field>
   );
 }
+
+export const TextInput = Input;

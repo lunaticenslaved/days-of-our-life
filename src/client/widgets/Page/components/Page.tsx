@@ -15,7 +15,7 @@ export function Page({ title, actions, children }: PageProps) {
   }, [title]);
 
   return (
-    <Flex direction="column" spacing={{ p: 4 }}>
+    <Flex direction="column" spacing={{ p: 4 }} gap={4}>
       <Flex direction="row" alignItems="center" justifyContent="space-between" gap={2}>
         <Text variant="header-m">{title}</Text>
         {actions}

@@ -1,7 +1,6 @@
 import { FoodProduct, multiplyNutrients, roundNutrients } from '#/shared/models/food';
 import { Button } from '#/ui-lib/atoms/Button';
 import _ from 'lodash';
-import { Link } from 'react-router-dom';
 
 interface FoodProductTablesProps {
   products: FoodProduct[];
@@ -26,7 +25,13 @@ export function FoodProductsTable(props: FoodProductTablesProps) {
       title: 'Название',
       getValue: (p: Item, { createHref }: FoodProductTablesProps) => (
         <div>
-          <Link to={createHref(p)}>{p.name}</Link>
+          <Button
+            component="router-link"
+            color="secondary"
+            view="clear"
+            to={createHref(p)}>
+            {p.name}
+          </Button>
           <small style={{ marginLeft: '10px' }}>{p.manufacturer}</small>
         </div>
       ),
