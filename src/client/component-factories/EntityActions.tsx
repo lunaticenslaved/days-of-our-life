@@ -3,6 +3,9 @@ import { ConfirmDialog } from '#/client/components/ConfirmDialog';
 import { useDialog } from '#/ui-lib/atoms/Dialog';
 import { FC, Fragment } from 'react';
 
+// FIXME переделать на одиночные обработчики событий (обязательные)
+// TODO добавить асинхронные обработчики. Блокировать кнопку и показывать лоадер
+
 interface ActionConfig {
   text: string;
   confirm?: {

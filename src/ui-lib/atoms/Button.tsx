@@ -3,6 +3,7 @@ import { Color, getColorShade } from '#/ui-lib/utils/color';
 import { getDimensions } from '#/ui-lib/utils/dimensions';
 import { DEFAULT_SIZE, Size } from '#/ui-lib/utils/size';
 import { TRANSITION_ALL } from '#/ui-lib/utils/transition';
+import shouldForwardProp from '@styled-system/should-forward-prop';
 import React from 'react';
 import { LinkProps, Link } from 'react-router-dom';
 import styled, { StyledObject } from 'styled-components';
@@ -88,13 +89,15 @@ type ButtonButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
   CommonButtonProps & {
     component?: 'button';
   };
-const ButtonButton = styled.div.withConfig({})<ButtonButtonProps>(props => {
-  const style = getStyle(props);
+const ButtonButton = styled.button.withConfig({ shouldForwardProp })<ButtonButtonProps>(
+  props => {
+    const style = getStyle(props);
 
-  return {
-    ...style,
-  };
-});
+    return {
+      ...style,
+    };
+  },
+);
 
 // --- Anchor ------------------------------------------------------------------------------
 type AnchorButtonProps = React.AnchorHTMLAttributes<HTMLAnchorElement> &

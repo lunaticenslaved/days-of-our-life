@@ -1,15 +1,16 @@
 import { FoodProduct, multiplyNutrients, roundNutrients } from '#/shared/models/food';
 import { Button } from '#/ui-lib/atoms/Button';
 import _ from 'lodash';
+import { ReactNode } from 'react';
 
 interface FoodProductTablesProps {
   products: FoodProduct[];
   createHref(product: FoodProduct): string;
-  onDelete(product: FoodProduct): void;
+  renderActions: (product: FoodProduct) => ReactNode;
 }
 
 export function FoodProductsTable(props: FoodProductTablesProps) {
-  const { products, onDelete } = props;
+  const { products, renderActions } = props;
 
   const preparedProducts = products.map(product => {
     return {
@@ -59,7 +60,7 @@ export function FoodProductsTable(props: FoodProductTablesProps) {
     {
       title: '',
       getValue: (product: FoodProduct) => {
-        return <Button onClick={onDelete.bind(null, product)}>Удалить</Button>;
+        return <>{renderActions(product)}</>;
       },
     },
   ];
