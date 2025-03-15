@@ -1,12 +1,11 @@
 import { ComponentProps } from 'react';
 import { FoodProductActions as ActionsComponent } from '../components/Actions';
-import { nonReachable } from '#/shared/utils';
 import { useFoodNavigation } from '#/client/pages/food';
 import { useDeleteFoodProductMutation } from '#/client/store';
 
 type FoodProductActionsProps = Omit<
   ComponentProps<typeof ActionsComponent>,
-  'onAction' | 'disabled'
+  'loading' | 'disabled' | 'onDelete' | 'onEdit'
 >;
 
 export function FoodProductActions(props: FoodProductActionsProps) {
@@ -17,16 +16,17 @@ export function FoodProductActions(props: FoodProductActionsProps) {
   return (
     <ActionsComponent
       {...props}
-      onAction={(action, product) => {
-        if (action === 'delete') {
-          deleteFoodProductMutation.mutate({
-            id: product.id,
-          });
-        } else if (action === 'edit') {
-          navigation.toProductOverview({ productId: product.id });
-        } else {
-          nonReachable(action);
-        }
+      onDelete={product => {
+        deleteFoodProductMutation.mutate({
+          id: product.id,
+        });
+      }}
+      onEdit={product => {
+        navigation.toProductOverview({ productId: product.id });
+      }}
+      loading={{
+        edit: false,
+        delete: deleteFoodProductMutation.isPending,
       }}
       disabled={{
         edit: false,

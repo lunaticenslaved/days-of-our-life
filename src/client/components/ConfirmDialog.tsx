@@ -1,12 +1,13 @@
 import { Button } from '#/ui-lib/atoms/Button';
 import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
+import { usePendingCall } from '#/ui-lib/hooks';
 
 interface ConfirmDialogProps {
   dialog: IDialog;
   title: string;
   text: string;
   submitText: string;
-  onSubmit(): void;
+  onSubmit(): void | Promise<void>;
   onCancel?(): void;
 }
 
@@ -18,6 +19,8 @@ export function ConfirmDialog({
   onSubmit,
   onCancel,
 }: ConfirmDialogProps) {
+  const [isPending, pendingCall] = usePendingCall(onSubmit);
+
   return (
     <Dialog dialog={dialog}>
       <Dialog.Header>{title}</Dialog.Header>
@@ -30,7 +33,9 @@ export function ConfirmDialog({
           }}>
           Отмена
         </Button>
-        <Button onClick={onSubmit}>{submitText}</Button>
+        <Button disabled={isPending} loading={isPending} onClick={pendingCall}>
+          {submitText}
+        </Button>
       </Dialog.Footer>
     </Dialog>
   );

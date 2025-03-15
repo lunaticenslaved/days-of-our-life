@@ -1,9 +1,9 @@
+import { useClickOutside } from '#/ui-lib/hooks';
 import {
   createContext,
   PropsWithChildren,
   RefObject,
   useContext,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -113,46 +113,6 @@ function PopupContent({ children }: PropsWithChildren) {
   );
 }
 Popup.displayName = 'Popup.Content';
-
-// FIXME move to another place
-function useClickOutside(
-  elementRef: RefObject<Element> | RefObject<Element>[],
-  cb: (event: MouseEvent) => void,
-) {
-  useEffect(() => {
-    function call(event: MouseEvent) {
-      const forElement = (element: RefObject<Element>) => {
-        if (!element.current) {
-          return false;
-        }
-
-        if (!event.target || element.current.contains(event.target as Node)) {
-          return false;
-        }
-
-        return true;
-      };
-
-      let isClickedOutside = false;
-
-      if (Array.isArray(elementRef)) {
-        isClickedOutside = elementRef.every(forElement);
-      } else {
-        isClickedOutside = forElement(elementRef);
-      }
-
-      if (isClickedOutside) {
-        cb(event);
-      }
-    }
-
-    document.addEventListener('click', call);
-
-    return () => {
-      document.removeEventListener('click', call);
-    };
-  }, [cb, elementRef]);
-}
 
 Popup.Trigger = PopupTrigger;
 Popup.Content = PopupContent;

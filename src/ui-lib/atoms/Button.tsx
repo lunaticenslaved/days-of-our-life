@@ -14,11 +14,13 @@ type ButtonView = 'clear' | 'filled' | 'outlined';
 const DEFAULT_COLOR: Color = 'primary';
 const DEFAULT_VIEW: ButtonView = 'filled';
 
+// FIXME add disabled and loading ui
 type CommonButtonProps = {
   color?: Color;
   size?: Size;
   view?: ButtonView;
   disabled?: boolean;
+  loading?: boolean;
 };
 
 function getStyle({

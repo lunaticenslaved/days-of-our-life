@@ -2,9 +2,8 @@ import { Button } from '#/ui-lib/atoms/Button';
 import { ConfirmDialog } from '#/client/components/ConfirmDialog';
 import { useDialog } from '#/ui-lib/atoms/Dialog';
 import { FC, Fragment } from 'react';
-
-// FIXME переделать на одиночные обработчики событий (обязательные)
-// TODO добавить асинхронные обработчики. Блокировать кнопку и показывать лоадер
+import _ from 'lodash';
+import { usePendingCall } from '#/ui-lib/hooks';
 
 interface ActionConfig {
   text: string;
@@ -21,60 +20,49 @@ interface CreateEntityActionsProps<TEntity, TAction extends string> {
   actions: Record<TAction, ActionConfig>;
 }
 
-interface EntityActionsProps<TEntity, TAction extends string> {
+type CamelCase<S extends string> = S extends `${infer P1}_${infer P2}${infer P3}`
+  ? `${Lowercase<P1>}${Uppercase<P2>}${CamelCase<P3>}`
+  : S extends `${infer P1}-${infer P2}${infer P3}`
+  ? `${Lowercase<P1>}${Uppercase<P2>}${CamelCase<P3>}`
+  : Lowercase<S>;
+
+type ActionHandlerKey<TAction extends string> = `on${Capitalize<CamelCase<TAction>>}`;
+type ActionHandler<TEntity> = (entity: TEntity) => void | Promise<void>;
+
+type EntityActionsProps<TEntity, TAction extends string> = {
   entity: TEntity;
-  onAction(action: TAction, entity: TEntity): void;
   disabled: Record<TAction, boolean>;
-}
+  loading: Record<TAction, boolean>;
+} & Record<ActionHandlerKey<TAction>, ActionHandler<TEntity>>;
 
 export function createEntityActions<TEntity, TAction extends string>({
   entityName,
   actions,
   getActions,
 }: CreateEntityActionsProps<TEntity, TAction>) {
-  const Component: FC<EntityActionsProps<TEntity, TAction>> = ({
-    entity,
-    onAction,
-    disabled,
-  }) => {
-    const confirmingDialog = useDialog();
-    const actionKeys = getActions(entity);
+  const Component: FC<EntityActionsProps<TEntity, TAction>> = componentProps => {
+    const { entity, disabled, loading } = componentProps;
 
     return (
       <>
-        {actionKeys.map(key => {
-          const { text, confirm } = actions[key];
-          const callAction = () => {
-            onAction(key, entity);
-          };
+        {getActions(entity).map(actionKey => {
+          const actionHandlerKey = `on${_.capitalize(
+            _.camelCase(actionKey),
+          )}` as ActionHandlerKey<TAction>;
+          const actionHandler = componentProps[
+            actionHandlerKey
+          ] as ActionHandler<TEntity>;
 
           return (
-            <Fragment key={key}>
-              {confirm && confirmingDialog.isOpen && (
-                <ConfirmDialog
-                  dialog={confirmingDialog}
-                  title={confirm.title}
-                  text={confirm.description}
-                  submitText={confirm.submitText}
-                  onCancel={confirmingDialog.close}
-                  onSubmit={() => {
-                    confirmingDialog.close();
-                    callAction();
-                  }}
-                />
-              )}
-              <Button
-                disabled={disabled[key]}
-                onClick={() => {
-                  if (confirm) {
-                    confirmingDialog.open();
-                  } else {
-                    callAction();
-                  }
-                }}>
-                {text}
-              </Button>
-            </Fragment>
+            <Action
+              key={actionKey}
+              config={actions[actionKey]}
+              disabled={disabled[actionKey]}
+              loading={loading[actionKey]}
+              onAct={() => {
+                actionHandler(entity);
+              }}
+            />
           );
         })}
       </>
@@ -84,6 +72,51 @@ export function createEntityActions<TEntity, TAction extends string>({
   Component.displayName = `${entityName}ActionsFactory`;
 
   return Component;
+}
+
+function Action({
+  config,
+  onAct,
+  disabled,
+  loading,
+}: {
+  config: ActionConfig;
+  onAct: () => void | Promise<void>;
+  disabled: boolean;
+  loading: boolean;
+}) {
+  const confirmingDialog = useDialog();
+  const [isPending, act] = usePendingCall(onAct);
+
+  return (
+    <Fragment>
+      {config.confirm && confirmingDialog.isOpen && (
+        <ConfirmDialog
+          dialog={confirmingDialog}
+          title={config.confirm.title}
+          text={config.confirm.description}
+          submitText={config.confirm.submitText}
+          onCancel={confirmingDialog.close}
+          onSubmit={async () => {
+            confirmingDialog.close();
+            await onAct();
+          }}
+        />
+      )}
+      <Button
+        loading={loading || isPending}
+        disabled={disabled || isPending}
+        onClick={() => {
+          if (config.confirm) {
+            confirmingDialog.open();
+          } else {
+            act();
+          }
+        }}>
+        {config.text}
+      </Button>
+    </Fragment>
+  );
 }
 
 export const EntityActionsTemplate = {

@@ -1,6 +1,6 @@
 import { ComponentProps } from 'react';
 import { ActionsComponent } from '../components/Actions';
-import { assertDefined, nonReachable } from '#/shared/utils';
+import { assertDefined } from '#/shared/utils';
 import {
   useDeleteFoodMealItem,
   useListFoodProductsQuery,
@@ -61,19 +61,20 @@ export function ActionsContainer({ entity, ...props }: ActionsContainerProps) {
 
       <ActionsComponent
         {...props}
+        entity={entity}
+        loading={{
+          delete: deletingMutation.isPending,
+          edit: updatingMutation.isPending,
+        }}
         disabled={{
           delete: deletingMutation.isPending,
           edit: updatingMutation.isPending,
         }}
-        entity={entity}
-        onAction={(action, mealItem) => {
-          if (action === 'delete') {
-            deletingMutation.mutate(mealItem);
-          } else if (action === 'edit') {
-            editingDialog.open();
-          } else {
-            nonReachable(action);
-          }
+        onDelete={mealItem => {
+          deletingMutation.mutate(mealItem);
+        }}
+        onEdit={() => {
+          editingDialog.open();
         }}
       />
     </>

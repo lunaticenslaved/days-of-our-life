@@ -8,7 +8,6 @@ import {
   useUpdateCosmeticINCIIngredientMutation,
 } from '#/client/store';
 import { CosmeticINCIIngredient } from '#/shared/models/cosmetic';
-import { nonReachable } from '#/shared/utils';
 import { useDialog } from '#/ui-lib/atoms/Dialog';
 
 type Actions = 'edit' | 'delete';
@@ -57,19 +56,20 @@ export function CosmeticINCIIngredientActions({
       />
 
       <BaseComponent
+        loading={{
+          delete: deletingMutation.isPending,
+          edit: updatingMutation.isPending,
+        }}
         disabled={{
           delete: deletingMutation.isPending,
           edit: updatingMutation.isPending,
         }}
         entity={ingredient}
-        onAction={action => {
-          if (action === 'delete') {
-            deletingMutation.mutate(ingredient);
-          } else if (action === 'edit') {
-            editingDialog.open();
-          } else {
-            nonReachable(action);
-          }
+        onDelete={() => {
+          deletingMutation.mutate(ingredient);
+        }}
+        onEdit={() => {
+          editingDialog.open();
         }}
       />
     </>
