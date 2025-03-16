@@ -1,5 +1,8 @@
+import { THEME } from '#/ui-lib/theme';
 import { InputProps as BaseInputProps } from '#/ui-lib/types';
 import { getDimensions } from '#/ui-lib/utils/dimensions';
+import { Size } from '#/ui-lib/utils/size';
+import { getSpacingStyles } from '#/ui-lib/utils/spacing';
 import {
   forwardRef,
   InputHTMLAttributes,
@@ -8,6 +11,8 @@ import {
   useRef,
   useState,
 } from 'react';
+
+const SIZE: Size = 'm';
 
 type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, keyof BaseInputProps> &
   BaseInputProps<string | null> & {
@@ -43,12 +48,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         ref={ref}
         {...props}
         style={{
-          height: '100%',
+          height: getDimensions(THEME.components.input.height[SIZE]),
+          borderRadius: getDimensions(THEME.components.input.borderRadius[SIZE]),
           width: '100%',
-          padding: getDimensions(2),
           outlineWidth: '0',
-          margin: '0',
           border: 'none',
+          ...getSpacingStyles(THEME.components.input.spacing[SIZE]),
           ...props.style,
         }}
         value={localValue || ''}

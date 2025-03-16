@@ -1,16 +1,19 @@
-import { Color, getColorShade } from '#/ui-lib/utils/color';
+import { Color, ColorInherit, getTextColor } from '#/ui-lib/utils/color';
 import { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-const DEAFULT_COLOR: Color = 'primary';
+// --- Settings -----------------------------------------------------------------
+const DEFAULT_COLOR = 'primary';
 
-const getTextColor = ({ color = DEAFULT_COLOR }: Partial<ColorProps>) => {
-  return color === 'inherit' ? 'inherit' : getColorShade(color, 'main');
+type CommonProps = {
+  color?: Color | ColorInherit;
 };
 
-type ColorProps = { color?: Color | 'inherit' };
-type LinkProps = HTMLAttributes<HTMLAnchorElement> & Partial<ColorProps>;
+// --- Link ---------------------------------------------------------------------
+type LinkProps = HTMLAttributes<HTMLAnchorElement> & CommonProps;
 export const Link = styled.a<LinkProps>`
-  color: ${getTextColor};
+  color: ${props => {
+    return getTextColor(props.color || DEFAULT_COLOR);
+  }};
   text-decoration: none;
 `;

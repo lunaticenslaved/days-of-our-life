@@ -2,10 +2,14 @@ export const DEFAULT_SIZE: Size = 'm';
 
 export type Size = 's' | 'm' | 'l';
 
-export function recordSize<T>(fn: (size: Size) => T): Record<Size, T> {
-  return {
-    s: fn('s'),
-    m: fn('m'),
-    l: fn('l'),
-  };
+export function sizeMap<T>(arg: ((size: Size) => T) | Record<Size, T>): Record<Size, T> {
+  if (typeof arg === 'function') {
+    return {
+      s: arg('s'),
+      m: arg('m'),
+      l: arg('l'),
+    };
+  }
+
+  return arg;
 }

@@ -1,13 +1,9 @@
-import {
-  Dimension,
-  getDimensions,
-  getSpacingsStyles,
-  SpacingProps,
-} from '#/ui-lib/utils/dimensions';
+import { Dimension, getDimensions } from '#/ui-lib/utils/dimensions';
 import { CSSProperties } from 'react';
 import styled from 'styled-components';
 import shouldForwardProp from '@styled-system/should-forward-prop';
 import { getHeightStyles, HeightProps } from '#/ui-lib/utils/height';
+import { getSpacingStyles, SpacingProps } from '#/ui-lib/utils/spacing';
 
 // --- Settings ---------------------------------------------------------------
 const DEFAULT_GAP: Dimension = 0;
@@ -42,7 +38,7 @@ const FlexRoot = styled.div.withConfig({ shouldForwardProp })<FlexRootProps>(pro
     alignItems: props.alignItems,
     justifyContent: props.justifyContent,
     gap,
-    ...getSpacingsStyles(props),
+    ...getSpacingStyles(props.spacing || {}),
     ...getHeightStyles(props),
   };
 });

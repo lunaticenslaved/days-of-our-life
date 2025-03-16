@@ -1,6 +1,6 @@
 import { nonReachable } from '#/shared/utils';
+import { checkProps } from '#/ui-lib/utils/common';
 import { getDimensions } from '#/ui-lib/utils/dimensions';
-import shouldForwardProp from '@styled-system/should-forward-prop';
 import styled, { StyledObject } from 'styled-components';
 
 // --- Settings ---------------------------------------------------------------------------
@@ -8,6 +8,10 @@ type TextVariant = 'body-m' | 'header-m';
 type CommonTextProps = {
   variant?: TextVariant;
 };
+
+const shouldForwardProp = checkProps<CommonTextProps>({
+  variant: false,
+});
 
 const DEFAULT_VARIANT: TextVariant = 'body-m';
 

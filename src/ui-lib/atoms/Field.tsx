@@ -183,8 +183,6 @@ function FieldInput({
     <div
       ref={ref}
       style={{
-        height: getDimensions(8),
-        borderRadius: getDimensions(1),
         overflow: 'hidden',
         ...(isFocusWithin
           ? {

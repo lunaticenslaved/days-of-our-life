@@ -1,29 +1,44 @@
 import { nonReachable } from '#/shared/utils';
-import { getSpacingsStyles, SpacingProps } from '#/ui-lib/utils/dimensions';
 import { FlexChildProps, getFlexChildStyles } from '#/ui-lib/utils/flex';
 import { getHeightStyles, HeightProps } from '#/ui-lib/utils/height';
 import { getOverflowStyles, OverflowProps } from '#/ui-lib/utils/overflow';
 import React from 'react';
 import styled, { StyledObject } from 'styled-components';
-import shouldForwardProp from '@styled-system/should-forward-prop';
-import { Color, getColorShade } from '#/ui-lib/utils/color';
+import {
+  ColorInherit,
+  ColorProps,
+  ColorTransparent,
+  getColor,
+  getTextColor,
+} from '#/ui-lib/utils/color';
+import { checkProps } from '#/ui-lib/utils/common';
+import { getSpacingStyles, SpacingProps } from '#/ui-lib/utils/spacing';
 
 // --- Settings ---------------------------------------------------------------
+const DEFAULT_BG_COLOR = 'transparent';
+
 type CommonProps = SpacingProps &
   OverflowProps &
   HeightProps &
-  FlexChildProps & {
-    color?: Color;
-  };
+  FlexChildProps &
+  ColorProps<ColorInherit | ColorTransparent>;
 
-function getStyles(props: CommonProps): StyledObject {
+const shouldForwardProp = checkProps<CommonProps>({
+  color: false,
+  flexGrow: false,
+  height: false,
+  overflow: false,
+  spacing: false,
+});
+
+function getStyles({ color = DEFAULT_BG_COLOR, ...props }: CommonProps): StyledObject {
   const result: StyledObject = {
-    ...getSpacingsStyles(props),
+    ...getSpacingStyles(props.spacing || {}),
     ...getOverflowStyles(props),
     ...getHeightStyles(props),
     ...getFlexChildStyles(props),
-    backgroundColor: getColorShade(props.color || 'inherit', 'main'),
-    color: props.color ? getColorShade(props.color, 'contrastText') : undefined,
+    backgroundColor: getColor({ color, shade: 'main' }),
+    color: getTextColor(color),
   };
 
   return result;
