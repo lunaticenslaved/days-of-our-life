@@ -10,8 +10,7 @@ import RecipesRoot from './recipes/Root';
 import RecipeCreate from './recipes/Create';
 import RecipeOverview from './recipes/[recipeId]/Overview';
 import RecipeEdit from './recipes/[recipeId]/Edit';
-import { SubNavigationItem, useNavigationContext } from '#/client/widgets/navigation';
-import { useEffect } from 'react';
+import { SubNavigation, SubNavigationItem } from '#/client/widgets/navigation';
 
 type RecipeId = { recipeId: string };
 type ProductId = { productId: string };
@@ -58,13 +57,24 @@ export function useFoodPageParams() {
 
 export const useFoodNavigation = createNavigationHook(FOOD_NAVIGATION);
 
+const SUBNAVIGATION_ITEMS: SubNavigationItem[] = [
+  {
+    to: FOOD_NAVIGATION.toProducts(),
+    title: 'Продукты',
+  },
+  {
+    to: FOOD_NAVIGATION.toRecipes(),
+    title: 'Рецепты',
+  },
+];
+
 export default [
   <Route
     key="food"
     path={routes.root}
     element={
       <>
-        <Navigation />
+        <SubNavigation items={SUBNAVIGATION_ITEMS} />
         <Outlet />
       </>
     }>
@@ -80,29 +90,3 @@ export default [
     <Route path={routes.recipeEdit} element={<RecipeEdit />} />
   </Route>,
 ];
-
-const SUBNAVIGATION_ITEMS: SubNavigationItem[] = [
-  {
-    to: FOOD_NAVIGATION.toProducts(),
-    title: 'Продукты',
-  },
-  {
-    to: FOOD_NAVIGATION.toRecipes(),
-    title: 'Рецепты',
-  },
-];
-
-function Navigation() {
-  const navigationContext = useNavigationContext();
-
-  useEffect(() => {
-    navigationContext.setSubNavigation(SUBNAVIGATION_ITEMS);
-
-    return () => {
-      navigationContext.removeSubNavigation();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  return null;
-}

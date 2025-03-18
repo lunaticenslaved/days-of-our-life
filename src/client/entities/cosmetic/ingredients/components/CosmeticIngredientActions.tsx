@@ -12,6 +12,8 @@ interface CosmeticIngredientActionsProps {
   ingredient: CosmeticIngredient;
 }
 
+// FIXME replace with factory
+
 export function CosmeticIngredientActions({
   ingredient,
 }: CosmeticIngredientActionsProps) {
@@ -27,8 +29,12 @@ export function CosmeticIngredientActions({
 
   return (
     <>
-      <Button onClick={updateDialog.open}>Редактировать</Button>
-      <Button onClick={deleteDialog.open}>Удалить</Button>
+      <Button onClick={updateDialog.open} view="outlined">
+        Редактировать
+      </Button>
+      <Button onClick={deleteDialog.open} view="outlined">
+        Удалить
+      </Button>
 
       {deleteDialog.isOpen && (
         <ConfirmDialog

@@ -5,15 +5,15 @@ import {
   useFoodProductFilters,
 } from '#/client/entities/food';
 import { useListFoodProductsQuery } from '#/client/store';
-import { Page as PageWidget } from '#/client/widgets/Page';
+import { Page } from '#/client/widgets/Page';
 
-export default function Page() {
+export default function FoodProductsPage() {
   const { data: products = [] } = useListFoodProductsQuery();
 
   const productsFilters = useFoodProductFilters();
 
   return (
-    <PageWidget
+    <Page
       title="Продукты"
       actions={<FoodProductCreatingAction />}
       filters={
@@ -23,6 +23,6 @@ export default function Page() {
         />
       }>
       <FoodProductsTable products={productsFilters.filter(products)} />
-    </PageWidget>
+    </Page>
   );
 }

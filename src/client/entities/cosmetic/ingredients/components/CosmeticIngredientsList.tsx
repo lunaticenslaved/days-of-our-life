@@ -13,8 +13,8 @@ export function CosmeticIngredientsList({ renderAction }: CosmeticIngredientsLis
     <ul>
       {(listCosmeticIngredientQuery.data || []).map(ingredient => {
         return (
-          <li key={ingredient.id} style={{ display: 'flex' }}>
-            <div>{ingredient.name}</div>
+          <li key={ingredient.id} style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ flexGrow: 1 }}>{ingredient.name}</div>
             <div>{!!renderAction && renderAction(ingredient)}</div>
           </li>
         );

@@ -1,20 +1,20 @@
 import { FOOD_NAVIGATION } from '#/client/pages/food';
 import { useListFoodRecipesQuery } from '#/client/store';
 import { Button } from '#/ui-lib/atoms/Button';
-import { Page as PageWidget } from '#/client/widgets/Page';
+import { Page } from '#/client/widgets/Page';
 import {
   FoodRecipeFilters,
   FoodRecipesTable,
   useFoodRecipeFilters,
 } from '#/client/entities/food/recipes';
 
-export default function Page() {
+export default function FoodRecipesPage() {
   const { data: recipes = [] } = useListFoodRecipesQuery();
 
   const filters = useFoodRecipeFilters();
 
   return (
-    <PageWidget
+    <Page
       title="Рецепты"
       actions={
         <Button
@@ -31,6 +31,6 @@ export default function Page() {
         recipes={filters.filter(recipes)}
         to={recipe => FOOD_NAVIGATION.toRecipeOverview({ recipeId: recipe.id })}
       />
-    </PageWidget>
+    </Page>
   );
 }

@@ -1,18 +1,18 @@
 import {
-  CosmeticRecipeActions,
   CosmeticRecipeCommentActions,
   CosmeticRecipeCommentCreateAction,
   CosmeticRecipeCommentList,
 } from '#/client/entities/cosmetic';
+import { CosmeticRecipeActions } from '#/client/entities/cosmetic/recipes';
 import { useCosmeticNavigation, useCosmeticPageParams } from '#/client/pages/cosmetic';
 import {
   useGetCosmeticRecipeQuery,
   useListCosmeticIngredientsQuery,
   useListCosmeticRecipeCommentsQuery,
 } from '#/client/store';
-import { useQueryClient } from '@tanstack/react-query';
+import { Page } from '#/client/widgets/Page';
 
-export default function Overview() {
+export default function CosmeticRecipeOverviewPage() {
   const { recipeId = '' } = useCosmeticPageParams();
 
   const cosmeticNavigation = useCosmeticNavigation();
@@ -25,17 +25,16 @@ export default function Overview() {
   const cosmeticIngredients = listCosmeticIngredientsQuery.data;
   const comments = listCosmeticRecipeCommentsQuery.data;
 
-  const queryClient = useQueryClient();
-  const hasMutating = queryClient.isMutating() > 0;
-
   if (!recipe || !cosmeticIngredients || !comments) {
     return <div>Loading...</div>;
   }
 
   return (
-    <>
-      {String(hasMutating)}
-      <CosmeticRecipeActions recipe={recipe} onDeleted={cosmeticNavigation.toRecipes} />
+    <Page
+      title={recipe.name}
+      actions={
+        <CosmeticRecipeActions recipe={recipe} onDeleted={cosmeticNavigation.toRecipes} />
+      }>
       <div style={{ display: 'flex' }}>
         <div style={{ flexGrow: 1 }}>
           <div>
@@ -91,6 +90,6 @@ export default function Overview() {
           />
         </div>
       </div>
-    </>
+    </Page>
   );
 }

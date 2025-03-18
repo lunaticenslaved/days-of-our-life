@@ -1,11 +1,12 @@
-import { CosmeticRecipeForm } from '#/client/entities/cosmetic';
+import { CosmeticRecipeForm } from '#/client/entities/cosmetic/recipes';
 import { useCosmeticNavigation } from '#/client/pages/cosmetic';
 import {
   useCreateCosmeticRecipeMutation,
   useListCosmeticIngredientsQuery,
 } from '#/client/store';
+import { Page } from '#/client/widgets/Page';
 
-export default function Page() {
+export default function CosmeticRecipeCreatePage() {
   const listCosmeticIngredientsQuery = useListCosmeticIngredientsQuery();
 
   const cosmeticNavigation = useCosmeticNavigation();
@@ -16,9 +17,7 @@ export default function Page() {
   });
 
   return (
-    <div>
-      <h1>Создать рецепт</h1>
-
+    <Page title="Создать рецепт">
       <CosmeticRecipeForm
         ingredients={listCosmeticIngredientsQuery.data || []}
         onSubmit={async values => {
@@ -28,6 +27,6 @@ export default function Page() {
           });
         }}
       />
-    </div>
+    </Page>
   );
 }

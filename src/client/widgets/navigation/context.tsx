@@ -1,4 +1,4 @@
-import { SubNavigationItem } from '#/client/widgets/navigation/types';
+import { SubNavigationItem } from './components/SubNavigation';
 import { createContext, ReactNode, useContext, useMemo, useState } from 'react';
 
 interface NavigationContext {

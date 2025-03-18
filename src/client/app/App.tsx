@@ -6,11 +6,7 @@ import FoodRouter, { FOOD_NAVIGATION } from '../pages/food';
 import DaysRouter, { DAYS_NAVIGATION } from '../pages/days';
 import CosmeticRouter, { COSMETIC_NAVIGATION } from '../pages/cosmetic';
 import MedicamentsRouter, { MEDICAMENTS_NAVIGATION } from '../pages/medicaments';
-import {
-  NavigationContextProvider,
-  SubNavigation,
-  TheLeftNavigation,
-} from '#/client/widgets/navigation';
+import { NavigationContextProvider } from '#/client/widgets/navigation';
 import { DialogContextProvider } from '#/ui-lib/atoms/Dialog';
 import { Box } from '#/ui-lib/atoms/Box';
 import isPropValid from '@emotion/is-prop-valid';
@@ -20,6 +16,8 @@ import { DaysIcon } from '#/client/entities/days';
 import { CosmeticIcon } from '#/client/entities/cosmetic';
 import { MedicamentsIcon } from '#/client/entities/medicament';
 import { Flex } from '#/ui-lib/atoms/Flex';
+import { TheLeftNavigation } from './components/TheLeftNavigation';
+import { TheSubNavigation } from './components/TheSubNavigation';
 
 const LINKS = [
   {
@@ -53,7 +51,7 @@ export function App() {
             <Flex height="100%">
               <Flex direction="row" height="100%">
                 <TheLeftNavigation items={LINKS} />
-                <SubNavigation />
+                <TheSubNavigation />
               </Flex>
 
               <Box overflow="auto" height="100%" flexGrow={1}>

@@ -3,17 +3,16 @@ import {
   CosmeticIngredientsList,
   CreateCosmeticIngredientAction,
 } from '#/client/entities/cosmetic';
+import { Page } from '#/client/widgets/Page';
 
-export default function Page() {
+export default function CosmeticIngredientRootPage() {
   return (
-    <>
-      <CreateCosmeticIngredientAction />
-
+    <Page title="Косметические ингредиенты" actions={<CreateCosmeticIngredientAction />}>
       <CosmeticIngredientsList
         renderAction={ingredient => {
           return <CosmeticIngredientActions ingredient={ingredient} />;
         }}
       />
-    </>
+    </Page>
   );
 }

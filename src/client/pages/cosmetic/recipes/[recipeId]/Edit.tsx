@@ -1,12 +1,13 @@
-import { CosmeticRecipeForm } from '#/client/entities/cosmetic';
+import { CosmeticRecipeForm } from '#/client/entities/cosmetic/recipes';
 import { useCosmeticNavigation, useCosmeticPageParams } from '#/client/pages/cosmetic';
 import {
   useGetCosmeticRecipeQuery,
   useListCosmeticIngredientsQuery,
   useUpdateCosmeticRecipeMutation,
 } from '#/client/store';
+import { Page } from '#/client/widgets/Page';
 
-export default function Page() {
+export default function CosmeticRecipeEditPage() {
   const { recipeId = '' } = useCosmeticPageParams();
 
   const getCosmeticRecipeQuery = useGetCosmeticRecipeQuery(recipeId);
@@ -29,9 +30,7 @@ export default function Page() {
   }
 
   return (
-    <div>
-      <h1>Редактировать рецепт</h1>
-
+    <Page title="Редактировать рецепт">
       <CosmeticRecipeForm
         recipe={recipe}
         ingredients={listCosmeticIngredientsQuery.data || []}
@@ -45,6 +44,6 @@ export default function Page() {
           });
         }}
       />
-    </div>
+    </Page>
   );
 }

@@ -34,8 +34,10 @@ export function createEntityList<TEntity, TProps = object>({
       <ul>
         {entities.map(entity => {
           return (
-            <li key={getEntityKey(entity)} style={{ display: 'flex' }}>
-              <div>{renderEntity(entity, props as TProps)}</div>
+            <li
+              key={getEntityKey(entity)}
+              style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ flexGrow: 1 }}>{renderEntity(entity, props as TProps)}</div>
               <div>{!!renderActions && renderActions(entity)}</div>
             </li>
           );

@@ -13,7 +13,7 @@ import RecipeEdit from './recipes/[recipeId]/Edit';
 import ProductOverview from './products/[productId]/Overview';
 import ProductEdit from './products/[productId]/Edit';
 import INCIIngredientsRoot from './inci-ingredients/Root';
-import { Link } from 'react-router-dom';
+import { SubNavigation, SubNavigationItem } from '#/client/widgets/navigation';
 
 type ProductId = { productId: string };
 type RecipeId = { recipeId: string };
@@ -78,23 +78,38 @@ export function useCosmeticPageParams() {
 
 export const useCosmeticNavigation = createNavigationHook(COSMETIC_NAVIGATION);
 
+const SUBNAVIGATION_ITEMS: SubNavigationItem[] = [
+  {
+    to: COSMETIC_NAVIGATION.toProducts(),
+    title: 'Продукты',
+  },
+  {
+    to: COSMETIC_NAVIGATION.toBenefits(),
+    title: 'Бенефиты',
+  },
+  {
+    to: COSMETIC_NAVIGATION.toIngredients(),
+    title: 'Ингредиенты',
+  },
+  {
+    to: COSMETIC_NAVIGATION.toINCIIngredients(),
+    title: 'INCI Ингредиенты',
+  },
+  {
+    to: COSMETIC_NAVIGATION.toRecipes(),
+    title: 'Рецепты',
+  },
+];
+
 export default [
   <Route
     key="cosmetic"
     path={routes.root}
     element={
-      <div style={{ display: 'flex' }}>
-        <aside style={{ width: '100px', display: 'flex', flexDirection: 'column' }}>
-          <Link to={COSMETIC_NAVIGATION.toProducts()}>Продукты</Link>
-          <Link to={COSMETIC_NAVIGATION.toBenefits()}>Бенефиты</Link>
-          <Link to={COSMETIC_NAVIGATION.toIngredients()}>Ингредиенты</Link>
-          <Link to={COSMETIC_NAVIGATION.toINCIIngredients()}>INCI Ингредиенты</Link>
-          <Link to={COSMETIC_NAVIGATION.toRecipes()}>Рецепты</Link>
-        </aside>
-        <div style={{ flexGrow: 1, overflow: 'auto' }}>
-          <Outlet />
-        </div>
-      </div>
+      <>
+        <SubNavigation items={SUBNAVIGATION_ITEMS} />
+        <Outlet />
+      </>
     }>
     {/* Products */}
     <Route path={routes.products} element={<ProductsRoot />} />

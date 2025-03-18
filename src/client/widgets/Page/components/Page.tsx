@@ -5,10 +5,12 @@ import { ReactNode, useEffect } from 'react';
 
 interface PageProps {
   title: string;
-  actions: ReactNode;
+  actions?: ReactNode;
   children: ReactNode;
   filters?: ReactNode;
 }
+
+// FIXME refactor component to use Page Context
 
 export function Page({ title, actions, children, filters }: PageProps) {
   useEffect(() => {

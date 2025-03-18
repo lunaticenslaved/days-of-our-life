@@ -12,7 +12,7 @@ const DEFAULT_GAP: Dimension = 0;
 type FlexRootProps = React.HTMLAttributes<HTMLDivElement> &
   SpacingProps &
   HeightProps &
-  Pick<CSSProperties, 'alignItems' | 'justifyContent'> & {
+  Pick<CSSProperties, 'alignItems' | 'justifyContent' | 'flexWrap'> & {
     component?: 'div';
     direction?: CSSProperties['flexDirection'];
     gap?: Dimension | `${Dimension} ${Dimension}`;

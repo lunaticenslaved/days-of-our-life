@@ -1,9 +1,10 @@
 import { Button } from '#/ui-lib/atoms/Button';
 import { ConfirmDialog } from '#/client/components/ConfirmDialog';
 import { useDialog } from '#/ui-lib/atoms/Dialog';
-import { FC, Fragment } from 'react';
+import { FC } from 'react';
 import _ from 'lodash';
 import { usePendingCall } from '#/ui-lib/hooks';
+import { Flex } from '#/ui-lib/atoms/Flex';
 
 interface ActionConfig {
   text: string;
@@ -44,7 +45,7 @@ export function createEntityActions<TEntity, TAction extends string>({
     const { entity, disabled, loading } = componentProps;
 
     return (
-      <>
+      <Flex alignItems="center" flexWrap="nowrap" gap={1}>
         {getActions(entity).map(actionKey => {
           const actionHandlerKey = `on${_.capitalize(
             _.camelCase(actionKey),
@@ -65,7 +66,7 @@ export function createEntityActions<TEntity, TAction extends string>({
             />
           );
         })}
-      </>
+      </Flex>
     );
   };
 
@@ -89,7 +90,7 @@ function Action({
   const [isPending, act] = usePendingCall(onAct);
 
   return (
-    <Fragment>
+    <>
       {config.confirm && confirmingDialog.isOpen && (
         <ConfirmDialog
           dialog={confirmingDialog}
@@ -106,6 +107,7 @@ function Action({
       <Button
         loading={loading || isPending}
         disabled={disabled || isPending}
+        view="clear"
         onClick={() => {
           if (config.confirm) {
             confirmingDialog.open();
@@ -115,7 +117,7 @@ function Action({
         }}>
         {config.text}
       </Button>
-    </Fragment>
+    </>
   );
 }
 

@@ -4,8 +4,9 @@ import {
   CosmeticINCIIngredientsList,
 } from '#/client/entities/cosmetic';
 import { useListCosmeticINCIIngredientsQuery } from '#/client/store';
+import { Page } from '#/client/widgets/Page';
 
-export default function Page() {
+export default function CosmeticINCIIngredientRootPage() {
   const listQuery = useListCosmeticINCIIngredientsQuery();
 
   if (!listQuery.data) {
@@ -13,14 +14,13 @@ export default function Page() {
   }
 
   return (
-    <>
-      <CosmeticINCIIngredientCreateAction />
+    <Page title="INCI-ингредиенты" actions={<CosmeticINCIIngredientCreateAction />}>
       <CosmeticINCIIngredientsList
         entities={listQuery.data}
         renderActions={ingredient => {
           return <CosmeticINCIIngredientActions ingredient={ingredient} />;
         }}
       />
-    </>
+    </Page>
   );
 }
