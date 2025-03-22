@@ -13,10 +13,7 @@ const schema = z.object({
   benefitIds: CosmeticINCIIngredientValidators.benefitIds,
 });
 
-export const CosmeticINCIIngredientFormDialog = createEntityFormDialog<
-  CosmeticINCIIngredient,
-  typeof schema
->({
+export const FormDialog = createEntityFormDialog<CosmeticINCIIngredient, typeof schema>({
   schema,
   titleText: {
     create: 'Добавление INCI ингредиента',

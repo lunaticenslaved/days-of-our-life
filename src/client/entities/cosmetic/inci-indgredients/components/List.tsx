@@ -1,7 +1,7 @@
 import { createEntityList } from '#/client/component-factories/EntityList';
 import { CosmeticINCIIngredient } from '#/shared/models/cosmetic';
 
-export const CosmeticINCIIngredientsList = createEntityList<CosmeticINCIIngredient>({
+export const ListComponent = createEntityList<CosmeticINCIIngredient>({
   entityName: 'CosmeticINCIIngredient',
   placeholder: {
     empty: 'Нет INCI-ингредиентов',

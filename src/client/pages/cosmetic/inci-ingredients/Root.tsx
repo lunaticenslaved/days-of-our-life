@@ -1,8 +1,7 @@
 import {
-  CosmeticINCIIngredientActions,
   CosmeticINCIIngredientCreateAction,
   CosmeticINCIIngredientsList,
-} from '#/client/entities/cosmetic';
+} from '#/client/entities/cosmetic/inci-indgredients';
 import { useListCosmeticINCIIngredientsQuery } from '#/client/store';
 import { Page } from '#/client/widgets/Page';
 
@@ -15,12 +14,7 @@ export default function CosmeticINCIIngredientRootPage() {
 
   return (
     <Page title="INCI-ингредиенты" actions={<CosmeticINCIIngredientCreateAction />}>
-      <CosmeticINCIIngredientsList
-        entities={listQuery.data}
-        renderActions={ingredient => {
-          return <CosmeticINCIIngredientActions ingredient={ingredient} />;
-        }}
-      />
+      <CosmeticINCIIngredientsList />
     </Page>
   );
 }

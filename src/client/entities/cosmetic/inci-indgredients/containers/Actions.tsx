@@ -1,8 +1,4 @@
-import {
-  createEntityActions,
-  EntityActionsTemplate,
-} from '#/client/component-factories/EntityActions';
-import { CosmeticINCIIngredientFormDialog } from '#/client/entities/cosmetic/inci-indgredients/components/FormDialog';
+import { FormDialog } from '../components/FormDialog';
 import {
   useDeleteCosmeticINCIIngredientMutation,
   useUpdateCosmeticINCIIngredientMutation,
@@ -10,40 +6,24 @@ import {
 import { CosmeticINCIIngredient } from '#/shared/models/cosmetic';
 import { useDialog } from '#/ui-lib/atoms/Dialog';
 
-type Actions = 'edit' | 'delete';
+import { ActionsComponent } from '../components/Actions';
 
-const BaseComponent = createEntityActions<CosmeticINCIIngredient, Actions>({
-  entityName: 'CosmeticINCIIngredient',
-  actions: {
-    edit: EntityActionsTemplate.edit,
-    delete: EntityActionsTemplate.delete,
-  },
-  getActions() {
-    return ['edit', 'delete'];
-  },
-});
-
-interface CosmeticINCIIngredientActionsProps {
+interface ActionsContainerProps {
   ingredient: CosmeticINCIIngredient;
-  onDelete?(): void;
+  onDeleted: () => void;
 }
 
-export function CosmeticINCIIngredientActions({
-  ingredient,
-  onDelete,
-}: CosmeticINCIIngredientActionsProps) {
+export function ActionsContainer({ ingredient, onDeleted }: ActionsContainerProps) {
   const updatingMutation = useUpdateCosmeticINCIIngredientMutation();
   const deletingMutation = useDeleteCosmeticINCIIngredientMutation({
-    onSuccess: () => {
-      onDelete?.();
-    },
+    onMutate: onDeleted,
   });
 
   const editingDialog = useDialog();
 
   return (
     <>
-      <CosmeticINCIIngredientFormDialog
+      <FormDialog
         dialog={editingDialog}
         entity={ingredient}
         isPending={updatingMutation.isPending}
@@ -55,7 +35,7 @@ export function CosmeticINCIIngredientActions({
         }}
       />
 
-      <BaseComponent
+      <ActionsComponent
         loading={{
           delete: deletingMutation.isPending,
           edit: updatingMutation.isPending,

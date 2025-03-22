@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { CosmeticBenefitMultipleSelect } from '#/client/entities/cosmetic/benefits/components/CosmeticBenefitSelect';
 import { createEntityFormDialog } from '#/client/component-factories/EntityFormDialog';
 import { TextArea } from '#/client/components/TextArea';
-import { CosmeticINCIIngredientMultipleSelect } from '#/client/entities/cosmetic/inci-indgredients/containers/MultipleSelect';
+import { CosmeticINCIIngredientMultipleSelect } from '#/client/entities/cosmetic/inci-indgredients';
 
 const schema = z.object({
   name: CosmeticIngredientValidators.name,

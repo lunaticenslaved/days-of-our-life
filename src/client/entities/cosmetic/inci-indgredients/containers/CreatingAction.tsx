@@ -1,13 +1,11 @@
 import { Button } from '#/ui-lib/atoms/Button';
 import { useCreateCosmeticINCIIngredientMutation } from '#/client/store';
 import { useDialog } from '#/ui-lib/atoms/Dialog';
-import { CosmeticINCIIngredientFormDialog } from '../components/FormDialog';
+import { FormDialog } from '../components/FormDialog';
 
-interface CosmeticINCIIngredientCreateActionProps {}
+interface CreatingActionProps {}
 
-export function CosmeticINCIIngredientCreateAction(
-  _: CosmeticINCIIngredientCreateActionProps,
-) {
+export function CreatingAction(_: CreatingActionProps) {
   const dialog = useDialog();
 
   const creatingMutation = useCreateCosmeticINCIIngredientMutation({
@@ -16,7 +14,7 @@ export function CosmeticINCIIngredientCreateAction(
 
   return (
     <>
-      <CosmeticINCIIngredientFormDialog
+      <FormDialog
         isPending={creatingMutation.isPending}
         dialog={dialog}
         onSubmit={values => {
