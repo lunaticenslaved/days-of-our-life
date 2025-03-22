@@ -1,7 +1,7 @@
 import { Field } from '#/ui-lib/atoms/Field';
 import { Input } from '#/ui-lib/atoms/Input';
-import { InputFieldProps } from '#/ui-lib/types';
-import { useCallback, useEffect, useState } from 'react';
+import { InputFieldProps, InputProps } from '#/ui-lib/types';
+import { ComponentProps, useCallback, useEffect, useState } from 'react';
 
 function convertInput(value: string | null): { number?: number; string?: string } {
   if (!value) {
@@ -102,5 +102,49 @@ export function NumberInputField({ label, ...props }: NumberInputFieldProps) {
       </Field.Input>
       <Field.Message />
     </Field>
+  );
+}
+
+type NumberInputProps = Omit<ComponentProps<typeof Input>, keyof InputProps> &
+  InputProps<number | null>;
+
+export function NumberInput(props: NumberInputProps) {
+  const valueProp = props.value;
+  const onValueUpdate = props.onValueUpdate;
+
+  const [numberValue, setNumberValue] = useState(() => {
+    return convertInput(String(valueProp)).number || null;
+  });
+  const [strValue, setStringValue] = useState(() => {
+    return convertInput(String(valueProp)).string || null;
+  });
+
+  const setValue = useCallback(
+    (newValue: string | null) => {
+      const { string, number } = convertInput(newValue);
+
+      setNumberValue(number || null);
+      setStringValue(string || null);
+      onValueUpdate?.(number || null);
+    },
+    [onValueUpdate],
+  );
+
+  useEffect(() => {
+    if (valueProp !== numberValue) {
+      setStringValue(convertInput(String(valueProp)).string || null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [valueProp]);
+
+  return (
+    <Input
+      {...props}
+      onValueUpdate={setValue}
+      value={strValue}
+      convertValue={newValue => {
+        return convertInput(newValue).string;
+      }}
+    />
   );
 }

@@ -10,6 +10,7 @@ import arrayMutators from 'final-form-arrays';
 import { Validator } from '#/shared/validation';
 import { z } from 'zod';
 import { FieldContext, InputFormFieldProps } from '#/ui-lib/types';
+import { FieldArray } from 'react-final-form-arrays';
 
 // --- Form Context -------------------------------------------------------
 // TODO
@@ -118,5 +119,6 @@ Field.displayName = 'Form.Field';
 
 // --- Exports --------------------------------------------------------------
 Form.Field = Field;
+Form.FieldArray = FieldArray;
 
 export { Form, useFormFieldContext };

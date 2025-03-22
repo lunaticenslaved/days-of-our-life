@@ -12,6 +12,8 @@ import {
   useState,
 } from 'react';
 
+// FIXME add state
+
 const SIZE: Size = 'm';
 
 type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, keyof BaseInputProps> &

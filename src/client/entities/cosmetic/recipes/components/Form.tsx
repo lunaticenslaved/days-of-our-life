@@ -1,10 +1,4 @@
 import { Button } from '#/ui-lib/atoms/Button';
-import { FinalForm } from '#/client/components/FForm';
-import { Form } from '#/client/components/Form';
-import { NumberInput } from '#/client/components/NumberInput';
-import { TextArea } from '#/client/components/TextArea';
-import { TextInput } from '#/client/components/TextInput';
-import { CosmeticIngredientSingleSelect } from '#/client/entities/cosmetic/ingredients/components/CosmeticIngredientSelect';
 import {
   CosmeticIngredient,
   CosmeticRecipe,
@@ -13,6 +7,13 @@ import {
 import { ERROR_MESSAGES } from '#/shared/validation';
 import { useMemo } from 'react';
 import { z } from 'zod';
+import { Form } from '#/ui-lib/atoms/Form';
+import { Field } from '#/ui-lib/atoms/Field';
+import { Box } from '#/ui-lib/atoms/Box';
+import { TextInput } from '#/ui-lib/molecules/TextInputField';
+import { Flex } from '#/ui-lib/atoms/Flex';
+import { CosmeticIngredientSingleSelect } from '#/client/entities/cosmetic/ingredients';
+import { NumberInput } from '#/ui-lib/molecules/NumberInputField';
 
 const schema = z.object({
   name: CosmeticRecipeValidators.name,
@@ -93,114 +94,182 @@ export function CosmeticRecipeForm({
   const initialValues = useMemo(() => getInitialValues(recipe), [recipe]);
 
   return (
-    <FinalForm schema={schema} onSubmit={onSubmit} initialValues={initialValues}>
-      {({ handleSubmit }) => (
-        <Form onSubmit={handleSubmit} style={{ maxWidth: '500px' }}>
-          <Form.Content>
-            <FinalForm.Field title="Имя" name="name" required>
-              {TextInput}
-            </FinalForm.Field>
+    <Form schema={schema} onSubmit={onSubmit} initialValues={initialValues}>
+      {({ handleSubmit }) => {
+        return (
+          <Flex direction="column" gap={4}>
+            <Form.Field<CosmeticRecipeFormValues['name'] | null> name={'name'} required>
+              {fieldProps => {
+                return (
+                  <Field>
+                    <Field.Label>Название</Field.Label>
+                    <Field.Input>
+                      <TextInput {...fieldProps.input} />
+                    </Field.Input>
+                    <Field.Message />
+                  </Field>
+                );
+              }}
+            </Form.Field>
 
-            <FinalForm.Field title="Описание" name="description">
-              {TextArea}
-            </FinalForm.Field>
+            <Box component="section">
+              {/* FIXME use Text */}
+              <h3>Фазы</h3>
 
-            <section>
-              <h2>Фазы</h2>
-              <FinalForm.FieldArray<CosmeticRecipeFormValues['phases'][number]>
-                name="phases"
-                addButtonText="Добавить фазу"
-                newElement={{
-                  name: '',
-                  ingredients: [
-                    {
-                      ingredientId: '',
-                      comment: '',
-                      percent: null as unknown as number,
-                    },
-                  ],
-                }}
-                renderField={({ name, fields, index }) => {
+              <Form.FieldArray<CosmeticRecipeFormValues['phases'][number]> name="phases">
+                {({ fields: phasesPields }) => {
                   return (
-                    <div style={{ marginBottom: '20px' }}>
-                      <Button
-                        onClick={() => {
-                          fields.remove(index);
-                        }}>
-                        Удалить фазу
-                      </Button>
-
-                      <FinalForm.Field name={`${name}.name`} title="Название" required>
-                        {fieldProps => {
-                          return <TextInput {...fieldProps} />;
-                        }}
-                      </FinalForm.Field>
-
-                      <FinalForm.FieldArray<
-                        CosmeticRecipeFormValues['phases'][number]['ingredients'][number]
-                      >
-                        name={`${name}.ingredients`}
-                        addButtonText="Добавить ингредиент"
-                        newElement={{}}
-                        renderField={ingredientField => {
+                    <Flex direction="column" gap={4}>
+                      <Flex direction="column" gap={2}>
+                        {phasesPields.map((phaseFieldName, phaseIndex) => {
                           return (
-                            <div style={{ marginBottom: '20px', display: 'flex' }}>
-                              <FinalForm.Field
-                                required
-                                name={`${ingredientField.name}.ingredientId`}
-                                title="Ингредиент">
-                                {fieldProps => {
+                            <Box key={phaseFieldName} spacing={{ mb: 4 }}>
+                              <Flex direction="row" alignItems="center" gap={1}>
+                                <Form.Field<string | null>
+                                  name={`${phaseFieldName}.name`}
+                                  required>
+                                  {fieldProps => {
+                                    return (
+                                      <Field direction="horizontal">
+                                        <Field.Label>Название</Field.Label>
+                                        <Field.Input>
+                                          <TextInput {...fieldProps.input} />
+                                        </Field.Input>
+                                        <Field.Message />
+                                      </Field>
+                                    );
+                                  }}
+                                </Form.Field>
+
+                                <Button
+                                  view="outlined"
+                                  onClick={() => {
+                                    phasesPields.remove(phaseIndex);
+                                  }}>
+                                  Удалить фазу
+                                </Button>
+                              </Flex>
+
+                              <Form.FieldArray<
+                                CosmeticRecipeFormValues['phases'][number]['ingredients'][number]
+                              >
+                                name={`${phaseFieldName}.ingredients`}>
+                                {({ fields: ingredientFields }) => {
                                   return (
-                                    <CosmeticIngredientSingleSelect
-                                      {...fieldProps}
-                                      entities={ingredients}
-                                    />
+                                    <Flex direction="column" gap={2}>
+                                      {ingredientFields.map(
+                                        (ingredientField, ingredientFieldIndex) => {
+                                          return (
+                                            <Flex gap={1} key={ingredientField}>
+                                              <Form.Field
+                                                required
+                                                name={`${ingredientField}.ingredientId`}>
+                                                {fieldProps => {
+                                                  return (
+                                                    <Field>
+                                                      <Field.Label>
+                                                        Ингредиент
+                                                      </Field.Label>
+                                                      <Field.Input>
+                                                        <CosmeticIngredientSingleSelect
+                                                          modelValue={
+                                                            fieldProps.input.value
+                                                          }
+                                                          onModelValueChange={
+                                                            fieldProps.input.onValueUpdate
+                                                          }
+                                                          entities={ingredients}
+                                                        />
+                                                      </Field.Input>
+                                                      <Field.Message />
+                                                    </Field>
+                                                  );
+                                                }}
+                                              </Form.Field>
+
+                                              <Form.Field<number | null>
+                                                name={`${ingredientField}.percent`}
+                                                required>
+                                                {fieldProps => {
+                                                  return (
+                                                    <Field>
+                                                      <Field.Label>Процент</Field.Label>
+                                                      <Field.Input>
+                                                        <NumberInput
+                                                          {...fieldProps.input}
+                                                        />
+                                                      </Field.Input>
+                                                      <Field.Message />
+                                                    </Field>
+                                                  );
+                                                }}
+                                              </Form.Field>
+
+                                              <Form.Field<string | null>
+                                                name={`${phaseFieldName}.comment`}
+                                                required>
+                                                {fieldProps => {
+                                                  return (
+                                                    <Field>
+                                                      <Field.Label>
+                                                        Комментарий
+                                                      </Field.Label>
+                                                      <Field.Input>
+                                                        <TextInput
+                                                          {...fieldProps.input}
+                                                        />
+                                                      </Field.Input>
+                                                      <Field.Message />
+                                                    </Field>
+                                                  );
+                                                }}
+                                              </Form.Field>
+
+                                              <Button
+                                                type="button"
+                                                view="outlined"
+                                                onClick={() =>
+                                                  ingredientFields.remove(
+                                                    ingredientFieldIndex,
+                                                  )
+                                                }>
+                                                Удалить
+                                              </Button>
+                                            </Flex>
+                                          );
+                                        },
+                                      )}
+                                    </Flex>
                                   );
                                 }}
-                              </FinalForm.Field>
-
-                              <FinalForm.Field
-                                name={`${ingredientField.name}.percent`}
-                                title="Процент ввода"
-                                required>
-                                {NumberInput}
-                              </FinalForm.Field>
-
-                              <FinalForm.Field
-                                name={`${ingredientField.name}.comment`}
-                                title="Комментарий">
-                                {TextInput}
-                              </FinalForm.Field>
-
-                              <Button
-                                type="button"
-                                onClick={() =>
-                                  ingredientField.fields.remove(ingredientField.index)
-                                }>
-                                Удалить
-                              </Button>
-                            </div>
+                              </Form.FieldArray>
+                            </Box>
                           );
-                        }}
-                      />
-                    </div>
+                        })}
+                      </Flex>
+
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          phasesPields.push({
+                            name: '',
+                            ingredients: [],
+                          });
+                        }}>
+                        Добавить фазу
+                      </Button>
+                    </Flex>
                   );
                 }}
-              />
-            </section>
-          </Form.Content>
+              </Form.FieldArray>
+            </Box>
 
-          <Form.Footer>
-            {() => {
-              return (
-                <Button type="submit" onClick={handleSubmit}>
-                  Сохранить
-                </Button>
-              );
-            }}
-          </Form.Footer>
-        </Form>
-      )}
-    </FinalForm>
+            <Button type="submit" onClick={handleSubmit}>
+              Сохранить
+            </Button>
+          </Flex>
+        );
+      }}
+    </Form>
   );
 }

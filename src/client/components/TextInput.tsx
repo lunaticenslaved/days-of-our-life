@@ -2,7 +2,7 @@ import { ModelValueProps } from '#/client/types';
 import { HTMLProps } from 'react';
 
 interface TextInputProps
-  extends HTMLProps<HTMLInputElement>,
+  extends Omit<HTMLProps<HTMLInputElement>, keyof ModelValueProps>,
     ModelValueProps<string | undefined> {}
 
 export function TextInput({ modelValue, onModelValueChange, ...props }: TextInputProps) {

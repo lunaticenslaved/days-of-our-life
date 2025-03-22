@@ -17,7 +17,7 @@ const SelectWithRef = forwardRef<HTMLSelectElement, SelectProps>(function Select
 ) {
   if (props.multiple) {
     return (
-      <SelectContextProvider type="multiple">
+      <SelectContextProvider type="multiple" value={props.modelValue}>
         <SelectMultiple ref={ref} {...props}>
           {children}
         </SelectMultiple>
@@ -26,7 +26,7 @@ const SelectWithRef = forwardRef<HTMLSelectElement, SelectProps>(function Select
   }
 
   return (
-    <SelectContextProvider type="single">
+    <SelectContextProvider type="single" value={props.modelValue}>
       <SelectSingle ref={ref} {...props}>
         {children}
       </SelectSingle>
