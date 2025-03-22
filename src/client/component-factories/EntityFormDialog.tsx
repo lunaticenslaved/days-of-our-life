@@ -33,6 +33,7 @@ type ComponentProps<TEntity, TSchema extends Zod.SomeZodObject> = {
   isPending: boolean;
 };
 
+// FIXME use form from atoms
 export function createEntityFormDialog<
   TEntity,
   TSchema extends Zod.SomeZodObject,

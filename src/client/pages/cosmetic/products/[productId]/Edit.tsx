@@ -1,4 +1,4 @@
-import { CosmeticProductForm } from '#/client/entities/cosmetic';
+import { CosmeticProductForm } from '#/client/entities/cosmetic/products';
 import { useCosmeticNavigation, useCosmeticPageParams } from '#/client/pages/cosmetic';
 import {
   useGetCosmeticProductQuery,

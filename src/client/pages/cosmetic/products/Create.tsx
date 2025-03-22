@@ -1,4 +1,4 @@
-import { CosmeticProductForm } from '#/client/entities/cosmetic';
+import { CosmeticProductForm } from '#/client/entities/cosmetic/products';
 import { useCosmeticNavigation } from '#/client/pages/cosmetic';
 import { useCreateCosmeticProductMutation } from '#/client/store';
 

@@ -1,14 +1,3 @@
-// Products
-export { CosmeticProductForm } from './products/components/CosmeticProductForm';
-export { CosmeticProductsList } from './products/components/CosmeticProductsList';
-export { CosmeticProductActions } from './products/components/CosmeticProductActions';
-export {
-  CosmeticProductSingleSelect,
-  CosmeticProductMultipleSelect,
-} from './products/components/CosmeticProductSelect';
-export { AddCosmeticProductAction } from './products/containers/AddCosmeticProductAction';
-export { CosmeticProductApplicationsList } from './products/containers/CosmeticProductApplicationsList';
-
 // Benefits
 export { CosmeticBenefitActions } from './benefits/containers/CosmeticBenefitActions';
 export { CreateCosmeticBenefitAction } from './benefits/containers/CreateCosmeticBenefitAction';

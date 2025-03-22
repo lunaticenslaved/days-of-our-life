@@ -10,11 +10,11 @@ import {
   MedicamentIntakesList,
 } from '#/client/entities/medicament/components';
 import { Fragment, useMemo } from 'react';
-import {
-  AddCosmeticProductAction,
-  CosmeticProductApplicationsList,
-} from '#/client/entities/cosmetic';
 import { StartFemalePeriodAction } from '#/client/entities/female-period';
+import {
+  CosmeticProductApplicationCreatingAction,
+  CosmeticProductApplicationsList,
+} from '#/client/entities/cosmetic/product-applications';
 
 interface RenderDayPartProps {
   dayPart: DayPart;
@@ -97,7 +97,10 @@ export function Calendar({
     return (
       <>
         <CosmeticProductApplicationsList applications={items} />
-        <AddCosmeticProductAction date={arg.date} dayPartId={arg.dayPart.id} />
+        <CosmeticProductApplicationCreatingAction
+          date={arg.date}
+          dayPartId={arg.dayPart.id}
+        />
       </>
     );
   }

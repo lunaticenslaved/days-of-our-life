@@ -1,9 +1,6 @@
-import { CosmeticProductActions } from '#/client/entities/cosmetic';
+import { CosmeticProductActions } from '#/client/entities/cosmetic/products';
 import { useCosmeticNavigation, useCosmeticPageParams } from '#/client/pages/cosmetic';
-import {
-  useDeleteCosmeticProductMutation,
-  useGetCosmeticProductQuery,
-} from '#/client/store';
+import { useGetCosmeticProductQuery } from '#/client/store';
 
 export default function Page() {
   const { productId = '' } = useCosmeticPageParams();
@@ -11,7 +8,6 @@ export default function Page() {
   const navigation = useCosmeticNavigation();
 
   const getCosmeticProductQuery = useGetCosmeticProductQuery(productId);
-  const deleteCosmeticProductMutation = useDeleteCosmeticProductMutation();
 
   const product = getCosmeticProductQuery.data;
 
@@ -22,9 +18,8 @@ export default function Page() {
   return (
     <div>
       <CosmeticProductActions
-        onEdit={() => navigation.toProductEdit({ productId: product.id })}
-        onDelete={() => {
-          deleteCosmeticProductMutation.mutate(product);
+        product={product}
+        onDeleted={() => {
           navigation.toProducts();
         }}
       />

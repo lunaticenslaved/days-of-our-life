@@ -17,6 +17,7 @@ const schema = z.object({
   benefitIds: CosmeticIngredientValidators.benefitIds,
 });
 
+// FIXME use from field from atoms
 export const CosmeticIngredientFormDialog = createEntityFormDialog<
   CosmeticIngredient,
   typeof schema
