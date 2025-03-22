@@ -1,14 +1,12 @@
 import {
-  CosmeticRecipeCommentActions,
-  CosmeticRecipeCommentCreateAction,
-  CosmeticRecipeCommentList,
-} from '#/client/entities/cosmetic';
+  CosmeticRecipeCommentCreatingAction,
+  CosmeticRecipeCommentsList,
+} from '#/client/entities/cosmetic/recipe-comments';
 import { CosmeticRecipeActions } from '#/client/entities/cosmetic/recipes';
 import { useCosmeticNavigation, useCosmeticPageParams } from '#/client/pages/cosmetic';
 import {
   useGetCosmeticRecipeQuery,
   useListCosmeticIngredientsQuery,
-  useListCosmeticRecipeCommentsQuery,
 } from '#/client/store';
 import { Page } from '#/client/widgets/Page';
 
@@ -19,13 +17,11 @@ export default function CosmeticRecipeOverviewPage() {
 
   const getCosmeticRecipeQuery = useGetCosmeticRecipeQuery(recipeId);
   const listCosmeticIngredientsQuery = useListCosmeticIngredientsQuery();
-  const listCosmeticRecipeCommentsQuery = useListCosmeticRecipeCommentsQuery(recipeId);
 
   const recipe = getCosmeticRecipeQuery.data;
   const cosmeticIngredients = listCosmeticIngredientsQuery.data;
-  const comments = listCosmeticRecipeCommentsQuery.data;
 
-  if (!recipe || !cosmeticIngredients || !comments) {
+  if (!recipe || !cosmeticIngredients) {
     return <div>Loading...</div>;
   }
 
@@ -79,15 +75,8 @@ export default function CosmeticRecipeOverviewPage() {
 
         <div>
           <h3>Комментарии</h3>
-          <CosmeticRecipeCommentCreateAction recipeId={recipeId} />
-          <CosmeticRecipeCommentList
-            comments={comments}
-            renderActions={comment => {
-              return (
-                <CosmeticRecipeCommentActions comment={comment} recipeId={recipeId} />
-              );
-            }}
-          />
+          <CosmeticRecipeCommentCreatingAction recipeId={recipeId} />
+          <CosmeticRecipeCommentsList recipeId={recipeId} />
         </div>
       </div>
     </Page>
