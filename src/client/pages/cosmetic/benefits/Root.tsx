@@ -1,12 +1,12 @@
 import {
+  CosmeticBenefitCreatingAction,
   CosmeticBenefitsList,
-  CreateCosmeticBenefitAction,
-} from '#/client/entities/cosmetic';
+} from '#/client/entities/cosmetic/benefits';
 
 export default function Page() {
   return (
     <div>
-      <CreateCosmeticBenefitAction />
+      <CosmeticBenefitCreatingAction />
       <CosmeticBenefitsList />
     </div>
   );

@@ -6,7 +6,7 @@ import { FForm } from '#/client/components/FForm';
 import { Form } from '#/client/components/Form';
 import { z } from 'zod';
 import { useMemo } from 'react';
-import { CosmeticBenefitSingleSelect } from './CosmeticBenefitSelect';
+import { CosmeticBenefitSingleSelect } from './Select';
 import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
 
 const schema = z.object({

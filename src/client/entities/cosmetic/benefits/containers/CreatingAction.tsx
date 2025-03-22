@@ -3,7 +3,7 @@ import { CosmeticBenefitFormDialog } from '#/client/entities/cosmetic/benefits/c
 import { useCreateCosmeticBenefitMutation } from '#/client/store';
 import { useDialog } from '#/ui-lib/atoms/Dialog';
 
-export function CreateCosmeticBenefitAction() {
+export function CreatingAction() {
   const createDialog = useDialog();
 
   const createCosmeticBenefitMutation = useCreateCosmeticBenefitMutation({

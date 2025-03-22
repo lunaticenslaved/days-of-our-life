@@ -5,7 +5,7 @@ import {
 import { TextInput } from '#/client/components/TextInput';
 import { FinalForm } from '#/client/components/FForm';
 import { z } from 'zod';
-import { CosmeticBenefitMultipleSelect } from '#/client/entities/cosmetic/benefits/components/CosmeticBenefitSelect';
+import { CosmeticBenefitMultipleSelect } from '#/client/entities/cosmetic/benefits/components/Select';
 import { createEntityFormDialog } from '#/client/component-factories/EntityFormDialog';
 
 const schema = z.object({

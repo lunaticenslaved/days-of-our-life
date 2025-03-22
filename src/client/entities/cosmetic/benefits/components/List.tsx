@@ -5,12 +5,12 @@ import {
 } from '#/shared/models/cosmetic';
 import { ReactNode, useMemo } from 'react';
 
-interface CosmeticBenefitsListProps {
+interface ListComponentProps {
   benefits: CosmeticBenefit[];
   renderActions(benefit: CosmeticBenefit): ReactNode;
 }
 
-export function CosmeticBenefitsList({ benefits, ...props }: CosmeticBenefitsListProps) {
+export function ListComponent({ benefits, ...props }: ListComponentProps) {
   const tree = useMemo(() => {
     return CosmeticUtils.treeBenefits(benefits);
   }, [benefits]);
@@ -21,7 +21,7 @@ export function CosmeticBenefitsList({ benefits, ...props }: CosmeticBenefitsLis
 function Tree({
   tree,
   ...props
-}: Omit<CosmeticBenefitsListProps, 'benefits'> & { tree: CosmeticBenefitTree[] }) {
+}: Omit<ListComponentProps, 'benefits'> & { tree: CosmeticBenefitTree[] }) {
   const { renderActions } = props;
 
   return (

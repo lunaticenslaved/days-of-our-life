@@ -1,5 +1,3 @@
-import { Button } from '#/ui-lib/atoms/Button';
-import { ConfirmDialog } from '#/client/components/ConfirmDialog';
 import { CosmeticBenefitFormDialog } from '#/client/entities/cosmetic/benefits/components/CosmeticBenefitFormDialog';
 import {
   useCreateCosmeticBenefitMutation,
@@ -9,14 +7,16 @@ import {
 import { CosmeticBenefit } from '#/shared/models/cosmetic';
 import { useDialog } from '#/ui-lib/atoms/Dialog';
 
-interface CosmeticBenefitActionsProps {
+import { ActionsComponent } from '../components/Actions';
+
+interface ActionsContainerProps {
   benefit: CosmeticBenefit;
+  onDeleted: () => void;
 }
 
-export function CosmeticBenefitActions({ benefit }: CosmeticBenefitActionsProps) {
+export function ActionsContainer({ benefit, onDeleted }: ActionsContainerProps) {
   const createDialog = useDialog();
   const updateDialog = useDialog();
-  const deleteDialog = useDialog();
 
   const createCosmeticBenefitMutation = useCreateCosmeticBenefitMutation({
     onMutate: createDialog.close,
@@ -25,14 +25,29 @@ export function CosmeticBenefitActions({ benefit }: CosmeticBenefitActionsProps)
     onMutate: updateDialog.close,
   });
   const deleteCosmeticBenefitMutation = useDeleteCosmeticBenefitMutation({
-    onMutate: deleteDialog.close,
+    onMutate: onDeleted,
   });
 
   return (
     <>
-      <Button onClick={updateDialog.open}>Редактировать</Button>
-      <Button onClick={createDialog.open}>Добавить подкатегорию</Button>
-      <Button onClick={deleteDialog.open}>Удалить</Button>
+      <ActionsComponent
+        entity={benefit}
+        onEdit={updateDialog.open}
+        onCreateSubcategory={createDialog.open}
+        onDelete={() => {
+          deleteCosmeticBenefitMutation.mutate(benefit);
+        }}
+        disabled={{
+          delete: deleteCosmeticBenefitMutation.isPending,
+          edit: updateCosmeticBenefitMutation.isPending,
+          'create-subcategory': createCosmeticBenefitMutation.isPending,
+        }}
+        loading={{
+          delete: deleteCosmeticBenefitMutation.isPending,
+          edit: updateCosmeticBenefitMutation.isPending,
+          'create-subcategory': createCosmeticBenefitMutation.isPending,
+        }}
+      />
 
       {createDialog.isOpen && (
         <CosmeticBenefitFormDialog
@@ -40,18 +55,6 @@ export function CosmeticBenefitActions({ benefit }: CosmeticBenefitActionsProps)
           dialog={createDialog}
           onSubmit={values => {
             createCosmeticBenefitMutation.mutate(values);
-          }}
-        />
-      )}
-
-      {deleteDialog.isOpen && (
-        <ConfirmDialog
-          dialog={deleteDialog}
-          title="Удалить преимущество"
-          text="Вы уверены, что хотите удалить преимущество?"
-          submitText="Удалить"
-          onSubmit={() => {
-            deleteCosmeticBenefitMutation.mutate(benefit);
           }}
         />
       )}
