@@ -2,12 +2,12 @@ import {
   CosmeticBenefitCreatingAction,
   CosmeticBenefitsList,
 } from '#/client/entities/cosmetic/benefits';
+import { Page } from '#/client/widgets/Page';
 
-export default function Page() {
+export default function CosmeticBenefitsPage() {
   return (
-    <div>
-      <CosmeticBenefitCreatingAction />
+    <Page title="Косметические преимущества" actions={<CosmeticBenefitCreatingAction />}>
       <CosmeticBenefitsList />
-    </div>
+    </Page>
   );
 }

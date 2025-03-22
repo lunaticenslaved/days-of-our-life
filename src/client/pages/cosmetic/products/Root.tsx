@@ -2,16 +2,12 @@ import {
   CosmeticProductCreatingAction,
   CosmeticProductsList,
 } from '#/client/entities/cosmetic/products';
+import { Page } from '#/client/widgets/Page';
 
-export default function Page() {
+export default function CosmeticProductsRootPage() {
   return (
-    <div>
-      <h3>Косметические продукты</h3>
-      <div>
-        <CosmeticProductCreatingAction />
-      </div>
-
+    <Page title="Косметические продукты" actions={<CosmeticProductCreatingAction />}>
       <CosmeticProductsList />
-    </div>
+    </Page>
   );
 }

@@ -1,13 +1,14 @@
 import { CosmeticProductForm } from '#/client/entities/cosmetic/products';
 import { useCosmeticNavigation } from '#/client/pages/cosmetic';
 import { useCreateCosmeticProductMutation } from '#/client/store';
+import { Page } from '#/client/widgets/Page';
 
-export default function Page() {
+export default function CreateCosmeticProductPage() {
   const createCosmeticProductMutation = useCreateCosmeticProductMutation();
   const navigation = useCosmeticNavigation();
 
   return (
-    <div style={{ maxWidth: '550px' }}>
+    <Page title="Новый косметический продукт">
       <CosmeticProductForm
         onSubmit={values => {
           createCosmeticProductMutation.mutate(values, {
@@ -17,6 +18,6 @@ export default function Page() {
           });
         }}
       />
-    </div>
+    </Page>
   );
 }

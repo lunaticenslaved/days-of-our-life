@@ -4,8 +4,9 @@ import {
   useGetCosmeticProductQuery,
   useUpdateCosmeticProductMutation,
 } from '#/client/store';
+import { Page } from '#/client/widgets/Page';
 
-export default function Page() {
+export default function CosmeticProductEditPage() {
   const { productId = '' } = useCosmeticPageParams();
 
   const navigation = useCosmeticNavigation();
@@ -22,22 +23,21 @@ export default function Page() {
     },
   });
 
-  if (!product) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <div>
-      <h3>Edit cosmetic product</h3>
-      <CosmeticProductForm
-        cosmeticProduct={product}
-        onSubmit={values => {
-          updateCosmeticProductMutation.mutate({
-            product,
-            newData: values,
-          });
-        }}
-      />
-    </div>
+    <Page title="Edit cosmetic product">
+      {product ? (
+        <CosmeticProductForm
+          cosmeticProduct={product}
+          onSubmit={values => {
+            updateCosmeticProductMutation.mutate({
+              product,
+              newData: values,
+            });
+          }}
+        />
+      ) : (
+        <div>Loading...</div>
+      )}
+    </Page>
   );
 }
