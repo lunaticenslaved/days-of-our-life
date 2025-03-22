@@ -14,12 +14,6 @@ export { CosmeticBenefitActions } from './benefits/containers/CosmeticBenefitAct
 export { CreateCosmeticBenefitAction } from './benefits/containers/CreateCosmeticBenefitAction';
 export { CosmeticBenefitsList } from './benefits/containers/CosmeticBenefitsList';
 
-// Ingredients
-export { CosmeticIngredientFormDialog } from './ingredients/components/FormDialog';
-export { CreateCosmeticIngredientAction } from './ingredients/components/CreateCosmeticIngredientAction';
-export { CosmeticIngredientsList } from './ingredients/components/CosmeticIngredientsList';
-export { CosmeticIngredientActions } from './ingredients/components/CosmeticIngredientActions';
-
 // Recipe Comments
 export { CosmeticRecipeCommentList } from './recipe-comments/components/CosmeticRecipeCommentList';
 export { CosmeticRecipeCommentCreateAction } from './recipe-comments/containers/CosmeticRecipeCommentCreateAction';

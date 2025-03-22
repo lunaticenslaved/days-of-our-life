@@ -1,18 +1,15 @@
 import {
-  CosmeticIngredientActions,
   CosmeticIngredientsList,
-  CreateCosmeticIngredientAction,
-} from '#/client/entities/cosmetic';
+  CosmeticIngredientCreatingAction,
+} from '#/client/entities/cosmetic/ingredients';
 import { Page } from '#/client/widgets/Page';
 
 export default function CosmeticIngredientRootPage() {
   return (
-    <Page title="Косметические ингредиенты" actions={<CreateCosmeticIngredientAction />}>
-      <CosmeticIngredientsList
-        renderAction={ingredient => {
-          return <CosmeticIngredientActions ingredient={ingredient} />;
-        }}
-      />
+    <Page
+      title="Косметические ингредиенты"
+      actions={<CosmeticIngredientCreatingAction />}>
+      <CosmeticIngredientsList />
     </Page>
   );
 }

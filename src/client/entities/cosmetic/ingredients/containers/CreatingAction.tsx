@@ -1,9 +1,9 @@
 import { Button } from '#/ui-lib/atoms/Button';
-import { CosmeticIngredientFormDialog } from './FormDialog';
+import { CosmeticIngredientFormDialog } from '../components/FormDialog';
 import { useCreateCosmeticIngredientMutation } from '#/client/store';
 import { useDialog } from '#/ui-lib/atoms/Dialog';
 
-export function CreateCosmeticIngredientAction() {
+export function CreatingAction() {
   const dialog = useDialog();
 
   const { mutate, isPending } = useCreateCosmeticIngredientMutation({
