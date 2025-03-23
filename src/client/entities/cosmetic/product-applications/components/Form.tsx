@@ -54,8 +54,7 @@ export function FormDialogComponent({
                         <Field.Label>Продукт</Field.Label>
                         <Field.Input>
                           <CosmeticProductSingleSelect
-                            modelValue={fieldProps.input.value}
-                            onModelValueChange={fieldProps.input.onValueUpdate}
+                            {...fieldProps.input}
                             entities={products}
                           />
                         </Field.Input>

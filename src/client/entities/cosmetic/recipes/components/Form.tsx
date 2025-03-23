@@ -172,12 +172,7 @@ export function CosmeticRecipeForm({
                                                       </Field.Label>
                                                       <Field.Input>
                                                         <CosmeticIngredientSingleSelect
-                                                          modelValue={
-                                                            fieldProps.input.value
-                                                          }
-                                                          onModelValueChange={
-                                                            fieldProps.input.onValueUpdate
-                                                          }
+                                                          {...fieldProps.input}
                                                           entities={ingredients}
                                                         />
                                                       </Field.Input>

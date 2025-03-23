@@ -2,7 +2,7 @@ import { createEntityFormDialog } from '#/client/component-factories/EntityFormD
 import { FinalForm } from '#/client/components/FForm';
 import { NumberInput } from '#/client/components/NumberInput';
 import { RadioGroup } from '#/client/components/Radio';
-import { Select } from '#/client/components/Select';
+import { Select } from '#/ui-lib/atoms/Select';
 import {
   FoodNutrientsList,
   FoodProductSearch,
@@ -80,7 +80,12 @@ export const FoodMealItemFormDialog = createEntityFormDialog<
 
         {food.type === 'product' ? (
           <FinalForm.Field name="food.productId" title="Продукт" required>
-            {inputProps => <FoodProductSearch {...inputProps} />}
+            {inputProps => (
+              <FoodProductSearch
+                value={inputProps.modelValue}
+                onValueUpdate={inputProps.onModelValueChange}
+              />
+            )}
           </FinalForm.Field>
         ) : (
           <FinalForm.Field name="food.recipeId" title="Рецепт" required>

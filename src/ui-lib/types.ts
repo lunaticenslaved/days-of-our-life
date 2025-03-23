@@ -16,6 +16,11 @@ export interface InputProps<TValue = unknown> {
   onValueUpdate: (newValue: TValue) => void;
 }
 
+export type WithInputProps<TValue = unknown, T extends object = object> = Partial<
+  InputProps<TValue>
+> &
+  Omit<T, keyof InputProps>;
+
 // --- Field ------------------------------------------------
 export type FieldState = 'valid' | 'invalid';
 export type FieldDirection = 'vertical' | 'horizontal';

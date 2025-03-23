@@ -3,11 +3,7 @@ import {
   CosmeticBenefitTree,
   CosmeticUtils,
 } from '#/shared/models/cosmetic';
-import {
-  Select,
-  SelectMultipleProps,
-  SelectSingleProps,
-} from '#/client/components/Select';
+import { Select, SelectMultipleProps, SelectSingleProps } from '#/ui-lib/atoms/Select';
 import { useMemo } from 'react';
 import { useListCosmeticBenefitsQuery } from '#/client/store';
 
@@ -75,7 +71,7 @@ function BenefitOption({
 }
 
 interface CosmeticBenefitSingleSelectProps
-  extends Pick<SelectSingleProps, 'modelValue' | 'onModelValueChange'> {
+  extends Pick<SelectSingleProps, 'value' | 'onValueUpdate'> {
   hiddenIds?: string[];
 }
 
@@ -97,7 +93,7 @@ export function CosmeticBenefitSingleSelect({
 }
 
 interface CosmeticBenefitMultipleSelectProps
-  extends Pick<SelectMultipleProps, 'modelValue' | 'onModelValueChange'> {
+  extends Pick<SelectMultipleProps, 'value' | 'onValueUpdate'> {
   hiddenIds?: string[];
 }
 

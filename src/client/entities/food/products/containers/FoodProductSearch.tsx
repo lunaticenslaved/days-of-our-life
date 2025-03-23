@@ -5,7 +5,7 @@ import {
 import { useListFoodProductsQuery } from '#/client/store';
 
 interface FoodProductSearchProps
-  extends Pick<FoodProductSingleSelectProps, 'modelValue' | 'onModelValueChange'> {}
+  extends Pick<FoodProductSingleSelectProps, 'value' | 'onValueUpdate'> {}
 
 export function FoodProductSearch(props: FoodProductSearchProps) {
   const productsQuery = useListFoodProductsQuery();

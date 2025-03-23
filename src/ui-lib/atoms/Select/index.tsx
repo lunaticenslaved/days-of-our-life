@@ -1,11 +1,12 @@
-import { SelectContextProvider } from '#/client/components/Select/context';
-import { SelectSingleProps, SelectSingle } from './SelectSingle';
-import { SelectMultipleProps, SelectMultiple } from './SelectMultiple';
+import { SelectContextProvider } from './context';
+import { SelectMultiple, SelectSingle, SelectOption } from './Select';
 
-import { SelectOption } from './Option';
-import { forwardRef } from 'react';
+import { ComponentProps, forwardRef } from 'react';
 
 // TODO add area attributes
+
+type SelectSingleProps = ComponentProps<typeof SelectSingle>;
+type SelectMultipleProps = ComponentProps<typeof SelectMultiple>;
 
 export type { SelectSingleProps, SelectMultipleProps };
 
@@ -17,7 +18,10 @@ const SelectWithRef = forwardRef<HTMLSelectElement, SelectProps>(function Select
 ) {
   if (props.multiple) {
     return (
-      <SelectContextProvider type="multiple" value={props.modelValue}>
+      <SelectContextProvider
+        type="multiple"
+        value={props.value}
+        onValueUpdate={props.onValueUpdate}>
         <SelectMultiple ref={ref} {...props}>
           {children}
         </SelectMultiple>
@@ -26,7 +30,10 @@ const SelectWithRef = forwardRef<HTMLSelectElement, SelectProps>(function Select
   }
 
   return (
-    <SelectContextProvider type="single" value={props.modelValue}>
+    <SelectContextProvider
+      type="single"
+      value={props.value}
+      onValueUpdate={props.onValueUpdate}>
       <SelectSingle ref={ref} {...props}>
         {children}
       </SelectSingle>
