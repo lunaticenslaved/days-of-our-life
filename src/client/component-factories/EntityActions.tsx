@@ -1,6 +1,5 @@
 import { Button } from '#/ui-lib/atoms/Button';
-import { ConfirmDialog } from '#/client/components/ConfirmDialog';
-import { useDialog } from '#/ui-lib/atoms/Dialog';
+import { Dialog, IDialog, useDialog } from '#/ui-lib/atoms/Dialog';
 import { FC } from 'react';
 import _ from 'lodash';
 import { usePendingCall } from '#/ui-lib/hooks';
@@ -134,3 +133,42 @@ export const EntityActionsTemplate = {
     },
   },
 } satisfies Record<string, ActionConfig>;
+
+interface ConfirmDialogProps {
+  dialog: IDialog;
+  title: string;
+  text: string;
+  submitText: string;
+  onSubmit(): void | Promise<void>;
+  onCancel?(): void;
+}
+
+function ConfirmDialog({
+  dialog,
+  title,
+  text,
+  submitText,
+  onSubmit,
+  onCancel,
+}: ConfirmDialogProps) {
+  const [isPending, pendingCall] = usePendingCall(onSubmit);
+
+  return (
+    <Dialog dialog={dialog}>
+      <Dialog.Header>{title}</Dialog.Header>
+      <Dialog.Content>{text}</Dialog.Content>
+      <Dialog.Footer>
+        <Button
+          onClick={() => {
+            onCancel?.();
+            dialog.close();
+          }}>
+          Отмена
+        </Button>
+        <Button disabled={isPending} loading={isPending} onClick={pendingCall}>
+          {submitText}
+        </Button>
+      </Dialog.Footer>
+    </Dialog>
+  );
+}
