@@ -1,5 +1,6 @@
-import { Input, InputProps } from '#/ui-lib/atoms/Input';
+import { Input } from '#/ui-lib/atoms/Input';
 import {
+  ComponentProps,
   createContext,
   PropsWithChildren,
   useCallback,
@@ -187,14 +188,14 @@ function ListItem({
 }
 
 // --- List Search --------------------------------------------------------------------------
-function ListSearch(props: Pick<InputProps, 'placeholder'>) {
+function ListSearch(props: Pick<ComponentProps<typeof Input>, 'placeholder'>) {
   const { search, setSearch } = useListContext();
 
   return (
     <Input
       {...props}
-      modelValue={search}
-      onModelValueChange={setSearch}
+      value={search || null}
+      onValueUpdate={newValue => setSearch(newValue || '')}
       debounceMs={500}
     />
   );

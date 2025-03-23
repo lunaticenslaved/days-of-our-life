@@ -14,7 +14,7 @@ import { StyleSheetManager } from 'styled-components';
 import { FoodIcon } from '#/client/entities/food';
 import { DaysIcon } from '#/client/entities/days';
 import { CosmeticIcon } from '#/client/entities/cosmetic';
-import { MedicamentsIcon } from '#/client/entities/medicament';
+import { MedicamentsIcon } from '#/client/entities/medicaments';
 import { Flex } from '#/ui-lib/atoms/Flex';
 import { TheLeftNavigation } from './components/TheLeftNavigation';
 import { TheSubNavigation } from './components/TheSubNavigation';

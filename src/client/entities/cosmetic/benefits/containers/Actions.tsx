@@ -1,4 +1,4 @@
-import { CosmeticBenefitFormDialog } from '#/client/entities/cosmetic/benefits/components/CosmeticBenefitFormDialog';
+import { FormDialog } from '../components/Form';
 import {
   useCreateCosmeticBenefitMutation,
   useDeleteCosmeticBenefitMutation,
@@ -50,7 +50,8 @@ export function ActionsContainer({ benefit, onDeleted }: ActionsContainerProps) 
       />
 
       {createDialog.isOpen && (
-        <CosmeticBenefitFormDialog
+        <FormDialog
+          isPending={createCosmeticBenefitMutation.isPending}
           parentId={benefit.id}
           dialog={createDialog}
           onSubmit={values => {
@@ -60,7 +61,8 @@ export function ActionsContainer({ benefit, onDeleted }: ActionsContainerProps) 
       )}
 
       {updateDialog.isOpen && (
-        <CosmeticBenefitFormDialog
+        <FormDialog
+          isPending={updateCosmeticBenefitMutation.isPending}
           benefit={benefit}
           dialog={updateDialog}
           onSubmit={values => {

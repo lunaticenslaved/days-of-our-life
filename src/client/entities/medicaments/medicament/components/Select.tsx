@@ -4,9 +4,8 @@ import {
   createEntityMultipleSelect,
   createEntitySingleSelect,
 } from '#/client/component-factories/EntitySelect';
-import { ComponentProps } from 'react';
 
-export const MedicamentMultipleSelect = createEntityMultipleSelect<Medicament>(
+export const MultipleSelectComponent = createEntityMultipleSelect<Medicament>(
   'Medicament',
   {
     getValue: entity => entity.id,
@@ -14,9 +13,7 @@ export const MedicamentMultipleSelect = createEntityMultipleSelect<Medicament>(
   },
 );
 
-export const MedicamentSingleSelect = createEntitySingleSelect<Medicament>('Medicament', {
+export const SingleSelectComponent = createEntitySingleSelect<Medicament>('Medicament', {
   getValue: entity => entity.id,
   renderOption: entity => <>{entity.name}</>,
 });
-
-export type MedicamentSingleSelectProps = ComponentProps<typeof MedicamentSingleSelect>;

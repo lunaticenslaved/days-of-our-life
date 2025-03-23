@@ -7,8 +7,6 @@ import DayPartsRootPage from './parts/Root';
 import { Link } from 'react-router-dom';
 import { DateFormat } from '#/shared/models/date';
 
-type Date = { date: DateFormat };
-
 const routes = {
   root: '/days',
   calendar: '/days/calendar',

@@ -1,17 +1,8 @@
 import { DateFormat, DateUtils } from '#/shared/models/date';
-import { DayPart } from '#/shared/models/day';
 import { DatePicker, DatePickerRangeModelValue } from '#/client/components/DatePicker';
-import { MedicamentIntakeFormDialog } from '#/client/entities/medicament/components';
-import {
-  useCreateMedicamentIntakeMutation,
-  useDeleteMedicamentIntakeMutation,
-  useListDayPartsQuery,
-  useListDaysQuery,
-  useListMedicamentsQuery,
-} from '#/client/store';
+import { useListDayPartsQuery, useListDaysQuery } from '#/client/store';
 import { Calendar } from '#/client/widgets/Calendar';
-import { useEffect, useMemo, useState } from 'react';
-import { useDialog } from '#/ui-lib/atoms/Dialog';
+import { useMemo, useState } from 'react';
 
 export default function PageView() {
   const [dateRange, setDateRange] = useState(() => {
@@ -79,72 +70,22 @@ function CalendarDatePicker({
 }
 
 function LocalCalendar(props: { startDate: DateFormat; endDate: DateFormat }) {
-  const medicamentIntakeDialog = useDialog();
-
   const listDaysQuery = useListDaysQuery(props);
 
   const listDayPartsQuery = useListDayPartsQuery();
-  const listMedicamentsQuery = useListMedicamentsQuery();
 
-  const createMedicamentIntakeMutation = useCreateMedicamentIntakeMutation({
-    onMutate: () => {
-      medicamentIntakeDialog.close();
-    },
-  });
-  const deleteMedicamentIntakeMutation = useDeleteMedicamentIntakeMutation();
-
-  const [selectedDate, setSelectedDate] = useState<DateFormat>();
-  const [selectedDayPart, setSelectedDayPart] = useState<DayPart>();
-
-  useEffect(() => {
-    if (!medicamentIntakeDialog.isOpen) {
-      setSelectedDayPart(undefined);
-      setSelectedDate(undefined);
-    }
-  }, [medicamentIntakeDialog.isOpen, selectedDayPart]);
-
-  function openIntakeDialog({ date, dayPart }: { date: DateFormat; dayPart: DayPart }) {
-    medicamentIntakeDialog.open();
-    setSelectedDate(date);
-    setSelectedDayPart(dayPart);
-  }
-
-  if (!listDayPartsQuery.data || !listMedicamentsQuery.data || !listDaysQuery.data) {
+  if (!listDayPartsQuery.data || !listDaysQuery.data) {
     return <div>Loading...</div>;
   }
 
   return (
     <>
-      {selectedDate && selectedDayPart && (
-        <MedicamentIntakeFormDialog
-          type="create"
-          date={selectedDate}
-          dayPartId={selectedDayPart.id}
-          dialog={medicamentIntakeDialog}
-          medicaments={listMedicamentsQuery.data || []}
-          onSubmit={values => {
-            createMedicamentIntakeMutation.mutate({
-              date: values.date,
-              medicamentId: values.medicamentId,
-              dayPartId: values.dayPartId,
-            });
-          }}
-        />
-      )}
-
       <Calendar
         startDate={props.startDate}
         endDate={props.endDate}
         dayParts={listDayPartsQuery.data}
-        medicaments={listMedicamentsQuery.data}
         getDayInfo={date => {
           return listDaysQuery.data[date];
-        }}
-        onMedicamentIntakeDelete={arg => {
-          deleteMedicamentIntakeMutation.mutate(arg.intake);
-        }}
-        onAddMedicamentIntake={arg => {
-          openIntakeDialog(arg);
         }}
         onUpdated={() => {}}
       />

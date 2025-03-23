@@ -1,1 +1,1 @@
-export { DayPartFormDialog } from './containers/DayPartFormDialog';
+export { FormDialog as DayPartFormDialog } from './containers/FormDialog';
