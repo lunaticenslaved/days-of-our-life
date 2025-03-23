@@ -1,32 +1,33 @@
-import { Route, useParams } from 'react-router';
+import { Outlet, Route, useParams } from 'react-router';
 
 import { createNavigationHook } from '#/client/hooks/navigation';
 
-import ProductCreate from './Create';
-import ProductsRoot from './Root';
-import ProductOverview from './[medicamentId]/Overview';
-import ProductEdit from './[medicamentId]/Edit';
+import MedicamentCreate from './Create';
+import MedicamentsRoot from './Root';
+import MedicamentOverview from './[medicamentId]/Overview';
+import MedicamentEdit from './[medicamentId]/Edit';
+import { SubNavigation, SubNavigationItem } from '#/client/widgets/navigation';
 
 type MedicamentId = { medicamentId: string };
 
 const routes = {
   root: '/medicaments',
 
-  // Products
-  productCreate: '/medicaments/create',
-  productEdit: '/medicaments/:medicamentId/edit',
-  productOverview: '/medicaments/:medicamentId',
+  // Medicaments
+  medicamentCreate: '/medicaments/create',
+  medicamentEdit: '/medicaments/:medicamentId/edit',
+  medicamentOverview: '/medicaments/:medicamentId',
 } as const;
 
 export const MEDICAMENTS_NAVIGATION = {
   toRoot: () => routes.root,
 
-  // Products
-  toProductCreate: () => routes.productCreate,
-  toProductEdit: ({ medicamentId }: MedicamentId) =>
-    routes.productEdit.replace(':medicamentId', medicamentId),
-  toProductOverview: ({ medicamentId }: MedicamentId) =>
-    routes.productOverview.replace(':medicamentId', medicamentId),
+  // Medicaments
+  toMedicamentCreate: () => routes.medicamentCreate,
+  toMedicamentEdit: ({ medicamentId }: MedicamentId) =>
+    routes.medicamentEdit.replace(':medicamentId', medicamentId),
+  toMedicamentOverview: ({ medicamentId }: MedicamentId) =>
+    routes.medicamentOverview.replace(':medicamentId', medicamentId),
 };
 
 export function useMedicamentsPageParams() {
@@ -35,11 +36,26 @@ export function useMedicamentsPageParams() {
 
 export const useMedicamentsNavigation = createNavigationHook(MEDICAMENTS_NAVIGATION);
 
+const SUBNAVIGATION_ITEMS: SubNavigationItem[] = [
+  {
+    to: MEDICAMENTS_NAVIGATION.toRoot(),
+    title: 'Медикаменты',
+  },
+];
+
 export default [
-  <Route key="food" path={routes.root}>
-    <Route index element={<ProductsRoot />} />
-    <Route path={routes.productCreate} element={<ProductCreate />} />
-    <Route path={routes.productOverview} element={<ProductOverview />} />
-    <Route path={routes.productEdit} element={<ProductEdit />} />
+  <Route
+    key="food"
+    path={routes.root}
+    element={
+      <>
+        <SubNavigation items={SUBNAVIGATION_ITEMS} />
+        <Outlet />
+      </>
+    }>
+    <Route index element={<MedicamentsRoot />} />
+    <Route path={routes.medicamentCreate} element={<MedicamentCreate />} />
+    <Route path={routes.medicamentOverview} element={<MedicamentOverview />} />
+    <Route path={routes.medicamentEdit} element={<MedicamentEdit />} />
   </Route>,
 ];
