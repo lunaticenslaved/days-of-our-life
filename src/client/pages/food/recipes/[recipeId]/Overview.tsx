@@ -6,112 +6,140 @@ import { multiplyNutrients } from '#/shared/models/food';
 import { useState } from 'react';
 import { NumberInput } from '#/client/components/NumberInput';
 import { useGetFoodRecipeQuery } from '#/client/store';
+import { Page } from '#/client/widgets/Page';
 
-export default function Page() {
+export default function FoodRecipeOverviewPage() {
   const { recipeId = '' } = useFoodPageParams();
   const query = useGetFoodRecipeQuery(recipeId);
 
   const [testGrams, setTestGrams] = useState<number>();
 
   if (query.isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <Page>
+        <Page.Header>
+          <Page.Title>Продукт</Page.Title>
+        </Page.Header>
+
+        <Page.Content>
+          <Page.Loading />
+        </Page.Content>
+      </Page>
+    );
   }
 
-  if (!query.data) {
-    return <div>not found</div>;
+  const product = query.data;
+
+  if (!product) {
+    return (
+      <Page>
+        <Page.Header>
+          <Page.Title>Продукт</Page.Title>
+        </Page.Header>
+
+        <Page.Content>
+          <Page.Error />
+        </Page.Content>
+      </Page>
+    );
   }
 
-  const { parts, output, nutrientsPerGram, description } = query.data;
+  const { parts, output, nutrientsPerGram, description } = product;
   const gramsPerPortion = output.grams / output.servings;
 
   return (
-    <div>
-      <h1>{query.data.name}</h1>
+    <Page>
+      <Page.Header>
+        <Page.Title>{product.name}</Page.Title>
+        <Page.Actions>
+          <Link to={FOOD_NAVIGATION.toRecipeEdit({ recipeId: product.id })}>
+            Редактировать
+          </Link>
+        </Page.Actions>
+      </Page.Header>
 
-      <Link to={FOOD_NAVIGATION.toRecipeEdit({ recipeId: query.data.id })}>
-        Редактировать
-      </Link>
-
-      <section>
-        <h2>Выход</h2>
-        <FoodRecipeOutput output={output} />
-      </section>
-
-      <section>
-        <h2>Питательные вещества</h2>
-
+      <Page.Content>
         <section>
-          <h3>На 100 г</h3>
-          <NumberInput modelValue={testGrams} onModelValueChange={setTestGrams} />
-          {testGrams && (
-            <div>
-              Проверка калорийности - {testGrams * query.data.nutrientsPerGram.calories}
-            </div>
-          )}
-          <FoodNutrientsList nutrients={multiplyNutrients(nutrientsPerGram, 100)} />
+          <h2>Выход</h2>
+          <FoodRecipeOutput output={output} />
         </section>
 
         <section>
-          <h3>На 1 порцию ({gramsPerPortion} г)</h3>
-          <FoodNutrientsList
-            nutrients={multiplyNutrients(nutrientsPerGram, gramsPerPortion)}
-          />
+          <h2>Питательные вещества</h2>
+
+          <section>
+            <h3>На 100 г</h3>
+            <NumberInput modelValue={testGrams} onModelValueChange={setTestGrams} />
+            {testGrams && (
+              <div>
+                Проверка калорийности - {testGrams * product.nutrientsPerGram.calories}
+              </div>
+            )}
+            <FoodNutrientsList nutrients={multiplyNutrients(nutrientsPerGram, 100)} />
+          </section>
+
+          <section>
+            <h3>На 1 порцию ({gramsPerPortion} г)</h3>
+            <FoodNutrientsList
+              nutrients={multiplyNutrients(nutrientsPerGram, gramsPerPortion)}
+            />
+          </section>
         </section>
-      </section>
 
-      <section>
-        <h2>Части рецепта</h2>
-        {parts.map(({ title, ingredients, description }, index) => {
-          const descriptionItems = (description ?? '').split('\n').filter(Boolean);
+        <section>
+          <h2>Части рецепта</h2>
+          {parts.map(({ title, ingredients, description }, index) => {
+            const descriptionItems = (description ?? '').split('\n').filter(Boolean);
 
-          return (
-            <section key={index}>
-              <h3>{title}</h3>
+            return (
+              <section key={index}>
+                <h3>{title}</h3>
 
-              <section>
-                <h4>Ингредиенты</h4>
-                <ul>
-                  {ingredients.map((ingredient, index) => {
-                    return (
-                      <li key={index}>
-                        <span>{ingredient.product.name}</span>
-                        {' - '}
-                        <span>{ingredient.grams} грамм</span>
-                        {ingredient.description && (
-                          <>
-                            {' - '}
-                            <span>{ingredient.description}</span>
-                          </>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </section>
-
-              {descriptionItems.length > 0 && (
                 <section>
-                  <h4>Подготовка</h4>
+                  <h4>Ингредиенты</h4>
                   <ul>
-                    {descriptionItems.map((text, index) => {
-                      return <li key={index}>{text}</li>;
+                    {ingredients.map((ingredient, index) => {
+                      return (
+                        <li key={index}>
+                          <span>{ingredient.product.name}</span>
+                          {' - '}
+                          <span>{ingredient.grams} грамм</span>
+                          {ingredient.description && (
+                            <>
+                              {' - '}
+                              <span>{ingredient.description}</span>
+                            </>
+                          )}
+                        </li>
+                      );
                     })}
                   </ul>
                 </section>
-              )}
-            </section>
-          );
-        })}
-      </section>
 
-      <section>
-        <h2>Как готовить</h2>
-        <ol>
-          {description.split('\n').map((text, index) => {
-            return <li key={index}>{text}</li>;
+                {descriptionItems.length > 0 && (
+                  <section>
+                    <h4>Подготовка</h4>
+                    <ul>
+                      {descriptionItems.map((text, index) => {
+                        return <li key={index}>{text}</li>;
+                      })}
+                    </ul>
+                  </section>
+                )}
+              </section>
+            );
           })}
-        </ol>
-      </section>
-    </div>
+        </section>
+
+        <section>
+          <h2>Как готовить</h2>
+          <ol>
+            {description.split('\n').map((text, index) => {
+              return <li key={index}>{text}</li>;
+            })}
+          </ol>
+        </section>
+      </Page.Content>
+    </Page>
   );
 }

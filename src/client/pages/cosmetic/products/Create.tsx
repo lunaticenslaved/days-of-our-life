@@ -8,16 +8,22 @@ export default function CreateCosmeticProductPage() {
   const navigation = useCosmeticNavigation();
 
   return (
-    <Page title="Новый косметический продукт">
-      <CosmeticProductForm
-        onSubmit={values => {
-          createCosmeticProductMutation.mutate(values, {
-            onSuccess: response => {
-              navigation.toProductOverview({ productId: response.id });
-            },
-          });
-        }}
-      />
+    <Page>
+      <Page.Header>
+        <Page.Title>Новый косметический продукт</Page.Title>
+      </Page.Header>
+
+      <Page.Content>
+        <CosmeticProductForm
+          onSubmit={values => {
+            createCosmeticProductMutation.mutate(values, {
+              onSuccess: response => {
+                navigation.toProductOverview({ productId: response.id });
+              },
+            });
+          }}
+        />
+      </Page.Content>
     </Page>
   );
 }

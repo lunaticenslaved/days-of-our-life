@@ -30,20 +30,26 @@ export default function CosmeticRecipeEditPage() {
   }
 
   return (
-    <Page title="Редактировать рецепт">
-      <CosmeticRecipeForm
-        recipe={recipe}
-        ingredients={listCosmeticIngredientsQuery.data || []}
-        onSubmit={async values => {
-          await updateMutation.mutate({
-            oldItem: recipe,
-            newData: {
-              ...values,
-              description: values.description || null,
-            },
-          });
-        }}
-      />
+    <Page>
+      <Page.Header>
+        <Page.Title>Редактировать рецепт</Page.Title>
+      </Page.Header>
+
+      <Page.Content>
+        <CosmeticRecipeForm
+          recipe={recipe}
+          ingredients={listCosmeticIngredientsQuery.data || []}
+          onSubmit={async values => {
+            await updateMutation.mutate({
+              oldItem: recipe,
+              newData: {
+                ...values,
+                description: values.description || null,
+              },
+            });
+          }}
+        />
+      </Page.Content>
     </Page>
   );
 }

@@ -17,16 +17,22 @@ export default function CosmeticRecipeCreatePage() {
   });
 
   return (
-    <Page title="Создать рецепт">
-      <CosmeticRecipeForm
-        ingredients={listCosmeticIngredientsQuery.data || []}
-        onSubmit={async values => {
-          await createMutation.mutate({
-            ...values,
-            description: values.description || null,
-          });
-        }}
-      />
+    <Page>
+      <Page.Header>
+        <Page.Title>Создать рецепт</Page.Title>
+      </Page.Header>
+
+      <Page.Content>
+        <CosmeticRecipeForm
+          ingredients={listCosmeticIngredientsQuery.data || []}
+          onSubmit={async values => {
+            await createMutation.mutate({
+              ...values,
+              description: values.description || null,
+            });
+          }}
+        />
+      </Page.Content>
     </Page>
   );
 }

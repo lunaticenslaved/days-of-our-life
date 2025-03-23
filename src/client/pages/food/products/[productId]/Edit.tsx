@@ -1,8 +1,9 @@
 import { FoodProductForm } from '#/client/entities/food';
 import { useFoodNavigation, useFoodPageParams } from '#/client/pages/food';
 import { useGetFoodProductQuery } from '#/client/store';
+import { Page } from '#/client/widgets/Page';
 
-export default function Page() {
+export default function FoodProductUpdatingPage() {
   const { productId = '' } = useFoodPageParams();
   const query = useGetFoodProductQuery({ id: productId });
   const navigation = useFoodNavigation();
@@ -12,18 +13,27 @@ export default function Page() {
   }
 
   if (!query.data) {
+    // TODO add error boundary to page
     throw new Error('Unknown product');
   }
 
   const product = query.data;
 
   return (
-    <FoodProductForm
-      type="update"
-      product={product}
-      onSuccess={({ id: productId }) => {
-        navigation.toProductOverview({ productId });
-      }}
-    />
+    <Page>
+      <Page.Header>
+        <Page.Title>Редактировать продукт</Page.Title>
+      </Page.Header>
+
+      <Page.Content>
+        <FoodProductForm
+          type="update"
+          product={product}
+          onSuccess={({ id: productId }) => {
+            navigation.toProductOverview({ productId });
+          }}
+        />
+      </Page.Content>
+    </Page>
   );
 }

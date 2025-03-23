@@ -24,20 +24,26 @@ export default function CosmeticProductEditPage() {
   });
 
   return (
-    <Page title="Edit cosmetic product">
-      {product ? (
-        <CosmeticProductForm
-          cosmeticProduct={product}
-          onSubmit={values => {
-            updateCosmeticProductMutation.mutate({
-              product,
-              newData: values,
-            });
-          }}
-        />
-      ) : (
-        <div>Loading...</div>
-      )}
+    <Page>
+      <Page.Header>
+        <Page.Title>Редактировать косметический продукт</Page.Title>
+      </Page.Header>
+
+      <Page.Content>
+        {product ? (
+          <CosmeticProductForm
+            cosmeticProduct={product}
+            onSubmit={values => {
+              updateCosmeticProductMutation.mutate({
+                product,
+                newData: values,
+              });
+            }}
+          />
+        ) : (
+          <Page.Loading />
+        )}
+      </Page.Content>
     </Page>
   );
 }

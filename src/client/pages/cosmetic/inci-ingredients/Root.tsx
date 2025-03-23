@@ -1,20 +1,22 @@
 import {
-  CosmeticINCIIngredientCreateAction,
+  CosmeticINCIIngredientCreatingAction,
   CosmeticINCIIngredientsList,
 } from '#/client/entities/cosmetic/inci-indgredients';
-import { useListCosmeticINCIIngredientsQuery } from '#/client/store';
 import { Page } from '#/client/widgets/Page';
 
 export default function CosmeticINCIIngredientRootPage() {
-  const listQuery = useListCosmeticINCIIngredientsQuery();
-
-  if (!listQuery.data) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <Page title="INCI-ингредиенты" actions={<CosmeticINCIIngredientCreateAction />}>
-      <CosmeticINCIIngredientsList />
+    <Page>
+      <Page.Header>
+        <Page.Title>INCI-ингредиенты</Page.Title>
+        <Page.Actions>
+          <CosmeticINCIIngredientCreatingAction />
+        </Page.Actions>
+      </Page.Header>
+
+      <Page.Content>
+        <CosmeticINCIIngredientsList />
+      </Page.Content>
     </Page>
   );
 }

@@ -1,8 +1,9 @@
 import { FoodRecipeForm } from '#/client/entities/food';
 import { useFoodNavigation, useFoodPageParams } from '#/client/pages/food';
 import { useGetFoodRecipeQuery, useUpdateFoodRecipeMutation } from '#/client/store';
+import { Page } from '#/client/widgets/Page';
 
-export default function Page() {
+export default function FoodRecipeUpdatingPage() {
   const { recipeId = '' } = useFoodPageParams();
   const navigation = useFoodNavigation();
 
@@ -21,14 +22,22 @@ export default function Page() {
   }
 
   return (
-    <FoodRecipeForm
-      recipe={query.data}
-      onSubmit={async values => {
-        await editing.mutate({
-          ...values,
-          id: recipeId,
-        });
-      }}
-    />
+    <Page>
+      <Page.Header>
+        <Page.Title>Создание рецепта</Page.Title>
+      </Page.Header>
+
+      <Page.Content>
+        <FoodRecipeForm
+          recipe={query.data}
+          onSubmit={async values => {
+            await editing.mutate({
+              ...values,
+              id: recipeId,
+            });
+          }}
+        />
+      </Page.Content>
+    </Page>
   );
 }

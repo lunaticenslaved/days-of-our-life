@@ -8,29 +8,35 @@ import {
   useFoodRecipeFilters,
 } from '#/client/entities/food/recipes';
 
-export default function FoodRecipesPage() {
+export default function FoodRecipesRootPage() {
   const { data: recipes = [] } = useListFoodRecipesQuery();
 
   const filters = useFoodRecipeFilters();
 
   return (
-    <Page
-      title="Рецепты"
-      actions={
-        <Button
-          view="outlined"
-          component="router-link"
-          to={FOOD_NAVIGATION.toRecipeCreate()}>
-          Создать рецепт
-        </Button>
-      }
-      filters={
+    <Page>
+      <Page.Header>
+        <Page.Title>Рецепты</Page.Title>
+        <Page.Actions>
+          <Button
+            view="outlined"
+            component="router-link"
+            to={FOOD_NAVIGATION.toRecipeCreate()}>
+            Создать рецепт
+          </Button>
+        </Page.Actions>
+      </Page.Header>
+
+      <Page.Header>
         <FoodRecipeFilters value={filters.value} onValueUpdate={filters.onValueUpdate} />
-      }>
-      <FoodRecipesTable
-        recipes={filters.filter(recipes)}
-        to={recipe => FOOD_NAVIGATION.toRecipeOverview({ recipeId: recipe.id })}
-      />
+      </Page.Header>
+
+      <Page.Content>
+        <FoodRecipesTable
+          recipes={filters.filter(recipes)}
+          to={recipe => FOOD_NAVIGATION.toRecipeOverview({ recipeId: recipe.id })}
+        />
+      </Page.Content>
     </Page>
   );
 }

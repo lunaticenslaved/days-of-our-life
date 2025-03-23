@@ -13,16 +13,24 @@ export default function FoodProductsPage() {
   const productsFilters = useFoodProductFilters();
 
   return (
-    <Page
-      title="Продукты"
-      actions={<FoodProductCreatingAction />}
-      filters={
+    <Page>
+      <Page.Header>
+        <Page.Title>Продукты</Page.Title>
+        <Page.Actions>
+          <FoodProductCreatingAction />
+        </Page.Actions>
+      </Page.Header>
+
+      <Page.Header>
         <FoodProductFilters
           value={productsFilters.value}
           onValueUpdate={productsFilters.onValueUpdate}
         />
-      }>
-      <FoodProductsTable products={productsFilters.filter(products)} />
+      </Page.Header>
+
+      <Page.Content>
+        <FoodProductsTable products={productsFilters.filter(products)} />
+      </Page.Content>
     </Page>
   );
 }

@@ -1,39 +1,99 @@
 import { Box } from '#/ui-lib/atoms/Box';
+import { ReactNode, Suspense } from 'react';
+import { PageContextProvider, usePageContextStrict } from '../context';
 import { Flex } from '#/ui-lib/atoms/Flex';
 import { Text } from '#/ui-lib/atoms/Text';
-import { ReactNode, useEffect } from 'react';
 
-interface PageProps {
-  title: string;
-  actions?: ReactNode;
-  children: ReactNode;
-  filters?: ReactNode;
+const PADDING = 4;
+
+// --- Page Root -------------------------------------------------------
+function Page({ children }: { children: ReactNode }) {
+  return (
+    <PageContextProvider>
+      <Box>{children}</Box>
+    </PageContextProvider>
+  );
 }
 
-// FIXME refactor component to use Page Context
-
-export function Page({ title, actions, children, filters }: PageProps) {
-  useEffect(() => {
-    document.title = title;
-  }, [title]);
-
+// --- Page Header ------------------------------------------------------
+function PageHeader({ children }: { children: ReactNode }) {
   return (
-    <Flex direction="column" gap={4} height="100%">
-      <Flex
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        gap={2}
-        spacing={{ pt: 4, px: 4 }}>
-        <Text variant="header-m">{title}</Text>
-        {actions}
-      </Flex>
-
-      {!!filters && <Box spacing={{ px: 4, pb: 4 }}>{filters}</Box>}
-
-      <Box flexGrow={1} overflow="auto" spacing={{ px: 4, pb: 4 }}>
-        {children}
-      </Box>
+    <Flex
+      direction="row"
+      alignItems="center"
+      justifyContent="space-between"
+      gap={2}
+      spacing={{ pt: PADDING, px: PADDING }}>
+      {children}
     </Flex>
   );
 }
+
+// --- Page Title ------------------------------------------------------
+function PageTitle({ children }: { children: ReactNode }) {
+  return <Text variant="header-m">{children}</Text>;
+}
+
+// --- Page Actions ----------------------------------------------------
+function PageActions({ children }: { children: ReactNode }) {
+  return (
+    <Flex direction="row" alignItems="center" justifyContent="space-between" gap={2}>
+      {children}
+    </Flex>
+  );
+}
+
+// --- Page Content ----------------------------------------------------
+function PageContent({ children }: { children: ReactNode }) {
+  const pageContext = usePageContextStrict();
+
+  if (pageContext.isLoading) {
+    return <PageLoading />;
+  }
+
+  return (
+    <Box overflow="auto" height="100%" flexGrow={1} spacing={{ p: PADDING }}>
+      <Suspense fallback={<PageLoading />}>{children}</Suspense>
+    </Box>
+  );
+}
+
+// --- Page Loading ----------------------------------------------------
+function PageLoading() {
+  // TODO add beautiful component
+  return (
+    <Flex height="100%" width="100%" alignItems="center" justifyContent="center">
+      <Text>Loading...</Text>
+    </Flex>
+  );
+}
+
+// --- Page Empty ----------------------------------------------------
+function PageEmpty() {
+  // TODO add beautiful component
+  return (
+    <Flex height="100%" width="100%" alignItems="center" justifyContent="center">
+      <Text>Empty...</Text>
+    </Flex>
+  );
+}
+
+// --- Page Error ----------------------------------------------------
+function PageError() {
+  // TODO add beautiful component
+  return (
+    <Flex height="100%" width="100%" alignItems="center" justifyContent="center">
+      <Text>Error...</Text>
+    </Flex>
+  );
+}
+
+Page.Header = PageHeader;
+Page.Title = PageTitle;
+Page.Actions = PageActions;
+Page.Content = PageContent;
+Page.Loading = PageLoading;
+Page.Empty = PageEmpty;
+Page.Error = PageError;
+
+export { Page };

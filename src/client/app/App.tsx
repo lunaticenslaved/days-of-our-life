@@ -18,6 +18,7 @@ import { MedicamentsIcon } from '#/client/entities/medicament';
 import { Flex } from '#/ui-lib/atoms/Flex';
 import { TheLeftNavigation } from './components/TheLeftNavigation';
 import { TheSubNavigation } from './components/TheSubNavigation';
+import { PageContextProvider } from '#/client/widgets/Page';
 
 const LINKS = [
   {
@@ -54,19 +55,21 @@ export function App() {
                 <TheSubNavigation />
               </Flex>
 
-              <Box overflow="auto" height="100%" flexGrow={1}>
-                <Suspense>
-                  <Routes>
-                    {HomeRouter}
-                    {FoodRouter}
-                    {DaysRouter}
-                    {CosmeticRouter}
-                    {MedicamentsRouter}
-                    {/* TODO add not found page */}
-                    <Route path="*" element={<div>not found</div>} />
-                  </Routes>
-                </Suspense>
-              </Box>
+              <PageContextProvider>
+                <Box overflow="auto" height="100%" flexGrow={1}>
+                  <Suspense>
+                    <Routes>
+                      {HomeRouter}
+                      {FoodRouter}
+                      {DaysRouter}
+                      {CosmeticRouter}
+                      {MedicamentsRouter}
+                      {/* TODO add not found page */}
+                      <Route path="*" element={<div>not found</div>} />
+                    </Routes>
+                  </Suspense>
+                </Box>
+              </PageContextProvider>
             </Flex>
           </Box>
         </DialogContextProvider>

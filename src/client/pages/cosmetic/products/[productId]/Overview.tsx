@@ -17,18 +17,29 @@ export default function CosmeticProductOverviewPage() {
   }
 
   return (
-    <Page
-      title={product.name}
-      actions={
-        <CosmeticProductActions
-          product={product}
-          onDeleted={() => {
-            navigation.toProducts();
-          }}
-        />
-      }>
-      <div>Имя - {getCosmeticProductQuery.data.name}</div>
-      <div>Производитель - {getCosmeticProductQuery.data.manufacturer}</div>
+    <Page>
+      <Page.Header>
+        <Page.Title>{product.name}</Page.Title>
+        <Page.Actions>
+          <CosmeticProductActions
+            product={product}
+            onDeleted={() => {
+              navigation.toProducts();
+            }}
+          />
+        </Page.Actions>
+      </Page.Header>
+
+      <Page.Content>
+        {product ? (
+          <>
+            <div>Имя - {getCosmeticProductQuery.data.name}</div>
+            <div>Производитель - {getCosmeticProductQuery.data.manufacturer}</div>
+          </>
+        ) : (
+          <Page.Loading />
+        )}
+      </Page.Content>
     </Page>
   );
 }

@@ -6,8 +6,17 @@ import { Page } from '#/client/widgets/Page';
 
 export default function CosmeticBenefitsPage() {
   return (
-    <Page title="Косметические преимущества" actions={<CosmeticBenefitCreatingAction />}>
-      <CosmeticBenefitsList />
+    <Page>
+      <Page.Header>
+        <Page.Title>Косметические преимущества</Page.Title>
+        <Page.Actions>
+          <CosmeticBenefitCreatingAction />
+        </Page.Actions>
+      </Page.Header>
+
+      <Page.Content>
+        <CosmeticBenefitsList />
+      </Page.Content>
     </Page>
   );
 }
