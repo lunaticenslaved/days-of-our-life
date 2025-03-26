@@ -1,4 +1,4 @@
-import { CommonValidators } from './common';
+import { CommonValidators } from '../common';
 import { DateFormat } from '#/shared/models/date';
 import { orderBy } from 'lodash';
 import { z } from 'zod';

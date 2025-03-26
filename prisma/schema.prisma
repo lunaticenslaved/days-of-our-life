@@ -172,10 +172,11 @@ model Day {
   id   String   @id @default(uuid()) @db.Uuid
   date DateTime
 
-  cosmeticProducts    CosmeticProductApplication[]
-  femalePeriodStarted FemalePeriod?
-  medicaments         MedicamentIntake[]
-  foodMealItems       FoodMealItem[]
+  cosmecticApplications CosmeticApplication[]
+  cosmeticProducts      CosmeticProductApplication[]
+  femalePeriodStarted   FemalePeriod?
+  medicaments           MedicamentIntake[]
+  foodMealItems         FoodMealItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -188,6 +189,7 @@ model DayPart {
   name  String @unique @db.VarChar(255)
   order Int    @default(autoincrement()) @db.SmallInt
 
+  cosmecticApplications  CosmeticApplication[]
   medicamentIntakes      MedicamentIntake[]
   cosmeticProductApplied CosmeticProductApplication[]
   foodMealItems          FoodMealItem[]
@@ -232,8 +234,30 @@ model CosmeticProduct {
 
   applied CosmeticProductApplication[]
 
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  CosmeticApplication CosmeticApplication[]
+}
+
+model CosmeticApplication {
+  id String @id @default(uuid()) @db.Uuid
+
+  dayId String @db.Uuid
+  day   Day    @relation(fields: [dayId], references: [id], onDelete: Restrict)
+
+  dayPartId String  @db.Uuid
+  dayPart   DayPart @relation(fields: [dayPartId], references: [id], onDelete: Restrict)
+
+  productId String?          @db.Uuid
+  product   CosmeticProduct? @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  recipeId String?         @db.Uuid
+  recipe   CosmeticRecipe? @relation(fields: [recipeId], references: [id], onDelete: Restrict)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([recipeId, productId, dayPartId, dayId])
 }
 
 model CosmeticProductApplication {
@@ -309,8 +333,9 @@ model CosmeticRecipe {
   name        String  @db.Char(255)
   description String? @db.VarChar(1000)
 
-  phases   CosmeticRecipePhase[]
-  comments CosmeticRecipeComment[]
+  phases               CosmeticRecipePhase[]
+  comments             CosmeticRecipeComment[]
+  cosmeticApplications CosmeticApplication[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

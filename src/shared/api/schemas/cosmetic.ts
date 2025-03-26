@@ -59,6 +59,16 @@ import {
   GetCosmeticINCIIngredientResponse,
   ListCosmeticINCIIngredientsRequest,
   ListCosmeticINCIIngredientsResponse,
+  CreateCosmeticApplicationRequest,
+  CreateCosmeticApplicationResponse,
+  UpdateCosmeticApplicationRequest,
+  UpdateCosmeticApplicationResponse,
+  DeleteCosmeticApplicationRequest,
+  DeleteCosmeticApplicationResponse,
+  GetCosmeticApplicationRequest,
+  GetCosmeticApplicationResponse,
+  ListCosmeticApplicationsRequest,
+  ListCosmeticApplicationsResponse,
 } from '#/shared/api/types/cosmetic';
 import { createAction } from '#/shared/api/utils';
 
@@ -291,5 +301,45 @@ export const CosmeticSchema = {
   >({
     path: () => `/api/cosmetic/inci-ingredients`,
     method: 'GET',
+  }),
+
+  // --- Cosmetic Applications ------------------------------
+  createCosmeticApplication: createAction<
+    CreateCosmeticApplicationRequest,
+    CreateCosmeticApplicationResponse
+  >({
+    path: () => `/api/cosmetic/applications`,
+    method: 'POST',
+    body: data => data,
+  }),
+  updateCosmeticApplication: createAction<
+    UpdateCosmeticApplicationRequest,
+    UpdateCosmeticApplicationResponse
+  >({
+    path: ({ id }) => `/api/cosmetic/applications/${id}`,
+    method: 'PATCH',
+    body: ({ id: _id, ...data }) => data,
+  }),
+  deleteCosmeticApplication: createAction<
+    DeleteCosmeticApplicationRequest,
+    DeleteCosmeticApplicationResponse
+  >({
+    path: ({ id }) => `/api/cosmetic/applications/${id}`,
+    method: 'DELETE',
+  }),
+  getCosmeticApplication: createAction<
+    GetCosmeticApplicationRequest,
+    GetCosmeticApplicationResponse
+  >({
+    path: ({ id }) => `/api/cosmetic/applications/${id}`,
+    method: 'GET',
+  }),
+  listCosmeticApplications: createAction<
+    ListCosmeticApplicationsRequest,
+    ListCosmeticApplicationsResponse
+  >({
+    path: () => `/api/cosmetic/applications`,
+    method: 'GET',
+    query: data => data,
   }),
 };

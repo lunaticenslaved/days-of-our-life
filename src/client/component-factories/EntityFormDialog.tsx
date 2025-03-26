@@ -3,11 +3,12 @@ import { FinalForm } from '#/client/components/FForm';
 import { Form } from '#/client/components/Form';
 import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
 import { ReactNode, useMemo } from 'react';
+import { ValidationErrors } from 'final-form';
 import { z } from 'zod';
 
 interface CreateEntityFormDialogProps<
   TEntity,
-  TSchema extends Zod.SomeZodObject,
+  TSchema extends Zod.ZodType,
   TAdditionalProps,
 > {
   schema: TSchema;
@@ -19,14 +20,17 @@ interface CreateEntityFormDialogProps<
     create: string;
     update: string;
   };
-  renderFields(arg: { values: z.infer<TSchema> }, props: TAdditionalProps): ReactNode;
+  renderFields(
+    arg: { values: z.infer<TSchema>; errors: ValidationErrors },
+    props: TAdditionalProps,
+  ): ReactNode;
   getInitialValues(
     entity: TEntity | undefined,
     props: TAdditionalProps,
   ): z.infer<TSchema>;
 }
 
-type ComponentProps<TEntity, TSchema extends Zod.SomeZodObject> = {
+type ComponentProps<TEntity, TSchema extends Zod.ZodType> = {
   dialog: IDialog;
   onSubmit(values: z.infer<TSchema>): void;
   entity?: TEntity;
@@ -36,7 +40,7 @@ type ComponentProps<TEntity, TSchema extends Zod.SomeZodObject> = {
 // FIXME use form from atoms
 export function createEntityFormDialog<
   TEntity,
-  TSchema extends Zod.SomeZodObject,
+  TSchema extends Zod.ZodType,
   TAdditionalProps = object,
 >({
   renderFields,
@@ -65,14 +69,16 @@ export function createEntityFormDialog<
           onSubmit={onSubmit}
           initialValues={initialValues}
           disabled={isPending}>
-          {({ handleSubmit, values }) => {
+          {({ handleSubmit, values, errors }) => {
             return (
               <Form onSubmit={handleSubmit}>
                 <Dialog.Header>
                   {entity ? titleText.update : titleText.create}
                 </Dialog.Header>
                 <Dialog.Content>
-                  <Form.Content>{renderFields({ values }, additionalProp)}</Form.Content>
+                  <Form.Content>
+                    {renderFields({ values, errors }, additionalProp)}
+                  </Form.Content>
                 </Dialog.Content>
 
                 <Dialog.Footer>

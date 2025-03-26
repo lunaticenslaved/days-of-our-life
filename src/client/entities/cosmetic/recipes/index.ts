@@ -1,5 +1,9 @@
 // Components
 export { CosmeticRecipeForm } from './components/Form';
+export {
+  SingleSelect as CosmeticRecipeSingleSelect,
+  MultipleSelect as CosmeticRecipeMultipleSelect,
+} from './components/Select';
 
 // Containers
 export { CosmeticRecipeActions } from './containers/Actions';

@@ -1,4 +1,3 @@
-import dayjs from '#/shared/libs/dayjs';
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { DayInfo, DayPart } from '#/shared/models/day';
 import { AddWeightAction } from '#/client/entities/body-statistics';
@@ -35,19 +34,7 @@ export function Calendar({
   onUpdated,
 }: CalendarProps) {
   const dates = useMemo((): DateFormat[] => {
-    const start = DateUtils.fromDateFormat(startDate);
-    const end = DateUtils.fromDateFormat(endDate);
-
-    const result: DateFormat[] = [];
-
-    let date = dayjs(start);
-
-    while (date.isBefore(end, 'day') || date.isSame(end, 'day')) {
-      result.push(DateUtils.toDateFormat(date));
-      date = date.add(1, 'day');
-    }
-
-    return result;
+    return DateUtils.toArray({ start: startDate, end: endDate });
   }, [endDate, startDate]);
 
   function renderMedicamentIntakes(arg: RenderDayPartProps) {

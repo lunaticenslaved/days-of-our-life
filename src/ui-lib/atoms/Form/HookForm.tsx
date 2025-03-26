@@ -120,7 +120,8 @@ function getInputFormFieldProps<
       name: field.name,
       ref: field.ref,
       onValueUpdate: newValue => {
-        form.setValue(field.name, newValue, {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        form.setValue(field.name, newValue as any, {
           shouldValidate: true,
           shouldDirty: true,
         });

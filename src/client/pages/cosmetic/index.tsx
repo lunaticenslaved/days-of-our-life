@@ -7,6 +7,7 @@ import RecipeCreate from './recipes/Create';
 import ProductCreate from './products/Create';
 import IngredientsRoot from './ingredients/Root';
 import ProductsRoot from './products/Root';
+import ApplicationsRoot from './applications/Root';
 import BenefitsRoot from './benefits/Root';
 import RecipeOverview from './recipes/[recipeId]/Overview';
 import RecipeEdit from './recipes/[recipeId]/Edit';
@@ -41,6 +42,9 @@ const routes = {
 
   // INCI Ingredients
   INCIIngredients: '/cosmetic/inci-ingredients',
+
+  // Applications
+  applications: '/cosmetic/applications',
 } as const;
 
 export const COSMETIC_NAVIGATION = {
@@ -70,6 +74,9 @@ export const COSMETIC_NAVIGATION = {
 
   // INCI Ingredients
   toINCIIngredients: () => routes.INCIIngredients,
+
+  // Applications
+  toApplications: () => routes.applications,
 };
 
 export function useCosmeticPageParams() {
@@ -79,6 +86,10 @@ export function useCosmeticPageParams() {
 export const useCosmeticNavigation = createNavigationHook(COSMETIC_NAVIGATION);
 
 const SUBNAVIGATION_ITEMS: SubNavigationItem[] = [
+  {
+    to: COSMETIC_NAVIGATION.toApplications(),
+    title: 'Применение',
+  },
   {
     to: COSMETIC_NAVIGATION.toProducts(),
     title: 'Продукты',
@@ -131,6 +142,9 @@ export default [
 
     {/* INCI Ingredients */}
     <Route path={routes.INCIIngredients} element={<INCIIngredientsRoot />} />
+
+    {/* Applications */}
+    <Route path={routes.applications} element={<ApplicationsRoot />} />
 
     {/* Others */}
     <Route

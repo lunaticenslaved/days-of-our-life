@@ -3,6 +3,8 @@ import {
   COSMETIC_PRODUCT_SELECTOR,
 } from '#/server/selectors/cosmetic';
 import {
+  CreateCosmeticApplicationRequest,
+  CreateCosmeticApplicationResponse,
   CreateCosmeticBenefitRequest,
   CreateCosmeticBenefitResponse,
   CreateCosmeticINCIIngredientRequest,
@@ -15,6 +17,8 @@ import {
   CreateCosmeticRecipeCommentResponse,
   CreateCosmeticRecipeRequest,
   CreateCosmeticRecipeResponse,
+  DeleteCosmeticApplicationRequest,
+  DeleteCosmeticApplicationResponse,
   DeleteCosmeticBenefitRequest,
   DeleteCosmeticBenefitResponse,
   DeleteCosmeticINCIIngredientRequest,
@@ -27,6 +31,8 @@ import {
   DeleteCosmeticRecipeCommentResponse,
   DeleteCosmeticRecipeRequest,
   DeleteCosmeticRecipeResponse,
+  GetCosmeticApplicationRequest,
+  GetCosmeticApplicationResponse,
   GetCosmeticBenefitRequest,
   GetCosmeticBenefitResponse,
   GetCosmeticINCIIngredientRequest,
@@ -39,6 +45,8 @@ import {
   GetCosmeticRecipeCommentResponse,
   GetCosmeticRecipeRequest,
   GetCosmeticRecipeResponse,
+  ListCosmeticApplicationsRequest,
+  ListCosmeticApplicationsResponse,
   ListCosmeticBenefitsRequest,
   ListCosmeticBenefitsResponse,
   ListCosmeticINCIIngredientsRequest,
@@ -51,6 +59,8 @@ import {
   ListCosmeticRecipeCommentsResponse,
   ListCosmeticRecipesRequest,
   ListCosmeticRecipesResponse,
+  UpdateCosmeticApplicationRequest,
+  UpdateCosmeticApplicationResponse,
   UpdateCosmeticBenefitRequest,
   UpdateCosmeticBenefitResponse,
   UpdateCosmeticINCIIngredientRequest,
@@ -80,6 +90,9 @@ import {
 } from '#/shared/models/cosmetic';
 import CosmeticRecipeCommentService from '#/server/services/CosmeticRecipeCommentService';
 import CosmeticINCIIngredientService from '#/server/services/CosmeticINCIIngredientService';
+import CosmeticApplicationService from '#/server/services/cosmetic/CosmeticApplicationService';
+import { DateFormat } from '#/shared/models/date';
+import DayService from '#/server/services/DayService';
 
 export default new Controller<'cosmetic'>({
   // Cosmetic Products
@@ -596,6 +609,133 @@ export default new Controller<'cosmetic'>({
     parse: () => ({}),
     handler: async (_, { prisma }) => {
       return CosmeticINCIIngredientService.list({}, prisma);
+    },
+  }),
+
+  // --- Cosmetic Applications ------------------------------------------------
+  'GET /cosmetic/applications': Controller.handler<
+    ListCosmeticApplicationsRequest,
+    ListCosmeticApplicationsResponse
+  >({
+    validator: z.object({
+      startDate: CommonValidators.dateFormat,
+      endDate: CommonValidators.dateFormat,
+    }),
+    parse: request => ({
+      startDate: request.query.startDate as DateFormat,
+      endDate: request.query.endDate as DateFormat,
+    }),
+    handler: async ({ startDate, endDate }, { prisma }) => {
+      return CosmeticApplicationService.list({ startDate, endDate }, prisma);
+    },
+  }),
+
+  'GET /cosmetic/applications/:id': Controller.handler<
+    GetCosmeticApplicationRequest,
+    GetCosmeticApplicationResponse
+  >({
+    validator: z.object({
+      id: CommonValidators.id,
+    }),
+    parse: request => ({
+      id: request.params.id,
+    }),
+    handler: async ({ id }, { prisma }) => {
+      return CosmeticApplicationService.get({ id }, prisma);
+    },
+  }),
+
+  'POST /cosmetic/applications': Controller.handler<
+    CreateCosmeticApplicationRequest,
+    CreateCosmeticApplicationResponse
+  >({
+    validator: z.object({
+      date: CommonValidators.dateFormat,
+      dayPartId: CommonValidators.id,
+      source: z.union([
+        z.object({
+          type: z.literal('recipe'),
+          recipeId: CommonValidators.id,
+        }),
+        z.object({
+          type: z.literal('product'),
+          productId: CommonValidators.id,
+        }),
+      ]),
+    }),
+    parse: request => ({
+      date: request.body.date as DateFormat,
+      dayPartId: request.body.dayPartId,
+      source: request.body.source,
+    }),
+    handler: async ({ date, ...props }, { prisma }) => {
+      const day = await DayService.getDay(date, prisma);
+
+      return CosmeticApplicationService.create(
+        {
+          dayId: day.id,
+          dayPartId: props.dayPartId,
+          productId: props.source.type === 'product' ? props.source.productId : null,
+          recipeId: props.source.type === 'recipe' ? props.source.recipeId : null,
+        },
+        prisma,
+      );
+    },
+  }),
+
+  'PATCH /cosmetic/applications/:id': Controller.handler<
+    UpdateCosmeticApplicationRequest,
+    UpdateCosmeticApplicationResponse
+  >({
+    validator: z.object({
+      id: CommonValidators.id,
+      date: CommonValidators.dateFormat,
+      dayPartId: CommonValidators.id,
+      source: z.union([
+        z.object({
+          type: z.literal('recipe'),
+          recipeId: CommonValidators.id,
+        }),
+        z.object({
+          type: z.literal('product'),
+          productId: CommonValidators.id,
+        }),
+      ]),
+    }),
+    parse: request => ({
+      id: request.params.id,
+      date: request.body.date as DateFormat,
+      dayPartId: request.body.dayPartId,
+      source: request.body.source,
+    }),
+    handler: async ({ date, ...props }, { prisma }) => {
+      const day = await DayService.getDay(date, prisma);
+
+      return CosmeticApplicationService.update(
+        {
+          id: props.id,
+          dayId: day.id,
+          dayPartId: props.dayPartId,
+          productId: props.source.type === 'product' ? props.source.productId : null,
+          recipeId: props.source.type === 'recipe' ? props.source.recipeId : null,
+        },
+        prisma,
+      );
+    },
+  }),
+
+  'DELETE /cosmetic/applications/:id': Controller.handler<
+    DeleteCosmeticApplicationRequest,
+    DeleteCosmeticApplicationResponse
+  >({
+    validator: z.object({
+      id: CommonValidators.id,
+    }),
+    parse: request => ({
+      id: request.params.id,
+    }),
+    handler: async ({ id }, { prisma }) => {
+      await CosmeticApplicationService.delete({ id }, prisma);
     },
   }),
 });

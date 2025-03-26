@@ -6,6 +6,8 @@ import {
   CosmeticRecipeComment,
   CosmeticINCIIngredient,
 } from '#/shared/models/cosmetic';
+import { CosmeticApplication } from '#/shared/models/cosmetic/applications';
+import { DateFormat } from '#/shared/models/date';
 
 export type CreateCosmeticProductResponse = CosmeticProduct;
 export interface CreateCosmeticProductRequest {
@@ -173,3 +175,36 @@ export type GetCosmeticINCIIngredientRequest = {
 
 export type ListCosmeticINCIIngredientsResponse = CosmeticINCIIngredient[];
 export type ListCosmeticINCIIngredientsRequest = unknown;
+
+// --- Cosmetic Applications ------------------------------------
+export type CreateCosmeticApplicationResponse = CosmeticApplication;
+export type CreateCosmeticApplicationRequest = {
+  date: DateFormat;
+  dayPartId: string;
+  source:
+    | {
+        type: 'product';
+        productId: string;
+      }
+    | {
+        type: 'recipe';
+        recipeId: string;
+      };
+};
+
+export type UpdateCosmeticApplicationResponse = CosmeticApplication;
+export type UpdateCosmeticApplicationRequest = {
+  id: string;
+} & CreateCosmeticApplicationRequest;
+
+export type ListCosmeticApplicationsResponse = CosmeticApplication[];
+export interface ListCosmeticApplicationsRequest {
+  startDate: DateFormat;
+  endDate: DateFormat;
+}
+
+export type GetCosmeticApplicationResponse = CosmeticApplication;
+export type GetCosmeticApplicationRequest = { id: string };
+
+export type DeleteCosmeticApplicationResponse = void;
+export type DeleteCosmeticApplicationRequest = { id: string };

@@ -10,6 +10,7 @@ import {
 } from '#/shared/models/cosmetic';
 import { DAY_SELECTOR } from '#/server/selectors/days';
 import { DateUtils } from '#/shared/models/date';
+import { CosmeticApplication } from '#/shared/models/cosmetic/applications';
 
 export const COSMETIC_PRODUCT_SELECTOR = {
   select: {
@@ -182,5 +183,49 @@ export function convertCosmeticINCIIngredientSelector(
     id: data.id,
     name: data.name,
     benefitIds: data.benefits.map(benefit => benefit.id),
+  };
+}
+
+// --- Cosmetic Applications ------------------------------------
+export const COSMETIC_APPLICATION_SELECTOR = {
+  select: {
+    id: true,
+    dayPartId: true,
+    day: {
+      select: {
+        date: true,
+      },
+    },
+    productId: true,
+    recipeId: true,
+  },
+} satisfies Prisma.CosmeticApplicationDefaultArgs;
+
+export function convertCosmeticApplciationSelector(
+  data: Prisma.CosmeticApplicationGetPayload<typeof COSMETIC_APPLICATION_SELECTOR>,
+): CosmeticApplication {
+  let source: CosmeticApplication['source'] | null = null;
+
+  if (data.productId) {
+    source = {
+      type: 'product',
+      productId: data.productId,
+    };
+  } else if (data.recipeId) {
+    source = {
+      type: 'recipe',
+      recipeId: data.recipeId,
+    };
+  }
+
+  if (!source) {
+    throw new Error('Unknown cosmetic applcation source');
+  }
+
+  return {
+    id: data.id,
+    date: DateUtils.toDateFormat(data.day.date),
+    dayPartId: data.dayPartId,
+    source,
   };
 }
