@@ -1,12 +1,12 @@
 import { FoodRecipe, FoodValidators } from '#/shared/models/food';
 import { Button } from '#/ui-lib/atoms/Button';
 import { FForm } from '#/client/components/FForm';
-import { Form } from '#/client/components/Form';
 import { FoodProductSearch } from '#/client/entities/food';
 import { z } from 'zod';
 import { TextArea } from '#/ui-lib/atoms/TextArea';
 import { NumberInput } from '#/ui-lib/molecules/NumberInputField';
 import { TextInput } from '#/ui-lib/molecules/TextInputField';
+import { Box } from '#/ui-lib/atoms/Box';
 
 export const FoodRecipeValidator = z.object({
   name: FoodValidators.name,
@@ -64,7 +64,7 @@ export function FoodRecipeForm({ onSubmit, recipe }: RecipeFormProps) {
       initialValues={getInitialValues(recipe)}>
       {({ handleSubmit }) => (
         <>
-          <Form.Content>
+          <Box>
             <FForm.Field title="Имя" name="name" required>
               {fieldProps => {
                 return (
@@ -224,11 +224,11 @@ export function FoodRecipeForm({ onSubmit, recipe }: RecipeFormProps) {
                 }}
               </FForm.Field>
             </section>
-          </Form.Content>
+          </Box>
 
-          <Form.Footer>
+          <Box>
             <Button onClick={handleSubmit}>Сохранить</Button>
-          </Form.Footer>
+          </Box>
         </>
       )}
     </FForm>

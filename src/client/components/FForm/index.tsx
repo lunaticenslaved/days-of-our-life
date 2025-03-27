@@ -6,7 +6,6 @@ import { Form, FormRenderProps } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
 import { Validator } from '#/shared/validation';
 import { ZodType, z } from 'zod';
-import { Form as UIForm } from '../Form';
 
 interface FFormProps<V, T extends ZodType<V>, VZ extends z.infer<T>> {
   schema: T;
@@ -14,7 +13,7 @@ interface FFormProps<V, T extends ZodType<V>, VZ extends z.infer<T>> {
   loading?: boolean;
   initialValues?: Partial<VZ>;
   onSubmit(values: VZ): void | Promise<void>;
-  children(props: FormRenderProps<VZ>): ReactNode;
+  children(props: FormRenderProps<VZ> & { disabled?: boolean }): ReactNode;
 }
 
 export function FForm<V, T extends ZodType<V>, VZ extends z.infer<T>>({
@@ -35,10 +34,10 @@ export function FForm<V, T extends ZodType<V>, VZ extends z.infer<T>>({
       mutators={{ ...arrayMutators }}>
       {data => {
         return (
-          <UIForm disabled={disabled} onSubmit={data.handleSubmit}>
-            <div>{children(data)}</div>
+          <form onSubmit={data.handleSubmit}>
+            <div>{children({ ...data, disabled })}</div>
             {loading && <div>Loading...</div>}
-          </UIForm>
+          </form>
         );
       }}
     </Form>

@@ -1,6 +1,5 @@
 import { Button } from '#/ui-lib/atoms/Button';
 import { FinalForm } from '#/client/components/FForm';
-import { Form } from '#/client/components/Form';
 import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
 import { ReactNode, useMemo } from 'react';
 import { ValidationErrors } from 'final-form';
@@ -71,26 +70,20 @@ export function createEntityFormDialog<
           disabled={isPending}>
           {({ handleSubmit, values, errors }) => {
             return (
-              <Form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit}>
                 <Dialog.Header>
                   {entity ? titleText.update : titleText.create}
                 </Dialog.Header>
                 <Dialog.Content>
-                  <Form.Content>
-                    {renderFields({ values, errors }, additionalProp)}
-                  </Form.Content>
+                  {renderFields({ values, errors }, additionalProp)}
                 </Dialog.Content>
 
                 <Dialog.Footer>
-                  <Form.Footer>
-                    {({ disabled }) => (
-                      <Button disabled={disabled} type="submit">
-                        {entity ? submitText.update : submitText.create}
-                      </Button>
-                    )}
-                  </Form.Footer>
+                  <Button disabled={isPending} type="submit">
+                    {entity ? submitText.update : submitText.create}
+                  </Button>
                 </Dialog.Footer>
-              </Form>
+              </form>
             );
           }}
         </FinalForm>
