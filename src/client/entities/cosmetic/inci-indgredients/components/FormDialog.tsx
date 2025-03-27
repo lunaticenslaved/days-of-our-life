@@ -2,11 +2,11 @@ import {
   CosmeticINCIIngredient,
   CosmeticINCIIngredientValidators,
 } from '#/shared/models/cosmetic';
-import { TextInput } from '#/client/components/TextInput';
 import { FinalForm } from '#/client/components/FForm';
 import { z } from 'zod';
 import { CosmeticBenefitMultipleSelect } from '#/client/entities/cosmetic/benefits/components/Select';
 import { createEntityFormDialog } from '#/client/component-factories/EntityFormDialog';
+import { TextInput } from '#/ui-lib/molecules/TextInputField';
 
 const schema = z.object({
   name: CosmeticINCIIngredientValidators.name,
@@ -27,7 +27,15 @@ export const FormDialog = createEntityFormDialog<CosmeticINCIIngredient, typeof 
     return (
       <>
         <FinalForm.Field name="name" title="Название">
-          {TextInput}
+          {fieldProps => {
+            return (
+              <TextInput
+                {...fieldProps}
+                value={fieldProps.value}
+                onValueUpdate={fieldProps.onModelValueChange}
+              />
+            );
+          }}
         </FinalForm.Field>
 
         <FinalForm.Field name="benefitIds">

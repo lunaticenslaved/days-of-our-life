@@ -1,5 +1,5 @@
-import { TextInput } from '#/client/components/TextInput';
 import { ModelValueProps } from '#/client/types';
+import { TextInput } from '#/ui-lib/molecules/TextInputField';
 import {
   createContext,
   PropsWithChildren,

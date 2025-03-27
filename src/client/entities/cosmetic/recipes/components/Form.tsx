@@ -98,7 +98,9 @@ export function CosmeticRecipeForm({
       {({ handleSubmit }) => {
         return (
           <Flex direction="column" gap={4}>
-            <Form.Field<CosmeticRecipeFormValues['name'] | null> name={'name'} required>
+            <Form.Field<CosmeticRecipeFormValues['name'] | undefined>
+              name={'name'}
+              required>
               {fieldProps => {
                 return (
                   <Field>
@@ -125,7 +127,7 @@ export function CosmeticRecipeForm({
                           return (
                             <Box key={phaseFieldName} spacing={{ mb: 4 }}>
                               <Flex direction="row" alignItems="center" gap={1}>
-                                <Form.Field<string | null>
+                                <Form.Field<string | undefined>
                                   name={`${phaseFieldName}.name`}
                                   required>
                                   {fieldProps => {
@@ -182,7 +184,7 @@ export function CosmeticRecipeForm({
                                                 }}
                                               </Form.Field>
 
-                                              <Form.Field<number | null>
+                                              <Form.Field<number | undefined>
                                                 name={`${ingredientField}.percent`}
                                                 required>
                                                 {fieldProps => {
@@ -200,7 +202,7 @@ export function CosmeticRecipeForm({
                                                 }}
                                               </Form.Field>
 
-                                              <Form.Field<string | null>
+                                              <Form.Field<string | undefined>
                                                 name={`${phaseFieldName}.comment`}
                                                 required>
                                                 {fieldProps => {

@@ -1,4 +1,5 @@
-import { DirectionProp, ModelValueProps } from '#/client/types';
+import { DirectionProp } from '#/client/types';
+import { WithInputProps } from '#/ui-lib/types';
 import {
   ChangeEvent,
   createContext,
@@ -10,42 +11,40 @@ import {
   FocusEvent,
 } from 'react';
 
-//
-//
-// --- Radio Group Context ---
-interface RadioGroupContext extends ModelValueProps<string | undefined> {
-  onChange?(e: ChangeEvent<HTMLInputElement>): void;
-  onBlur?(e: FocusEvent<HTMLInputElement>): void;
-}
+// --- Radio Group Context ------------------------------------------------------------
+type RadioGroupContext = WithInputProps<
+  string | undefined,
+  {
+    onChange?(e: ChangeEvent<HTMLInputElement>): void;
+    onBlur?(e: FocusEvent<HTMLInputElement>): void;
+  }
+>;
 
 const RadioGroupContext = createContext<RadioGroupContext | null>(null);
 
-//
-//
-// --- Radio Group ---
+// --- Radio Group --------------------------------------------------------------------
 // TODO add aria attributes
-interface RadioGroupProps extends PropsWithChildren, DirectionProp, RadioGroupContext {}
-
+// TODO and on blur event
 function RadioGroup({
   children,
   direction = 'column',
-  modelValue,
+  value: valueProp,
   onChange,
-  onModelValueChange,
-}: RadioGroupProps) {
-  const [value, setValue] = useState(modelValue);
+  onValueUpdate,
+}: PropsWithChildren & DirectionProp & RadioGroupContext) {
+  const [value, setValue] = useState(valueProp);
 
   useEffect(() => {
-    setValue(modelValue);
-  }, [modelValue]);
+    setValue(valueProp);
+  }, [valueProp]);
 
   return (
     <RadioGroupContext.Provider
       value={{
-        modelValue: value,
+        value,
         onChange,
-        onModelValueChange: value => {
-          onModelValueChange?.(value);
+        onValueUpdate: value => {
+          onValueUpdate?.(value);
           setValue(value);
         },
       }}>
@@ -53,12 +52,9 @@ function RadioGroup({
     </RadioGroupContext.Provider>
   );
 }
-
 RadioGroup.displayName = 'RadioGroup';
 
-//
-//
-// --- Radio Button ---
+// --- Radio Button ------------------------------------------------------------------
 // TODO add aria attributes
 interface RadioProps extends Omit<HTMLProps<HTMLInputElement>, 'value'>, DirectionProp {
   title?: string;
@@ -73,11 +69,11 @@ function RadioButton({ title, direction = 'row', ...props }: RadioProps) {
       <input
         {...props}
         type="radio"
-        checked={props.value === context?.modelValue}
+        checked={props.value === context?.value}
         onChange={e => {
           props.onChange?.(e);
           context?.onChange?.(e);
-          context?.onModelValueChange?.(props.value);
+          context?.onValueUpdate?.(props.value);
         }}
         onBlur={e => {
           props.onBlur?.(e);
@@ -88,9 +84,7 @@ function RadioButton({ title, direction = 'row', ...props }: RadioProps) {
     </label>
   );
 }
-
 RadioButton.displayName = 'RadioGroup.Button';
-
 RadioGroup.Button = RadioButton;
 
 export { RadioGroup };

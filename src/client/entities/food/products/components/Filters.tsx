@@ -5,7 +5,7 @@ import { InputProps } from '#/ui-lib/types';
 import { useCallback, useState } from 'react';
 
 type FoodProductFiltersValues = {
-  search: string | null;
+  search?: string;
 };
 
 type FoodProductFiltersProps = InputProps<FoodProductFiltersValues>;
@@ -31,7 +31,7 @@ export function FoodProductFilters({ value, onValueUpdate }: FoodProductFiltersP
 
 export function useFoodProductFilters() {
   const [value, onValueUpdate] = useState<FoodProductFiltersValues>({
-    search: null,
+    search: undefined,
   });
 
   const filter = useCallback(

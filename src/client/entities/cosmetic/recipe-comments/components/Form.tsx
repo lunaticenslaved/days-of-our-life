@@ -29,7 +29,7 @@ export function FormComponent({ onSubmit }: CosmeticRecipeCommentFormProps) {
     <Form schema={schema} onSubmit={onSubmit} initialValues={initialValues}>
       {() => (
         <>
-          <Form.Field<string | null> name="text">
+          <Form.Field<string | undefined> name="text">
             {fieldProps => {
               // FIXME use text area
               return (

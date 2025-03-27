@@ -1,31 +1,32 @@
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import dayjs from '#/shared/libs/dayjs';
-import { ModelValueProps } from '#/client/types';
 import { cloneDeep } from 'lodash';
 import { FocusEventHandler, useCallback, useEffect, useMemo, useState } from 'react';
 import { format } from './utils';
+import { WithInputProps } from '#/ui-lib/types';
 
 // FIXME replace undefined with null
-export interface DatePickerRangeModelValue {
+export interface DatePickerRangeValue {
   from?: DateFormat;
   to?: DateFormat;
 }
 
-export interface DatePickerRangeProps extends ModelValueProps<DatePickerRangeModelValue> {
-  onBlur?: FocusEventHandler<HTMLElement>;
-  onFocus?: FocusEventHandler<HTMLElement>;
-}
+export type DatePickerRangeProps = WithInputProps<
+  DatePickerRangeValue | undefined,
+  {
+    onBlur?: FocusEventHandler<HTMLElement>;
+    onFocus?: FocusEventHandler<HTMLElement>;
+  }
+>;
 
 export function DatePickerRange({
-  modelValue: valueProp,
-  onModelValueChange,
+  value: valueProp,
+  onValueUpdate,
   ...props
 }: DatePickerRangeProps) {
-  const [value, _setValue] = useState<Partial<DatePickerRangeModelValue> | undefined>(
-    () => {
-      return cloneDeep(valueProp);
-    },
-  );
+  const [value, _setValue] = useState<Partial<DatePickerRangeValue> | undefined>(() => {
+    return cloneDeep(valueProp);
+  });
 
   useEffect(() => {
     _setValue(valueProp);
@@ -63,12 +64,12 @@ export function DatePickerRange({
       _setValue(newValue);
 
       if (newValue.from && newValue.to) {
-        onModelValueChange?.(newValue);
+        onValueUpdate?.(newValue);
       } else {
-        onModelValueChange?.(undefined);
+        onValueUpdate?.(undefined);
       }
     },
-    [onModelValueChange, value],
+    [onValueUpdate, value],
   );
 
   return (

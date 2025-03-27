@@ -4,9 +4,9 @@ import { FOOD_NAVIGATION } from '../../index';
 import { FoodRecipeOutput, FoodNutrientsList } from '#/client/entities/food';
 import { multiplyNutrients } from '#/shared/models/food';
 import { useState } from 'react';
-import { NumberInput } from '#/client/components/NumberInput';
 import { useGetFoodRecipeQuery } from '#/client/store';
 import { Page } from '#/client/widgets/Page';
+import { NumberInput } from '#/ui-lib/molecules/NumberInputField';
 
 export default function FoodRecipeOverviewPage() {
   const { recipeId = '' } = useFoodPageParams();
@@ -69,7 +69,7 @@ export default function FoodRecipeOverviewPage() {
 
           <section>
             <h3>На 100 г</h3>
-            <NumberInput modelValue={testGrams} onModelValueChange={setTestGrams} />
+            <NumberInput value={testGrams} onValueUpdate={setTestGrams} />
             {testGrams && (
               <div>
                 Проверка калорийности - {testGrams * product.nutrientsPerGram.calories}

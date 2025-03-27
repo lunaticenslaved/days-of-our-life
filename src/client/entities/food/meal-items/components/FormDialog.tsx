@@ -1,7 +1,5 @@
 import { createEntityFormDialog } from '#/client/component-factories/EntityFormDialog';
 import { FinalForm } from '#/client/components/FForm';
-import { NumberInput } from '#/client/components/NumberInput';
-import { RadioGroup } from '#/client/components/Radio';
 import { Select } from '#/ui-lib/atoms/Select';
 import {
   FoodNutrientsList,
@@ -19,6 +17,8 @@ import {
 import { cloneDeep } from 'lodash';
 import { ComponentProps } from 'react';
 import { z } from 'zod';
+import { RadioGroup } from '#/ui-lib/atoms/Radio';
+import { NumberInput } from '#/ui-lib/molecules/NumberInputField';
 
 const schema = z.object({
   quantity: z.object({
@@ -70,12 +70,17 @@ export const FoodMealItemFormDialog = createEntityFormDialog<
     return (
       <>
         <FinalForm.Field name="food.type">
-          {inputProps => (
-            <RadioGroup {...inputProps}>
-              <RadioGroup.Button value="product" title="Продукт" />
-              <RadioGroup.Button value="recipe" title="Рецепт" />
-            </RadioGroup>
-          )}
+          {inputProps => {
+            return (
+              <RadioGroup
+                {...inputProps}
+                value={inputProps.modelValue}
+                onValueUpdate={inputProps.onModelValueChange}>
+                <RadioGroup.Button value="product" title="Продукт" />
+                <RadioGroup.Button value="recipe" title="Рецепт" />
+              </RadioGroup>
+            );
+          }}
         </FinalForm.Field>
 
         {food.type === 'product' ? (
@@ -109,7 +114,15 @@ export const FoodMealItemFormDialog = createEntityFormDialog<
 
         {quantityConverter && (
           <FinalForm.Field title={quantityConverter.name} name="quantity.value" required>
-            {NumberInput}
+            {fieldProps => {
+              return (
+                <NumberInput
+                  {...fieldProps}
+                  value={fieldProps.value}
+                  onValueUpdate={fieldProps.onModelValueChange}
+                />
+              );
+            }}
           </FinalForm.Field>
         )}
 

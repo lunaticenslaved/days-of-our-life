@@ -1,9 +1,9 @@
 import { CosmeticBenefit } from '#/shared/models/cosmetic';
-import { TextInput } from '#/client/components/TextInput';
 import { z } from 'zod';
 import { createEntityFormDialog } from '#/client/component-factories/EntityFormDialog';
 import { CommonValidators } from '#/shared/models/common';
 import { FForm } from '#/client/components/FForm';
+import { TextInput } from '#/ui-lib/molecules/TextInputField';
 
 const schema = z.object({
   name: CommonValidators.str(255),
@@ -25,7 +25,16 @@ export const FormDialogComponent = createEntityFormDialog<CosmeticBenefit, typeo
       return (
         <>
           <FForm.Field title={'Имя'} name="name" required>
-            {props => <TextInput {...props} autoFocus />}
+            {fieldProps => {
+              return (
+                <TextInput
+                  {...fieldProps}
+                  autoFocus
+                  value={fieldProps.value}
+                  onValueUpdate={fieldProps.onModelValueChange}
+                />
+              );
+            }}
           </FForm.Field>
         </>
       );

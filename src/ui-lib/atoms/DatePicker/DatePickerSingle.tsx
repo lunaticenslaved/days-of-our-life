@@ -1,16 +1,19 @@
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { format } from './utils';
-import { ModelValueProps } from '#/client/types';
 import { FocusEventHandler, useCallback, useEffect, useMemo, useState } from 'react';
+import { WithInputProps } from '#/ui-lib/types';
 
-export interface DatePickerSingleProps extends ModelValueProps<DateFormat> {
-  onBlur?: FocusEventHandler<HTMLElement>;
-  onFocus?: FocusEventHandler<HTMLElement>;
-}
+export type DatePickerSingleProps = WithInputProps<
+  DateFormat | undefined,
+  {
+    onBlur?: FocusEventHandler<HTMLElement>;
+    onFocus?: FocusEventHandler<HTMLElement>;
+  }
+>;
 
 export function DatePickerSingle({
-  modelValue: valueProp,
-  onModelValueChange,
+  value: valueProp,
+  onValueUpdate,
   ...props
 }: DatePickerSingleProps) {
   const [value, _setValue] = useState(valueProp);
@@ -32,9 +35,9 @@ export function DatePickerSingle({
       const newValue = date ? DateUtils.toDateFormat(date) : undefined;
 
       _setValue(newValue);
-      onModelValueChange?.(newValue);
+      onValueUpdate?.(newValue);
     },
-    [onModelValueChange],
+    [onValueUpdate],
   );
 
   return (

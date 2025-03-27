@@ -194,7 +194,7 @@ function ListSearch(props: Pick<ComponentProps<typeof Input>, 'placeholder'>) {
   return (
     <Input
       {...props}
-      value={search || null}
+      value={search}
       onValueUpdate={newValue => setSearch(newValue || '')}
       debounceMs={500}
     />

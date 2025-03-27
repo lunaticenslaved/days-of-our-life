@@ -1,6 +1,6 @@
 import { FoodMealItemsList, FoodNutrientsList } from '#/client/entities/food';
 import { useState } from 'react';
-import { DatePicker } from '#/client/components/DatePicker';
+import { DatePicker } from '#/ui-lib/atoms/DatePicker';
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { useGetDayQuery, useListFoodMealItemQuery } from '#/client/store';
 import { sumNutrients } from '#/shared/models/food';
@@ -44,8 +44,8 @@ export default function Page() {
     <div>
       <DatePicker
         type="single"
-        modelValue={date}
-        onModelValueChange={v => setDate(v ? v : DateUtils.toDateFormat(new Date()))}
+        value={date}
+        onValueUpdate={v => setDate(v ? v : DateUtils.toDateFormat(new Date()))}
       />
 
       <section>

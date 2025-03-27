@@ -1,5 +1,5 @@
 import { DateFormat, DateUtils } from '#/shared/models/date';
-import { DatePicker, DatePickerRangeModelValue } from '#/client/components/DatePicker';
+import { DatePicker, DatePickerRangeValue } from '#/ui-lib/atoms/DatePicker';
 import { useListDayPartsQuery, useListDaysQuery } from '#/client/store';
 import { Calendar } from '#/client/widgets/Calendar';
 import { useMemo, useState } from 'react';
@@ -45,7 +45,7 @@ function CalendarDatePicker({
   onStartDateChange,
   onEndDateChange,
 }: CalendarDatePickerProps) {
-  const modelValue = useMemo((): DatePickerRangeModelValue => {
+  const modelValue = useMemo((): DatePickerRangeValue => {
     return {
       from: startDate,
       to: endDate,
@@ -55,8 +55,8 @@ function CalendarDatePicker({
   return (
     <DatePicker
       type="range"
-      modelValue={modelValue}
-      onModelValueChange={value => {
+      value={modelValue}
+      onValueUpdate={value => {
         if (value?.from && modelValue.from !== value.from) {
           onStartDateChange(value.from);
         }

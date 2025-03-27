@@ -53,14 +53,6 @@ export function wrapApiAction<
     arg: P extends undefined ? T : Omit<T, keyof P>,
     localHandlers: Handlers<R> = {},
   ): Promise<R> => {
-    // FIXME remove
-    // await new Promise(resolve => {
-    //   setTimeout(() => {
-    //     console.log('resolving');
-    //     resolve(undefined);
-    //   }, 1000);
-    // });
-
     const response = await fn({ ...(passArg || {}), ...arg } as unknown as T);
 
     if (response.type === 'error') {

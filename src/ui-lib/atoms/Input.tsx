@@ -1,5 +1,5 @@
 import { THEME } from '#/ui-lib/theme';
-import { InputProps as BaseInputProps } from '#/ui-lib/types';
+import { WithInputProps } from '#/ui-lib/types';
 import { getDimensions } from '#/ui-lib/utils/dimensions';
 import { Size } from '#/ui-lib/utils/size';
 import { getSpacingStyles } from '#/ui-lib/utils/spacing';
@@ -16,11 +16,13 @@ import {
 
 const SIZE: Size = 'm';
 
-type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, keyof BaseInputProps> &
-  BaseInputProps<string | null> & {
-    debounceMs?: number;
-    convertValue?: (value: string | null) => string | undefined;
-  };
+type InputProps = WithInputProps<
+  string | undefined,
+  InputHTMLAttributes<HTMLInputElement>
+> & {
+  debounceMs?: number;
+  convertValue?: (value: string | undefined) => string | undefined;
+};
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ debounceMs = 0, value, onValueUpdate, convertValue, ...props }, ref) => {

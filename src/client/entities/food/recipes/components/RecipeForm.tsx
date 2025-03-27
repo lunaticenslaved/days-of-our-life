@@ -2,11 +2,11 @@ import { FoodRecipe, FoodValidators } from '#/shared/models/food';
 import { Button } from '#/ui-lib/atoms/Button';
 import { FForm } from '#/client/components/FForm';
 import { Form } from '#/client/components/Form';
-import { NumberInput } from '#/client/components/NumberInput';
-import { TextArea } from '#/client/components/TextArea';
-import { TextInput } from '#/client/components/TextInput';
 import { FoodProductSearch } from '#/client/entities/food';
 import { z } from 'zod';
+import { TextArea } from '#/ui-lib/atoms/TextArea';
+import { NumberInput } from '#/ui-lib/molecules/NumberInputField';
+import { TextInput } from '#/ui-lib/molecules/TextInputField';
 
 export const FoodRecipeValidator = z.object({
   name: FoodValidators.name,
@@ -66,7 +66,15 @@ export function FoodRecipeForm({ onSubmit, recipe }: RecipeFormProps) {
         <>
           <Form.Content>
             <FForm.Field title="Имя" name="name" required>
-              {TextInput}
+              {fieldProps => {
+                return (
+                  <TextInput
+                    {...fieldProps}
+                    value={fieldProps.value}
+                    onValueUpdate={fieldProps.onModelValueChange}
+                  />
+                );
+              }}
             </FForm.Field>
 
             <section>
@@ -83,11 +91,27 @@ export function FoodRecipeForm({ onSubmit, recipe }: RecipeFormProps) {
                   return (
                     <div style={{ marginBottom: '20px' }}>
                       <FForm.Field name={`${name}.title`} title="Название" required>
-                        {TextInput}
+                        {fieldProps => {
+                          return (
+                            <TextInput
+                              {...fieldProps}
+                              value={fieldProps.value}
+                              onValueUpdate={fieldProps.onModelValueChange}
+                            />
+                          );
+                        }}
                       </FForm.Field>
 
                       <FForm.Field name={`${name}.description`} title="Подготовка">
-                        {TextArea}
+                        {fieldProps => {
+                          return (
+                            <TextArea
+                              {...fieldProps}
+                              value={fieldProps.modelValue}
+                              onValueUpdate={fieldProps.onModelValueChange}
+                            />
+                          );
+                        }}
                       </FForm.Field>
 
                       <section>
@@ -114,13 +138,29 @@ export function FoodRecipeForm({ onSubmit, recipe }: RecipeFormProps) {
                                   name={`${name}.grams`}
                                   title="Граммы"
                                   required>
-                                  {NumberInput}
+                                  {fieldProps => {
+                                    return (
+                                      <NumberInput
+                                        {...fieldProps}
+                                        value={fieldProps.value}
+                                        onValueUpdate={fieldProps.onModelValueChange}
+                                      />
+                                    );
+                                  }}
                                 </FForm.Field>
 
                                 <FForm.Field
                                   name={`${name}.description`}
                                   title="Описание">
-                                  {TextInput}
+                                  {fieldProps => {
+                                    return (
+                                      <TextInput
+                                        {...fieldProps}
+                                        value={fieldProps.value}
+                                        onValueUpdate={fieldProps.onModelValueChange}
+                                      />
+                                    );
+                                  }}
                                 </FForm.Field>
 
                                 <div>
@@ -146,7 +186,15 @@ export function FoodRecipeForm({ onSubmit, recipe }: RecipeFormProps) {
               <h2>Как готовить</h2>
 
               <FForm.Field name={`description`} required>
-                {TextArea}
+                {fieldProps => {
+                  return (
+                    <TextArea
+                      {...fieldProps}
+                      value={fieldProps.modelValue}
+                      onValueUpdate={fieldProps.onModelValueChange}
+                    />
+                  );
+                }}
               </FForm.Field>
             </section>
 
@@ -154,10 +202,26 @@ export function FoodRecipeForm({ onSubmit, recipe }: RecipeFormProps) {
               <h2>Выход</h2>
 
               <FForm.Field name={`output.grams`} title="Граммы" required>
-                {NumberInput}
+                {fieldProps => {
+                  return (
+                    <NumberInput
+                      {...fieldProps}
+                      value={fieldProps.value}
+                      onValueUpdate={fieldProps.onModelValueChange}
+                    />
+                  );
+                }}
               </FForm.Field>
               <FForm.Field name={`output.servings`} title="Порции" required>
-                {NumberInput}
+                {fieldProps => {
+                  return (
+                    <NumberInput
+                      {...fieldProps}
+                      value={fieldProps.value}
+                      onValueUpdate={fieldProps.onModelValueChange}
+                    />
+                  );
+                }}
               </FForm.Field>
             </section>
           </Form.Content>

@@ -20,7 +20,7 @@ type NutrientsInputFormFieldProps = {
 export function NutrientsInputFormField({ name }: NutrientsInputFormFieldProps) {
   return (
     <>
-      <Form.Field<NutrientsInputValues['calories'] | null>
+      <Form.Field<NutrientsInputValues['calories'] | undefined>
         name={`${name}.calories`}
         required>
         {fieldProps => {
@@ -34,7 +34,7 @@ export function NutrientsInputFormField({ name }: NutrientsInputFormFieldProps) 
         }}
       </Form.Field>
 
-      <Form.Field<NutrientsInputValues['proteins'] | null>
+      <Form.Field<NutrientsInputValues['proteins'] | undefined>
         name={`${name}.proteins`}
         required>
         {fieldProps => {
@@ -48,7 +48,9 @@ export function NutrientsInputFormField({ name }: NutrientsInputFormFieldProps) 
         }}
       </Form.Field>
 
-      <Form.Field<NutrientsInputValues['fats'] | null> name={`${name}.fats`} required>
+      <Form.Field<NutrientsInputValues['fats'] | undefined>
+        name={`${name}.fats`}
+        required>
         {fieldProps => {
           return (
             <NumberInputField
@@ -60,7 +62,9 @@ export function NutrientsInputFormField({ name }: NutrientsInputFormFieldProps) 
         }}
       </Form.Field>
 
-      <Form.Field<NutrientsInputValues['carbs'] | null> name={`${name}.carbs`} required>
+      <Form.Field<NutrientsInputValues['carbs'] | undefined>
+        name={`${name}.carbs`}
+        required>
         {fieldProps => {
           return (
             <NumberInputField
@@ -72,7 +76,9 @@ export function NutrientsInputFormField({ name }: NutrientsInputFormFieldProps) 
         }}
       </Form.Field>
 
-      <Form.Field<NutrientsInputValues['fibers'] | null> name={`${name}.fibers`} required>
+      <Form.Field<NutrientsInputValues['fibers'] | undefined>
+        name={`${name}.fibers`}
+        required>
         {fieldProps => {
           return (
             <NumberInputField

@@ -23,7 +23,6 @@ export type Spacing = {
 
 export type SpacingProps = { spacing?: Spacing };
 
-// FIXME remove extra spacing arg
 export function getSpacingStyles(spacing: Spacing): CSSProperties {
   const result: CSSProperties = {};
 

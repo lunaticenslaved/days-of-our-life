@@ -39,7 +39,7 @@ export function CosmeticProductForm({
       {() => {
         return (
           <>
-            <Form.Field<string | null> name="name">
+            <Form.Field<string | undefined> name="name">
               {fieldProps => {
                 return (
                   <Field direction="horizontal">
@@ -53,7 +53,7 @@ export function CosmeticProductForm({
               }}
             </Form.Field>
 
-            <Form.Field<string | null> name="manufacturer">
+            <Form.Field<string | undefined> name="manufacturer">
               {fieldProps => {
                 return (
                   <Field direction="horizontal">

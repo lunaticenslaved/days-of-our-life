@@ -6,9 +6,9 @@ import { createEntityFormDialog } from '#/client/component-factories/EntityFormD
 import { CosmeticApplication } from '#/shared/models/cosmetic/applications';
 import { DateFormat } from '#/shared/models/date';
 import { FinalForm } from '#/client/components/FForm';
-import { RadioGroup } from '#/client/components/Radio';
 import { CosmeticRecipeSingleSelect } from '#/client/entities/cosmetic/recipes';
 import { nonReachable } from '#/shared/utils';
+import { RadioGroup } from '#/ui-lib/atoms/Radio';
 
 // FIXME add better validation
 const schema = z.union([
@@ -48,12 +48,17 @@ export const FormDialogComponent = createEntityFormDialog<
     return (
       <>
         <FinalForm.Field name="type">
-          {inputProps => (
-            <RadioGroup {...inputProps}>
-              <RadioGroup.Button value="product" title="Продукт" />
-              <RadioGroup.Button value="recipe" title="Рецепт" />
-            </RadioGroup>
-          )}
+          {inputProps => {
+            return (
+              <RadioGroup
+                {...inputProps}
+                value={inputProps.modelValue}
+                onValueUpdate={inputProps.onModelValueChange}>
+                <RadioGroup.Button value="product" title="Продукт" />
+                <RadioGroup.Button value="recipe" title="Рецепт" />
+              </RadioGroup>
+            );
+          }}
         </FinalForm.Field>
 
         {values.type === 'product' ? (

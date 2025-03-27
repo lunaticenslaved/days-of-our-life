@@ -12,7 +12,9 @@ const PADDING = 4;
 function Page({ children }: { children: ReactNode }) {
   return (
     <PageContextProvider>
-      <Box>{children}</Box>
+      <Flex direction="column" height="100%" width="100%">
+        {children}
+      </Flex>
     </PageContextProvider>
   );
 }
