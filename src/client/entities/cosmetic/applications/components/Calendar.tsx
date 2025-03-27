@@ -1,6 +1,7 @@
 import { CosmeticApplication } from '#/shared/models/cosmetic/applications';
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { DayPart } from '#/shared/models/day';
+import { Box } from '#/ui-lib/atoms/Box';
 import _ from 'lodash';
 import { ReactNode, useMemo } from 'react';
 
@@ -35,6 +36,15 @@ export function CalendarComponent({
 
   return (
     <table>
+      <colgroup>
+        <col style={{ minWidth: '120px' }} />
+        {dayParts.map(currentDayPart => {
+          return (
+            <col key={currentDayPart.id} style={{ minWidth: '300px', width: '300px' }} />
+          );
+        })}
+      </colgroup>
+
       <thead>
         <tr>
           <th></th>
@@ -56,11 +66,13 @@ export function CalendarComponent({
 
                 return (
                   <td key={currentDayPart.id}>
-                    {renderApplications({
-                      date: currentDate,
-                      dayPartId: currentDayPart.id,
-                      applications: currentApplications,
-                    })}
+                    <Box spacing={{ p: 2 }}>
+                      {renderApplications({
+                        date: currentDate,
+                        dayPartId: currentDayPart.id,
+                        applications: currentApplications,
+                      })}
+                    </Box>
                   </td>
                 );
               })}

@@ -6,6 +6,8 @@ import { Text } from '#/ui-lib/atoms/Text';
 
 const PADDING = 4;
 
+// FIXME add content scrolling
+
 // --- Page Root -------------------------------------------------------
 function Page({ children }: { children: ReactNode }) {
   return (

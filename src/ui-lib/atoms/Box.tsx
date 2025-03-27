@@ -13,6 +13,7 @@ import {
 } from '#/ui-lib/utils/color';
 import { checkProps } from '#/ui-lib/utils/common';
 import { getSpacingStyles, SpacingProps } from '#/ui-lib/utils/spacing';
+import { getWidthStyles, WidthProps } from '#/ui-lib/utils/width';
 
 // --- Settings ---------------------------------------------------------------
 const DEFAULT_BG_COLOR = 'transparent';
@@ -20,6 +21,7 @@ const DEFAULT_BG_COLOR = 'transparent';
 type CommonProps = SpacingProps &
   OverflowProps &
   HeightProps &
+  WidthProps &
   FlexChildProps &
   ColorProps<ColorInherit | ColorTransparent>;
 
@@ -29,6 +31,7 @@ const shouldForwardProp = checkProps<CommonProps>({
   height: false,
   overflow: false,
   spacing: false,
+  width: false,
 });
 
 function getStyles({ color = DEFAULT_BG_COLOR, ...props }: CommonProps): StyledObject {
@@ -36,6 +39,7 @@ function getStyles({ color = DEFAULT_BG_COLOR, ...props }: CommonProps): StyledO
     ...getSpacingStyles(props.spacing || {}),
     ...getOverflowStyles(props),
     ...getHeightStyles(props),
+    ...getWidthStyles(props),
     ...getFlexChildStyles(props),
     backgroundColor: getColor({ color, shade: 'main' }),
     color: getTextColor(color),

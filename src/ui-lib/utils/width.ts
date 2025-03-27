@@ -1,7 +1,7 @@
 import { CSSProperties } from 'react';
 
 export type WidthProps = {
-  width?: `${number}%`;
+  width?: `${number}%` | `${number}px`;
 };
 
 type GetWidthStylesResult = Pick<CSSProperties, 'width'>;
