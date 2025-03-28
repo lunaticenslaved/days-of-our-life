@@ -10,10 +10,12 @@ import { z } from 'zod';
 import { Form } from '#/ui-lib/atoms/Form';
 import { Field } from '#/ui-lib/atoms/Field';
 import { Box } from '#/ui-lib/atoms/Box';
+import { Text } from '#/ui-lib/atoms/Text';
 import { TextInput } from '#/ui-lib/molecules/TextInputField';
 import { Flex } from '#/ui-lib/atoms/Flex';
 import { CosmeticIngredientSingleSelect } from '#/client/entities/cosmetic/ingredients';
 import { NumberInput } from '#/ui-lib/molecules/NumberInputField';
+import { sumBy } from 'lodash';
 
 const schema = z.object({
   name: CosmeticRecipeValidators.name,
@@ -95,7 +97,7 @@ export function CosmeticRecipeForm({
 
   return (
     <Form schema={schema} onSubmit={onSubmit} initialValues={initialValues}>
-      {({ handleSubmit }) => {
+      {({ handleSubmit, values }) => {
         return (
           <Flex direction="column" gap={4}>
             <Form.Field<CosmeticRecipeFormValues['name'] | undefined>
@@ -236,6 +238,18 @@ export function CosmeticRecipeForm({
                                           );
                                         },
                                       )}
+
+                                      <Button
+                                        type="button"
+                                        onClick={() => {
+                                          ingredientFields.push({
+                                            ingredientId: '',
+                                            percent: 0,
+                                            comment: '',
+                                          });
+                                        }}>
+                                        Добавить ингредиент
+                                      </Button>
                                     </Flex>
                                   );
                                 }}
@@ -261,9 +275,18 @@ export function CosmeticRecipeForm({
               </Form.FieldArray>
             </Box>
 
-            <Button type="submit" onClick={handleSubmit}>
-              Сохранить
-            </Button>
+            <Flex alignItems="center" gap={2}>
+              <Button type="submit" onClick={handleSubmit}>
+                Сохранить
+              </Button>
+
+              <Text>
+                Сумма процентов:{' '}
+                {sumBy(values.phases, phase =>
+                  sumBy(phase.ingredients, ingredient => ingredient.percent),
+                )}
+              </Text>
+            </Flex>
           </Flex>
         );
       }}

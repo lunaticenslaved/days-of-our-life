@@ -39,7 +39,7 @@ export const CosmeticIngredientFormDialog = createEntityFormDialog<
             return (
               <TextInput
                 {...fieldProps}
-                value={fieldProps.value}
+                value={fieldProps.modelValue}
                 onValueUpdate={fieldProps.onModelValueChange}
               />
             );
@@ -59,11 +59,27 @@ export const CosmeticIngredientFormDialog = createEntityFormDialog<
         </FinalForm.Field>
 
         <FinalForm.Field name="INCIIngredientIds" title="INCI" required>
-          {CosmeticINCIIngredientMultipleSelect}
+          {fieldProps => {
+            return (
+              <CosmeticINCIIngredientMultipleSelect
+                {...fieldProps}
+                value={fieldProps.modelValue}
+                onValueUpdate={fieldProps.onModelValueChange}
+              />
+            );
+          }}
         </FinalForm.Field>
 
         <FinalForm.Field name="benefitIds" title="Направления действия">
-          {CosmeticBenefitMultipleSelect}
+          {fieldProps => {
+            return (
+              <CosmeticBenefitMultipleSelect
+                {...fieldProps}
+                value={fieldProps.modelValue}
+                onValueUpdate={fieldProps.onModelValueChange}
+              />
+            );
+          }}
         </FinalForm.Field>
       </>
     );
