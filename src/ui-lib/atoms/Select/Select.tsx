@@ -1,34 +1,51 @@
 import { useSelectContextStrict } from './context';
 import { WithInputProps } from '#/ui-lib/types';
-import { HTMLProps } from 'react';
+import { CSSProperties, HTMLProps } from 'react';
+import { getSpacingStyles } from '#/ui-lib/utils/spacing';
+import { THEME } from '#/ui-lib/theme';
+import { Size } from '#/ui-lib/utils/size';
+import { getHeightStyles } from '#/ui-lib/utils/height';
+import { getDimensions } from '#/ui-lib/utils/dimensions';
 
 // TODO add area attributes
 
+// --- Settings ----------------------------------------------------
+const SIZE: Size = 'm';
+
+type CommonSelectProps<T> = WithInputProps<
+  T,
+  Omit<HTMLProps<HTMLSelectElement>, 'multiple'>
+>;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getStyles(_props: CommonSelectProps<any>): CSSProperties {
+  return {
+    width: '100%',
+    border: 'none',
+    borderRadius: getDimensions(THEME.components.input.borderRadius[SIZE]),
+    ...getSpacingStyles(THEME.components.select.spacing[SIZE]),
+    ...getHeightStyles({ height: THEME.components.select.height[SIZE] }),
+  };
+}
+
 // --- Single ------------------------------------------------------
-type SelectSingleProps = WithInputProps<
-  string | undefined,
-  Omit<HTMLProps<HTMLSelectElement>, 'multiple' | 'type'>
-> & {
+type SelectSingleProps = CommonSelectProps<string | undefined> & {
   multiple?: false;
 };
-
-export function SelectSingle({
-  children,
-  value: _value,
-  onValueUpdate: _onValueUpdate,
-  ...props
-}: SelectSingleProps) {
+export function SelectSingle(props: SelectSingleProps) {
   const selectContext = useSelectContextStrict();
+
+  const { children, value: _value, onValueUpdate: _onValueUpdate, ...otherProps } = props;
 
   return (
     <select
-      {...props}
+      {...otherProps}
+      value={selectContext.value}
+      style={getStyles(props)}
       onChange={e => {
         selectContext.setValue?.(e.target.value);
         props.onChange?.(e);
-      }}
-      value={selectContext.value}
-      style={{ width: '100%' }}>
+      }}>
       <option value={undefined} />
       {children}
     </select>
@@ -36,25 +53,20 @@ export function SelectSingle({
 }
 
 // --- Multiple ------------------------------------------------------
-type SelectMultipleProps = WithInputProps<
-  string[] | undefined,
-  Omit<HTMLProps<HTMLSelectElement>, 'multiple' | 'type'>
-> & {
+type SelectMultipleProps = CommonSelectProps<string[] | undefined> & {
   multiple: true;
 };
-
-export function SelectMultiple({
-  children,
-  value: _value,
-  onValueUpdate: _onValueUpdate,
-  ...props
-}: SelectMultipleProps) {
+export function SelectMultiple(props: SelectMultipleProps) {
   const selectContext = useSelectContextStrict();
+
+  const { children, value: _value, onValueUpdate: _onValueUpdate, ...otherProps } = props;
 
   return (
     <select
-      {...props}
+      {...otherProps}
       multiple
+      value={selectContext.value}
+      style={getStyles(props)}
       onChange={e => {
         const newValue = Array.from(e.target.querySelectorAll('option'))
           .filter(option => option.selected)
@@ -62,9 +74,7 @@ export function SelectMultiple({
 
         selectContext.setValue?.(newValue);
         props.onChange?.(e);
-      }}
-      value={selectContext.value}
-      style={{ width: '100%' }}>
+      }}>
       <option value={undefined} />
       {children}
     </select>

@@ -51,19 +51,17 @@ export function createEntitySingleSelect<TEntity>(
   creationProps: CreateSelectProps<TEntity>,
 ) {
   const Select = forwardRef(function SelectComponent(
-    propsInitial: EntitySingleSelectProps<TEntity>,
+    { entities: entitiesProp = [], ...propsInitial }: EntitySingleSelectProps<TEntity>,
     ref: ForwardedRef<HTMLSelectElement>,
   ) {
-    const props = { ...propsInitial };
-
-    const [entities, setEntities] = useState<TEntity[]>(props.entities || []);
+    const [entities, setEntities] = useState<TEntity[]>(entitiesProp);
 
     useEffect(() => {
-      setEntities(props.entities || []);
-    }, [props.entities]);
+      setEntities(entitiesProp);
+    }, [entitiesProp]);
 
     const component = (
-      <BaseSelect {...props} ref={ref}>
+      <BaseSelect {...propsInitial} ref={ref}>
         {renderOptions(entities, creationProps)}
       </BaseSelect>
     );
@@ -85,19 +83,17 @@ export function createEntityMultipleSelect<TEntity>(
   creationProps: CreateSelectProps<TEntity>,
 ) {
   const Select = forwardRef(function SelectComponent(
-    propsInitial: EntityMultipleSelectProps<TEntity>,
+    { entities: entitiesProp = [], ...propsInitial }: EntityMultipleSelectProps<TEntity>,
     ref: ForwardedRef<HTMLSelectElement>,
   ) {
-    const props = { ...propsInitial };
-
-    const [entities, setEntities] = useState<TEntity[]>(props.entities || []);
+    const [entities, setEntities] = useState<TEntity[]>(entitiesProp);
 
     useEffect(() => {
-      setEntities(props.entities || []);
-    }, [props.entities]);
+      setEntities(entitiesProp);
+    }, [entitiesProp]);
 
     const component = (
-      <BaseSelect {...props} multiple ref={ref}>
+      <BaseSelect {...propsInitial} multiple ref={ref}>
         {renderOptions(entities, creationProps)}
       </BaseSelect>
     );

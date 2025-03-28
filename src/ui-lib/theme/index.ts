@@ -30,17 +30,23 @@ export const THEME = {
   },
   components: {
     input: {
-      height: sizeMap({
-        s: 6,
-        m: 8,
-        l: 10,
-      }),
+      height: sizeMap({ s: 6, m: 8, l: 10 }),
       spacing: sizeMap({
         s: spacingMap({ px: 2, m: 0 }),
         m: spacingMap({ px: 2, m: 0 }),
         l: spacingMap({ px: 4, m: 0 }),
       }),
       borderRadius: sizeMap({ s: 2, m: 2, l: 2 }),
+    },
+    select: {
+      // TODO button, input, select имеют одни типоразмеры
+      height: sizeMap({ s: 6, m: 8, l: 10 }),
+      borderRadius: sizeMap({ s: 2, m: 2, l: 2 }),
+      spacing: sizeMap({
+        s: spacingMap({ px: 2, m: 0 }),
+        m: spacingMap({ px: 2, m: 0 }),
+        l: spacingMap({ px: 4, m: 0 }),
+      }),
     },
     button: {
       height: sizeMap({ s: 6, m: 8, l: 10 }),
