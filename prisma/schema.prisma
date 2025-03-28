@@ -346,8 +346,6 @@ model CosmeticRecipe {
 model CosmeticRecipePhase {
   id String @id @default(uuid()) @db.Uuid
 
-  name String @db.Char(255)
-
   recipe   CosmeticRecipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   recipeId String         @db.Uuid
 
@@ -355,8 +353,6 @@ model CosmeticRecipePhase {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  @@unique([recipeId, name])
 }
 
 model CosmeticRecipeIngredient {

@@ -46,10 +46,14 @@ function usePopup(arg: { isOpen?: boolean } = {}) {
     };
   }, [isOpen]);
 }
+type IUsePopup = ReturnType<typeof usePopup>;
 
 // --- Popup Root -----------------------------------------------------------------------
-function Popup({ children }: PropsWithChildren) {
-  const popup = usePopup();
+type PopupProps = PropsWithChildren & { popup?: IUsePopup };
+function Popup({ children, popup: popupProp }: PopupProps) {
+  const popupLocal = usePopup();
+  const popup = popupProp || popupLocal;
+
   const triggerEl = useRef<Element>(null);
   const contentEl = useRef<Element>(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });

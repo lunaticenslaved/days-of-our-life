@@ -1,25 +1,32 @@
 import { nonReachable } from '#/shared/utils';
 import { checkProps } from '#/ui-lib/utils/common';
 import { getDimensions } from '#/ui-lib/utils/dimensions';
-import styled, { StyledObject } from 'styled-components';
+import styled, { CSSProperties, StyledObject } from 'styled-components';
 
 // --- Settings ---------------------------------------------------------------------------
 type TextVariant = 'body-m' | 'header-m';
 type CommonTextProps = {
   variant?: TextVariant;
+  whiteSpace?: CSSProperties['whiteSpace'];
 };
 
 const shouldForwardProp = checkProps<CommonTextProps>({
   variant: false,
+  whiteSpace: false,
 });
 
 const DEFAULT_VARIANT: TextVariant = 'body-m';
 
-function getStyles({ variant = DEFAULT_VARIANT }: CommonTextProps): StyledObject {
-  const result: StyledObject = {};
+function getStyles({
+  variant = DEFAULT_VARIANT,
+  whiteSpace,
+}: CommonTextProps): StyledObject {
+  const result: StyledObject = {
+    whiteSpace,
+  };
 
   if (variant === 'body-m') {
-    result.fontSize = getDimensions(2.5);
+    result.fontSize = getDimensions(3.5);
   } else if (variant === 'header-m') {
     result.fontSize = getDimensions(5);
   } else {

@@ -9,7 +9,6 @@ interface InsertRecipeData {
   name: string;
   description: string | null;
   phases: Array<{
-    name: string;
     ingredients: Array<{
       comment: string | null;
       ingredientId: string;
@@ -20,7 +19,6 @@ interface InsertRecipeData {
 
 function getPhaseCreateData(phase: InsertRecipeData['phases'][number]) {
   return {
-    name: phase.name,
     ingredients: {
       create: phase.ingredients.map(ingredient => {
         return {

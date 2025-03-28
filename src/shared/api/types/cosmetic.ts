@@ -95,7 +95,6 @@ export interface CreateCosmeticRecipeRequest {
   name: string;
   description: string | null;
   phases: Array<{
-    name: string;
     ingredients: Array<{
       ingredientId: string;
       percent: number;

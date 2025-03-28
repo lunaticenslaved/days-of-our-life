@@ -1,21 +1,18 @@
-import { ModelValueProps } from '#/client/types';
+import { Popup, usePopup } from '#/ui-lib/molecules/Popup';
 import { TextInput } from '#/ui-lib/molecules/TextInputField';
+import { WithInputProps } from '#/ui-lib/types';
 import {
   createContext,
   PropsWithChildren,
   ReactNode,
-  useCallback,
   useContext,
   useMemo,
   useRef,
-  useState,
 } from 'react';
 
-type ComboboxModelValue = ModelValueProps<string[] | undefined>;
+type ComboboxModelValue = WithInputProps<string[] | undefined>;
 
-//
-//
-// ------ Combobox Context ---
+// --- Combobox Context ---------------------------------------------------------------
 interface IComboboxContext {
   searchComponent: ReactNode | null;
   setSearchComponent(value: ReactNode | null): void;
@@ -33,13 +30,11 @@ function useComboboxContext() {
   return context;
 }
 
-//
-//
-// ------ Combobox Root Component ---
+// --- Combobox Root Component ---------------------------------------------------------
 export function Combobox({
   children,
-  modelValue,
-  onModelValueChange,
+  value,
+  onValueUpdate,
 }: PropsWithChildren & ComboboxModelValue) {
   const popup = usePopup();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -60,12 +55,16 @@ export function Combobox({
       <div ref={rootRef} onClick={popup.open}>
         {children}
       </div>
-      {popup.isOpen && <Popup></Popup>}
+
+      <Popup popup={popup}>
+        <Popup.Content></Popup.Content>
+      </Popup>
     </ComboboxContext.Provider>
   );
 }
 
-export function ComboboxInput() {
+// --- Combobox Input -------------------------------------------------------------------
+function ComboboxInput() {
   const comboboxContext = useComboboxContext();
 
   const content = <TextInput />;
@@ -74,3 +73,5 @@ export function ComboboxInput() {
 
   return <TextInput />;
 }
+ComboboxInput.displayName = 'Combobox.Input';
+Combobox.Input = ComboboxInput;

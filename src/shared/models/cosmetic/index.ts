@@ -103,7 +103,6 @@ export interface CosmeticRecipe {
   name: string;
   description: string | null;
   phases: Array<{
-    name: string;
     ingredients: Array<{
       ingredientId: string;
       percent: number;
@@ -125,7 +124,6 @@ export const CosmeticRecipeValidators = (() => {
   const phaseName = CommonValidators.str(255);
   const phaseIngredients = z.array(ingredient).min(1, ERROR_MESSAGES.required);
   const phase = z.object({
-    name: phaseName,
     ingredients: phaseIngredients,
   });
 

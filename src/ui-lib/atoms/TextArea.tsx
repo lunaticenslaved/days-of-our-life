@@ -3,6 +3,8 @@ import { HTMLProps } from 'react';
 
 type TextAreaProps = WithInputProps<string | undefined, HTMLProps<HTMLTextAreaElement>>;
 
+// TODO добавить стили
+
 export function TextArea({ value, onValueUpdate, ...props }: TextAreaProps) {
   return (
     <textarea

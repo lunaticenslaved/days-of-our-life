@@ -16,6 +16,7 @@ import { Flex } from '#/ui-lib/atoms/Flex';
 import { CosmeticIngredientSingleSelect } from '#/client/entities/cosmetic/ingredients';
 import { NumberInput } from '#/ui-lib/molecules/NumberInputField';
 import { sumBy } from 'lodash';
+import { TextArea } from '#/ui-lib/atoms/TextArea';
 
 const schema = z.object({
   name: CosmeticRecipeValidators.name,
@@ -23,7 +24,6 @@ const schema = z.object({
   phases: z
     .array(
       z.object({
-        name: CosmeticRecipeValidators.phaseName,
         ingredients: z
           .array(
             z.object({
@@ -63,13 +63,11 @@ function getInitialValues(recipe?: CosmeticRecipe): CosmeticRecipeFormValues {
     phases: recipe
       ? recipe.phases.map(phase => {
           return {
-            name: phase.name,
             ingredients: phase.ingredients.map(ingredient => ({ ...ingredient })),
           };
         })
       : [
           {
-            name: 'Фаза A',
             ingredients: [
               {
                 ingredientId: '',
@@ -116,6 +114,25 @@ export function CosmeticRecipeForm({
               }}
             </Form.Field>
 
+            <Form.Field<CosmeticRecipeFormValues['description'] | undefined>
+              name={'description'}
+              required>
+              {fieldProps => {
+                return (
+                  <Field>
+                    <Field.Label>Описание</Field.Label>
+                    <Field.Input>
+                      <TextArea
+                        {...fieldProps.input}
+                        value={fieldProps.input.value || undefined}
+                      />
+                    </Field.Input>
+                    <Field.Message />
+                  </Field>
+                );
+              }}
+            </Form.Field>
+
             <Box component="section">
               {/* FIXME use Text */}
               <h3>Фазы</h3>
@@ -129,21 +146,7 @@ export function CosmeticRecipeForm({
                           return (
                             <Box key={phaseFieldName} spacing={{ mb: 4 }}>
                               <Flex direction="row" alignItems="center" gap={1}>
-                                <Form.Field<string | undefined>
-                                  name={`${phaseFieldName}.name`}
-                                  required>
-                                  {fieldProps => {
-                                    return (
-                                      <Field direction="horizontal">
-                                        <Field.Label>Название</Field.Label>
-                                        <Field.Input>
-                                          <TextInput {...fieldProps.input} />
-                                        </Field.Input>
-                                        <Field.Message />
-                                      </Field>
-                                    );
-                                  }}
-                                </Form.Field>
+                                <Text variant="header-m">Фаза {phaseIndex + 1}</Text>
 
                                 <Button
                                   view="outlined"
@@ -263,7 +266,6 @@ export function CosmeticRecipeForm({
                         type="button"
                         onClick={() => {
                           phasesPields.push({
-                            name: '',
                             ingredients: [],
                           });
                         }}>

@@ -100,7 +100,6 @@ export const COSMETIC_RECIPE_SELECTOR = {
     description: true,
     phases: {
       select: {
-        name: true,
         ingredients: {
           select: {
             comment: true,
@@ -122,7 +121,6 @@ export function convertCosmeticRecipeSelector(
     description: data.description,
     phases: data.phases.map(phase => {
       return {
-        name: phase.name,
         ingredients: phase.ingredients.map(ingredient => {
           return {
             percent: ingredient.percent,
