@@ -143,7 +143,13 @@ function FieldLabel({ children }: PropsWithChildren) {
       style={{
         minWidth: direction === 'horizontal' ? getDimensions(24) : undefined,
       }}>
-      <label htmlFor={id}>
+      <label
+        htmlFor={id}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          height: getDimensions(4),
+        }}>
         <span style={{ color }}>{children}</span>
         {required && <span style={{ color: 'red' }}>*</span>}
       </label>
@@ -159,7 +165,7 @@ function FieldMessage({ children }: PropsWithChildren) {
   const color = STATE_TO_COLOR[visibleState].message;
 
   return (
-    <div style={{ color, height: getDimensions(5) }}>
+    <div style={{ color, height: getDimensions(4) }}>
       {visibleState === 'valid' ? null : <span>{error || children}</span>}
     </div>
   );

@@ -14,6 +14,7 @@ import {
 import { checkProps } from '#/ui-lib/utils/common';
 import { getSpacingStyles, SpacingProps } from '#/ui-lib/utils/spacing';
 import { getWidthStyles, WidthProps } from '#/ui-lib/utils/width';
+import { BorderProps, getBorderStyles } from '#/ui-lib/utils/border';
 
 // --- Settings ---------------------------------------------------------------
 const DEFAULT_BG_COLOR = 'transparent';
@@ -23,6 +24,7 @@ type CommonProps = SpacingProps &
   HeightProps &
   WidthProps &
   FlexChildProps &
+  BorderProps &
   ColorProps<ColorInherit | ColorTransparent>;
 
 const shouldForwardProp = checkProps<CommonProps>({
@@ -32,6 +34,8 @@ const shouldForwardProp = checkProps<CommonProps>({
   overflow: false,
   spacing: false,
   width: false,
+  borderRadius: false,
+  borderWidth: false,
 });
 
 function getStyles({ color = DEFAULT_BG_COLOR, ...props }: CommonProps): StyledObject {
@@ -41,6 +45,7 @@ function getStyles({ color = DEFAULT_BG_COLOR, ...props }: CommonProps): StyledO
     ...getHeightStyles(props),
     ...getWidthStyles(props),
     ...getFlexChildStyles(props),
+    ...getBorderStyles(props),
     backgroundColor: getColor({ color, shade: 'main' }),
     color: getTextColor(color),
   };

@@ -2,7 +2,7 @@ import { Box } from '#/ui-lib/atoms/Box';
 import { Flex } from '#/ui-lib/atoms/Flex';
 import { Input } from '#/ui-lib/atoms/Input';
 import { WithInputProps } from '#/ui-lib/types';
-import { getBorderRadiusStyles } from '#/ui-lib/utils/border-radius';
+import { getBorderStyles } from '#/ui-lib/utils/border';
 import { getSpacingStyles } from '#/ui-lib/utils/spacing';
 import { TRANSITION_ALL } from '#/ui-lib/utils/transition';
 import {
@@ -285,7 +285,7 @@ const LI = styled.li.withConfig({
     padding: 0,
     margin: 0,
     transition: TRANSITION_ALL,
-    ...getBorderRadiusStyles('m'),
+    ...getBorderStyles({ borderRadius: 'm' }),
     ...getSpacingStyles({ py: 2 }),
   };
 
