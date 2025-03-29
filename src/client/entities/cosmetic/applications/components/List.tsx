@@ -5,6 +5,8 @@ import { CosmeticProduct, CosmeticRecipe } from '#/shared/models/cosmetic';
 import { CosmeticApplication } from '#/shared/models/cosmetic/applications';
 import { nonReachable } from '#/shared/utils';
 
+import { getCosmeticApplicationKeywords } from '../utils';
+
 export const ListComponent = createEntityList<
   CosmeticApplication,
   {
@@ -16,6 +18,7 @@ export const ListComponent = createEntityList<
   placeholder: {
     empty: '-',
   },
+  getEntityKeywords: getCosmeticApplicationKeywords,
   getEntityKey(application) {
     return application.id;
   },

@@ -60,16 +60,10 @@ export function createEntitySingleSelect<TEntity>(
       setEntities(entitiesProp);
     }, [entitiesProp]);
 
-    const component = (
+    return (
       <BaseSelect {...propsInitial} ref={ref}>
         {renderOptions(entities, creationProps)}
       </BaseSelect>
-    );
-
-    return (
-      <div className="flex gap-x-2">
-        <div className="flex-1">{component}</div>
-      </div>
     );
   });
 
@@ -92,16 +86,10 @@ export function createEntityMultipleSelect<TEntity>(
       setEntities(entitiesProp);
     }, [entitiesProp]);
 
-    const component = (
+    return (
       <BaseSelect {...propsInitial} multiple ref={ref}>
         {renderOptions(entities, creationProps)}
       </BaseSelect>
-    );
-
-    return (
-      <div className="flex gap-x-2">
-        <div className="flex-1">{component}</div>
-      </div>
     );
   });
 

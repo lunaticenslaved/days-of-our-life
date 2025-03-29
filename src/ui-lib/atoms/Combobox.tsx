@@ -1,21 +1,20 @@
-import { Popup, usePopup } from '#/ui-lib/molecules/Popup';
+import { IUsePopup, Popup, usePopup } from '#/ui-lib/atoms/Popup';
 import { TextInput } from '#/ui-lib/molecules/TextInputField';
-import { WithInputProps } from '#/ui-lib/types';
 import {
   createContext,
   PropsWithChildren,
-  ReactNode,
   useContext,
   useMemo,
   useRef,
+  useState,
 } from 'react';
-
-type ComboboxModelValue = WithInputProps<string[] | undefined>;
 
 // --- Combobox Context ---------------------------------------------------------------
 interface IComboboxContext {
-  searchComponent: ReactNode | null;
-  setSearchComponent(value: ReactNode | null): void;
+  popup: IUsePopup;
+
+  search?: string;
+  setSearch: (newValue?: string) => void;
 }
 
 const ComboboxContext = createContext<IComboboxContext | null>(null);
@@ -31,47 +30,42 @@ function useComboboxContext() {
 }
 
 // --- Combobox Root Component ---------------------------------------------------------
-export function Combobox({
-  children,
-  value,
-  onValueUpdate,
-}: PropsWithChildren & ComboboxModelValue) {
+export function Combobox({ children }: PropsWithChildren) {
   const popup = usePopup();
   const rootRef = useRef<HTMLDivElement>(null);
 
-  const searchComponent = useRef<ReactNode>(null);
+  const [search, setSearch] = useState<string>();
 
   const contextValue = useMemo((): IComboboxContext => {
     return {
-      searchComponent: null,
-      setSearchComponent: value => {
-        searchComponent.current = value;
-      },
+      popup,
+      search,
+      setSearch,
     };
-  }, []);
+  }, [popup, search]);
 
   return (
     <ComboboxContext.Provider value={contextValue}>
-      <div ref={rootRef} onClick={popup.open}>
-        {children}
-      </div>
-
       <Popup popup={popup}>
-        <Popup.Content></Popup.Content>
+        <div ref={rootRef} onClick={popup.open}>
+          {children}
+        </div>
       </Popup>
     </ComboboxContext.Provider>
   );
 }
 
+// --- Combobox Trigger -----------------------------------------------------------------
+Combobox.Trigger = Popup.Trigger;
+
+// --- Combobox Content -----------------------------------------------------------------
+Combobox.Content = Popup.Content;
+
 // --- Combobox Input -------------------------------------------------------------------
 function ComboboxInput() {
-  const comboboxContext = useComboboxContext();
+  const { search, setSearch } = useComboboxContext();
 
-  const content = <TextInput />;
-
-  comboboxContext.setSearchComponent(content);
-
-  return <TextInput />;
+  return <TextInput value={search} onValueUpdate={setSearch} />;
 }
 ComboboxInput.displayName = 'Combobox.Input';
 Combobox.Input = ComboboxInput;

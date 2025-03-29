@@ -1,36 +1,21 @@
-import { CosmeticRecipeActions } from './Actions';
+import { useCosmeticNavigation } from '#/client/pages/cosmetic';
 import { useListCosmeticRecipesQuery } from '#/client/store';
-import { Link } from 'react-router-dom';
-import { COSMETIC_NAVIGATION } from '#/client/pages/cosmetic';
-import { Flex } from '#/ui-lib/atoms/Flex';
-import { Box } from '#/ui-lib/atoms/Box';
+
+import { ListComponent } from '../components/List';
 
 interface CosmeticRecipesListProps {}
 
 export function CosmeticRecipesList(_: CosmeticRecipesListProps) {
-  const { data = [], refetch } = useListCosmeticRecipesQuery();
+  const listQuery = useListCosmeticRecipesQuery();
+  const cosmeticNavigation = useCosmeticNavigation();
 
-  if (!data.length) {
-    return <div>Нет рецептов</div>;
-  }
-
+  // TODO use link here
   return (
-    <ul>
-      {data.map(recipe => {
-        return (
-          <li key={recipe.id} style={{ display: 'flex' }}>
-            <Flex alignItems="center" style={{ width: '100%' }}>
-              <Box flexGrow={1}>
-                <Link to={COSMETIC_NAVIGATION.toRecipeOverview({ recipeId: recipe.id })}>
-                  {recipe.name}
-                </Link>
-              </Box>
-
-              <CosmeticRecipeActions recipe={recipe} onDeleted={() => refetch()} />
-            </Flex>
-          </li>
-        );
-      })}
-    </ul>
+    <ListComponent
+      entities={listQuery.data || []}
+      onEntityClick={recipe =>
+        cosmeticNavigation.toRecipeOverview({ recipeId: recipe.id })
+      }
+    />
   );
 }

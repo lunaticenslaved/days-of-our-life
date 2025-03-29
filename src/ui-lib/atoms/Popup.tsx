@@ -107,7 +107,6 @@ function PopupContent({ children }: PropsWithChildren) {
       style={{
         position: 'absolute',
         zIndex: 1_000_000,
-        background: 'white', // FIXME
         top: `${position.top}px`,
         left: `${position.left}px`,
         boxShadow: '2px 2px 2px #0005',
@@ -121,4 +120,4 @@ Popup.displayName = 'Popup.Content';
 Popup.Trigger = PopupTrigger;
 Popup.Content = PopupContent;
 
-export { Popup, usePopup, usePopupContext };
+export { Popup, usePopup, usePopupContext, type IUsePopup };
