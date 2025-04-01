@@ -12,6 +12,7 @@ import { Page } from '#/client/widgets/Page';
 import { Box } from '#/ui-lib/atoms/Box';
 import { Flex } from '#/ui-lib/atoms/Flex';
 import { Text } from '#/ui-lib/atoms/Text';
+import { getSpacingStyles } from '#/ui-lib/utils/spacing';
 
 export default function CosmeticRecipeOverviewPage() {
   const { recipeId = '' } = useCosmeticPageParams();
@@ -70,11 +71,22 @@ export default function CosmeticRecipeOverviewPage() {
                                 );
 
                                 return (
-                                  <li key={ingredientId}>
-                                    <div>
-                                      {ingredient?.name || '-'} - {percent} %
-                                    </div>
-                                    {comment && <div>{comment}</div>}
+                                  <li
+                                    key={ingredientId}
+                                    style={getSpacingStyles({ mb: 1 })}>
+                                    <Flex direction="column" minWidth="100%">
+                                      <Flex
+                                        alignItems="start"
+                                        justifyContent="space-between"
+                                        gap={2}
+                                        flexGrow={1}>
+                                        <Text>{ingredient?.name || '-'}</Text>
+                                        <Text wordWrap="unset" minWidth="max-content">
+                                          {percent} %
+                                        </Text>
+                                      </Flex>
+                                      {comment && <Text variant="body-s">{comment}</Text>}
+                                    </Flex>
                                   </li>
                                 );
                               },

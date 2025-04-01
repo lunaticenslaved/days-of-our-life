@@ -1,6 +1,10 @@
 import { nonReachable } from '#/shared/utils';
 import { FlexChildProps, getFlexChildStyles } from '#/ui-lib/utils/flex';
-import { getHeightStyles, HeightProps } from '#/ui-lib/utils/height';
+import {
+  getHeightStyles,
+  HeightProps,
+  SHOULD_FORWARD_HEIGHT,
+} from '#/ui-lib/utils/height';
 import { getOverflowStyles, OverflowProps } from '#/ui-lib/utils/overflow';
 import React from 'react';
 import styled, { StyledObject } from 'styled-components';
@@ -13,7 +17,7 @@ import {
 } from '#/ui-lib/utils/color';
 import { checkProps } from '#/ui-lib/utils/common';
 import { getSpacingStyles, SpacingProps } from '#/ui-lib/utils/spacing';
-import { getWidthStyles, WidthProps } from '#/ui-lib/utils/width';
+import { getWidthStyles, SHOULD_FORWARD_WIDTH, WidthProps } from '#/ui-lib/utils/width';
 import { BorderProps, getBorderStyles } from '#/ui-lib/utils/border';
 
 // --- Settings ---------------------------------------------------------------
@@ -30,12 +34,12 @@ type CommonProps = SpacingProps &
 const shouldForwardProp = checkProps<CommonProps>({
   color: false,
   flexGrow: false,
-  height: false,
   overflow: false,
   spacing: false,
-  width: false,
   borderRadius: false,
   borderWidth: false,
+  ...SHOULD_FORWARD_HEIGHT,
+  ...SHOULD_FORWARD_WIDTH,
 });
 
 function getStyles({ color = DEFAULT_BG_COLOR, ...props }: CommonProps): StyledObject {

@@ -1,0 +1,2 @@
+export const INGREDIENT_DRAGGABLE = 'INGREDIENT';
+export const PHASE_DRAGGABLE = 'PHASE';

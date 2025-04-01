@@ -344,7 +344,8 @@ model CosmeticRecipe {
 }
 
 model CosmeticRecipePhase {
-  id String @id @default(uuid()) @db.Uuid
+  id    String @id @default(uuid()) @db.Uuid
+  order Int    @default(0)
 
   recipe   CosmeticRecipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   recipeId String         @db.Uuid
@@ -356,7 +357,8 @@ model CosmeticRecipePhase {
 }
 
 model CosmeticRecipeIngredient {
-  id String @id @default(uuid()) @db.Uuid
+  id    String @id @default(uuid()) @db.Uuid
+  order Int    @default(0)
 
   percent Float @db.Real
 

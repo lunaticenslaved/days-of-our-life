@@ -1,18 +1,21 @@
 import { nonReachable } from '#/shared/utils';
 import { checkProps } from '#/ui-lib/utils/common';
 import { getDimensions } from '#/ui-lib/utils/dimensions';
+import { getWidthStyles, SHOULD_FORWARD_WIDTH, WidthProps } from '#/ui-lib/utils/width';
 import styled, { CSSProperties, StyledObject } from 'styled-components';
 
 // --- Settings ---------------------------------------------------------------------------
-type TextVariant = 'body-m' | 'header-m';
-type CommonTextProps = {
-  variant?: TextVariant;
-  whiteSpace?: CSSProperties['whiteSpace'];
-};
+type TextVariant = 'body-m' | 'body-s' | 'header-m';
+type CommonTextProps = Pick<CSSProperties, 'whiteSpace' | 'wordWrap'> &
+  WidthProps & {
+    variant?: TextVariant;
+  };
 
 const shouldForwardProp = checkProps<CommonTextProps>({
   variant: false,
   whiteSpace: false,
+  wordWrap: false,
+  ...SHOULD_FORWARD_WIDTH,
 });
 
 const DEFAULT_VARIANT: TextVariant = 'body-m';
@@ -20,13 +23,19 @@ const DEFAULT_VARIANT: TextVariant = 'body-m';
 function getStyles({
   variant = DEFAULT_VARIANT,
   whiteSpace,
+  wordWrap,
+  ...props
 }: CommonTextProps): StyledObject {
   const result: StyledObject = {
     whiteSpace,
+    wordWrap,
+    ...getWidthStyles(props),
   };
 
   if (variant === 'body-m') {
     result.fontSize = getDimensions(3.5);
+  } else if (variant === 'body-s') {
+    result.fontSize = getDimensions(3);
   } else if (variant === 'header-m') {
     result.fontSize = getDimensions(5);
   } else {

@@ -11,6 +11,7 @@ import {
 import { DAY_SELECTOR } from '#/server/selectors/days';
 import { DateUtils } from '#/shared/models/date';
 import { CosmeticApplication } from '#/shared/models/cosmetic/applications';
+import _ from 'lodash';
 
 export const COSMETIC_PRODUCT_SELECTOR = {
   select: {
@@ -100,8 +101,10 @@ export const COSMETIC_RECIPE_SELECTOR = {
     description: true,
     phases: {
       select: {
+        order: true,
         ingredients: {
           select: {
+            order: true,
             comment: true,
             percent: true,
             ingredientId: true,
@@ -119,15 +122,17 @@ export function convertCosmeticRecipeSelector(
     id: data.id,
     name: data.name,
     description: data.description,
-    phases: data.phases.map(phase => {
+    phases: _.orderBy(data.phases, phase => phase.order, 'asc').map(phase => {
       return {
-        ingredients: phase.ingredients.map(ingredient => {
-          return {
-            percent: ingredient.percent,
-            comment: ingredient.comment,
-            ingredientId: ingredient.ingredientId,
-          };
-        }),
+        ingredients: _.orderBy(phase.ingredients, ing => ing.order, 'asc').map(
+          ingredient => {
+            return {
+              percent: ingredient.percent,
+              comment: ingredient.comment,
+              ingredientId: ingredient.ingredientId,
+            };
+          },
+        ),
       };
     }),
   };

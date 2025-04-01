@@ -58,6 +58,7 @@ export function CalendarContainer() {
           <>
             <CreatingActionContainer date={data.date} dayPartId={data.dayPartId} />
             <ListComponent
+              hideSearch
               entities={data.applications}
               productsMap={productsMap}
               recipesMap={recipesMap}

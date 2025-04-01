@@ -17,11 +17,13 @@ interface InsertRecipeData {
   }>;
 }
 
-function getPhaseCreateData(phase: InsertRecipeData['phases'][number]) {
+function getPhaseCreateData(phase: InsertRecipeData['phases'][number], index: number) {
   return {
+    order: index,
     ingredients: {
-      create: phase.ingredients.map(ingredient => {
+      create: phase.ingredients.map((ingredient, indIndex) => {
         return {
+          order: indIndex,
           percent: ingredient.percent,
           comment: ingredient.comment,
           ingredientId: ingredient.ingredientId,

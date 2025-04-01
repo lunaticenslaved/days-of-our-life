@@ -31,8 +31,10 @@ export function createEntityList<TEntity, TProps = object>({
       TProps & {
         onEntityClick?: (entity: TEntity) => void;
         renderEntity?: (item: TEntity, props: TProps) => ReactNode;
+        hideSearch?: boolean;
       }
   > = ({
+    hideSearch,
     entities,
     renderActions,
     onEntityClick,
@@ -47,7 +49,7 @@ export function createEntityList<TEntity, TProps = object>({
 
     return (
       <List>
-        {getEntityKeywords && <List.Search placeholder="Поиск..." />}
+        {getEntityKeywords && !hideSearch && <List.Search placeholder="Поиск..." />}
         <List.Empty>{placeholder.empty}</List.Empty>
         <List.Group>
           {entities.map(entity => {

@@ -5,6 +5,7 @@ import shouldForwardProp from '@styled-system/should-forward-prop';
 import { getHeightStyles, HeightProps } from '#/ui-lib/utils/height';
 import { getSpacingStyles, SpacingProps } from '#/ui-lib/utils/spacing';
 import { getWidthStyles, WidthProps } from '#/ui-lib/utils/width';
+import { FlexChildProps, getFlexChildStyles } from '#/ui-lib/utils/flex';
 
 // --- Settings ---------------------------------------------------------------
 const DEFAULT_GAP: Dimension = 0;
@@ -14,6 +15,7 @@ type FlexRootProps = React.HTMLAttributes<HTMLDivElement> &
   SpacingProps &
   HeightProps &
   WidthProps &
+  FlexChildProps &
   Pick<CSSProperties, 'alignItems' | 'justifyContent' | 'flexWrap'> & {
     component?: 'div';
     direction?: CSSProperties['flexDirection'];
@@ -43,6 +45,7 @@ const FlexRoot = styled.div.withConfig({ shouldForwardProp })<FlexRootProps>(pro
     ...getSpacingStyles(props.spacing || {}),
     ...getHeightStyles(props),
     ...getWidthStyles(props),
+    ...getFlexChildStyles(props),
   };
 });
 
