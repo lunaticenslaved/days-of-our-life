@@ -6,6 +6,9 @@ import RecipesRoot from './recipes/Root';
 import RecipeCreate from './recipes/Create';
 import ProductCreate from './products/Create';
 import IngredientsRoot from './ingredients/Root';
+import IngredientCreate from './ingredients/Create';
+import IngredientEdit from './ingredients/[ingredientId]/Edit';
+import IngredientOverview from './ingredients/[ingredientId]/Overview';
 import ProductsRoot from './products/Root';
 import ApplicationsRoot from './applications/Root';
 import BenefitsRoot from './benefits/Root';
@@ -18,6 +21,7 @@ import { SubNavigation, SubNavigationItem } from '#/client/widgets/navigation';
 
 type ProductId = { productId: string };
 type RecipeId = { recipeId: string };
+type IngredientId = { ingredientId: string };
 
 const routes = {
   root: '/cosmetic',
@@ -33,6 +37,9 @@ const routes = {
 
   // Ingredients
   ingredients: '/cosmetic/ingredients',
+  ingredientCreate: '/cosmetic/ingredients/create',
+  ingredientEdit: '/cosmetic/ingredients/:ingredientId/edit',
+  ingredientOverview: '/cosmetic/ingredients/:ingredientId',
 
   // Recipes
   recipes: '/cosmetic/recipes',
@@ -63,6 +70,11 @@ export const COSMETIC_NAVIGATION = {
 
   // Ingredients
   toIngredients: () => routes.ingredients,
+  toIngredientCreate: () => routes.ingredientCreate,
+  toIngredientEdit: ({ ingredientId }: IngredientId) =>
+    routes.ingredientEdit.replace(':ingredientId', ingredientId),
+  toIngredientOverview: ({ ingredientId }: IngredientId) =>
+    routes.ingredientOverview.replace(':ingredientId', ingredientId),
 
   // Recipes
   toRecipes: () => routes.recipes,
@@ -80,7 +92,7 @@ export const COSMETIC_NAVIGATION = {
 };
 
 export function useCosmeticPageParams() {
-  return useParams<ProductId & RecipeId>();
+  return useParams<ProductId & RecipeId & IngredientId>();
 }
 
 export const useCosmeticNavigation = createNavigationHook(COSMETIC_NAVIGATION);
@@ -133,6 +145,9 @@ export default [
 
     {/* Ingredients */}
     <Route path={routes.ingredients} element={<IngredientsRoot />} />
+    <Route path={routes.ingredientCreate} element={<IngredientCreate />} />
+    <Route path={routes.ingredientEdit} element={<IngredientEdit />} />
+    <Route path={routes.ingredientOverview} element={<IngredientOverview />} />
 
     {/* Recipes */}
     <Route path={routes.recipes} element={<RecipesRoot />} />

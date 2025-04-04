@@ -1,11 +1,7 @@
 import { ActionsComponent } from '../components/Actions';
-import {
-  useDeleteCosmeticIngredientMutation,
-  useUpdateCosmeticIngredientMutation,
-} from '#/client/store';
-import { useDialog } from '#/ui-lib/atoms/Dialog';
-import { CosmeticIngredientFormDialog } from '../components/FormDialog';
+import { useDeleteCosmeticIngredientMutation } from '#/client/store';
 import { CosmeticIngredient } from '#/shared/models/cosmetic';
+import { useCosmeticNavigation } from '#/client/pages/cosmetic';
 
 type ActionsProps = {
   ingredient: CosmeticIngredient;
@@ -13,48 +9,29 @@ type ActionsProps = {
 };
 
 export function Actions({ onDeleted, ...props }: ActionsProps) {
-  const updateDialog = useDialog();
+  const cosmeticNavigation = useCosmeticNavigation();
 
-  const updateCosmeticIngredientMutation = useUpdateCosmeticIngredientMutation({
-    onMutate: updateDialog.close,
-  });
   const deleteCosmeticIngredientMutation = useDeleteCosmeticIngredientMutation({
     onMutate: onDeleted,
   });
 
   return (
-    <>
-      {updateDialog.isOpen && (
-        <CosmeticIngredientFormDialog
-          entity={props.ingredient}
-          dialog={updateDialog}
-          isPending={updateCosmeticIngredientMutation.isPending}
-          onSubmit={values => {
-            updateCosmeticIngredientMutation.mutate({
-              ingredient: props.ingredient,
-              newData: values,
-            });
-          }}
-        />
-      )}
-
-      <ActionsComponent
-        entity={props.ingredient}
-        onDelete={ingredient => {
-          deleteCosmeticIngredientMutation.mutate(ingredient);
-        }}
-        onEdit={() => {
-          updateDialog.open();
-        }}
-        disabled={{
-          edit: updateCosmeticIngredientMutation.isPending,
-          delete: deleteCosmeticIngredientMutation.isPending,
-        }}
-        loading={{
-          edit: updateCosmeticIngredientMutation.isPending,
-          delete: deleteCosmeticIngredientMutation.isPending,
-        }}
-      />
-    </>
+    <ActionsComponent
+      entity={props.ingredient}
+      onDelete={ingredient => {
+        deleteCosmeticIngredientMutation.mutate(ingredient);
+      }}
+      onEdit={ingredient => {
+        cosmeticNavigation.toIngredientEdit({ ingredientId: ingredient.id });
+      }}
+      disabled={{
+        edit: false,
+        delete: deleteCosmeticIngredientMutation.isPending,
+      }}
+      loading={{
+        edit: false,
+        delete: deleteCosmeticIngredientMutation.isPending,
+      }}
+    />
   );
 }

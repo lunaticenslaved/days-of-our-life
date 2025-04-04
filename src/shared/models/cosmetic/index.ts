@@ -89,7 +89,7 @@ export interface CosmeticIngredient {
 export const CosmeticIngredientValidators = (() => {
   return {
     name: CommonValidators.str(255),
-    description: CommonValidators.strNullable(1000),
+    description: z.string().max(1000, ERROR_MESSAGES.maxLengthStr(1000)).optional(),
     INCIIngredientIds: z.array(CommonValidators.id).min(1, ERROR_MESSAGES.required),
     benefitIds: z.array(CommonValidators.id),
   };
