@@ -8,6 +8,7 @@ import { TRANSITION_ALL } from '#/ui-lib/utils/transition';
 import {
   ComponentProps,
   createContext,
+  CSSProperties,
   PropsWithChildren,
   useCallback,
   useContext,
@@ -103,7 +104,8 @@ function List({
   children,
   value: valueProp,
   onValueUpdate: onValueUpdateProp,
-}: WithInputProps<string[] | undefined, PropsWithChildren>) {
+  style,
+}: WithInputProps<string[] | undefined, PropsWithChildren & { style?: CSSProperties }>) {
   const rerender = useRerender();
 
   const searchRef = useRef('');
@@ -198,7 +200,13 @@ function List({
           );
         },
       }}>
-      <Flex direction="column" width="100%" height="100%">
+      <Flex
+        data-component="List"
+        direction="column"
+        width="100%"
+        maxHeight="100%"
+        overflow="auto"
+        style={style}>
         {children}
       </Flex>
     </ListContext.Provider>
@@ -324,7 +332,8 @@ function ListSearch(props: Pick<ComponentProps<typeof Input>, 'placeholder'>) {
 function ListGroup({ children }: PropsWithChildren) {
   // FIXME use styled component
   return (
-    <ul style={{ listStyle: 'none', padding: 0, margin: 0, overflow: 'auto' }}>
+    <ul
+      style={{ listStyle: 'none', flexGrow: 1, padding: 0, margin: 0, overflow: 'auto' }}>
       {children}
     </ul>
   );

@@ -80,7 +80,7 @@ function getStyle({
 type ButtonProps = ButtonButtonProps | AnchorButtonProps | RouterLinkButtonProps;
 export function Button(props: ButtonProps) {
   if (!props.component || props.component === 'button') {
-    return <ButtonButton {...props} component="button" />;
+    return <ButtonButton type="button" {...props} component="button" />;
   } else if (props.component === 'anchor') {
     return <AnchorButton {...props} component="anchor" />;
   } else if (props.component === 'router-link') {

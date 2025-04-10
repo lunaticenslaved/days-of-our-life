@@ -42,18 +42,15 @@ const STATE_TO_COLOR: Record<
   {
     message: string;
     label: string;
-    border: string;
   }
 > = {
   valid: {
     message: 'rgba(0,0,0,0.5)',
     label: '',
-    border: 'black',
   },
   invalid: {
     message: 'red',
     label: 'red',
-    border: 'red',
   },
 };
 //
@@ -181,22 +178,12 @@ function FieldInput({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const fieldContext = useFieldContext();
-  const isFocusWithin = useFocusWithin(ref);
-
-  const borderColor = STATE_TO_COLOR[fieldContext.visibleState].border;
 
   return (
     <div
       ref={ref}
       style={{
         overflow: 'hidden',
-        ...(isFocusWithin
-          ? {
-              border: `2px solid ${borderColor}`,
-            }
-          : {
-              border: `1px solid ${borderColor}`,
-            }),
       }}>
       {typeof children === 'function' ? children(fieldContext) : children}
     </div>

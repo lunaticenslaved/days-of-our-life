@@ -1,4 +1,3 @@
-import { ComboboxComponent } from '../components/Combobox';
 import { useListCosmeticIngredientsQuery } from '#/client/store';
 import { List as ListComponent } from '../components/List';
 
@@ -9,7 +8,6 @@ export function List() {
 
   return (
     <>
-      <ComboboxComponent />
       <ListComponent
         entities={listCosmeticIngredientQuery.data || []}
         renderActions={ingredient => {

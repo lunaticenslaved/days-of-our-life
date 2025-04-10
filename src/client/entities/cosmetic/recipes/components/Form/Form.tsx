@@ -87,8 +87,6 @@ export function CosmeticRecipeForm({
             return;
           }
 
-          console.log(overCurrent, activeCurrent);
-
           if (overCurrent.type === 'INGREDIENT' && activeCurrent.type === 'INGREDIENT') {
             if (overCurrent.phaseId === activeCurrent.phaseId) {
               const newPhases = values.phases.map(phase => {

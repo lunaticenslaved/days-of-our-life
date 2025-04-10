@@ -1,13 +1,13 @@
 import { createEntityList } from '#/client/component-factories/EntityList';
 import { CosmeticINCIIngredient } from '#/shared/models/cosmetic';
-import { getCosmeticINCIIngreientKeywords } from '../utils';
+import { getCosmeticINCIIngredientKeywords } from '../utils';
 
 export const ListComponent = createEntityList<CosmeticINCIIngredient>({
   entityName: 'CosmeticINCIIngredient',
   placeholder: {
     empty: 'Нет INCI-ингредиентов',
   },
-  getEntityKeywords: getCosmeticINCIIngreientKeywords,
+  getEntityKeywords: getCosmeticINCIIngredientKeywords,
   getEntityKey(ingredient) {
     return ingredient.id;
   },

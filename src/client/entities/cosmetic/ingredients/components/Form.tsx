@@ -3,14 +3,15 @@ import {
   CosmeticIngredientValidators,
 } from '#/shared/models/cosmetic';
 import { z } from 'zod';
-import { CosmeticBenefitMultipleSelect } from '#/client/entities/cosmetic/benefits/components/Select';
-import { CosmeticINCIIngredientMultipleSelect } from '#/client/entities/cosmetic/inci-indgredients';
+import { CosmeticBenefitMultipleSelect } from '#/client/entities/cosmetic/benefits';
+import { CosmeticINCIIngredientTagSelect } from '#/client/entities/cosmetic/inci-indgredients';
 import { TextArea } from '#/ui-lib/atoms/TextArea';
 import { TextInput } from '#/ui-lib/molecules/TextInputField';
 import { Form } from '#/ui-lib/atoms/Form';
 import { Field } from '#/ui-lib/atoms/Field';
 import { useMemo } from 'react';
 import { Button } from '#/ui-lib/atoms/Button';
+import { useListCosmeticINCIIngredientsQuery } from '#/client/store/cosmetic';
 
 const schema = z.object({
   name: CosmeticIngredientValidators.name,
@@ -28,6 +29,8 @@ export function IngredientForm({
   onSubmit: (values: FormValues) => void;
   ingredient?: CosmeticIngredient;
 }) {
+  const { data: ingredients } = useListCosmeticINCIIngredientsQuery();
+
   const initialValues = useMemo((): FormValues => {
     return {
       name: ingredient?.name || '',
@@ -41,6 +44,10 @@ export function IngredientForm({
     ingredient?.description,
     ingredient?.name,
   ]);
+
+  if (!ingredients) {
+    return <div> Loading...</div>;
+  }
 
   return (
     <Form initialValues={initialValues} schema={schema} onSubmit={onSubmit}>
@@ -83,7 +90,10 @@ export function IngredientForm({
                   <Field required>
                     <Field.Label>INCI</Field.Label>
                     <Field.Input>
-                      <CosmeticINCIIngredientMultipleSelect {...fieldProps.input} />
+                      <CosmeticINCIIngredientTagSelect
+                        {...fieldProps.input}
+                        ingredients={ingredients}
+                      />
                     </Field.Input>
                     <Field.Message />
                   </Field>

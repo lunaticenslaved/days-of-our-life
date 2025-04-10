@@ -6,6 +6,7 @@ import { getHeightStyles, HeightProps } from '#/ui-lib/utils/height';
 import { getSpacingStyles, SpacingProps } from '#/ui-lib/utils/spacing';
 import { getWidthStyles, WidthProps } from '#/ui-lib/utils/width';
 import { FlexChildProps, getFlexChildStyles } from '#/ui-lib/utils/flex';
+import { getOverflowStyles, OverflowProps } from '#/ui-lib/utils/overflow';
 
 // --- Settings ---------------------------------------------------------------
 const DEFAULT_GAP: Dimension = 0;
@@ -16,11 +17,15 @@ type FlexRootProps = React.HTMLAttributes<HTMLDivElement> &
   HeightProps &
   WidthProps &
   FlexChildProps &
+  OverflowProps &
   Pick<CSSProperties, 'alignItems' | 'justifyContent' | 'flexWrap'> & {
     component?: 'div';
     direction?: CSSProperties['flexDirection'];
     gap?: Dimension | `${Dimension} ${Dimension}`;
   };
+
+// FIXME omit props
+
 const FlexRoot = styled.div.withConfig({ shouldForwardProp })<FlexRootProps>(props => {
   let gap: CSSProperties['gap'] = undefined;
 
@@ -41,11 +46,13 @@ const FlexRoot = styled.div.withConfig({ shouldForwardProp })<FlexRootProps>(pro
     flexDirection: props.direction,
     alignItems: props.alignItems,
     justifyContent: props.justifyContent,
+    flexWrap: props.flexWrap,
     gap,
     ...getSpacingStyles(props.spacing || {}),
     ...getHeightStyles(props),
     ...getWidthStyles(props),
     ...getFlexChildStyles(props),
+    ...getOverflowStyles(props),
   };
 });
 

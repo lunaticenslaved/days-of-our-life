@@ -1,6 +1,6 @@
 import { CosmeticINCIIngredient } from '#/shared/models/cosmetic';
 
-export function getCosmeticINCIIngreientKeywords(
+export function getCosmeticINCIIngredientKeywords(
   ingredient: CosmeticINCIIngredient,
 ): string[] {
   return [ingredient.name];
