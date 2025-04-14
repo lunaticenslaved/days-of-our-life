@@ -1,5 +1,5 @@
 import { useListCosmeticIngredientsQuery } from '#/client/store';
-import { List as ListComponent } from '../components/List';
+import { ListComponent } from '../components/List';
 
 import { Actions } from './Actions';
 
@@ -9,7 +9,7 @@ export function List() {
   return (
     <>
       <ListComponent
-        entities={listCosmeticIngredientQuery.data || []}
+        ingredients={listCosmeticIngredientQuery.data || []}
         renderActions={ingredient => {
           return <Actions ingredient={ingredient} onDeleted={() => null} />;
         }}

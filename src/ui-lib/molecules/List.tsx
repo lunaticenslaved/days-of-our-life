@@ -126,7 +126,16 @@ function List({
     });
   }, []);
 
-  const [value, setValue] = useState(valueProp || []);
+  const [value, _setValue] = useState([...(valueProp || [])]);
+
+  const setValue = useCallback(
+    (newValue: string[]) => {
+      console.log('setValue');
+      _setValue(newValue);
+      onValueUpdateProp?.(newValue);
+    },
+    [onValueUpdateProp],
+  );
 
   const { removeItem, findItem, addItem } = useMemo((): Pick<
     IListContext,
@@ -162,7 +171,7 @@ function List({
         return itemsRef.current.get(value);
       },
     };
-  }, [rerender, value]);
+  }, [rerender, setValue, value]);
 
   return (
     <ListContext.Provider
@@ -170,10 +179,7 @@ function List({
         isSelectable: !!onValueUpdateProp,
 
         value,
-        setValue: newValue => {
-          setValue(newValue);
-          onValueUpdateProp?.(newValue);
-        },
+        setValue,
 
         isSomeItemsVisible: visibleCountRef.current > 0,
 
@@ -192,12 +198,10 @@ function List({
           return value.includes(itemValue);
         },
         selectItem: itemValue => {
-          setValue(oldValue => [...oldValue, itemValue]);
+          setValue([...value, itemValue]);
         },
         unselectItem: itemValue => {
-          setValue(oldValue =>
-            oldValue.filter(curItemValue => curItemValue !== itemValue),
-          );
+          setValue(value.filter(curItemValue => curItemValue !== itemValue));
         },
       }}>
       <Flex
@@ -224,22 +228,8 @@ function ListItem({
   keywords?: string[];
   onClick?: () => void;
 }) {
-  const {
-    addItem,
-    removeItem,
-    findItem,
-    isItemSelected,
-    selectItem,
-    unselectItem,
-    isSelectable,
-  } = useListContext();
-
-  useEffect(() => {
-    return () => {
-      removeItem(value);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { addItem, findItem, isItemSelected, selectItem, unselectItem, isSelectable } =
+    useListContext();
 
   let item = findItem(value);
 

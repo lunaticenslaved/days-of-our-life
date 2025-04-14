@@ -1,46 +1,49 @@
-import {
-  CosmeticBenefit,
-  CosmeticBenefitTree,
-  CosmeticUtils,
-} from '#/shared/models/cosmetic';
-import { ReactNode, useMemo } from 'react';
+import { CosmeticBenefit } from '#/shared/models/cosmetic';
+import { Box } from '#/ui-lib/atoms/Box';
+import { Flex } from '#/ui-lib/atoms/Flex';
+import { Text } from '#/ui-lib/atoms/Text';
+import { List } from '#/ui-lib/molecules/List';
+import { WithInputProps } from '#/ui-lib/types';
+import { ReactNode } from 'react';
+import { getCosmeticBenefitKeywords } from '../utils';
 
-interface ListComponentProps {
-  benefits: CosmeticBenefit[];
-  renderActions(benefit: CosmeticBenefit): ReactNode;
-}
+type ListComponentProps = WithInputProps<
+  string[] | undefined,
+  {
+    benefits: CosmeticBenefit[];
+    renderActions?: (ing: CosmeticBenefit) => ReactNode;
+  }
+>;
 
-export function ListComponent({ benefits, ...props }: ListComponentProps) {
-  const tree = useMemo(() => {
-    return CosmeticUtils.treeBenefits(benefits);
-  }, [benefits]);
-
-  return <Tree tree={tree} {...props} />;
-}
-
-function Tree({
-  tree,
-  ...props
-}: Omit<ListComponentProps, 'benefits'> & { tree: CosmeticBenefitTree[] }) {
-  const { renderActions } = props;
-
+export function ListComponent({
+  value,
+  onValueUpdate,
+  benefits,
+  renderActions,
+}: ListComponentProps) {
   return (
-    <ul>
-      {tree.map(benefit => {
-        return (
-          <li key={benefit.id}>
-            <div style={{ display: 'flex' }}>
-              <p>{benefit.name}</p>
-              {renderActions(benefit)}
-            </div>
-            {benefit.children.length > 0 && (
-              <div style={{ paddingLeft: '20px' }}>
-                <Tree tree={benefit.children} {...props} />
-              </div>
-            )}
-          </li>
-        );
-      })}
-    </ul>
+    <List value={value} onValueUpdate={onValueUpdate}>
+      <Box spacing={{ px: 4, pt: 4 }}>
+        <List.Search placeholder="Поиск..." />
+      </Box>
+      <List.Empty>Преимущества не найдены</List.Empty>
+      <List.Group>
+        <Box spacing={{ px: 4, pb: 4 }} overflow="auto">
+          {benefits.map(benefit => {
+            return (
+              <List.Item
+                key={benefit.id}
+                value={benefit.id}
+                keywords={getCosmeticBenefitKeywords(benefit)}>
+                <Flex gap={2}>
+                  <Text>{benefit.name}</Text>
+                  {!!renderActions && <Box>{renderActions?.(benefit)}</Box>}
+                </Flex>
+              </List.Item>
+            );
+          })}
+        </Box>
+      </List.Group>
+    </List>
   );
 }

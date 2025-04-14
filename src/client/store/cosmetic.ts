@@ -540,7 +540,7 @@ export function useListCosmeticIngredientsQuery() {
     queryKey: StoreKeys.listCosmeticIngredients(),
     queryFn: wrapApiAction(Schema.cosmetic.listCosmeticIngredients),
     select: data => {
-      return orderBy(data, item => item.name, 'asc');
+      return orderBy(data, item => item.name.toLocaleLowerCase(), 'asc');
     },
   });
 }
@@ -1499,7 +1499,7 @@ export function useListCosmeticINCIIngredientsQuery() {
     queryKey: StoreKeys.listCosmeticINCIIngredients(),
     queryFn: wrapApiAction(Schema.cosmetic.listCosmeticINCIIngredients),
     select: data => {
-      return orderBy(data, item => item.name, 'asc');
+      return orderBy(data, item => item.name.toLocaleLowerCase(), 'asc');
     },
   });
 }

@@ -3,7 +3,7 @@ import {
   CosmeticIngredientValidators,
 } from '#/shared/models/cosmetic';
 import { z } from 'zod';
-import { CosmeticBenefitMultipleSelect } from '#/client/entities/cosmetic/benefits';
+import { CosmeticBenefitTagSelect } from '#/client/entities/cosmetic/benefits';
 import { CosmeticINCIIngredientTagSelect } from '#/client/entities/cosmetic/inci-indgredients';
 import { TextArea } from '#/ui-lib/atoms/TextArea';
 import { TextInput } from '#/ui-lib/molecules/TextInputField';
@@ -11,7 +11,10 @@ import { Form } from '#/ui-lib/atoms/Form';
 import { Field } from '#/ui-lib/atoms/Field';
 import { useMemo } from 'react';
 import { Button } from '#/ui-lib/atoms/Button';
-import { useListCosmeticINCIIngredientsQuery } from '#/client/store/cosmetic';
+import {
+  useListCosmeticBenefitsQuery,
+  useListCosmeticINCIIngredientsQuery,
+} from '#/client/store/cosmetic';
 
 const schema = z.object({
   name: CosmeticIngredientValidators.name,
@@ -30,6 +33,7 @@ export function IngredientForm({
   ingredient?: CosmeticIngredient;
 }) {
   const { data: ingredients } = useListCosmeticINCIIngredientsQuery();
+  const { data: benefits } = useListCosmeticBenefitsQuery();
 
   const initialValues = useMemo((): FormValues => {
     return {
@@ -45,7 +49,7 @@ export function IngredientForm({
     ingredient?.name,
   ]);
 
-  if (!ingredients) {
+  if (!ingredients || !benefits) {
     return <div> Loading...</div>;
   }
 
@@ -71,7 +75,7 @@ export function IngredientForm({
             <Form.Field<FormValues['description'] | undefined> name="description">
               {fieldProps => {
                 return (
-                  <Field required>
+                  <Field>
                     <Field.Label>Описание</Field.Label>
                     <Field.Input>
                       <TextArea {...fieldProps.input} />
@@ -107,7 +111,10 @@ export function IngredientForm({
                   <Field required>
                     <Field.Label>Направления действия</Field.Label>
                     <Field.Input>
-                      <CosmeticBenefitMultipleSelect {...fieldProps.input} />
+                      <CosmeticBenefitTagSelect
+                        {...fieldProps.input}
+                        benefits={benefits}
+                      />
                     </Field.Input>
                     <Field.Message />
                   </Field>

@@ -1,4 +1,4 @@
-import { CosmeticINCIIngredient } from '#/shared/models/cosmetic';
+import { CosmeticIngredient } from '#/shared/models/cosmetic';
 import { Box } from '#/ui-lib/atoms/Box';
 import { Button } from '#/ui-lib/atoms/Button';
 import { Flex } from '#/ui-lib/atoms/Flex';
@@ -12,18 +12,18 @@ import {
   SortableCloudElementRenderArg,
 } from '#/ui-lib/molecules/SortableCloud';
 
-type INCIIngredientTagSelectProps = WithInputProps<
+type IngredientTagSelectProps = WithInputProps<
   string[] | undefined,
   {
-    ingredients: CosmeticINCIIngredient[];
+    ingredients: CosmeticIngredient[];
   }
 >;
 
-export function INCIIngredientTagSelect({
+export function IngredientTagSelect({
   value = [],
   onValueUpdate,
   ingredients,
-}: INCIIngredientTagSelectProps) {
+}: IngredientTagSelectProps) {
   const ingredientsMap = useMemo(() => {
     return _.fromPairs(
       ingredients.map(ingredient => {

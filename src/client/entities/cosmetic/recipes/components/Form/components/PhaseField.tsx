@@ -11,6 +11,7 @@ import { IngredientField } from './IngredientField';
 import { CosmeticIngredient } from '#/shared/models/cosmetic';
 import { createIngredinetId } from '../utils';
 import { PhaseData, DraggingData } from '../types';
+import { CosmeticIngredientCombobox } from '#/client/entities/cosmetic/ingredients';
 
 export function PhaseField({
   index,
@@ -52,58 +53,60 @@ export function PhaseField({
         color="background"
         borderRadius="m"
         borderWidth="m">
-        <Flex direction="row" alignItems="center" gap={1} spacing={{ mb: 4 }}>
-          <div {...listeners} {...attributes}>
-            drag
-          </div>
-
-          <Text variant="header-m">Фаза {index + 1}</Text>
-
-          <Button view="outlined" onClick={onRemove}>
-            Удалить фазу
-          </Button>
-        </Flex>
-
         <Form.FieldArray<FormIngredient> name={`${fieldName}.ingredients`}>
           {({ fields: ingredientFields }) => {
             return (
-              <Flex direction="column" gap={4}>
-                <SortableContext
-                  items={ingredientFields.map((_, index) => {
-                    const ingredient = ingredientFields.value[index];
+              <>
+                <Flex direction="row" alignItems="center" gap={1} spacing={{ mb: 4 }}>
+                  <div {...listeners} {...attributes}>
+                    drag
+                  </div>
 
-                    return ingredient.id;
-                  })}>
-                  {ingredientFields.map((ingFieldName, index) => {
-                    const ingredient = ingredientFields.value[index];
+                  <Text variant="header-m">Фаза {index + 1}</Text>
 
-                    return (
-                      <IngredientField
-                        key={ingredient.id}
-                        phaseId={phase.id}
-                        ingredient={ingredient}
-                        fieldName={ingFieldName}
-                        ingredients={ingredients}
-                        draggingData={draggingData}
-                        onRemove={() => ingredientFields.remove(index)}
-                      />
-                    );
-                  })}
-                </SortableContext>
+                  <Button view="outlined" onClick={onRemove}>
+                    Удалить фазу
+                  </Button>
 
-                <Button
-                  type="button"
-                  onClick={() => {
-                    ingredientFields.push({
-                      id: createIngredinetId(),
-                      ingredientId: '',
-                      percent: 0,
-                      comment: '',
-                    });
-                  }}>
-                  Добавить ингредиент
-                </Button>
-              </Flex>
+                  <CosmeticIngredientCombobox
+                    ingredients={ingredients}
+                    trigger={<Button type="button">Добавить ингредиент</Button>}
+                    onItemClick={ingredient => {
+                      ingredientFields.push({
+                        id: createIngredinetId(),
+                        ingredientId: ingredient.id,
+                        percent: 0,
+                        comment: '',
+                      });
+                    }}
+                  />
+                </Flex>
+
+                <Flex direction="column" gap={4}>
+                  <SortableContext
+                    items={ingredientFields.map((_, index) => {
+                      const ingredient = ingredientFields.value[index];
+
+                      return ingredient.id;
+                    })}>
+                    {ingredientFields.map((ingFieldName, index) => {
+                      const ingredient = ingredientFields.value[index];
+
+                      return (
+                        <IngredientField
+                          key={ingredient.id}
+                          phaseId={phase.id}
+                          ingredient={ingredient}
+                          fieldName={ingFieldName}
+                          ingredients={ingredients}
+                          draggingData={draggingData}
+                          onRemove={() => ingredientFields.remove(index)}
+                        />
+                      );
+                    })}
+                  </SortableContext>
+                </Flex>
+              </>
             );
           }}
         </Form.FieldArray>

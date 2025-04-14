@@ -1,27 +1,52 @@
-import { createEntityList } from '#/client/component-factories/EntityList';
-import { COSMETIC_NAVIGATION } from '#/client/pages/cosmetic';
 import { CosmeticIngredient } from '#/shared/models/cosmetic';
-import { Button } from '#/ui-lib/atoms/Button';
-
+import { Box } from '#/ui-lib/atoms/Box';
+import { Flex } from '#/ui-lib/atoms/Flex';
+import { Text } from '#/ui-lib/atoms/Text';
+import { List } from '#/ui-lib/molecules/List';
+import { WithInputProps } from '#/ui-lib/types';
+import { ReactNode } from 'react';
 import { getCosmeticIngredientKeywords } from '../utils';
 
-export const List = createEntityList<CosmeticIngredient>({
-  entityName: 'CosmeticIngredient',
-  placeholder: {
-    empty: 'Нет ингредиентов',
-  },
-  getEntityKeywords: getCosmeticIngredientKeywords,
-  getEntityKey(ingredient) {
-    return ingredient.id;
-  },
-  renderEntity(ingredient) {
-    return (
-      <Button
-        component="router-link"
-        view="clear"
-        to={COSMETIC_NAVIGATION.toIngredientOverview({ ingredientId: ingredient.id })}>
-        {ingredient.name}
-      </Button>
-    );
-  },
-});
+type ListComponentProps = WithInputProps<
+  string[] | undefined,
+  {
+    ingredients: CosmeticIngredient[];
+    renderActions?: (ing: CosmeticIngredient) => ReactNode;
+    onItemClick?: (ing: CosmeticIngredient) => void;
+  }
+>;
+
+export function ListComponent({
+  value,
+  onValueUpdate,
+  ingredients,
+  renderActions,
+  onItemClick,
+}: ListComponentProps) {
+  return (
+    <List value={value} onValueUpdate={onValueUpdate}>
+      <Box spacing={{ px: 4, pt: 4 }}>
+        <List.Search placeholder="Поиск..." />
+      </Box>
+      <List.Empty>Ингредиенты не найдены</List.Empty>
+      <List.Group>
+        <Box spacing={{ px: 4, pb: 4 }} overflow="auto">
+          {ingredients.map(ingredient => {
+            return (
+              <List.Item
+                key={ingredient.id}
+                value={ingredient.id}
+                keywords={getCosmeticIngredientKeywords(ingredient)}
+                onClick={() => onItemClick?.(ingredient)}>
+                <Flex gap={2}>
+                  <Text>{ingredient.name}</Text>
+                  {!!renderActions && <Box>{renderActions?.(ingredient)}</Box>}
+                </Flex>
+              </List.Item>
+            );
+          })}
+        </Box>
+      </List.Group>
+    </List>
+  );
+}

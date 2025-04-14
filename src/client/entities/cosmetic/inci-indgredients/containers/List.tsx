@@ -8,7 +8,7 @@ export function ListContainer() {
 
   return (
     <ListComponent
-      entities={listQuery.data || []}
+      ingredients={listQuery.data || []}
       renderActions={ingredient => {
         return <ActionsContainer ingredient={ingredient} onDeleted={() => null} />;
       }}

@@ -1,4 +1,4 @@
-import { CosmeticINCIIngredient } from '#/shared/models/cosmetic';
+import { CosmeticBenefit } from '#/shared/models/cosmetic';
 import { Box } from '#/ui-lib/atoms/Box';
 import { Button } from '#/ui-lib/atoms/Button';
 import { Flex } from '#/ui-lib/atoms/Flex';
@@ -15,47 +15,47 @@ import {
 type INCIIngredientTagSelectProps = WithInputProps<
   string[] | undefined,
   {
-    ingredients: CosmeticINCIIngredient[];
+    benefits: CosmeticBenefit[];
   }
 >;
 
-export function INCIIngredientTagSelect({
+export function BenefitTagSelect({
   value = [],
   onValueUpdate,
-  ingredients,
+  benefits,
 }: INCIIngredientTagSelectProps) {
-  const ingredientsMap = useMemo(() => {
+  const benefitsMap = useMemo(() => {
     return _.fromPairs(
-      ingredients.map(ingredient => {
-        return [ingredient.id, ingredient];
+      benefits.map(benefit => {
+        return [benefit.id, benefit];
       }),
     );
-  }, [ingredients]);
+  }, [benefits]);
 
   return (
     <SortableCloud
       value={value}
       onValueUpdate={onValueUpdate}
-      renderElement={({ id, ...arg }) => {
-        const ingredient = ingredientsMap[id];
+      renderElement={({ id }) => {
+        const benefit = benefitsMap[id];
 
         return (
           <Label
-            sortable={arg}
+            // sortable={arg}
             onRemove={() => {
-              onValueUpdate?.(value.filter(id => id !== ingredient.id));
+              onValueUpdate?.(value.filter(id => id !== benefit.id));
             }}>
-            {ingredient.name}
+            {benefit.name}
           </Label>
         );
       }}
       renderDraggedElement={({ id }) => {
-        return <Label onRemove={() => null}>{ingredientsMap[id].name}</Label>;
+        return <Label onRemove={() => null}>{benefitsMap[id].name}</Label>;
       }}
       append={
         <CompoboxComponent
           trigger={<Button size="s">Добавить +</Button>}
-          ingredients={ingredients}
+          benefits={benefits}
           value={value}
           onValueUpdate={arg => {
             onValueUpdate?.(arg);
@@ -66,6 +66,7 @@ export function INCIIngredientTagSelect({
   );
 }
 
+// FIXME move to ui-lib
 function Label({
   sortable,
   children,
