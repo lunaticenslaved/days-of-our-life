@@ -23,6 +23,8 @@ function getStyles(_props: CommonSelectProps<any>): CSSProperties {
     width: '100%',
     border: 'none',
     borderRadius: getDimensions(THEME.components.input.borderRadius[SIZE]),
+    backgroundColor: THEME.components.input.backgroundColor,
+    color: THEME.components.input.color,
     ...getSpacingStyles(THEME.components.select.spacing[SIZE]),
     ...getHeightStyles({ height: THEME.components.select.height[SIZE] }),
   };
@@ -83,5 +85,5 @@ export function SelectMultiple(props: SelectMultipleProps) {
 
 // --- Option ------------------------------------------------------------
 export function SelectOption(props: HTMLProps<HTMLOptionElement>) {
-  return <option {...props} />;
+  return <option {...props} style={{ color: 'black' }} />;
 }

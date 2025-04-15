@@ -36,16 +36,20 @@ export const THEME = {
         m: spacingMap({ px: 2, m: 0 }),
         l: spacingMap({ px: 4, m: 0 }),
       }),
-      borderRadius: sizeMap({ s: 2, m: 2, l: 2 }),
+      borderRadius: sizeMap({ s: 1, m: 1, l: 1 }),
+      backgroundColor: 'rgba(255,255,255,0.05)',
+      color: 'white',
     },
     textArea: {
       minHeight: sizeMap({ s: 6, m: 8, l: 10 }),
       spacing: sizeMap({
-        s: spacingMap({ px: 2, m: 0 }),
-        m: spacingMap({ px: 2, m: 0 }),
-        l: spacingMap({ px: 4, m: 0 }),
+        s: spacingMap({ p: 2, m: 0 }),
+        m: spacingMap({ p: 2, m: 0 }),
+        l: spacingMap({ p: 4, m: 0 }),
       }),
-      borderRadius: sizeMap({ s: 2, m: 2, l: 2 }),
+      borderRadius: sizeMap({ s: 1, m: 1, l: 1 }),
+      backgroundColor: 'rgba(255,255,255,0.05)',
+      color: 'white',
     },
     select: {
       // TODO button, input, select имеют одни типоразмеры

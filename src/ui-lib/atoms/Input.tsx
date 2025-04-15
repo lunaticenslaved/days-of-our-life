@@ -54,6 +54,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         style={{
           height: getDimensions(THEME.components.input.height[SIZE]),
           borderRadius: getDimensions(THEME.components.input.borderRadius[SIZE]),
+          backgroundColor: THEME.components.input.backgroundColor,
+          color: THEME.components.input.color,
           width: '100%',
           outlineWidth: '0',
           border: 'none',
