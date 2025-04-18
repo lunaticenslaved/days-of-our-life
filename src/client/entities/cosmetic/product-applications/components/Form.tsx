@@ -1,4 +1,4 @@
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import { z } from 'zod';
 import { useMemo } from 'react';
 import { CommonValidators } from '#/shared/models/common';

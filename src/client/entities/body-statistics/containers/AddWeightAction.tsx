@@ -1,5 +1,5 @@
 import { DateFormat } from '#/shared/models/date';
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import { useCreateBodyWeightMutation } from '#/client/store/days';
 
 import { BodyWeightFormDialog } from '../components/WeightFormDialog';

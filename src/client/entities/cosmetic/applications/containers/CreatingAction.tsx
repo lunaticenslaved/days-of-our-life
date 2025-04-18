@@ -1,13 +1,11 @@
-import { useCreateCosmeticApplicationMutation } from '#/client/entities/cosmetic/applications/store';
+import { useCreateCosmeticApplicationMutation } from '../store';
 import {
   useListCosmeticProductsQuery,
   useListCosmeticRecipesQuery,
 } from '#/client/store/cosmetic';
 import { DateFormat } from '#/shared/models/date';
 import { nonReachable } from '#/shared/utils';
-import { Button } from '#/ui-lib/atoms/Button';
-import { useDialog } from '#/ui-lib/atoms/Dialog';
-import { FormDialogComponent } from '../components/Form';
+import { ApplicationItemSelect } from '../components/ApplicationItemSelect';
 
 export function CreatingActionContainer({
   date,
@@ -16,52 +14,38 @@ export function CreatingActionContainer({
   date: DateFormat;
   dayPartId: string;
 }) {
-  const dialog = useDialog();
-
   const listCosmeticProductsQuery = useListCosmeticProductsQuery();
   const listCosmeticRecipesQuery = useListCosmeticRecipesQuery();
 
-  const creatingMutation = useCreateCosmeticApplicationMutation({
-    onMutate: dialog.close,
-  });
+  const creatingMutation = useCreateCosmeticApplicationMutation();
 
   return (
-    <>
-      {dialog.isOpen && (
-        <FormDialogComponent
-          date={date}
-          dayPartId={dayPartId}
-          dialog={dialog}
-          isPending={false}
-          products={listCosmeticProductsQuery.data || []}
-          recipes={listCosmeticRecipesQuery.data || []}
-          onSubmit={values => {
-            if (values.type === 'product') {
-              creatingMutation.mutate({
-                date,
-                dayPartId,
-                source: {
-                  type: 'product',
-                  productId: values.productId,
-                },
-              });
-            } else if (values.type === 'recipe') {
-              creatingMutation.mutate({
-                date,
-                dayPartId,
-                source: {
-                  type: 'recipe',
-                  recipeId: values.recipeId,
-                },
-              });
-            } else {
-              nonReachable(values);
-            }
-          }}
-        />
-      )}
-
-      <Button onClick={dialog.open}>Добавить косметику</Button>
-    </>
+    <ApplicationItemSelect
+      products={listCosmeticProductsQuery.data || []}
+      recipes={listCosmeticRecipesQuery.data || []}
+      onItemSelect={values => {
+        if (values.type === 'product') {
+          creatingMutation.mutate({
+            date,
+            dayPartId,
+            source: {
+              type: 'product',
+              productId: values.item.id,
+            },
+          });
+        } else if (values.type === 'recipe') {
+          creatingMutation.mutate({
+            date,
+            dayPartId,
+            source: {
+              type: 'recipe',
+              recipeId: values.item.id,
+            },
+          });
+        } else {
+          nonReachable(values);
+        }
+      }}
+    />
   );
 }

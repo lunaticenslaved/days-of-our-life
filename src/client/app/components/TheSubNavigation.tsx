@@ -1,7 +1,7 @@
 import { matchPath, useLocation } from 'react-router';
 import { Selectable } from '#/ui-lib/molecules/Selectable';
 import { Flex } from '#/ui-lib/atoms/Flex';
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import { useNavigationContext } from '#/client/widgets/navigation';
 
 export function TheSubNavigation() {

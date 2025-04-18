@@ -1,4 +1,4 @@
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import { FormDialog } from '../components/Form';
 import { useCreateCosmeticBenefitMutation } from '#/client/store';
 import { useDialog } from '#/ui-lib/atoms/Dialog';

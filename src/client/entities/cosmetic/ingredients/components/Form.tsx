@@ -10,7 +10,7 @@ import { TextInput } from '#/ui-lib/molecules/TextInputField';
 import { Form } from '#/ui-lib/atoms/Form';
 import { Field } from '#/ui-lib/atoms/Field';
 import { useMemo } from 'react';
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import {
   useListCosmeticBenefitsQuery,
   useListCosmeticINCIIngredientsQuery,

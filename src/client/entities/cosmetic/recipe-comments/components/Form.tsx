@@ -1,4 +1,4 @@
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import { CosmeticRecipeCommentValidators } from '#/shared/models/cosmetic';
 import { useMemo } from 'react';
 import { z } from 'zod';

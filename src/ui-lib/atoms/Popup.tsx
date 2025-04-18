@@ -1,7 +1,9 @@
 import { useClickOutside } from '#/ui-lib/hooks';
+import { getBorderStyles } from '#/ui-lib/utils/border';
 import {
   createContext,
   PropsWithChildren,
+  ReactNode,
   RefObject,
   useContext,
   useMemo,
@@ -94,8 +96,12 @@ function PopupTrigger({ children }: PropsWithChildren) {
 Popup.displayName = 'Popup.Trigger';
 
 // --- Popup Content ---------------------------------------------------------------------
-function PopupContent({ children }: PropsWithChildren) {
-  const { contentEl, isOpen, position } = usePopupContext();
+function PopupContent({
+  children,
+}: {
+  children: ReactNode | ((arg: { close: () => void }) => ReactNode);
+}) {
+  const { contentEl, isOpen, position, close } = usePopupContext();
 
   if (!isOpen) {
     return null;
@@ -110,8 +116,9 @@ function PopupContent({ children }: PropsWithChildren) {
         top: `${position.top}px`,
         left: `${position.left}px`,
         boxShadow: '2px 2px 2px #0005',
+        ...getBorderStyles({ borderRadius: 'm' }),
       }}>
-      {children}
+      {typeof children === 'function' ? children({ close }) : children}
     </div>
   );
 }

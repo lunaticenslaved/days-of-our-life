@@ -42,8 +42,10 @@ import {
   ListCosmeticBenefitsResponse,
   ListCosmeticINCIIngredientsResponse,
   ListCosmeticIngredientsResponse,
+  ListCosmeticProductsRequest,
   ListCosmeticProductsResponse,
   ListCosmeticRecipeCommentsResponse,
+  ListCosmeticRecipesRequest,
   ListCosmeticRecipesResponse,
   UpdateCosmeticBenefitRequest,
   UpdateCosmeticBenefitResponse,
@@ -68,6 +70,7 @@ import {
 } from '#/shared/models/cosmetic';
 import { cloneDeep, orderBy } from 'lodash';
 import dayjs from '#/shared/libs/dayjs';
+import { useCosmeticCacheStrict } from '#/client/entities/cosmetic/cache';
 
 const StoreKeys = {
   // Cosmetic Products
@@ -318,9 +321,17 @@ export function useGetCosmeticProductQuery(productId: string) {
 }
 
 export function useListCosmeticProductsQuery() {
+  const { products } = useCosmeticCacheStrict();
+
   return useQuery<ListCosmeticProductsResponse, Error, ListCosmeticProductsResponse>({
     queryKey: StoreKeys.listCosmeticProducts(),
-    queryFn: wrapApiAction(Schema.cosmetic.listCosmeticProducts),
+    queryFn: async (arg: ListCosmeticProductsRequest) => {
+      const response = await wrapApiAction(Schema.cosmetic.listCosmeticProducts)(arg);
+
+      response.forEach(products.add);
+
+      return response;
+    },
     select: data => {
       return orderBy(data, item => item.name, 'asc');
     },
@@ -969,9 +980,17 @@ export function useGetCosmeticRecipeQuery(recipeId: string) {
 }
 
 export function useListCosmeticRecipesQuery(enabled = true) {
+  const { recipes } = useCosmeticCacheStrict();
+
   return useQuery<ListCosmeticRecipesResponse, Error, ListCosmeticRecipesResponse>({
     queryKey: StoreKeys.listCosmeticRecipes(),
-    queryFn: wrapApiAction(Schema.cosmetic.listCosmeticRecipes),
+    queryFn: async (arg: ListCosmeticRecipesRequest) => {
+      const response = await wrapApiAction(Schema.cosmetic.listCosmeticRecipes)(arg);
+
+      response.forEach(recipes.add);
+
+      return response;
+    },
     select: data => {
       return orderBy(data, item => item.name, 'asc');
     },

@@ -1,4 +1,4 @@
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import { findNutrients } from '#/client/entities/food/meal-items/utils';
 import {
   useCreateFoodMealItem,

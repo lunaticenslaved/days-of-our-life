@@ -1,5 +1,5 @@
 import { useCreateCosmeticRecipeCommentMutation } from '#/client/store/cosmetic';
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import { Dialog, useDialog } from '#/ui-lib/atoms/Dialog';
 
 import { FormComponent } from '../components/Form';

@@ -76,8 +76,8 @@ export const FoodMealItemFormDialog = createEntityFormDialog<
                 {...inputProps}
                 value={inputProps.modelValue}
                 onValueUpdate={inputProps.onModelValueChange}>
-                <RadioGroup.Button value="product" title="Продукт" />
-                <RadioGroup.Button value="recipe" title="Рецепт" />
+                <RadioGroup.Button value="product">Продукт</RadioGroup.Button>
+                <RadioGroup.Button value="recipe">Рецепт</RadioGroup.Button>
               </RadioGroup>
             );
           }}

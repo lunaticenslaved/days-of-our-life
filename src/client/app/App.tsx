@@ -13,7 +13,7 @@ import isPropValid from '@emotion/is-prop-valid';
 import { StyleSheetManager } from 'styled-components';
 import { FoodIcon } from '#/client/entities/food';
 import { DaysIcon } from '#/client/entities/days';
-import { CosmeticIcon } from '#/client/entities/cosmetic';
+import { CosmeticCacheProvider, CosmeticIcon } from '#/client/entities/cosmetic';
 import { MedicamentsIcon } from '#/client/entities/medicaments';
 import { Flex } from '#/ui-lib/atoms/Flex';
 import { TheLeftNavigation } from './components/TheLeftNavigation';
@@ -48,30 +48,32 @@ export function App() {
     <StyleSheetManager shouldForwardProp={isPropValid}>
       <NavigationContextProvider>
         <DialogContextProvider>
-          <Box color="background" height="100%">
-            <Flex height="100%">
-              <Flex direction="row" height="100%">
-                <TheLeftNavigation items={LINKS} />
-                <TheSubNavigation />
-              </Flex>
+          <CosmeticCacheProvider>
+            <Box color="background" height="100%">
+              <Flex height="100%">
+                <Flex direction="row" height="100%">
+                  <TheLeftNavigation items={LINKS} />
+                  <TheSubNavigation />
+                </Flex>
 
-              <PageContextProvider>
-                <Box overflow="auto" height="100%" flexGrow={1}>
-                  <Suspense>
-                    <Routes>
-                      {HomeRouter}
-                      {FoodRouter}
-                      {DaysRouter}
-                      {CosmeticRouter}
-                      {MedicamentsRouter}
-                      {/* TODO add not found page */}
-                      <Route path="*" element={<div>not found</div>} />
-                    </Routes>
-                  </Suspense>
-                </Box>
-              </PageContextProvider>
-            </Flex>
-          </Box>
+                <PageContextProvider>
+                  <Box overflow="auto" height="100%" flexGrow={1}>
+                    <Suspense>
+                      <Routes>
+                        {HomeRouter}
+                        {FoodRouter}
+                        {DaysRouter}
+                        {CosmeticRouter}
+                        {MedicamentsRouter}
+                        {/* TODO add not found page */}
+                        <Route path="*" element={<div>not found</div>} />
+                      </Routes>
+                    </Suspense>
+                  </Box>
+                </PageContextProvider>
+              </Flex>
+            </Box>
+          </CosmeticCacheProvider>
         </DialogContextProvider>
       </NavigationContextProvider>
     </StyleSheetManager>

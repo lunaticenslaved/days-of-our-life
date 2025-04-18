@@ -36,7 +36,6 @@ export function ListComponent({
           <List.Search placeholder="Поиск..." />
         </Box>
       )}
-      <List.Empty>Преимущества не найдены</List.Empty>
       <List.Group>
         <Box spacing={{ px: 4, pb: 4 }} overflow="auto">
           {applications.map(application => {
@@ -63,7 +62,7 @@ export function ListComponent({
                 key={application.id}
                 value={application.id}
                 keywords={getCosmeticApplicationKeywords(application)}>
-                <Flex gap={2}>
+                <Flex gap={2} alignItems="center">
                   {content}
                   {!!renderActions && <Box>{renderActions?.(application)}</Box>}
                 </Flex>

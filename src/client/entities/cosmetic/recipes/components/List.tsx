@@ -3,7 +3,7 @@ import { CosmeticRecipe } from '#/shared/models/cosmetic';
 
 import { getCosmeticRecipeKeywords } from '../utils';
 
-export const ListComponent = createEntityList<CosmeticRecipe>({
+export const ListComponent = createEntityList<Pick<CosmeticRecipe, 'id' | 'name'>>({
   entityName: 'CosmeticRecipe',
   placeholder: {
     empty: 'Нет рецептов',

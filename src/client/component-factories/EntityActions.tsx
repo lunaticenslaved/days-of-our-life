@@ -1,4 +1,4 @@
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import { Dialog, IDialog, useDialog } from '#/ui-lib/atoms/Dialog';
 import { FC } from 'react';
 import _ from 'lodash';

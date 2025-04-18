@@ -1,6 +1,6 @@
 import { CosmeticIngredient } from '#/shared/models/cosmetic';
 import { Box } from '#/ui-lib/atoms/Box';
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import { Flex } from '#/ui-lib/atoms/Flex';
 import { Text } from '#/ui-lib/atoms/Text';
 import { WithInputProps } from '#/ui-lib/types';

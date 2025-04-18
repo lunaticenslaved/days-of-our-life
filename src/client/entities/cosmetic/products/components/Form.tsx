@@ -1,5 +1,5 @@
 import { CommonValidators } from '#/shared/models/common';
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import { z } from 'zod';
 import { CosmeticProduct } from '#/shared/models/cosmetic';
 import { useMemo } from 'react';

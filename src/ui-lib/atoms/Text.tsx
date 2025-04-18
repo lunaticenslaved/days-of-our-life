@@ -1,4 +1,5 @@
 import { nonReachable } from '#/shared/utils';
+import { getTextColor } from '#/ui-lib/utils/color';
 import { checkProps } from '#/ui-lib/utils/common';
 import { getDimensions } from '#/ui-lib/utils/dimensions';
 import { getWidthStyles, SHOULD_FORWARD_WIDTH, WidthProps } from '#/ui-lib/utils/width';
@@ -29,6 +30,8 @@ function getStyles({
   const result: StyledObject = {
     whiteSpace,
     wordWrap,
+    fontFamily: "'Jeju Gothic', sans-serif",
+    color: getTextColor('background'),
     ...getWidthStyles(props),
   };
 

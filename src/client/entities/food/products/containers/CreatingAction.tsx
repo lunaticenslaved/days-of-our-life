@@ -1,4 +1,4 @@
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import { useDialog } from '#/ui-lib/atoms/Dialog';
 
 import { FoodProductFormDialog } from './Form';

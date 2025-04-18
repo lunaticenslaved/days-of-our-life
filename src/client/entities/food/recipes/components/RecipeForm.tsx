@@ -1,5 +1,5 @@
 import { FoodRecipe, FoodValidators } from '#/shared/models/food';
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import { FForm } from '#/client/components/FForm';
 import { FoodProductSearch } from '#/client/entities/food';
 import { z } from 'zod';
@@ -130,7 +130,12 @@ export function FoodRecipeForm({ onSubmit, recipe }: RecipeFormProps) {
                               <div style={{ display: 'flex', gap: '10px' }}>
                                 <FForm.Field name={`${name}.productId`} required>
                                   {props => (
-                                    <FoodProductSearch type="single" {...props} />
+                                    <FoodProductSearch
+                                      type="single"
+                                      {...props}
+                                      value={props.modelValue}
+                                      onValueUpdate={props.onModelValueChange}
+                                    />
                                   )}
                                 </FForm.Field>
 

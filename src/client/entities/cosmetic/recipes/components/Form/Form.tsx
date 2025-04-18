@@ -1,4 +1,4 @@
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import { CosmeticIngredient, CosmeticRecipe } from '#/shared/models/cosmetic';
 import { useMemo, useState } from 'react';
 import { Form } from '#/ui-lib/atoms/Form';

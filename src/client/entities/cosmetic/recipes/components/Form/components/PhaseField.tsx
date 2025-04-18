@@ -1,4 +1,4 @@
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import { Form } from '#/ui-lib/atoms/Form';
 import { Box } from '#/ui-lib/atoms/Box';
 import { Text } from '#/ui-lib/atoms/Text';

@@ -1,4 +1,4 @@
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 
 interface StartFemalePeriodButtonProps {
   onStartPeriod(): void;

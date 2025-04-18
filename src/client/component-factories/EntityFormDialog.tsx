@@ -1,4 +1,4 @@
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import { FinalForm } from '#/client/components/FForm';
 import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
 import { ReactNode, useMemo } from 'react';

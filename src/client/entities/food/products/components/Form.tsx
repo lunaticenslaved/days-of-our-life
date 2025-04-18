@@ -8,7 +8,7 @@ import {
   multiplyNutrients,
   roundNutrients,
 } from '#/shared/models/food';
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
 import { Form } from '#/ui-lib/atoms/Form/FinalForm';
 import { TextInputField } from '#/ui-lib/molecules/TextInputField';

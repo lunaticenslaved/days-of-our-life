@@ -1,5 +1,5 @@
 import { BodyStatisticsValidators } from '#/shared/models/body';
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import { FForm } from '#/client/components/FForm';
 import { z } from 'zod';
 import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';

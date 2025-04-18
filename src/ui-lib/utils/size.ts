@@ -1,4 +1,5 @@
 export const DEFAULT_SIZE: Size = 'm';
+export const SIZES: Size[] = ['s', 'm', 'l'];
 
 export type Size = 's' | 'm' | 'l';
 

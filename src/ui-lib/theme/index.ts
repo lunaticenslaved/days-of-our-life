@@ -63,12 +63,13 @@ export const THEME = {
     },
     button: {
       height: sizeMap({ s: 6, m: 8, l: 10 }),
-      borderRadius: sizeMap({ s: 2, m: 2, l: 2 }),
+      borderRadius: sizeMap({ s: 1, m: 1, l: 1 }),
       spacing: sizeMap({
         s: spacingMap({ px: 2 }),
         m: spacingMap({ px: 2 }),
         l: spacingMap({ px: 4 }),
       }),
+      borderWidth: '1.5px',
     },
   },
 };

@@ -1,5 +1,5 @@
 import { LeftNavigationItem } from '../types';
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import { Flex } from '#/ui-lib/atoms/Flex';
 import { Selectable } from '#/ui-lib/molecules/Selectable';
 import { useLocation } from 'react-router';

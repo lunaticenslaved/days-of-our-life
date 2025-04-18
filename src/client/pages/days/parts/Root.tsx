@@ -1,5 +1,5 @@
 import { DayPart } from '#/shared/models/day';
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/atoms/Button/Button';
 import { DayPartFormDialog } from '#/client/entities/day-parts';
 import { useEffect, useState } from 'react';
 import { useDeleteDayPartMutation, useListDayPartsQuery } from '#/client/store/days';

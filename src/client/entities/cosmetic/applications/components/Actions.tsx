@@ -4,15 +4,14 @@ import {
 } from '#/client/component-factories/EntityActions';
 import { CosmeticApplication } from '#/shared/models/cosmetic/applications';
 
-type Actions = 'edit' | 'delete';
+type Actions = 'delete';
 
 export const ActionsComponent = createEntityActions<CosmeticApplication, Actions>({
   entityName: 'CosmeticApplication',
   actions: {
-    edit: EntityActionsTemplate.edit,
     delete: EntityActionsTemplate.delete,
   },
   getActions() {
-    return ['edit', 'delete'];
+    return ['delete'];
   },
 });

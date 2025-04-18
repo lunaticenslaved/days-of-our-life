@@ -11,7 +11,8 @@ import { LinkProps, Link } from 'react-router-dom';
 import styled, { StyledObject } from 'styled-components';
 
 // --- Settings ------------------------------------
-type ButtonView = 'clear' | 'filled' | 'outlined';
+type ButtonView = 'clear' | 'filled' | 'toned' | 'outlined';
+export const BUTTON_VIEWS: ButtonView[] = ['clear', 'filled', 'toned', 'outlined'];
 
 const DEFAULT_COLOR: Color = 'primary';
 const DEFAULT_VIEW: ButtonView = 'filled';
@@ -55,15 +56,33 @@ function getStyle({
     styles.color = getColor({ color, shade: 'main' });
 
     styles['&:hover'] = {
-      color: getColor({ color: 'primary', shade: 'main' }),
+      backgroundColor: 'rgba(255,255,255,0.1)',
     };
   } else if (view === 'filled') {
     styles.backgroundColor = getColor({ color, shade: 'main' });
     styles.color = getTextColor(color);
+
+    styles['&:hover'] = {
+      backgroundColor: 'rgba(255,255,255,0.6)',
+    };
   } else if (view === 'outlined') {
-    styles.border = `2px solid ${getColor({ color, shade: 'main' })}`;
+    styles.border = `${THEME.components.button.borderWidth} solid ${getColor({
+      color,
+      shade: 'main',
+    })}`;
     styles.backgroundColor = 'transparent';
     styles.color = getColor({ color, shade: 'main' });
+
+    styles['&:hover'] = {
+      backgroundColor: 'rgba(255,255,255,0.1)',
+    };
+  } else if (view === 'toned') {
+    styles.backgroundColor = 'rgba(255,255,255,0.05)';
+    styles.color = getColor({ color, shade: 'main' });
+
+    styles['&:hover'] = {
+      backgroundColor: 'rgba(255,255,255,0.20)',
+    };
   } else {
     nonReachable(view);
   }

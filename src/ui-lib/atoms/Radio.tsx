@@ -1,4 +1,6 @@
 import { DirectionProp } from '#/client/types';
+import { Box } from '#/ui-lib/atoms/Box';
+import { Flex } from '#/ui-lib/atoms/Flex';
 import { WithInputProps } from '#/ui-lib/types';
 import {
   ChangeEvent,
@@ -9,11 +11,12 @@ import {
   useEffect,
   useState,
   FocusEvent,
+  ReactNode,
 } from 'react';
 
 // --- Radio Group Context ------------------------------------------------------------
-type RadioGroupContext = WithInputProps<
-  string | undefined,
+type RadioGroupContext<TValue extends string = string> = WithInputProps<
+  TValue | undefined,
   {
     onChange?(e: ChangeEvent<HTMLInputElement>): void;
     onBlur?(e: FocusEvent<HTMLInputElement>): void;
@@ -25,14 +28,14 @@ const RadioGroupContext = createContext<RadioGroupContext | null>(null);
 // --- Radio Group --------------------------------------------------------------------
 // TODO add aria attributes
 // TODO and on blur event
-function RadioGroup({
+function RadioGroup<TValue extends string>({
   children,
   direction = 'column',
   value: valueProp,
   onChange,
   onValueUpdate,
-}: PropsWithChildren & DirectionProp & RadioGroupContext) {
-  const [value, setValue] = useState(valueProp);
+}: PropsWithChildren & DirectionProp & RadioGroupContext<TValue>) {
+  const [value, setValue] = useState<TValue | undefined>(valueProp);
 
   useEffect(() => {
     setValue(valueProp);
@@ -44,8 +47,8 @@ function RadioGroup({
         value,
         onChange,
         onValueUpdate: value => {
-          onValueUpdate?.(value);
-          setValue(value);
+          onValueUpdate?.(value as TValue);
+          setValue(value as TValue);
         },
       }}>
       <div style={{ display: 'flex', flexDirection: direction }}>{children}</div>
@@ -57,30 +60,40 @@ RadioGroup.displayName = 'RadioGroup';
 // --- Radio Button ------------------------------------------------------------------
 // TODO add aria attributes
 interface RadioProps extends Omit<HTMLProps<HTMLInputElement>, 'value'>, DirectionProp {
-  title?: string;
   value?: string;
+  children: ReactNode;
 }
 
-function RadioButton({ title, direction = 'row', ...props }: RadioProps) {
+function RadioButton({ direction = 'row', children, ...props }: RadioProps) {
   const context = useContext(RadioGroupContext);
 
   return (
-    <label style={{ display: 'flex', flexDirection: direction }}>
-      <input
-        {...props}
-        type="radio"
-        checked={props.value === context?.value}
-        onChange={e => {
-          props.onChange?.(e);
-          context?.onChange?.(e);
-          context?.onValueUpdate?.(props.value);
-        }}
-        onBlur={e => {
-          props.onBlur?.(e);
-          context?.onBlur?.(e);
-        }}
-      />
-      {title && <span>{title}</span>}
+    <label>
+      <Flex direction={direction} gap={1} alignItems="center">
+        <input
+          {...props}
+          style={{
+            margin: 0,
+            cursor: 'pointer',
+            ...props.style,
+          }}
+          type="radio"
+          checked={props.value === context?.value}
+          onChange={e => {
+            props.onChange?.(e);
+            context?.onChange?.(e);
+            context?.onValueUpdate?.(props.value);
+          }}
+          onBlur={e => {
+            props.onBlur?.(e);
+            context?.onBlur?.(e);
+          }}
+        />
+        {/* FIXME use cursor styles */}
+        <Box maxWidth="max-content" style={{ cursor: 'pointer' }}>
+          {children}
+        </Box>
+      </Flex>
     </label>
   );
 }
