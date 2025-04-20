@@ -35,6 +35,8 @@ import {
   RemoveFoodMealItemFromDateResponse,
   ListFoodMealItemsForDateRequest,
   ListFoodMealItemsForDateResponse,
+  ReorderCosmeticApplicationsRequest,
+  ReorderCosmeticApplicationsResponse,
 } from '#/shared/api/types/days';
 import { createAction } from '#/shared/api/utils';
 
@@ -165,5 +167,13 @@ export const DaysSchema = {
     path: ({ date, mealItemId, dayPartId }) =>
       `/api/days/${date}/parts/${dayPartId}/food/meal-items/${mealItemId}`,
     method: 'DELETE',
+  }),
+  reorderCosmeticApplications: createAction<
+    ReorderCosmeticApplicationsRequest,
+    ReorderCosmeticApplicationsResponse
+  >({
+    path: ({ date, dayPartId }) => `/api/days/${date}/parts/${dayPartId}/cosmetic`,
+    method: 'PATCH',
+    body: ({ date: _date, dayPartId: _dayPartId, ...data }) => data,
   }),
 };

@@ -3,7 +3,7 @@ import { Combobox } from '#/ui-lib/atoms/Combobox';
 import { Flex } from '#/ui-lib/atoms/Flex';
 import { ComponentProps, ReactNode } from 'react';
 
-import { ListComponent } from './List';
+import { ListComponent } from './List/List';
 
 type ListProps = ComponentProps<typeof ListComponent> & {
   trigger: ReactNode;

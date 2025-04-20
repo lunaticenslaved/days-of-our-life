@@ -40,6 +40,8 @@ import {
   RemoveFoodMealItemFromDateResponse,
   ListFoodMealItemsForDateRequest,
   ListFoodMealItemsForDateResponse,
+  ReorderCosmeticApplicationsRequest,
+  ReorderCosmeticApplicationsResponse,
 } from '#/shared/api/types/days';
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { DayPart } from '#/shared/models/day';
@@ -58,6 +60,7 @@ import {
   COSMETIC_PRODUCT_APPLY_SELECTOR,
 } from '#/server/selectors/cosmetic';
 import FoodMealItemService from '#/server/services/food/FoodMealItemsService';
+import CosmeticApplicationService from '#/server/services/cosmetic/CosmeticApplicationService';
 
 export default new Controller<'days'>({
   // Day parts
@@ -536,6 +539,34 @@ export default new Controller<'days'>({
       await prisma.$transaction(async trx => {
         return await FoodMealItemService.delete({ id: mealItemId }, trx);
       });
+    },
+  }),
+
+  'PATCH /days/:date/parts/:dayPartId/cosmetic': Controller.handler<
+    ReorderCosmeticApplicationsRequest,
+    ReorderCosmeticApplicationsResponse
+  >({
+    validator: z.object({
+      date: CommonValidators.dateFormat,
+      dayPartId: CommonValidators.id,
+      applications: z.array(
+        z.object({
+          id: CommonValidators.id,
+        }),
+      ),
+    }),
+    parse: req => ({
+      date: req.params.date as DateFormat,
+      dayPartId: req.params.dayPartId,
+      applications: req.body.applications,
+    }),
+    handler: async ({ applications }, { prisma }) => {
+      await CosmeticApplicationService.order(
+        {
+          items: applications,
+        },
+        prisma,
+      );
     },
   }),
 });

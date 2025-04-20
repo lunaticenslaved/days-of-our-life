@@ -1,6 +1,8 @@
 import { Box } from '#/ui-lib/atoms/Box';
 import { Flex } from '#/ui-lib/atoms/Flex';
 import { Input } from '#/ui-lib/atoms/Input';
+import { Text } from '#/ui-lib/atoms/Text';
+
 import { WithInputProps } from '#/ui-lib/types';
 import { getBorderStyles } from '#/ui-lib/utils/border';
 import { getSpacingStyles } from '#/ui-lib/utils/spacing';
@@ -333,7 +335,11 @@ function ListGroup({ children }: PropsWithChildren) {
 function ListEmpty({ children }: PropsWithChildren) {
   const { isSomeItemsVisible } = useListContext();
 
-  return !isSomeItemsVisible ? <div>{children}</div> : null;
+  return !isSomeItemsVisible ? (
+    <Box>
+      <Text variant="body-s">{children}</Text>
+    </Box>
+  ) : null;
 }
 
 // --- List Separator -----------------------------------------------------------------------

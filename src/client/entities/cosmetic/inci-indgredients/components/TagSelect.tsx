@@ -33,36 +33,35 @@ export function INCIIngredientTagSelect({
   }, [ingredients]);
 
   return (
-    <SortableCloud
-      value={value}
-      onValueUpdate={onValueUpdate}
-      renderElement={({ id, ...arg }) => {
-        const ingredient = ingredientsMap[id];
+    <Flex gap={2}>
+      <SortableCloud
+        strategy="rect-swapping"
+        value={value}
+        onValueUpdate={onValueUpdate}
+        renderElement={({ id, sortable }) => {
+          const ingredient = ingredientsMap[id];
 
-        return (
-          <Label
-            sortable={arg}
-            onRemove={() => {
-              onValueUpdate?.(value.filter(id => id !== ingredient.id));
-            }}>
-            {ingredient.name}
-          </Label>
-        );
-      }}
-      renderDraggedElement={({ id }) => {
-        return <Label onRemove={() => null}>{ingredientsMap[id].name}</Label>;
-      }}
-      append={
-        <CompoboxComponent
-          trigger={<Button size="s">Добавить +</Button>}
-          ingredients={ingredients}
-          value={value}
-          onValueUpdate={arg => {
-            onValueUpdate?.(arg);
-          }}
-        />
-      }
-    />
+          return (
+            <Label
+              sortable={sortable}
+              onRemove={() => {
+                onValueUpdate?.(value.filter(id => id !== ingredient.id));
+              }}>
+              {ingredient.name}
+            </Label>
+          );
+        }}
+      />
+
+      <CompoboxComponent
+        trigger={<Button size="s">Добавить +</Button>}
+        ingredients={ingredients}
+        value={value}
+        onValueUpdate={arg => {
+          onValueUpdate?.(arg);
+        }}
+      />
+    </Flex>
   );
 }
 
@@ -71,7 +70,7 @@ function Label({
   children,
   onRemove,
 }: {
-  sortable?: Pick<SortableCloudElementRenderArg, 'attributes' | 'listeners'>;
+  sortable?: SortableCloudElementRenderArg['sortable'];
   children: ReactNode;
   onRemove?: () => void;
 }) {

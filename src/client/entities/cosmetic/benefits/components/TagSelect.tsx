@@ -33,36 +33,35 @@ export function BenefitTagSelect({
   }, [benefits]);
 
   return (
-    <SortableCloud
-      value={value}
-      onValueUpdate={onValueUpdate}
-      renderElement={({ id }) => {
-        const benefit = benefitsMap[id];
+    <Flex gap={2}>
+      <SortableCloud
+        strategy="rect-swapping"
+        value={value}
+        onValueUpdate={onValueUpdate}
+        renderElement={({ id }) => {
+          const benefit = benefitsMap[id];
 
-        return (
-          <Label
-            // sortable={arg}
-            onRemove={() => {
-              onValueUpdate?.(value.filter(id => id !== benefit.id));
-            }}>
-            {benefit.name}
-          </Label>
-        );
-      }}
-      renderDraggedElement={({ id }) => {
-        return <Label onRemove={() => null}>{benefitsMap[id].name}</Label>;
-      }}
-      append={
-        <CompoboxComponent
-          trigger={<Button size="s">Добавить +</Button>}
-          benefits={benefits}
-          value={value}
-          onValueUpdate={arg => {
-            onValueUpdate?.(arg);
-          }}
-        />
-      }
-    />
+          return (
+            <Label
+              // sortable={arg}
+              onRemove={() => {
+                onValueUpdate?.(value.filter(id => id !== benefit.id));
+              }}>
+              {benefit.name}
+            </Label>
+          );
+        }}
+      />
+
+      <CompoboxComponent
+        trigger={<Button size="s">Добавить +</Button>}
+        benefits={benefits}
+        value={value}
+        onValueUpdate={arg => {
+          onValueUpdate?.(arg);
+        }}
+      />
+    </Flex>
   );
 }
 
@@ -72,7 +71,7 @@ function Label({
   children,
   onRemove,
 }: {
-  sortable?: Pick<SortableCloudElementRenderArg, 'attributes' | 'listeners'>;
+  sortable?: SortableCloudElementRenderArg['sortable'];
   children: ReactNode;
   onRemove?: () => void;
 }) {

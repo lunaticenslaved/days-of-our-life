@@ -257,6 +257,8 @@ model CosmeticApplication {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  order Int @default(0) @db.SmallInt
+
   @@unique([recipeId, productId, dayPartId, dayId])
 }
 

@@ -128,3 +128,10 @@ export interface RemoveFoodMealItemFromDateRequest {
   mealItemId: string;
   dayPartId: string;
 }
+
+export type ReorderCosmeticApplicationsResponse = void;
+export type ReorderCosmeticApplicationsRequest = {
+  dayPartId: string;
+  date: DateFormat;
+  applications: Array<{ id: string }>;
+};

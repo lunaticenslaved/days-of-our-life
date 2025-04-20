@@ -13,6 +13,14 @@ import { DefaultError, useMutation, useQuery } from '@tanstack/react-query';
 import { queryClient, wrapApiAction } from '#/client/utils/api';
 import { Schema } from '#/shared/api/schemas';
 import { MutationHandlers } from '#/client/types';
+import { LocalApplication } from '#/client/entities/cosmetic/applications/types';
+import { useCosmeticCacheStrict } from '#/client/entities/cosmetic/cache';
+import { nonReachable } from '#/shared/utils';
+import { DateFormat } from '#/shared/models/date';
+import {
+  ReorderCosmeticApplicationsRequest,
+  ReorderCosmeticApplicationsResponse,
+} from '#/shared/api/types/days';
 
 const StoreKeys = {
   // FIXME use dates in key
@@ -188,14 +196,75 @@ export function useListCosmeticApplicationsQuery({
   startDate,
   endDate,
 }: ListCosmeticApplicationsRequest) {
-  return useQuery<
-    ListCosmeticApplicationsResponse,
-    Error,
-    ListCosmeticApplicationsResponse
-  >({
+  const cache = useCosmeticCacheStrict();
+
+  return useQuery<ListCosmeticApplicationsResponse, Error, LocalApplication[]>({
     queryKey: StoreKeys.listCosmeticApplications(),
     queryFn: () =>
       wrapApiAction(Schema.cosmetic.listCosmeticApplications)({ startDate, endDate }),
+    select: data => {
+      return data.map((appl): LocalApplication => {
+        if (appl.source.type === 'recipe') {
+          return {
+            id: appl.id,
+            date: appl.date,
+            dayPartId: appl.dayPartId,
+            source: {
+              type: 'recipe',
+              recipeId: appl.source.recipeId,
+              recipe: {
+                id: appl.source.recipeId,
+                name: cache.recipes.find(appl.source.recipeId)?.name || '-',
+              },
+            },
+          };
+        } else if (appl.source.type === 'product') {
+          return {
+            id: appl.id,
+            date: appl.date,
+            dayPartId: appl.dayPartId,
+            source: {
+              type: 'product',
+              productId: appl.source.productId,
+              product: {
+                id: appl.source.productId,
+                name: cache.products.find(appl.source.productId)?.name || '-',
+              },
+            },
+          };
+        } else {
+          nonReachable(appl.source);
+        }
+      });
+    },
+  });
+}
+
+export function useReorderCometicApplications(props: {
+  date: DateFormat;
+  dayPartId: string;
+}) {
+  // FIXME update cache
+  return useMutation<
+    ReorderCosmeticApplicationsResponse,
+    DefaultError,
+    ReorderCosmeticApplicationsRequest,
+    {
+      createdItem: CosmeticApplication;
+    }
+  >({
+    mutationKey: StoreKeys.createCosmeticApplication(),
+    mutationFn: (arg: Omit<ReorderCosmeticApplicationsRequest, 'date' | 'dayPartId'>) =>
+      wrapApiAction<
+        ReorderCosmeticApplicationsRequest,
+        ReorderCosmeticApplicationsResponse
+      >(Schema.days.reorderCosmeticApplications)({
+        ...props,
+        ...arg,
+      }),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: StoreKeys.listCosmeticApplications() });
+    },
   });
 }
 

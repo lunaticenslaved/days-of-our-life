@@ -1,4 +1,4 @@
-import { CosmeticApplication } from '#/shared/models/cosmetic/applications';
+import { LocalApplication } from '#/client/entities/cosmetic/applications/types';
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { DayPart } from '#/shared/models/day';
 import { Box } from '#/ui-lib/atoms/Box';
@@ -9,11 +9,11 @@ interface CalendarComponentProps {
   startDate: DateFormat;
   endDate: DateFormat;
   dayParts: DayPart[];
-  applications: CosmeticApplication[];
+  applications: LocalApplication[];
   renderApplications: (arg: {
     date: DateFormat;
     dayPartId: string;
-    applications: CosmeticApplication[];
+    applications: LocalApplication[];
   }) => ReactNode;
 }
 

@@ -20,6 +20,13 @@ class CosmeticBenefitService {
       throw new Error('Either product or recipe must be selected!');
     }
 
+    const order = await trx.cosmeticApplication.count({
+      where: {
+        dayId: arg.dayId,
+        dayPartId: arg.dayPartId,
+      },
+    });
+
     return await trx.cosmeticApplication
       .create({
         data: {
@@ -27,6 +34,7 @@ class CosmeticBenefitService {
           dayPartId: arg.dayPartId,
           productId: arg.productId || undefined,
           recipeId: arg.recipeId || undefined,
+          order,
         },
         ...COSMETIC_APPLICATION_SELECTOR,
       })
@@ -96,8 +104,31 @@ class CosmeticBenefitService {
           },
         },
         ...COSMETIC_APPLICATION_SELECTOR,
+        orderBy: [
+          {
+            order: 'asc',
+          },
+        ],
       })
       .then(items => items.map(convertCosmeticApplciationSelector));
+  }
+
+  async order(
+    arg: {
+      items: Array<{ id: string }>;
+    },
+    trx: PrismaTransaction,
+  ) {
+    for (let i = 0; i < arg.items.length; i++) {
+      const { id } = arg.items[i];
+
+      await trx.cosmeticApplication.update({
+        where: { id },
+        data: {
+          order: i,
+        },
+      });
+    }
   }
 }
 

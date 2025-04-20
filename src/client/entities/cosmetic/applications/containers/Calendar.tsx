@@ -1,23 +1,23 @@
 import {
   useCreateCosmeticApplicationMutation,
   useListCosmeticApplicationsQuery,
+  useReorderCometicApplications,
 } from '../store';
 import {
   useListCosmeticProductsQuery,
   useListCosmeticRecipesQuery,
   useListDayPartsQuery,
 } from '#/client/store';
-import { DateUtils } from '#/shared/models/date';
-import { useMemo, useState } from 'react';
+import { DateFormat, DateUtils } from '#/shared/models/date';
+import { useState } from 'react';
 import { CalendarComponent } from '../components/Calendar';
-import { ListComponent } from '../components/List';
-import { CosmeticProduct, CosmeticRecipe } from '#/shared/models/cosmetic';
+import { ListComponent } from '../components/List/List';
 
 import { CreatingActionContainer } from './CreatingAction';
 import { ActionsContainer } from './Actions';
 import { Flex } from '#/ui-lib/atoms/Flex';
 import { Button } from '#/ui-lib/atoms/Button';
-import { CosmeticApplication } from '#/shared/models/cosmetic/applications';
+import { LocalApplication } from '../types';
 
 const startDate = DateUtils.toDateFormat(DateUtils.now().subtract(30, 'days'));
 const endDate = DateUtils.toDateFormat(DateUtils.now().add(30, 'days'));
@@ -26,34 +26,10 @@ export function CalendarContainer() {
   const dayPartsQuery = useListDayPartsQuery();
   const applicationsQuery = useListCosmeticApplicationsQuery({ startDate, endDate });
 
-  const productsQuery = useListCosmeticProductsQuery();
-  const recipesQuery = useListCosmeticRecipesQuery();
+  useListCosmeticProductsQuery();
+  useListCosmeticRecipesQuery();
 
-  const productsMap = useMemo(() => {
-    return (productsQuery.data || []).reduce(
-      (acc, product) => {
-        return {
-          ...acc,
-          [product.id]: product,
-        };
-      },
-      {} as Record<string, CosmeticProduct>,
-    );
-  }, [productsQuery.data]);
-
-  const recipesMap = useMemo(() => {
-    return (recipesQuery.data || []).reduce(
-      (acc, recipe) => {
-        return {
-          ...acc,
-          [recipe.id]: recipe,
-        };
-      },
-      {} as Record<string, CosmeticRecipe>,
-    );
-  }, [recipesQuery.data]);
-
-  const [clipboard, setClipboard] = useState<CosmeticApplication[]>();
+  const [clipboard, setClipboard] = useState<LocalApplication[]>();
   const creatingMutation = useCreateCosmeticApplicationMutation();
 
   return (
@@ -92,19 +68,46 @@ export function CalendarContainer() {
                 </Button>
               )}
             </Flex>
-            <ListComponent
-              hideSearch
+
+            <ApplicationsList
+              date={data.date}
+              dayPartId={data.dayPartId}
               applications={data.applications}
-              productsMap={productsMap}
-              recipesMap={recipesMap}
-              renderActions={application => {
-                return (
-                  <ActionsContainer application={application} onDeleted={() => null} />
-                );
-              }}
             />
           </>
         );
+      }}
+    />
+  );
+}
+
+function ApplicationsList({
+  applications,
+  date,
+  dayPartId,
+}: {
+  date: DateFormat;
+  dayPartId: string;
+  applications: LocalApplication[];
+}) {
+  const reordering = useReorderCometicApplications({
+    date,
+    dayPartId,
+  });
+
+  return (
+    <ListComponent
+      hideSearch
+      applications={applications}
+      onOrderUpdate={newValue => {
+        reordering.mutate({
+          date,
+          dayPartId,
+          applications: newValue.map(id => ({ id })),
+        });
+      }}
+      renderActions={application => {
+        return <ActionsContainer application={application} onDeleted={() => null} />;
       }}
     />
   );
