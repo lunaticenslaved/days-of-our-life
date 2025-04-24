@@ -103,7 +103,7 @@ function ApplicationsList({
         reordering.mutate({
           date,
           dayPartId,
-          applications: newValue.map(id => ({ id })),
+          applications: newValue.map(({ id }) => ({ id })),
         });
       }}
       renderActions={application => {

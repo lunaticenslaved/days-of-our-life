@@ -1,14 +1,22 @@
+import { CosmeticProduct, CosmeticRecipe } from '#/shared/models/cosmetic';
 import { nonReachable } from '#/shared/utils';
-import { LocalApplication } from './types';
 
 export function getCosmeticApplicationKeywords(
-  application: Pick<LocalApplication, 'source'>,
+  arg:
+    | {
+        type: 'recipe';
+        recipe: Pick<CosmeticRecipe, 'name'>;
+      }
+    | {
+        type: 'product';
+        product: Pick<CosmeticProduct, 'name' | 'manufacturer'>;
+      },
 ): string[] {
-  if (application.source.type === 'product') {
-    return [application.source.product.name];
-  } else if (application.source.type === 'recipe') {
-    return [application.source.recipe.name];
+  if (arg.type === 'product') {
+    return [arg.product.name];
+  } else if (arg.type === 'recipe') {
+    return [arg.recipe.name];
   } else {
-    nonReachable(application.source);
+    nonReachable(arg);
   }
 }

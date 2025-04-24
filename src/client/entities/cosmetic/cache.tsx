@@ -1,4 +1,5 @@
 import { CosmeticProduct, CosmeticRecipe } from '#/shared/models/cosmetic';
+import _ from 'lodash';
 import { createContext, ReactNode, useContext, useState } from 'react';
 
 type StoredCosmeticProduct = CosmeticProduct;
@@ -7,6 +8,7 @@ type StoredCosmeticRecipe = CosmeticRecipe;
 type ItemStore<TItem> = {
   map: Record<string, TItem>;
   add: (item: TItem) => void;
+  update: (item: TItem) => void;
   remove: (key: string | TItem) => void;
   find: (key: string) => TItem | undefined;
   list: () => TItem[];
@@ -19,10 +21,20 @@ interface ICosmeticStore {
 
 const Context = createContext<ICosmeticStore | null>(null);
 
-export function CosmeticCacheProvider({ children }: { children: ReactNode }) {
+interface CosmeticCacheProviderProps {
+  children: ReactNode;
+  products?: CosmeticProduct[];
+  recipes?: CosmeticRecipe[];
+}
+
+export function CosmeticCacheProvider({
+  children,
+  products,
+  recipes,
+}: CosmeticCacheProviderProps) {
   const value: ICosmeticStore = {
-    products: useItemCache<StoredCosmeticProduct>(item => item.id),
-    recipes: useItemCache<StoredCosmeticRecipe>(item => item.id),
+    products: useItemCache<StoredCosmeticProduct>(item => item.id, products),
+    recipes: useItemCache<StoredCosmeticRecipe>(item => item.id, recipes),
   };
 
   return (
@@ -46,12 +58,22 @@ export function useCosmeticCacheStrict() {
   return context;
 }
 
-function useItemCache<TItem>(getKey: (item: TItem) => string): ItemStore<TItem> {
-  const [map, setMap] = useState<Record<string, TItem>>({});
+function useItemCache<TItem>(
+  getKey: (item: TItem) => string,
+  initialStore: TItem[] = [],
+): ItemStore<TItem> {
+  const [map, setMap] = useState<Record<string, TItem>>(() => {
+    return initialStore.reduce((acc, item) => {
+      return { ...acc, [getKey(item)]: item };
+    }, {});
+  });
 
   return {
     map,
     add: item => {
+      setMap(value => ({ ...value, [getKey(item)]: item }));
+    },
+    update: item => {
       setMap(value => ({ ...value, [getKey(item)]: item }));
     },
     remove: item => {
