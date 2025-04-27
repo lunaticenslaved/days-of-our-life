@@ -3,11 +3,7 @@ import {
   useListCosmeticApplicationsQuery,
   useReorderCometicApplications,
 } from '../store';
-import {
-  useListCosmeticProductsQuery,
-  useListCosmeticRecipesQuery,
-  useListDayPartsQuery,
-} from '#/client/store';
+import { useListCosmeticRecipesQuery, useListDayPartsQuery } from '#/client/store';
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { useState } from 'react';
 import { CalendarComponent } from '../components/Calendar';
@@ -17,7 +13,8 @@ import { CreatingActionContainer } from './CreatingAction';
 import { ActionsContainer } from './Actions';
 import { Flex } from '#/ui-lib/atoms/Flex';
 import { Button } from '#/ui-lib/atoms/Button';
-import { LocalApplication } from '../types';
+import { useListCosmeticProductsQuery } from '#/client/entities/cosmetic/products';
+import { CosmeticApplication } from '#/shared/models/cosmetic/applications';
 
 const startDate = DateUtils.toDateFormat(DateUtils.now().subtract(30, 'days'));
 const endDate = DateUtils.toDateFormat(DateUtils.now().add(30, 'days'));
@@ -29,7 +26,7 @@ export function CalendarContainer() {
   useListCosmeticProductsQuery();
   useListCosmeticRecipesQuery();
 
-  const [clipboard, setClipboard] = useState<LocalApplication[]>();
+  const [clipboard, setClipboard] = useState<CosmeticApplication[]>();
   const creatingMutation = useCreateCosmeticApplicationMutation();
 
   return (
@@ -88,7 +85,7 @@ function ApplicationsList({
 }: {
   date: DateFormat;
   dayPartId: string;
-  applications: LocalApplication[];
+  applications: CosmeticApplication[];
 }) {
   const reordering = useReorderCometicApplications({
     date,

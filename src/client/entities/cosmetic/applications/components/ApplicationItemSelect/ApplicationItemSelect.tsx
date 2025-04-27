@@ -16,9 +16,7 @@ interface ApplicationItemSelectProps {
   products: LocalCosmeticProduct[];
   recipes: LocalCosmeticRecipe[];
   onItemSelect: (
-    item:
-      | { type: 'product'; item: LocalCosmeticProduct }
-      | { type: 'recipe'; item: LocalCosmeticRecipe },
+    item: { type: 'product'; productId: string } | { type: 'recipe'; recipeId: string },
   ) => void;
   closeOnItemSelect?: boolean;
 }
@@ -59,7 +57,7 @@ export function ApplicationItemSelect({
                   onEntityClick={product => {
                     onItemSelect({
                       type: 'product',
-                      item: product,
+                      productId: product.id,
                     });
                   }}
                 />
@@ -70,7 +68,7 @@ export function ApplicationItemSelect({
                   onEntityClick={recipe => {
                     onItemSelect({
                       type: 'recipe',
-                      item: recipe,
+                      recipeId: recipe.id,
                     });
 
                     if (closeOnItemSelect) {

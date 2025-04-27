@@ -8,6 +8,7 @@ import {
   multiplyNutrients,
   roundNutrients,
 } from '#/shared/models/food';
+import { Box } from '#/ui-lib/atoms/Box';
 import { Button } from '#/ui-lib/atoms/Button/Button';
 import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
 import { Form } from '#/ui-lib/atoms/Form/FinalForm';
@@ -103,10 +104,10 @@ export function ProductForm({ product, onSubmit }: ProductFormProps) {
     <Form schema={schema} initialValues={initialValues} onSubmit={onSubmit}>
       {() => {
         return (
-          <>
+          <Box color="background">
             <Fields />
             <Footer />
-          </>
+          </Box>
         );
       }}
     </Form>
@@ -138,7 +139,9 @@ export function ProductFormDialog({ dialog, product, onSubmit }: ProductFormDial
           return (
             <>
               <Dialog.Content style={{ minWidth: '500px' }}>
-                <Fields />
+                <Box color="background">
+                  <Fields />
+                </Box>
               </Dialog.Content>
 
               <Dialog.Footer>

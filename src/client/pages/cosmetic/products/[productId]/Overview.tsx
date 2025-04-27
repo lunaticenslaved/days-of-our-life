@@ -1,6 +1,8 @@
-import { CosmeticProductActions } from '#/client/entities/cosmetic/products';
+import {
+  CosmeticProductActions,
+  useGetCosmeticProductQuery,
+} from '#/client/entities/cosmetic/products';
 import { useCosmeticNavigation, useCosmeticPageParams } from '#/client/pages/cosmetic';
-import { useGetCosmeticProductQuery } from '#/client/store';
 import { Page } from '#/client/widgets/Page';
 
 export default function CosmeticProductOverviewPage() {

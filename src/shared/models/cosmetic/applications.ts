@@ -4,6 +4,7 @@ export type CosmeticApplication = {
   id: string;
   date: DateFormat;
   dayPartId: string;
+  order: number;
   source:
     | {
         type: 'product';

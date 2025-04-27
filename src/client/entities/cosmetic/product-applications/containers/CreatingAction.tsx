@@ -1,4 +1,4 @@
-import { useListCosmeticProductsQuery } from '#/client/store/cosmetic';
+import { useListCosmeticProductsQuery } from '#/client/entities/cosmetic/products';
 import { useAddCosmeticProductToDateMutation } from '#/client/store/days';
 import { DateFormat } from '#/shared/models/date';
 import { Button } from '#/ui-lib/atoms/Button/Button';

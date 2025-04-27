@@ -13,14 +13,13 @@ import { DefaultError, useMutation, useQuery } from '@tanstack/react-query';
 import { queryClient, wrapApiAction } from '#/client/utils/api';
 import { Schema } from '#/shared/api/schemas';
 import { MutationHandlers } from '#/client/types';
-import { LocalApplication } from '#/client/entities/cosmetic/applications/types';
-import { useCosmeticCacheStrict } from '#/client/entities/cosmetic/cache';
-import { nonReachable } from '#/shared/utils';
+import { useCosmeticCacheStrict, ItemStore } from '#/client/entities/cosmetic/cache';
 import { DateFormat } from '#/shared/models/date';
 import {
   ReorderCosmeticApplicationsRequest,
   ReorderCosmeticApplicationsResponse,
 } from '#/shared/api/types/days';
+import _ from 'lodash';
 
 const StoreKeys = {
   // FIXME use dates in key
@@ -34,6 +33,8 @@ const StoreKeys = {
 export function useCreateCosmeticApplicationMutation(
   handlers: MutationHandlers<CosmeticApplication> = {},
 ) {
+  const cache = useCosmeticCacheStrict();
+
   return useMutation<
     CreateCosmeticApplicationResponse,
     DefaultError,
@@ -54,10 +55,11 @@ export function useCreateCosmeticApplicationMutation(
 
       const createdItem: CosmeticApplication = {
         id: Date.now().toString(),
+        order: Number.MAX_SAFE_INTEGER,
         ...request,
       };
 
-      setListCosmeticApplicationsQueryData({
+      setListCosmeticApplicationsQueryData(cache.applications, {
         addCosmeticApplication: createdItem,
       });
 
@@ -71,7 +73,7 @@ export function useCreateCosmeticApplicationMutation(
       handlers.onError?.();
 
       if (context) {
-        setListCosmeticApplicationsQueryData({
+        setListCosmeticApplicationsQueryData(cache.applications, {
           removeCosmeticApplicationById: context.createdItem.id,
         });
       }
@@ -79,7 +81,7 @@ export function useCreateCosmeticApplicationMutation(
     onSuccess: (response, _request, context) => {
       handlers.onSuccess?.(response);
 
-      setListCosmeticApplicationsQueryData({
+      setListCosmeticApplicationsQueryData(cache.applications, {
         removeCosmeticApplicationById: context?.createdItem.id,
         addCosmeticApplication: response,
       });
@@ -96,12 +98,14 @@ export function useUpdateCosmeticApplicationMutation(
   applicationId: string,
   handlers: MutationHandlers<CosmeticApplication> = {},
 ) {
+  const cache = useCosmeticCacheStrict();
+
   return useMutation<
     UpdateCosmeticApplicationResponse,
     DefaultError,
     {
       application: CosmeticApplication;
-      newData: Omit<UpdateCosmeticApplicationRequest, 'id'>;
+      newData: Omit<UpdateCosmeticApplicationRequest, 'id'> & { order: number };
     },
     {
       oldItem: CosmeticApplication;
@@ -123,7 +127,7 @@ export function useUpdateCosmeticApplicationMutation(
         id: request.application.id,
       };
 
-      setListCosmeticApplicationsQueryData({
+      setListCosmeticApplicationsQueryData(cache.applications, {
         removeCosmeticApplicationById: request.application.id,
         addCosmeticApplication: newItem,
       });
@@ -139,7 +143,7 @@ export function useUpdateCosmeticApplicationMutation(
       handlers.onError?.();
 
       if (context) {
-        setListCosmeticApplicationsQueryData({
+        setListCosmeticApplicationsQueryData(cache.applications, {
           removeCosmeticApplicationById: context.newItem.id,
           addCosmeticApplication: context.oldItem,
         });
@@ -152,6 +156,8 @@ export function useDeleteCosmeticApplicationMutation(
   applicationId: string,
   handlers: MutationHandlers = {},
 ) {
+  const cache = useCosmeticCacheStrict();
+
   return useMutation<
     DeleteCosmeticApplicationResponse,
     DefaultError,
@@ -170,7 +176,7 @@ export function useDeleteCosmeticApplicationMutation(
 
       const deletedItem = request;
 
-      setListCosmeticApplicationsQueryData({
+      setListCosmeticApplicationsQueryData(cache.applications, {
         removeCosmeticApplicationById: request.id,
       });
 
@@ -184,7 +190,7 @@ export function useDeleteCosmeticApplicationMutation(
       handlers.onError?.();
 
       if (context) {
-        setListCosmeticApplicationsQueryData({
+        setListCosmeticApplicationsQueryData(cache.applications, {
           addCosmeticApplication: context.deletedItem,
         });
       }
@@ -198,44 +204,34 @@ export function useListCosmeticApplicationsQuery({
 }: ListCosmeticApplicationsRequest) {
   const cache = useCosmeticCacheStrict();
 
-  return useQuery<ListCosmeticApplicationsResponse, Error, LocalApplication[]>({
+  return useQuery<
+    ListCosmeticApplicationsResponse,
+    Error,
+    ListCosmeticApplicationsResponse
+  >({
     queryKey: StoreKeys.listCosmeticApplications(),
-    queryFn: () =>
-      wrapApiAction(Schema.cosmetic.listCosmeticApplications)({ startDate, endDate }),
-    select: data => {
-      return data.map((appl): LocalApplication => {
-        if (appl.source.type === 'recipe') {
-          return {
-            id: appl.id,
-            date: appl.date,
-            dayPartId: appl.dayPartId,
-            source: {
-              type: 'recipe',
-              recipeId: appl.source.recipeId,
-              recipe: {
-                id: appl.source.recipeId,
-                name: cache.recipes.find(appl.source.recipeId)?.name || '-',
-              },
-            },
-          };
-        } else if (appl.source.type === 'product') {
-          return {
-            id: appl.id,
-            date: appl.date,
-            dayPartId: appl.dayPartId,
-            source: {
-              type: 'product',
-              productId: appl.source.productId,
-              product: {
-                id: appl.source.productId,
-                name: cache.products.find(appl.source.productId)?.name || '-',
-              },
-            },
-          };
-        } else {
-          nonReachable(appl.source);
-        }
+    queryFn: async () => {
+      const response = await wrapApiAction(Schema.cosmetic.listCosmeticApplications)({
+        startDate,
+        endDate,
       });
+
+      response.forEach(cache.applications.add);
+
+      return response;
+    },
+    select: data => {
+      const result: ListCosmeticApplicationsResponse = [];
+
+      for (const { id } of data) {
+        const item = cache.applications.find(id);
+
+        if (item) {
+          result.push(item);
+        }
+      }
+
+      return _.orderBy(result, item => item.order, 'asc');
     },
   });
 }
@@ -244,7 +240,8 @@ export function useReorderCometicApplications(props: {
   date: DateFormat;
   dayPartId: string;
 }) {
-  // FIXME update cache
+  const cache = useCosmeticCacheStrict();
+
   return useMutation<
     ReorderCosmeticApplicationsResponse,
     DefaultError,
@@ -262,23 +259,57 @@ export function useReorderCometicApplications(props: {
         ...props,
         ...arg,
       }),
+    onSuccess: (_response, request) => {
+      queryClient.setQueryData<ListCosmeticApplicationsResponse>(
+        StoreKeys.listCosmeticApplications(),
+        oldData => {
+          if (!oldData) {
+            return undefined;
+          }
+
+          const newItems = oldData.map(item => {
+            const index = request.applications.findIndex(appl => appl.id === item.id);
+
+            if (index === -1) {
+              return item;
+            }
+
+            return {
+              ...item,
+              order: index,
+            };
+          });
+
+          newItems.forEach(cache.applications.add);
+
+          return newItems;
+        },
+      );
+    },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: StoreKeys.listCosmeticApplications() });
     },
   });
 }
 
-function setListCosmeticApplicationsQueryData(arg: {
-  addCosmeticApplication?: CosmeticApplication;
-  removeCosmeticApplicationById?: string;
-}) {
+function setListCosmeticApplicationsQueryData(
+  store: ItemStore<CosmeticApplication>,
+  arg: {
+    addCosmeticApplication?: CosmeticApplication;
+    removeCosmeticApplicationById?: string;
+  },
+) {
   if (arg.removeCosmeticApplicationById) {
+    store.remove(arg.removeCosmeticApplicationById);
+
     queryClient.removeQueries({
       queryKey: StoreKeys.getCosmeticApplication(arg.removeCosmeticApplicationById),
     });
   }
 
   if (arg.addCosmeticApplication) {
+    store.add(arg.addCosmeticApplication);
+
     queryClient.setQueryData(
       StoreKeys.getCosmeticApplication(arg.addCosmeticApplication.id),
       arg.addCosmeticApplication,

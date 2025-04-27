@@ -1,4 +1,4 @@
-import { useListCosmeticProductsQuery } from '#/client/store';
+import { useListCosmeticProductsQuery } from '#/client/entities/cosmetic/products';
 import { ListComponent } from '../components/List';
 
 import { ActionsContainer } from './Actions';

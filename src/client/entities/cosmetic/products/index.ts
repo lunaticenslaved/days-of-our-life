@@ -9,3 +9,5 @@ export {
 export { ActionsContainer as CosmeticProductActions } from './containers/Actions';
 export { ListContainer as CosmeticProductsList } from './containers/List';
 export { CreatingActionContainer as CosmeticProductCreatingAction } from './containers/CreatingAction';
+
+export * from './store';

@@ -1,11 +1,9 @@
 import { useCreateCosmeticApplicationMutation } from '../store';
-import {
-  useListCosmeticProductsQuery,
-  useListCosmeticRecipesQuery,
-} from '#/client/store/cosmetic';
+import { useListCosmeticRecipesQuery } from '#/client/store/cosmetic';
 import { DateFormat } from '#/shared/models/date';
 import { nonReachable } from '#/shared/utils';
 import { ApplicationItemSelect } from '../components/ApplicationItemSelect';
+import { useListCosmeticProductsQuery } from '#/client/entities/cosmetic/products';
 
 export function CreatingActionContainer({
   date,
@@ -30,7 +28,7 @@ export function CreatingActionContainer({
             dayPartId,
             source: {
               type: 'product',
-              productId: values.item.id,
+              productId: values.productId,
             },
           });
         } else if (values.type === 'recipe') {
@@ -39,7 +37,7 @@ export function CreatingActionContainer({
             dayPartId,
             source: {
               type: 'recipe',
-              recipeId: values.item.id,
+              recipeId: values.recipeId,
             },
           });
         } else {

@@ -3,7 +3,9 @@ import { ListComponent } from './List';
 import { ComponentProps, useState } from 'react';
 import {
   CosmeticCacheProvider,
+  CosmeticEventBusProvider,
   useCosmeticCacheStrict,
+  useCosmeticEventBusStrict,
 } from '#/client/entities/cosmetic';
 import { Button } from '#/ui-lib/atoms/Button';
 import { Flex } from '#/ui-lib/atoms/Flex';
@@ -18,31 +20,34 @@ function Component(props: Props) {
   const [value, setValue] = useState(props.applications);
 
   return (
-    <CosmeticCacheProvider
-      products={[
-        {
-          id: 'product-1',
-          name: 'Product 1',
-          manufacturer: 'Manufactureer - 1',
-        },
-      ]}
-      recipes={[
-        {
-          id: 'recipe-1',
-          name: 'Recipe 1',
-          description: '',
-          phases: [],
-        },
-      ]}>
-      <UpdateProductButton />
+    <CosmeticEventBusProvider>
+      <CosmeticCacheProvider
+        products={[
+          {
+            id: 'product-1',
+            name: 'Product 1',
+            manufacturer: 'Manufactureer - 1',
+          },
+        ]}
+        recipes={[
+          {
+            id: 'recipe-1',
+            name: 'Recipe 1',
+            description: '',
+            phases: [],
+          },
+        ]}>
+        <UpdateProductButton />
 
-      <ListComponent {...props} applications={value} onOrderUpdate={setValue} />
-    </CosmeticCacheProvider>
+        <ListComponent {...props} applications={value} onOrderUpdate={setValue} />
+      </CosmeticCacheProvider>
+    </CosmeticEventBusProvider>
   );
 }
 
 function UpdateProductButton() {
   const cache = useCosmeticCacheStrict();
+  const eventBus = useCosmeticEventBusStrict();
 
   return (
     <Flex spacing={{ mb: 4 }} gap={2}>
@@ -58,6 +63,7 @@ function UpdateProductButton() {
       </Button>
       <Button
         onClick={() => {
+          eventBus.emit('product-deleted', { productId: 'product-1' });
           cache.products.remove('product-1');
         }}>
         Remove product

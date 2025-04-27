@@ -193,6 +193,7 @@ export function convertCosmeticINCIIngredientSelector(
 export const COSMETIC_APPLICATION_SELECTOR = {
   select: {
     id: true,
+    order: true,
     dayPartId: true,
     day: {
       select: {
@@ -229,6 +230,7 @@ export function convertCosmeticApplciationSelector(
     id: data.id,
     date: DateUtils.toDateFormat(data.day.date),
     dayPartId: data.dayPartId,
+    order: data.order,
     source,
   };
 }

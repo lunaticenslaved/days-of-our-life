@@ -1,5 +1,5 @@
+import { useDeleteCosmeticProductMutation } from '#/client/entities/cosmetic/products';
 import { useCosmeticNavigation } from '#/client/pages/cosmetic';
-import { useDeleteCosmeticProductMutation } from '#/client/store';
 import { CosmeticProduct } from '#/shared/models/cosmetic';
 import { ActionsComponent } from '../components/Actions';
 

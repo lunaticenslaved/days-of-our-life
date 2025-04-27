@@ -1,6 +1,8 @@
-import { CosmeticProductForm } from '#/client/entities/cosmetic/products';
+import {
+  CosmeticProductForm,
+  useCreateCosmeticProductMutation,
+} from '#/client/entities/cosmetic/products';
 import { useCosmeticNavigation } from '#/client/pages/cosmetic';
-import { useCreateCosmeticProductMutation } from '#/client/store';
 import { Page } from '#/client/widgets/Page';
 
 export default function CreateCosmeticProductPage() {

@@ -1,9 +1,9 @@
-import { CosmeticProductForm } from '#/client/entities/cosmetic/products';
-import { useCosmeticNavigation, useCosmeticPageParams } from '#/client/pages/cosmetic';
 import {
+  CosmeticProductForm,
   useGetCosmeticProductQuery,
   useUpdateCosmeticProductMutation,
-} from '#/client/store';
+} from '#/client/entities/cosmetic/products';
+import { useCosmeticNavigation, useCosmeticPageParams } from '#/client/pages/cosmetic';
 import { Page } from '#/client/widgets/Page';
 
 export default function CosmeticProductEditPage() {
@@ -15,7 +15,7 @@ export default function CosmeticProductEditPage() {
 
   const product = getCosmeticProductQuery.data;
 
-  const updateCosmeticProductMutation = useUpdateCosmeticProductMutation({
+  const updateCosmeticProductMutation = useUpdateCosmeticProductMutation(productId, {
     onMutate: () => {
       if (product) {
         navigation.toProductOverview({ productId: product?.id });
