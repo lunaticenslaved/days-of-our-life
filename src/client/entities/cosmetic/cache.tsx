@@ -21,7 +21,7 @@ export type ItemStore<TItem> = {
   remove: (key: string | TItem) => void;
   find: (key: string) => TItem | undefined;
   get: (key: string) => TItem;
-  list: () => TItem[];
+  list: (keys?: string[]) => TItem[];
 };
 
 interface ICosmeticStore {
@@ -137,8 +137,22 @@ function useItemCache<TItem>(
       get: (key: string) => {
         return map[key];
       },
-      list: () => {
-        return Object.values(map);
+      list: keys => {
+        if (keys === undefined) {
+          return Object.values(map);
+        }
+
+        const items: TItem[] = [];
+
+        for (const key of keys) {
+          const item = map[key];
+
+          if (item) {
+            items.push(item);
+          }
+        }
+
+        return items;
       },
     };
   }, [getKey, map]);

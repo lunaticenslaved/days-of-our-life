@@ -7,7 +7,7 @@ import { useListCosmeticRecipesQuery, useListDayPartsQuery } from '#/client/stor
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { useState } from 'react';
 import { CalendarComponent } from '../components/Calendar';
-import { ListComponent } from '../components/List/List';
+import { CosmeticApplicationsList } from '../components/List';
 
 import { CreatingActionContainer } from './CreatingAction';
 import { ActionsContainer } from './Actions';
@@ -93,7 +93,7 @@ function ApplicationsList({
   });
 
   return (
-    <ListComponent
+    <CosmeticApplicationsList
       hideSearch
       applications={applications}
       onOrderUpdate={newValue => {

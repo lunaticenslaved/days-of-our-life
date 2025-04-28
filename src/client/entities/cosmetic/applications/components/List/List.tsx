@@ -5,15 +5,19 @@ import { Text } from '#/ui-lib/atoms/Text';
 import { List } from '#/ui-lib/molecules/List';
 import { ReactNode } from 'react';
 import { SortableCloud } from '#/ui-lib/molecules/SortableCloud';
-import { useCosmeticCacheStrict } from '#/client/entities/cosmetic';
 import { CosmeticApplication } from '#/shared/models/cosmetic/applications';
 import { getCosmeticApplicationKeywords } from '#/client/entities/cosmetic/applications/utils';
 import { keyBy } from 'lodash';
+import { CosmeticProduct, CosmeticRecipe } from '#/shared/models/cosmetic';
 
 type Application = Pick<CosmeticApplication, 'source' | 'id'>;
 
 type ListComponentProps<T extends Application> = {
   applications: T[];
+  getProduct: (arg: { productId: string }) => CosmeticProduct | undefined;
+  getRecipe: (arg: {
+    recipeId: string;
+  }) => Pick<CosmeticRecipe, 'id' | 'name'> | undefined;
   hideSearch?: boolean;
   renderActions?: (appl: T) => ReactNode;
   onOrderUpdate?: (value: T[]) => void;
@@ -24,9 +28,9 @@ export function ListComponent<T extends Application>({
   applications,
   onOrderUpdate,
   renderActions,
+  getProduct,
+  getRecipe,
 }: ListComponentProps<T>) {
-  const cosmeticCache = useCosmeticCacheStrict();
-
   const map = keyBy(applications, item => item.id);
 
   return (
@@ -49,7 +53,7 @@ export function ListComponent<T extends Application>({
 
             // FIXME add skeleton
             if (application.source.type === 'product') {
-              const product = cosmeticCache.products.find(application.source.productId);
+              const product = getProduct(application.source);
 
               if (product) {
                 content = <Text>{product.name}</Text>;
@@ -59,7 +63,7 @@ export function ListComponent<T extends Application>({
                 });
               }
             } else if (application.source.type === 'recipe') {
-              const recipe = cosmeticCache.recipes.find(application.source.recipeId);
+              const recipe = getRecipe(application.source);
 
               if (recipe) {
                 content = <Text>{recipe.name}</Text>;

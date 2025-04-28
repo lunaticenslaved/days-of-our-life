@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { ListComponent } from './List';
+import { ListWithCache } from './ListWithCache';
 import { ComponentProps, useState } from 'react';
 import {
   CosmeticCacheProvider,
@@ -10,9 +10,9 @@ import {
 import { Button } from '#/ui-lib/atoms/Button';
 import { Flex } from '#/ui-lib/atoms/Flex';
 
-type Props = ComponentProps<typeof ListComponent>;
+type Props = ComponentProps<typeof ListWithCache>;
 
-const meta: Meta<typeof ListComponent> = {
+const meta: Meta<typeof ListWithCache> = {
   component: Component,
 };
 
@@ -22,6 +22,28 @@ function Component(props: Props) {
   return (
     <CosmeticEventBusProvider>
       <CosmeticCacheProvider
+        applications={[
+          {
+            id: 'application-1',
+            date: '10-01-2024',
+            dayPartId: 'day-part-1',
+            order: 1,
+            source: {
+              type: 'product',
+              productId: 'product-1',
+            },
+          },
+          {
+            id: 'application-2',
+            date: '10-01-2024',
+            dayPartId: 'day-part-1',
+            order: 2,
+            source: {
+              type: 'recipe',
+              recipeId: 'recipe-1',
+            },
+          },
+        ]}
         products={[
           {
             id: 'product-1',
@@ -39,7 +61,7 @@ function Component(props: Props) {
         ]}>
         <UpdateProductButton />
 
-        <ListComponent {...props} applications={value} onOrderUpdate={setValue} />
+        <ListWithCache {...props} applications={value} onOrderUpdate={setValue} />
       </CosmeticCacheProvider>
     </CosmeticEventBusProvider>
   );
@@ -73,24 +95,16 @@ function UpdateProductButton() {
 }
 
 export default meta;
-type Story = StoryObj<typeof ListComponent>;
+type Story = StoryObj<typeof ListWithCache>;
 
 export const Default: Story = {
   args: {
     applications: [
       {
-        id: 'appl-1',
-        source: {
-          type: 'recipe',
-          recipeId: 'recipe-1',
-        },
+        id: 'application-1',
       },
       {
-        id: 'appl-2',
-        source: {
-          type: 'product',
-          productId: 'product-1',
-        },
+        id: 'application-2',
       },
     ],
   } satisfies Props,

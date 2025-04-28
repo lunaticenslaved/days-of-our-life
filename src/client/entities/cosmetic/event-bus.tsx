@@ -31,6 +31,7 @@ export function CosmeticEventBusProvider({ children }: PropsWithChildren) {
 
   const value: ICosmeticEventBus = {
     emit: (event, arg) => {
+      console.log(`EVENT: ${event}. ARG: ${JSON.stringify(arg)}`);
       listeners.current[event]?.forEach(fn => fn(arg as never));
     },
     subscribe: (event, fn) => {

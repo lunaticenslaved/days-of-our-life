@@ -1,1 +1,1 @@
-export * from './List';
+export { ListWithCache as CosmeticApplicationsList } from './ListWithCache';

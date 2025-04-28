@@ -112,7 +112,9 @@ export function useCreateCosmeticProductMutation(
   });
 }
 
-export function useDeleteCosmeticProductMutation(handlers: MutationHandlers = {}) {
+export function useDeleteCosmeticProductMutation(
+  handlers: MutationHandlers<{ productId: string }> = {},
+) {
   const eventBus = useCosmeticEventBusStrict();
   const cache = useCosmeticCacheStrict();
 
@@ -154,6 +156,10 @@ export function useDeleteCosmeticProductMutation(handlers: MutationHandlers = {}
       }
     },
     onSuccess: (_response, request) => {
+      handlers.onSuccess?.({
+        productId: request.id,
+      });
+
       eventBus.emit('product-deleted', {
         productId: request.id,
       });
@@ -166,7 +172,7 @@ export function useDeleteCosmeticProductMutation(handlers: MutationHandlers = {}
 
 export function useUpdateCosmeticProductMutation(
   productId: string,
-  handlers: MutationHandlers = {},
+  handlers: MutationHandlers<CosmeticProduct> = {},
 ) {
   const eventBus = useCosmeticEventBusStrict();
   const cache = useCosmeticCacheStrict();
@@ -216,6 +222,8 @@ export function useUpdateCosmeticProductMutation(
       }
     },
     onSuccess: response => {
+      handlers.onSuccess?.(response);
+
       eventBus.emit('product-updated', {
         product: response,
       });
