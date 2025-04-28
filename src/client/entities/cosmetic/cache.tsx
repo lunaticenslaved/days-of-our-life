@@ -69,11 +69,24 @@ export function CosmeticCacheProvider({
         })
         .forEach(value.applications.remove);
     };
+    const removeApplicationOnRecipeDeleted = (arg: CosmeticEvents['recipe-deleted']) => {
+      value.applications
+        .list()
+        .filter(application => {
+          return (
+            application.source.type === 'recipe' &&
+            application.source.recipeId === arg.recipeId
+          );
+        })
+        .forEach(value.applications.remove);
+    };
 
     eventBus.subscribe('product-deleted', removeApplicationOnProductDeleted);
+    eventBus.subscribe('recipe-deleted', removeApplicationOnRecipeDeleted);
 
     return () => {
       eventBus.unsubscribe('product-deleted', removeApplicationOnProductDeleted);
+      eventBus.unsubscribe('recipe-deleted', removeApplicationOnRecipeDeleted);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -116,7 +129,14 @@ function useItemCache<TItem>(
         setMap(value => ({ ...value, [getKey(item)]: item }));
       },
       update: item => {
-        setMap(value => ({ ...value, [getKey(item)]: item }));
+        setMap(value => {
+          const key = getKey(item);
+
+          const oldItem = value[key];
+          const newItem = _.merge(oldItem, item);
+
+          return { ...value, [key]: newItem };
+        });
       },
       remove: item => {
         setMap(value => {

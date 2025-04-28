@@ -1,10 +1,14 @@
-import { CosmeticProduct } from '#/shared/models/cosmetic';
+import { CosmeticProduct, CosmeticRecipe } from '#/shared/models/cosmetic';
 import { createContext, PropsWithChildren, useContext, useRef } from 'react';
 
 export type CosmeticEvents = {
   'product-deleted': { productId: string };
   'product-updated': { product: CosmeticProduct };
   'product-created': { product: CosmeticProduct };
+
+  'recipe-deleted': { recipeId: string };
+  'recipe-updated': { recipe: CosmeticRecipe };
+  'recipe-created': { recipe: CosmeticRecipe };
 };
 
 interface ICosmeticEventBus {

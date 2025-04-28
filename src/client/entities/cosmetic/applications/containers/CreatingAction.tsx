@@ -1,9 +1,9 @@
 import { useCreateCosmeticApplicationMutation } from '../store';
-import { useListCosmeticRecipesQuery } from '#/client/store/cosmetic';
 import { DateFormat } from '#/shared/models/date';
 import { nonReachable } from '#/shared/utils';
 import { ApplicationItemSelect } from '../components/ApplicationItemSelect';
 import { useListCosmeticProductsQuery } from '#/client/entities/cosmetic/products';
+import { useListCosmeticRecipesQuery } from '#/client/entities/cosmetic/recipes';
 
 export function CreatingActionContainer({
   date,

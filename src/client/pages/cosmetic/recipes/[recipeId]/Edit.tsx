@@ -1,10 +1,10 @@
-import { CosmeticRecipeForm } from '#/client/entities/cosmetic/recipes';
-import { useCosmeticNavigation, useCosmeticPageParams } from '#/client/pages/cosmetic';
 import {
+  CosmeticRecipeForm,
   useGetCosmeticRecipeQuery,
-  useListCosmeticIngredientsQuery,
   useUpdateCosmeticRecipeMutation,
-} from '#/client/store';
+} from '#/client/entities/cosmetic/recipes';
+import { useCosmeticNavigation, useCosmeticPageParams } from '#/client/pages/cosmetic';
+import { useListCosmeticIngredientsQuery } from '#/client/store';
 import { Page } from '#/client/widgets/Page';
 
 export default function CosmeticRecipeEditPage() {
@@ -17,7 +17,7 @@ export default function CosmeticRecipeEditPage() {
   const cosmeticIngredients = listCosmeticIngredientsQuery.data;
 
   const cosmeticNavigation = useCosmeticNavigation();
-  const updateMutation = useUpdateCosmeticRecipeMutation({
+  const updateMutation = useUpdateCosmeticRecipeMutation(recipeId, {
     onMutate: () => {
       if (recipe) {
         cosmeticNavigation.toRecipeOverview({ recipeId: recipe.id });

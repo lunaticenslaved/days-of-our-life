@@ -3,7 +3,7 @@ import {
   useListCosmeticApplicationsQuery,
   useReorderCometicApplications,
 } from '../store';
-import { useListCosmeticRecipesQuery, useListDayPartsQuery } from '#/client/store';
+import { useListDayPartsQuery } from '#/client/store';
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { useState } from 'react';
 import { CalendarComponent } from '../components/Calendar';
@@ -15,6 +15,7 @@ import { Flex } from '#/ui-lib/atoms/Flex';
 import { Button } from '#/ui-lib/atoms/Button';
 import { useListCosmeticProductsQuery } from '#/client/entities/cosmetic/products';
 import { CosmeticApplication } from '#/shared/models/cosmetic/applications';
+import { useListCosmeticRecipesQuery } from '#/client/entities/cosmetic/recipes';
 
 const startDate = DateUtils.toDateFormat(DateUtils.now().subtract(30, 'days'));
 const endDate = DateUtils.toDateFormat(DateUtils.now().add(30, 'days'));

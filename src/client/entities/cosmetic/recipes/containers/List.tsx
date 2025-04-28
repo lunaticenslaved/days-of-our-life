@@ -1,5 +1,5 @@
+import { useListCosmeticRecipesQuery } from '#/client/entities/cosmetic/recipes';
 import { useCosmeticNavigation } from '#/client/pages/cosmetic';
-import { useListCosmeticRecipesQuery } from '#/client/store';
 
 import { ListComponent } from '../components/List';
 

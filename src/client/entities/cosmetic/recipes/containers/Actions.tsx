@@ -1,5 +1,5 @@
+import { useDeleteCosmeticRecipeMutation } from '#/client/entities/cosmetic/recipes';
 import { useCosmeticNavigation } from '#/client/pages/cosmetic';
-import { useDeleteCosmeticRecipeMutation } from '#/client/store';
 import { CosmeticRecipe } from '#/shared/models/cosmetic';
 import { useDialog } from '#/ui-lib/atoms/Dialog';
 
@@ -13,7 +13,7 @@ interface CosmeticRecipeActionsProps {
 export function CosmeticRecipeActions({ recipe, onDeleted }: CosmeticRecipeActionsProps) {
   const cosmeticNavigation = useCosmeticNavigation();
 
-  const deleteRecipeMutation = useDeleteCosmeticRecipeMutation({
+  const deleteRecipeMutation = useDeleteCosmeticRecipeMutation(recipe.id, {
     onSuccess: onDeleted,
   });
 

@@ -1,9 +1,9 @@
-import { CosmeticRecipeForm } from '#/client/entities/cosmetic/recipes';
-import { useCosmeticNavigation } from '#/client/pages/cosmetic';
 import {
+  CosmeticRecipeForm,
   useCreateCosmeticRecipeMutation,
-  useListCosmeticIngredientsQuery,
-} from '#/client/store';
+} from '#/client/entities/cosmetic/recipes';
+import { useCosmeticNavigation } from '#/client/pages/cosmetic';
+import { useListCosmeticIngredientsQuery } from '#/client/store';
 import { Page } from '#/client/widgets/Page';
 
 export default function CosmeticRecipeCreatePage() {
