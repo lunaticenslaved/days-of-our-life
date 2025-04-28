@@ -2,20 +2,18 @@ import {
   useCreateCosmeticApplicationMutation,
   useListCosmeticApplicationsQuery,
   useReorderCometicApplications,
-} from '../store';
+} from '../../store';
 import { useListDayPartsQuery } from '#/client/store';
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { useState } from 'react';
-import { CalendarComponent } from '../components/Calendar';
-import { CosmeticApplicationsList } from '../components/List';
+import { CalendarComponent } from './Calendar.component';
+import { CosmeticApplicationsList } from '../List';
 
-import { CreatingActionContainer } from './CreatingAction';
-import { ActionsContainer } from './Actions';
+import { CosmeticApplicationCreatingAction } from '../CreatingAction';
+import { CosmeticApplicationActions } from '../Actions';
 import { Flex } from '#/ui-lib/atoms/Flex';
 import { Button } from '#/ui-lib/atoms/Button';
-import { useListCosmeticProductsQuery } from '#/client/entities/cosmetic/products';
 import { CosmeticApplication } from '#/shared/models/cosmetic/applications';
-import { useListCosmeticRecipesQuery } from '#/client/entities/cosmetic/recipes';
 
 const startDate = DateUtils.toDateFormat(DateUtils.now().subtract(30, 'days'));
 const endDate = DateUtils.toDateFormat(DateUtils.now().add(30, 'days'));
@@ -23,9 +21,6 @@ const endDate = DateUtils.toDateFormat(DateUtils.now().add(30, 'days'));
 export function CalendarContainer() {
   const dayPartsQuery = useListDayPartsQuery();
   const applicationsQuery = useListCosmeticApplicationsQuery({ startDate, endDate });
-
-  useListCosmeticProductsQuery();
-  useListCosmeticRecipesQuery();
 
   const [clipboard, setClipboard] = useState<CosmeticApplication[]>();
   const creatingMutation = useCreateCosmeticApplicationMutation();
@@ -40,7 +35,10 @@ export function CalendarContainer() {
         return (
           <>
             <Flex gap={1}>
-              <CreatingActionContainer date={data.date} dayPartId={data.dayPartId} />
+              <CosmeticApplicationCreatingAction
+                date={data.date}
+                dayPartId={data.dayPartId}
+              />
               {data.applications.length > 0 && (
                 <Button
                   view="toned"
@@ -105,7 +103,12 @@ function ApplicationsList({
         });
       }}
       renderActions={application => {
-        return <ActionsContainer application={application} onDeleted={() => null} />;
+        return (
+          <CosmeticApplicationActions
+            applicationId={application.id}
+            onDeleted={() => null}
+          />
+        );
       }}
     />
   );

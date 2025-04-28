@@ -1,9 +1,11 @@
-import { useCreateCosmeticApplicationMutation } from '../store';
+import { useCreateCosmeticApplicationMutation } from '../../store';
 import { DateFormat } from '#/shared/models/date';
 import { nonReachable } from '#/shared/utils';
-import { ApplicationItemSelect } from '../components/ApplicationItemSelect';
+import { CreatingAction } from './CreatingAction';
 import { useListCosmeticProductsQuery } from '#/client/entities/cosmetic/products';
 import { useListCosmeticRecipesQuery } from '#/client/entities/cosmetic/recipes';
+import { useCosmeticCacheStrict } from '#/client/entities/cosmetic/cache';
+import { useMemo } from 'react';
 
 export function CreatingActionContainer({
   date,
@@ -12,15 +14,24 @@ export function CreatingActionContainer({
   date: DateFormat;
   dayPartId: string;
 }) {
-  const listCosmeticProductsQuery = useListCosmeticProductsQuery();
-  const listCosmeticRecipesQuery = useListCosmeticRecipesQuery();
+  useListCosmeticProductsQuery();
+  useListCosmeticRecipesQuery();
 
   const creatingMutation = useCreateCosmeticApplicationMutation();
 
+  const cache = useCosmeticCacheStrict();
+
+  const { products, recipes } = useMemo(() => {
+    return {
+      products: cache.products.list(),
+      recipes: cache.recipes.list(),
+    };
+  }, [cache.products, cache.recipes]);
+
   return (
-    <ApplicationItemSelect
-      products={listCosmeticProductsQuery.data || []}
-      recipes={listCosmeticRecipesQuery.data || []}
+    <CreatingAction
+      products={products}
+      recipes={recipes}
       onItemSelect={values => {
         if (values.type === 'product') {
           creatingMutation.mutate({

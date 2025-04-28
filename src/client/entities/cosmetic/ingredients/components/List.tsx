@@ -28,7 +28,9 @@ export function ListComponent({
       <Box spacing={{ px: 4, pt: 4 }}>
         <List.Search placeholder="Поиск..." />
       </Box>
-      <List.Empty>Ингредиенты не найдены</List.Empty>
+      <List.Empty>
+        <Box spacing={{ px: 4 }}>Ингредиенты не найдены</Box>
+      </List.Empty>
       <List.Group>
         <Box spacing={{ px: 4, pb: 4 }} overflow="auto">
           {ingredients.map(ingredient => {

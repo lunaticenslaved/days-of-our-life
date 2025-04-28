@@ -3,6 +3,8 @@ import { ComponentProps, ReactNode } from 'react';
 import { ListComponent } from './List';
 import { CosmeticApplication } from '#/shared/models/cosmetic/applications';
 import _ from 'lodash';
+import { useListCosmeticProductsQuery } from '#/client/entities/cosmetic/products';
+import { useListCosmeticRecipesQuery } from '#/client/entities/cosmetic/recipes';
 
 type ListWithCacheProps = Pick<
   ComponentProps<typeof ListComponent>,
@@ -18,6 +20,9 @@ export function ListWithCache({
   ...props
 }: ListWithCacheProps) {
   const cache = useCosmeticCacheStrict();
+
+  useListCosmeticProductsQuery();
+  useListCosmeticRecipesQuery();
 
   const items = _.orderBy(
     cache.applications.list(applications.map(appl => appl.id)),

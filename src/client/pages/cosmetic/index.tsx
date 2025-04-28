@@ -107,8 +107,8 @@ const SUBNAVIGATION_ITEMS: SubNavigationItem[] = [
     title: 'Продукты',
   },
   {
-    to: COSMETIC_NAVIGATION.toBenefits(),
-    title: 'Бенефиты',
+    to: COSMETIC_NAVIGATION.toRecipes(),
+    title: 'Рецепты',
   },
   {
     to: COSMETIC_NAVIGATION.toIngredients(),
@@ -119,8 +119,8 @@ const SUBNAVIGATION_ITEMS: SubNavigationItem[] = [
     title: 'INCI Ингредиенты',
   },
   {
-    to: COSMETIC_NAVIGATION.toRecipes(),
-    title: 'Рецепты',
+    to: COSMETIC_NAVIGATION.toBenefits(),
+    title: 'Бенефиты',
   },
 ];
 

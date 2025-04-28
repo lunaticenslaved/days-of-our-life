@@ -12,7 +12,7 @@ import { useState } from 'react';
 type LocalCosmeticProduct = Pick<CosmeticProduct, 'id' | 'name' | 'manufacturer'>;
 type LocalCosmeticRecipe = Pick<CosmeticRecipe, 'id' | 'name'>;
 
-interface ApplicationItemSelectProps {
+interface CreatingActionProps {
   products: LocalCosmeticProduct[];
   recipes: LocalCosmeticRecipe[];
   onItemSelect: (
@@ -21,12 +21,12 @@ interface ApplicationItemSelectProps {
   closeOnItemSelect?: boolean;
 }
 
-export function ApplicationItemSelect({
+export function CreatingAction({
   recipes,
   products,
   onItemSelect,
   closeOnItemSelect,
-}: ApplicationItemSelectProps) {
+}: CreatingActionProps) {
   const [source, setSource] = useState<'product' | 'recipe'>('recipe');
 
   return (

@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { ApplicationItemSelect } from './ApplicationItemSelect';
+import { CreatingAction } from './CreatingAction';
 import { ComponentProps } from 'react';
 
-type Props = ComponentProps<typeof ApplicationItemSelect>;
+type Props = ComponentProps<typeof CreatingAction>;
 
-const meta: Meta<typeof ApplicationItemSelect> = {
-  component: (props: Props) => <ApplicationItemSelect {...props} />,
+const meta: Meta<typeof CreatingAction> = {
+  component: (props: Props) => <CreatingAction {...props} />,
 };
 
 export default meta;
-type Story = StoryObj<typeof ApplicationItemSelect>;
+type Story = StoryObj<typeof CreatingAction>;
 
 export const Default: Story = {
   args: {
