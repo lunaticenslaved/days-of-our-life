@@ -23,7 +23,7 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-export function IngredientForm({
+export function FormComponent({
   onSubmit,
   ingredient,
 }: {

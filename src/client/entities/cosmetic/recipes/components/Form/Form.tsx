@@ -1,5 +1,5 @@
 import { Button } from '#/ui-lib/atoms/Button/Button';
-import { CosmeticIngredient, CosmeticRecipe } from '#/shared/models/cosmetic';
+import { CosmeticRecipe } from '#/shared/models/cosmetic';
 import { useMemo, useState } from 'react';
 import { Form } from '#/ui-lib/atoms/Form';
 import { Field } from '#/ui-lib/atoms/Field';
@@ -58,14 +58,9 @@ function getInitialValues(recipe?: CosmeticRecipe): FormValues {
 interface CosmeticRecipeFormProps {
   recipe?: CosmeticRecipe;
   onSubmit(values: FormValues): void;
-  ingredients: CosmeticIngredient[];
 }
 
-export function CosmeticRecipeForm({
-  recipe,
-  onSubmit,
-  ingredients,
-}: CosmeticRecipeFormProps) {
+export function CosmeticRecipeForm({ recipe, onSubmit }: CosmeticRecipeFormProps) {
   const initialValues = useMemo(() => getInitialValues(recipe), [recipe]);
 
   const [activeData, setActiveDate] = useState<DraggingData>();
@@ -257,7 +252,6 @@ export function CosmeticRecipeForm({
                                 index={index}
                                 fieldName={fieldName}
                                 draggingData={activeData}
-                                ingredients={ingredients}
                                 phase={phase}
                                 onRemove={() => {
                                   phasesFields.remove(index);
@@ -290,7 +284,6 @@ export function CosmeticRecipeForm({
                           phaseId={activeData.phaseId}
                           ingredient={activeData.ingredient}
                           fieldName={activeData.fieldName}
-                          ingredients={ingredients}
                           onRemove={() => null}
                           draggingData={activeData}
                         />
@@ -299,7 +292,6 @@ export function CosmeticRecipeForm({
                         <PhaseField
                           index={activeData.index}
                           fieldName={activeData.fieldName}
-                          ingredients={ingredients}
                           phase={activeData.phase}
                           onRemove={() => null}
                         />

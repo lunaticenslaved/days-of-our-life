@@ -4,6 +4,7 @@ import {
 } from '#/client/entities/cosmetic/event-bus';
 import {
   CosmeticINCIIngredient,
+  CosmeticIngredient,
   CosmeticProduct,
   CosmeticRecipe,
 } from '#/shared/models/cosmetic';
@@ -33,6 +34,7 @@ interface ICosmeticStore {
   products: ItemStore<CosmeticProduct>;
   recipes: ItemStore<CosmeticRecipe>;
   inciIngredients: ItemStore<CosmeticINCIIngredient>;
+  ingredients: ItemStore<CosmeticIngredient>;
 }
 
 const Context = createContext<ICosmeticStore | null>(null);
@@ -43,6 +45,7 @@ interface CosmeticCacheProviderProps {
   recipes?: CosmeticRecipe[];
   applications?: CosmeticApplication[];
   inciIngredients?: CosmeticINCIIngredient[];
+  ingredients?: CosmeticIngredient[];
 }
 
 const getKey = (arg: { id: string }) => arg.id;
@@ -53,12 +56,14 @@ export function CosmeticCacheProvider({
   recipes,
   applications,
   inciIngredients,
+  ingredients,
 }: CosmeticCacheProviderProps) {
   const value: ICosmeticStore = {
     applications: useItemCache(getKey, applications),
     products: useItemCache(getKey, products),
     recipes: useItemCache(getKey, recipes),
     inciIngredients: useItemCache(getKey, inciIngredients),
+    ingredients: useItemCache(getKey, ingredients),
   };
 
   const eventBus = useCosmeticEventBusStrict();

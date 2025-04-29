@@ -1,23 +1,27 @@
-import { ActionsComponent } from '../components/Actions';
-import { useDeleteCosmeticIngredientMutation } from '#/client/store';
-import { CosmeticIngredient } from '#/shared/models/cosmetic';
+import { ActionsComponent } from './Actions.component';
 import { useCosmeticNavigation } from '#/client/pages/cosmetic';
+import { useDeleteCosmeticIngredientMutation } from '../../store';
+import { useCosmeticCacheStrict } from '#/client/entities/cosmetic/cache';
 
 type ActionsProps = {
-  ingredient: CosmeticIngredient;
+  ingredientId: string;
   onDeleted: () => void;
 };
 
-export function Actions({ onDeleted, ...props }: ActionsProps) {
+export function Actions({ onDeleted, ingredientId }: ActionsProps) {
   const cosmeticNavigation = useCosmeticNavigation();
+  const cache = useCosmeticCacheStrict();
 
-  const deleteCosmeticIngredientMutation = useDeleteCosmeticIngredientMutation({
-    onMutate: onDeleted,
-  });
+  const deleteCosmeticIngredientMutation = useDeleteCosmeticIngredientMutation(
+    ingredientId,
+    {
+      onMutate: onDeleted,
+    },
+  );
 
   return (
     <ActionsComponent
-      entity={props.ingredient}
+      entity={cache.ingredients.get(ingredientId)}
       onDelete={ingredient => {
         deleteCosmeticIngredientMutation.mutate(ingredient);
       }}

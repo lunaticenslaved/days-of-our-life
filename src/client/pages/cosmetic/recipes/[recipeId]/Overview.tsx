@@ -1,3 +1,4 @@
+import { useListCosmeticIngredientsQuery } from '#/client/entities/cosmetic/ingredients';
 import {
   CosmeticRecipeCommentCreatingAction,
   CosmeticRecipeCommentsList,
@@ -7,7 +8,6 @@ import {
   useGetCosmeticRecipeQuery,
 } from '#/client/entities/cosmetic/recipes';
 import { useCosmeticNavigation, useCosmeticPageParams } from '#/client/pages/cosmetic';
-import { useListCosmeticIngredientsQuery } from '#/client/store';
 import { Page } from '#/client/widgets/Page';
 import { Box } from '#/ui-lib/atoms/Box';
 import { Flex } from '#/ui-lib/atoms/Flex';

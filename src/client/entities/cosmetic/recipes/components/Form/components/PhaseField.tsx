@@ -8,7 +8,6 @@ import { CSS } from '@dnd-kit/utilities';
 import { FormPhase, FormIngredient } from '../schema';
 import { SortableContext, useSortable } from '@dnd-kit/sortable';
 import { IngredientField } from './IngredientField';
-import { CosmeticIngredient } from '#/shared/models/cosmetic';
 import { createIngredinetId } from '../utils';
 import { PhaseData, DraggingData } from '../types';
 import { CosmeticIngredientCombobox } from '#/client/entities/cosmetic/ingredients';
@@ -18,14 +17,12 @@ export function PhaseField({
   phase,
   fieldName,
   onRemove,
-  ingredients,
   draggingData,
 }: {
   index: number;
   fieldName: string;
   phase: FormPhase;
   onRemove: () => void;
-  ingredients: CosmeticIngredient[];
   draggingData?: DraggingData;
 }) {
   const { setNodeRef, listeners, attributes, transform, transition } = useSortable({
@@ -69,7 +66,6 @@ export function PhaseField({
                   </Button>
 
                   <CosmeticIngredientCombobox
-                    ingredients={ingredients}
                     trigger={<Button type="button">Добавить ингредиент</Button>}
                     onItemClick={ingredient => {
                       ingredientFields.push({
@@ -98,7 +94,6 @@ export function PhaseField({
                           phaseId={phase.id}
                           ingredient={ingredient}
                           fieldName={ingFieldName}
-                          ingredients={ingredients}
                           draggingData={draggingData}
                           onRemove={() => ingredientFields.remove(index)}
                         />

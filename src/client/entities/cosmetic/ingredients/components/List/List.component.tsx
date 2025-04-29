@@ -5,7 +5,7 @@ import { Text } from '#/ui-lib/atoms/Text';
 import { List } from '#/ui-lib/molecules/List';
 import { WithInputProps } from '#/ui-lib/types';
 import { ReactNode } from 'react';
-import { getCosmeticIngredientKeywords } from '../utils';
+import { getCosmeticIngredientKeywords } from '../../utils';
 
 type ListComponentProps = WithInputProps<
   string[] | undefined,

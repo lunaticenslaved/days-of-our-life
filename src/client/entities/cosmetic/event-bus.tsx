@@ -1,5 +1,6 @@
 import {
   CosmeticINCIIngredient,
+  CosmeticIngredient,
   CosmeticProduct,
   CosmeticRecipe,
 } from '#/shared/models/cosmetic';
@@ -17,6 +18,10 @@ export type CosmeticEvents = {
   'inci-ingredient-deleted': { ingredientId: string };
   'inci-ingredient-updated': { ingredient: CosmeticINCIIngredient };
   'inci-ingredient-created': { ingredient: CosmeticINCIIngredient };
+
+  'ingredient-deleted': { ingredientId: string };
+  'ingredient-updated': { ingredient: CosmeticIngredient };
+  'ingredient-created': { ingredient: CosmeticIngredient };
 };
 
 interface ICosmeticEventBus {

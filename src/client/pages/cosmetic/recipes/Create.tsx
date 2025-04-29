@@ -1,13 +1,13 @@
+import { useListCosmeticIngredientsQuery } from '#/client/entities/cosmetic/ingredients';
 import {
   CosmeticRecipeForm,
   useCreateCosmeticRecipeMutation,
 } from '#/client/entities/cosmetic/recipes';
 import { useCosmeticNavigation } from '#/client/pages/cosmetic';
-import { useListCosmeticIngredientsQuery } from '#/client/store';
 import { Page } from '#/client/widgets/Page';
 
 export default function CosmeticRecipeCreatePage() {
-  const listCosmeticIngredientsQuery = useListCosmeticIngredientsQuery();
+  useListCosmeticIngredientsQuery();
 
   const cosmeticNavigation = useCosmeticNavigation();
   const createMutation = useCreateCosmeticRecipeMutation({
@@ -24,7 +24,6 @@ export default function CosmeticRecipeCreatePage() {
 
       <Page.Content>
         <CosmeticRecipeForm
-          ingredients={listCosmeticIngredientsQuery.data || []}
           onSubmit={async values => {
             await createMutation.mutate({
               ...values,

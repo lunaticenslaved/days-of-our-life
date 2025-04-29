@@ -6,6 +6,7 @@ import { getDimensions } from '#/ui-lib/utils/dimensions';
 import { DEFAULT_SIZE, Size } from '#/ui-lib/utils/size';
 import { getSpacingStyles } from '#/ui-lib/utils/spacing';
 import { TRANSITION_ALL } from '#/ui-lib/utils/transition';
+import { getWidthStyles, SHOULD_FORWARD_WIDTH, WidthProps } from '#/ui-lib/utils/width';
 import React from 'react';
 import { LinkProps, Link } from 'react-router-dom';
 import styled, { StyledObject } from 'styled-components';
@@ -18,12 +19,13 @@ const DEFAULT_COLOR: Color = 'primary';
 const DEFAULT_VIEW: ButtonView = 'filled';
 
 // FIXME add disabled and loading ui
-type CommonButtonProps = ColorProps & {
-  size?: Size;
-  view?: ButtonView;
-  disabled?: boolean;
-  loading?: boolean;
-};
+type CommonButtonProps = ColorProps &
+  WidthProps & {
+    size?: Size;
+    view?: ButtonView;
+    disabled?: boolean;
+    loading?: boolean;
+  };
 
 const shouldForwardProp = checkProps<CommonButtonProps>({
   loading: false,
@@ -31,12 +33,14 @@ const shouldForwardProp = checkProps<CommonButtonProps>({
   color: false,
   size: false,
   view: false,
+  ...SHOULD_FORWARD_WIDTH,
 });
 
 function getStyle({
   color = DEFAULT_COLOR,
   view = DEFAULT_VIEW,
   size = DEFAULT_SIZE,
+  ...props
 }: CommonButtonProps): StyledObject {
   // TODO add disabled style
   // TODO add hover style
@@ -92,6 +96,9 @@ function getStyle({
     textDecoration: 'none',
     transition: TRANSITION_ALL,
     width: 'max-content',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    ...getWidthStyles(props),
   };
 }
 

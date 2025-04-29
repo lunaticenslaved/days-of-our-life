@@ -1,31 +1,29 @@
 import { Button } from '#/ui-lib/atoms/Button/Button';
-import { CosmeticIngredient } from '#/shared/models/cosmetic';
 import { Form } from '#/ui-lib/atoms/Form';
 import { Field } from '#/ui-lib/atoms/Field';
 import { Box } from '#/ui-lib/atoms/Box';
 import { TextInput } from '#/ui-lib/molecules/TextInputField';
 import { Flex } from '#/ui-lib/atoms/Flex';
-import { CosmeticIngredientSingleSelect } from '#/client/entities/cosmetic/ingredients';
+import { CosmeticIngredientCombobox } from '#/client/entities/cosmetic/ingredients';
 import { NumberInput } from '#/ui-lib/molecules/NumberInputField';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
 import { FormIngredient } from '../schema';
 import { DraggingData, IngredientData } from '../types';
+import { useCosmeticCacheStrict } from '#/client/entities/cosmetic/cache';
 
 // TODO use card here?
 export function IngredientField({
   phaseId,
   ingredient,
   fieldName,
-  ingredients,
   onRemove,
   draggingData,
 }: {
   phaseId: string;
   ingredient: FormIngredient;
   fieldName: string;
-  ingredients: CosmeticIngredient[];
   onRemove: () => void;
   draggingData?: DraggingData;
 }) {
@@ -42,6 +40,8 @@ export function IngredientField({
   const isDragging =
     draggingData?.type === 'INGREDIENT' && draggingData.ingredient.id === ingredient.id;
 
+  const cache = useCosmeticCacheStrict();
+
   return (
     <div
       ref={setNodeRef}
@@ -56,50 +56,64 @@ export function IngredientField({
             drag
           </div>
 
-          <Form.Field required name={`${fieldName}.ingredientId`}>
-            {fieldProps => {
-              return (
-                <Field>
-                  <Field.Label>Ингредиент</Field.Label>
-                  <Field.Input>
-                    <CosmeticIngredientSingleSelect
-                      {...fieldProps.input}
-                      entities={ingredients}
-                    />
-                  </Field.Input>
-                  <Field.Message />
-                </Field>
-              );
-            }}
-          </Form.Field>
+          <Box flexGrow={1}>
+            <Form.Field required name={`${fieldName}.ingredientId`}>
+              {fieldProps => {
+                const ingredient = fieldProps.input.value
+                  ? cache.ingredients.find(fieldProps.input.value)
+                  : undefined;
 
-          <Form.Field<number | undefined> name={`${fieldName}.percent`} required>
-            {fieldProps => {
-              return (
-                <Field>
-                  <Field.Label>Процент</Field.Label>
-                  <Field.Input>
-                    <NumberInput {...fieldProps.input} />
-                  </Field.Input>
-                  <Field.Message />
-                </Field>
-              );
-            }}
-          </Form.Field>
+                return (
+                  <Field>
+                    <Field.Label>Ингредиент</Field.Label>
+                    <Field.Input>
+                      <CosmeticIngredientCombobox
+                        {...fieldProps.input}
+                        trigger={<Button view="toned">{ingredient?.name || '-'}</Button>}
+                        value={[fieldProps.input.value]}
+                        onValueUpdate={values => {
+                          fieldProps.input.onValueUpdate(values?.[0]);
+                        }}
+                      />
+                    </Field.Input>
+                    <Field.Message />
+                  </Field>
+                );
+              }}
+            </Form.Field>
+          </Box>
 
-          <Form.Field<string | undefined> name={`${fieldName}.comment`} required>
-            {fieldProps => {
-              return (
-                <Field>
-                  <Field.Label>Комментарий</Field.Label>
-                  <Field.Input>
-                    <TextInput {...fieldProps.input} />
-                  </Field.Input>
-                  <Field.Message />
-                </Field>
-              );
-            }}
-          </Form.Field>
+          <Box width="80px">
+            <Form.Field<number | undefined> name={`${fieldName}.percent`} required>
+              {fieldProps => {
+                return (
+                  <Field>
+                    <Field.Label>Процент</Field.Label>
+                    <Field.Input>
+                      <NumberInput {...fieldProps.input} />
+                    </Field.Input>
+                    <Field.Message />
+                  </Field>
+                );
+              }}
+            </Form.Field>
+          </Box>
+
+          <Box width="240px">
+            <Form.Field<string | undefined> name={`${fieldName}.comment`} required>
+              {fieldProps => {
+                return (
+                  <Field>
+                    <Field.Label>Комментарий</Field.Label>
+                    <Field.Input>
+                      <TextInput {...fieldProps.input} />
+                    </Field.Input>
+                    <Field.Message />
+                  </Field>
+                );
+              }}
+            </Form.Field>
+          </Box>
 
           <Button type="button" view="outlined" onClick={onRemove}>
             Удалить

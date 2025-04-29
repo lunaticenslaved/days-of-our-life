@@ -1,6 +1,8 @@
-import { CosmeticIngredientForm } from '#/client/entities/cosmetic/ingredients';
+import {
+  CosmeticIngredientForm,
+  useCreateCosmeticIngredientMutation,
+} from '#/client/entities/cosmetic/ingredients';
 import { useCosmeticNavigation } from '#/client/pages/cosmetic';
-import { useCreateCosmeticIngredientMutation } from '#/client/store';
 import { Page } from '#/client/widgets/Page';
 
 export default function CosmeticIngredientCreatePage() {
@@ -22,7 +24,8 @@ export default function CosmeticIngredientCreatePage() {
 
       <Page.Content>
         <CosmeticIngredientForm
-          onSubmit={values => {
+          type="create"
+          onSuccess={values => {
             creatingMutation.mutate(values);
           }}
         />

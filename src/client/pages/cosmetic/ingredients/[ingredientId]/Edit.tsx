@@ -1,9 +1,8 @@
-import { CosmeticIngredientForm } from '#/client/entities/cosmetic/ingredients';
-import { useCosmeticNavigation, useCosmeticPageParams } from '#/client/pages/cosmetic';
 import {
+  CosmeticIngredientForm,
   useGetCosmeticIngredientQuery,
-  useUpdateCosmeticIngredientMutation,
-} from '#/client/store';
+} from '#/client/entities/cosmetic/ingredients';
+import { useCosmeticNavigation, useCosmeticPageParams } from '#/client/pages/cosmetic';
 import { Page } from '#/client/widgets/Page';
 
 export default function CosmeticIngredientEditPage() {
@@ -13,15 +12,7 @@ export default function CosmeticIngredientEditPage() {
 
   const getQuery = useGetCosmeticIngredientQuery(ingredientId);
 
-  const ingredient = getQuery.data;
-
-  const updatingMutation = useUpdateCosmeticIngredientMutation({
-    onMutate: () => {
-      cosmeticNavigation.toIngredientOverview({ ingredientId });
-    },
-  });
-
-  if (!ingredient) {
+  if (!getQuery.data) {
     return (
       <Page>
         <Page.Header>
@@ -43,12 +34,10 @@ export default function CosmeticIngredientEditPage() {
 
       <Page.Content>
         <CosmeticIngredientForm
-          ingredient={ingredient}
-          onSubmit={values => {
-            updatingMutation.mutate({
-              newData: values,
-              ingredient,
-            });
+          type="update"
+          ingredientId={ingredientId}
+          onOptimisticResponse={() => {
+            cosmeticNavigation.toIngredientOverview({ ingredientId });
           }}
         />
       </Page.Content>
