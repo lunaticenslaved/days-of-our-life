@@ -2,7 +2,11 @@ import {
   CosmeticEvents,
   useCosmeticEventBusStrict,
 } from '#/client/entities/cosmetic/event-bus';
-import { CosmeticProduct, CosmeticRecipe } from '#/shared/models/cosmetic';
+import {
+  CosmeticINCIIngredient,
+  CosmeticProduct,
+  CosmeticRecipe,
+} from '#/shared/models/cosmetic';
 import { CosmeticApplication } from '#/shared/models/cosmetic/applications';
 import _ from 'lodash';
 import {
@@ -28,6 +32,7 @@ interface ICosmeticStore {
   applications: ItemStore<CosmeticApplication>;
   products: ItemStore<CosmeticProduct>;
   recipes: ItemStore<CosmeticRecipe>;
+  inciIngredients: ItemStore<CosmeticINCIIngredient>;
 }
 
 const Context = createContext<ICosmeticStore | null>(null);
@@ -37,6 +42,7 @@ interface CosmeticCacheProviderProps {
   products?: CosmeticProduct[];
   recipes?: CosmeticRecipe[];
   applications?: CosmeticApplication[];
+  inciIngredients?: CosmeticINCIIngredient[];
 }
 
 const getKey = (arg: { id: string }) => arg.id;
@@ -46,11 +52,13 @@ export function CosmeticCacheProvider({
   products,
   recipes,
   applications,
+  inciIngredients,
 }: CosmeticCacheProviderProps) {
   const value: ICosmeticStore = {
-    applications: useItemCache<CosmeticApplication>(getKey, applications),
-    products: useItemCache<CosmeticProduct>(getKey, products),
-    recipes: useItemCache<CosmeticRecipe>(getKey, recipes),
+    applications: useItemCache(getKey, applications),
+    products: useItemCache(getKey, products),
+    recipes: useItemCache(getKey, recipes),
+    inciIngredients: useItemCache(getKey, inciIngredients),
   };
 
   const eventBus = useCosmeticEventBusStrict();

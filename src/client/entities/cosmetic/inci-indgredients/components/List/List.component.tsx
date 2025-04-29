@@ -5,7 +5,7 @@ import { Text } from '#/ui-lib/atoms/Text';
 import { List } from '#/ui-lib/molecules/List';
 import { WithInputProps } from '#/ui-lib/types';
 import { ReactNode } from 'react';
-import { getCosmeticINCIIngredientKeywords } from '../utils';
+import { getCosmeticINCIIngredientKeywords } from '../../utils';
 
 type ListComponentProps = WithInputProps<
   string[] | undefined,
@@ -26,7 +26,9 @@ export function ListComponent({
       <Box spacing={{ px: 4, pt: 4 }}>
         <List.Search placeholder="Поиск..." />
       </Box>
-      <List.Empty>Ингредиенты не найдены</List.Empty>
+      <List.Empty>
+        <Box spacing={{ px: 4 }}>Ингредиенты не найдены</Box>
+      </List.Empty>
       <List.Group>
         <Box spacing={{ px: 4, pb: 4 }} overflow="auto">
           {ingredients.map(ingredient => {

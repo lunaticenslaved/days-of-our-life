@@ -1,7 +1,6 @@
-// Components
-export { INCIIngredientTagSelect as CosmeticINCIIngredientTagSelect } from './components/TagSelect';
+export { CosmeticINCIIngredientTagSelect } from './components/TagSelect';
+export { CosmeticINCIIngredientsList } from './components/List';
+export { CosmeticINCIIngredientCreatingAction } from './components/CreatingAction';
+export { CosmeticINCIIngredientForm } from './components/Form';
 
-// Containers
-export { ListContainer as CosmeticINCIIngredientsList } from './containers/List';
-export { CreatingAction as CosmeticINCIIngredientCreatingAction } from './containers/CreatingAction';
-export { MultipleSelectContainer as CosmeticINCIIngredientMultipleSelect } from './containers/Select';
+export * from './store';

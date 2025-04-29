@@ -285,7 +285,7 @@ const LI = styled.li.withConfig({
     padding: 0,
     margin: 0,
     transition: TRANSITION_ALL,
-    ...getBorderStyles({ borderRadius: 'm' }),
+    ...getBorderStyles({ borderRadius: 's' }),
     ...getSpacingStyles({ py: 2 }),
   };
 

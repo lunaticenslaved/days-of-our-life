@@ -14,7 +14,7 @@ const SIZES: Record<
     borderWidth: 0.4,
   },
   s: {
-    borderRadius: 2,
+    borderRadius: 1,
     borderWidth: 1,
   },
   l: {
@@ -24,8 +24,8 @@ const SIZES: Record<
 };
 
 export type BorderProps = {
-  borderRadius?: 'm';
-  borderWidth?: 'm';
+  borderRadius?: Size;
+  borderWidth?: Size;
 };
 
 type StylesResult = Pick<

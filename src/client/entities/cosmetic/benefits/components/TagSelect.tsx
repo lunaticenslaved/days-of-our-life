@@ -54,7 +54,11 @@ export function BenefitTagSelect({
       />
 
       <CompoboxComponent
-        trigger={<Button size="s">Добавить +</Button>}
+        trigger={
+          <Button size="s" view="toned">
+            Добавить +
+          </Button>
+        }
         benefits={benefits}
         value={value}
         onValueUpdate={arg => {

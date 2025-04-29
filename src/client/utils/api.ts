@@ -15,7 +15,7 @@ export const queryClient = new QueryClient({
 });
 
 export function wrapApiAction<
-  T extends object,
+  T extends object | void,
   R,
   P extends Partial<T> | undefined = undefined,
 >(config: ApiAction<T, R>, handlers: Handlers<R> = {}, passArg: P = undefined as P) {

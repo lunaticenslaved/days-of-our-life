@@ -173,7 +173,7 @@ export type GetCosmeticINCIIngredientRequest = {
 };
 
 export type ListCosmeticINCIIngredientsResponse = CosmeticINCIIngredient[];
-export type ListCosmeticINCIIngredientsRequest = unknown;
+export type ListCosmeticINCIIngredientsRequest = object;
 
 // --- Cosmetic Applications ------------------------------------
 export type CreateCosmeticApplicationResponse = CosmeticApplication;

@@ -6,24 +6,25 @@ import { Text } from '#/ui-lib/atoms/Text';
 import { WithInputProps } from '#/ui-lib/types';
 import _ from 'lodash';
 import { ReactNode, useMemo } from 'react';
-import { CompoboxComponent } from './Combobox';
 import {
   SortableCloud,
   SortableCloudElementRenderArg,
 } from '#/ui-lib/molecules/SortableCloud';
+import { Popup } from '#/ui-lib/atoms/Popup';
+import { ListComponent } from '../List/List.component';
 
-type INCIIngredientTagSelectProps = WithInputProps<
+type TagSelectComponentProps = WithInputProps<
   string[] | undefined,
   {
     ingredients: CosmeticINCIIngredient[];
   }
 >;
 
-export function INCIIngredientTagSelect({
+export function TagSelectComponent({
   value = [],
   onValueUpdate,
   ingredients,
-}: INCIIngredientTagSelectProps) {
+}: TagSelectComponentProps) {
   const ingredientsMap = useMemo(() => {
     return _.fromPairs(
       ingredients.map(ingredient => {
@@ -53,14 +54,28 @@ export function INCIIngredientTagSelect({
         }}
       />
 
-      <CompoboxComponent
-        trigger={<Button size="s">Добавить +</Button>}
-        ingredients={ingredients}
-        value={value}
-        onValueUpdate={arg => {
-          onValueUpdate?.(arg);
-        }}
-      />
+      <Popup>
+        <Popup.Trigger>
+          <Button size="s" view="toned">
+            Добавить +
+          </Button>
+        </Popup.Trigger>
+
+        <Popup.Content>
+          {/* TODO добавить Paper компонент? */}
+          <Box color="background">
+            <Flex maxHeight="300px" overflow="auto">
+              <ListComponent
+                ingredients={ingredients}
+                value={value}
+                onValueUpdate={arg => {
+                  onValueUpdate?.(arg);
+                }}
+              />
+            </Flex>
+          </Box>
+        </Popup.Content>
+      </Popup>
     </Flex>
   );
 }

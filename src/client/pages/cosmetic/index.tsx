@@ -17,11 +17,14 @@ import RecipeEdit from './recipes/[recipeId]/Edit';
 import ProductOverview from './products/[productId]/Overview';
 import ProductEdit from './products/[productId]/Edit';
 import INCIIngredientsRoot from './inci-ingredients/Root';
+import INCIIngredientCreate from './inci-ingredients/Create';
+import INCIIngredientEdit from './inci-ingredients/Edit';
 import { SubNavigation, SubNavigationItem } from '#/client/widgets/navigation';
 
 type ProductId = { productId: string };
 type RecipeId = { recipeId: string };
 type IngredientId = { ingredientId: string };
+type INCIIngredientId = { inciIngredientId: string };
 
 const routes = {
   root: '/cosmetic',
@@ -49,6 +52,8 @@ const routes = {
 
   // INCI Ingredients
   INCIIngredients: '/cosmetic/inci-ingredients',
+  INCIIngredientCreate: '/cosmetic/inci-ingredients/create',
+  INCIIngredientEdit: '/cosmetic/inci-ingredients/:inciIngredientId/create',
 
   // Applications
   applications: '/cosmetic/applications',
@@ -86,13 +91,16 @@ export const COSMETIC_NAVIGATION = {
 
   // INCI Ingredients
   toINCIIngredients: () => routes.INCIIngredients,
+  toINCIIngredientCreate: () => routes.INCIIngredientCreate,
+  toINCIIngredientEdit: ({ inciIngredientId }: INCIIngredientId) =>
+    routes.INCIIngredientEdit.replace(':inciIngredientId', inciIngredientId),
 
   // Applications
   toApplications: () => routes.applications,
 };
 
 export function useCosmeticPageParams() {
-  return useParams<ProductId & RecipeId & IngredientId>();
+  return useParams<(ProductId & RecipeId & IngredientId) & INCIIngredientId>();
 }
 
 export const useCosmeticNavigation = createNavigationHook(COSMETIC_NAVIGATION);
@@ -157,6 +165,8 @@ export default [
 
     {/* INCI Ingredients */}
     <Route path={routes.INCIIngredients} element={<INCIIngredientsRoot />} />
+    <Route path={routes.INCIIngredientCreate} element={<INCIIngredientCreate />} />
+    <Route path={routes.INCIIngredientEdit} element={<INCIIngredientEdit />} />
 
     {/* Applications */}
     <Route path={routes.applications} element={<ApplicationsRoot />} />

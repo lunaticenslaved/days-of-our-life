@@ -11,10 +11,8 @@ import { Form } from '#/ui-lib/atoms/Form';
 import { Field } from '#/ui-lib/atoms/Field';
 import { useMemo } from 'react';
 import { Button } from '#/ui-lib/atoms/Button/Button';
-import {
-  useListCosmeticBenefitsQuery,
-  useListCosmeticINCIIngredientsQuery,
-} from '#/client/store/cosmetic';
+import { useListCosmeticBenefitsQuery } from '#/client/store/cosmetic';
+import { Flex } from '#/ui-lib/atoms/Flex';
 
 const schema = z.object({
   name: CosmeticIngredientValidators.name,
@@ -32,7 +30,6 @@ export function IngredientForm({
   onSubmit: (values: FormValues) => void;
   ingredient?: CosmeticIngredient;
 }) {
-  const { data: ingredients } = useListCosmeticINCIIngredientsQuery();
   const { data: benefits } = useListCosmeticBenefitsQuery();
 
   const initialValues = useMemo((): FormValues => {
@@ -49,7 +46,7 @@ export function IngredientForm({
     ingredient?.name,
   ]);
 
-  if (!ingredients || !benefits) {
+  if (!benefits) {
     return <div> Loading...</div>;
   }
 
@@ -57,7 +54,7 @@ export function IngredientForm({
     <Form initialValues={initialValues} schema={schema} onSubmit={onSubmit}>
       {() => {
         return (
-          <>
+          <Flex direction="column" maxWidth="700px" gap={4}>
             <Form.Field<FormValues['name'] | undefined> name="name">
               {fieldProps => {
                 return (
@@ -91,13 +88,10 @@ export function IngredientForm({
             > name="INCIIngredientIds">
               {fieldProps => {
                 return (
-                  <Field required>
+                  <Field>
                     <Field.Label>INCI</Field.Label>
                     <Field.Input>
-                      <CosmeticINCIIngredientTagSelect
-                        {...fieldProps.input}
-                        ingredients={ingredients}
-                      />
+                      <CosmeticINCIIngredientTagSelect {...fieldProps.input} />
                     </Field.Input>
                     <Field.Message />
                   </Field>
@@ -108,7 +102,7 @@ export function IngredientForm({
             <Form.Field<FormValues['benefitIds'] | undefined> name="benefitIds">
               {fieldProps => {
                 return (
-                  <Field required>
+                  <Field>
                     <Field.Label>Направления действия</Field.Label>
                     <Field.Input>
                       <CosmeticBenefitTagSelect
@@ -125,7 +119,7 @@ export function IngredientForm({
             <Button type="submit">
               {ingredient ? 'Сохранить изменения' : 'Сохранить ингредиент'}
             </Button>
-          </>
+          </Flex>
         );
       }}
     </Form>

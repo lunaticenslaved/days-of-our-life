@@ -40,7 +40,7 @@ export function ListComponent({
                 value={ingredient.id}
                 keywords={getCosmeticIngredientKeywords(ingredient)}
                 onClick={() => onItemClick?.(ingredient)}>
-                <Flex gap={2}>
+                <Flex gap={2} alignItems="center">
                   <Text>{ingredient.name}</Text>
                   {!!renderActions && <Box>{renderActions?.(ingredient)}</Box>}
                 </Flex>
