@@ -5,7 +5,7 @@ import { Form } from '#/ui-lib/atoms/Form';
 import { Field } from '#/ui-lib/atoms/Field';
 import { Box } from '#/ui-lib/atoms/Box';
 import { Text } from '#/ui-lib/atoms/Text';
-import { TextInput } from '#/ui-lib/molecules/TextInputField';
+import { TextInput } from '#/ui-lib/molecules/TextInput';
 import { Flex } from '#/ui-lib/atoms/Flex';
 import { sumBy, uniqueId } from 'lodash';
 import { TextArea } from '#/ui-lib/atoms/TextArea';

@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { CosmeticBenefitTagSelect } from '#/client/entities/cosmetic/benefits';
 import { CosmeticINCIIngredientTagSelect } from '#/client/entities/cosmetic/inci-indgredients';
 import { TextArea } from '#/ui-lib/atoms/TextArea';
-import { TextInput } from '#/ui-lib/molecules/TextInputField';
+import { TextInput } from '#/ui-lib/molecules/TextInput';
 import { Form } from '#/ui-lib/atoms/Form';
 import { Field } from '#/ui-lib/atoms/Field';
 import { useMemo } from 'react';

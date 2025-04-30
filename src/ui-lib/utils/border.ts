@@ -15,7 +15,7 @@ const SIZES: Record<
   },
   s: {
     borderRadius: 1,
-    borderWidth: 1,
+    borderWidth: '1px',
   },
   l: {
     borderRadius: 2,

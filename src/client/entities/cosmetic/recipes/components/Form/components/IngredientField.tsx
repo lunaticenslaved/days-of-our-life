@@ -2,16 +2,18 @@ import { Button } from '#/ui-lib/atoms/Button/Button';
 import { Form } from '#/ui-lib/atoms/Form';
 import { Field } from '#/ui-lib/atoms/Field';
 import { Box } from '#/ui-lib/atoms/Box';
-import { TextInput } from '#/ui-lib/molecules/TextInputField';
+import { Text } from '#/ui-lib/atoms/Text';
+import { TextInput } from '#/ui-lib/molecules/TextInput';
 import { Flex } from '#/ui-lib/atoms/Flex';
 import { CosmeticIngredientCombobox } from '#/client/entities/cosmetic/ingredients';
-import { NumberInput } from '#/ui-lib/molecules/NumberInputField';
+import { NumberInput } from '#/ui-lib/molecules/NumberInput';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
 import { FormIngredient } from '../schema';
 import { DraggingData, IngredientData } from '../types';
 import { useCosmeticCacheStrict } from '#/client/entities/cosmetic/cache';
+import { PiPencil } from 'react-icons/pi';
 
 // TODO use card here?
 export function IngredientField({
@@ -67,13 +69,41 @@ export function IngredientField({
                   <Field>
                     <Field.Label>Ингредиент</Field.Label>
                     <Field.Input>
-                      <CosmeticIngredientCombobox
+                      <Flex alignItems="center" gap={2}>
+                        <Text>{ingredient?.name || '-'}</Text>
+                        <CosmeticIngredientCombobox
+                          {...fieldProps.input}
+                          trigger={
+                            <Button view="clear">
+                              <PiPencil />
+                            </Button>
+                          }
+                          value={[fieldProps.input.value]}
+                          onValueUpdate={values => {
+                            fieldProps.input.onValueUpdate(values?.[0]);
+                          }}
+                        />
+                      </Flex>
+                    </Field.Input>
+                    <Field.Message />
+                  </Field>
+                );
+              }}
+            </Form.Field>
+          </Box>
+
+          <Box minWidth="105px" maxWidth="105px">
+            <Form.Field<number | undefined> name={`${fieldName}.percent`} required>
+              {fieldProps => {
+                return (
+                  <Field {...fieldProps.field} required={false}>
+                    <Field.Label></Field.Label>
+                    <Field.Input>
+                      <NumberInput
                         {...fieldProps.input}
-                        trigger={<Button view="toned">{ingredient?.name || '-'}</Button>}
-                        value={[fieldProps.input.value]}
-                        onValueUpdate={values => {
-                          fieldProps.input.onValueUpdate(values?.[0]);
-                        }}
+                        required
+                        hideClear
+                        append={'%'}
                       />
                     </Field.Input>
                     <Field.Message />
@@ -83,30 +113,14 @@ export function IngredientField({
             </Form.Field>
           </Box>
 
-          <Box width="80px">
-            <Form.Field<number | undefined> name={`${fieldName}.percent`} required>
+          <Box minWidth="240px" maxWidth="240px">
+            <Form.Field<string | undefined> name={`${fieldName}.comment`}>
               {fieldProps => {
                 return (
                   <Field>
-                    <Field.Label>Процент</Field.Label>
+                    <Field.Label></Field.Label>
                     <Field.Input>
-                      <NumberInput {...fieldProps.input} />
-                    </Field.Input>
-                    <Field.Message />
-                  </Field>
-                );
-              }}
-            </Form.Field>
-          </Box>
-
-          <Box width="240px">
-            <Form.Field<string | undefined> name={`${fieldName}.comment`} required>
-              {fieldProps => {
-                return (
-                  <Field>
-                    <Field.Label>Комментарий</Field.Label>
-                    <Field.Input>
-                      <TextInput {...fieldProps.input} />
+                      <TextInput {...fieldProps.input} placeholder="Комментарий" />
                     </Field.Input>
                     <Field.Message />
                   </Field>

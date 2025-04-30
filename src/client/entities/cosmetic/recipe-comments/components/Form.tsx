@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { z } from 'zod';
 import { Form } from '#/ui-lib/atoms/Form';
 import { Field } from '#/ui-lib/atoms/Field';
-import { TextInput } from '#/ui-lib/molecules/TextInputField';
+import { TextInput } from '#/ui-lib/molecules/TextInput';
 
 const schema = z.object({
   text: CosmeticRecipeCommentValidators.text,

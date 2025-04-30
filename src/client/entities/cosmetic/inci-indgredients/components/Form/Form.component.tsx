@@ -3,7 +3,7 @@ import {
   CosmeticINCIIngredient,
 } from '#/shared/models/cosmetic';
 import { z } from 'zod';
-import { TextInput } from '#/ui-lib/molecules/TextInputField';
+import { TextInput } from '#/ui-lib/molecules/TextInput';
 import { Form } from '#/ui-lib/atoms/Form';
 import { Field } from '#/ui-lib/atoms/Field';
 import { useMemo } from 'react';

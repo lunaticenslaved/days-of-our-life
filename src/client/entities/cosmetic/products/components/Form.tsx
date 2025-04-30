@@ -5,7 +5,7 @@ import { CosmeticProduct } from '#/shared/models/cosmetic';
 import { useMemo } from 'react';
 import { Form } from '#/ui-lib/atoms/Form';
 import { Field } from '#/ui-lib/atoms/Field';
-import { TextInput } from '#/ui-lib/molecules/TextInputField';
+import { TextInput } from '#/ui-lib/molecules/TextInput';
 
 const schema = z.object({
   name: CommonValidators.str(255),
@@ -39,10 +39,10 @@ export function CosmeticProductForm({
       {() => {
         return (
           <>
-            <Form.Field<string | undefined> name="name">
+            <Form.Field<string | undefined> name="name" required>
               {fieldProps => {
                 return (
-                  <Field direction="horizontal">
+                  <Field>
                     <Field.Label>Название</Field.Label>
                     <Field.Input>
                       <TextInput {...fieldProps.input} />
@@ -53,10 +53,10 @@ export function CosmeticProductForm({
               }}
             </Form.Field>
 
-            <Form.Field<string | undefined> name="manufacturer">
+            <Form.Field<string | undefined> name="manufacturer" required>
               {fieldProps => {
                 return (
-                  <Field direction="horizontal">
+                  <Field>
                     <Field.Label>Производитель</Field.Label>
                     <Field.Input>
                       <TextInput {...fieldProps.input} />

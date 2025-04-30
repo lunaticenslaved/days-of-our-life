@@ -1,7 +1,6 @@
 import { ComponentProps, useMemo } from 'react';
 import { ComboboxComponent } from './Combobox.component';
 import { useCosmeticCacheStrict } from '#/client/entities/cosmetic/cache';
-import { orderCosmeticIngredients } from '../../utils';
 
 type ComboboxContainerProps = Pick<
   ComponentProps<typeof ComboboxComponent>,
@@ -11,7 +10,7 @@ type ComboboxContainerProps = Pick<
 export function ComboboxContainer(props: ComboboxContainerProps) {
   const cache = useCosmeticCacheStrict();
   const items = useMemo(() => {
-    return orderCosmeticIngredients(cache.ingredients.list());
+    return cache.ingredients.list();
   }, [cache.ingredients]);
 
   return <ComboboxComponent {...props} ingredients={items} />;

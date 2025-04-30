@@ -1,6 +1,6 @@
 import { FoodProduct } from '#/shared/models/food';
 import { Flex } from '#/ui-lib/atoms/Flex';
-import { TextInput } from '#/ui-lib/molecules/TextInputField';
+import { TextInput } from '#/ui-lib/molecules/TextInput';
 import { InputProps } from '#/ui-lib/types';
 import { useCallback, useState } from 'react';
 

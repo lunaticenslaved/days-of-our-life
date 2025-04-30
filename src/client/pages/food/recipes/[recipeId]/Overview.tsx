@@ -6,7 +6,7 @@ import { multiplyNutrients } from '#/shared/models/food';
 import { useState } from 'react';
 import { useGetFoodRecipeQuery } from '#/client/store';
 import { Page } from '#/client/widgets/Page';
-import { NumberInput } from '#/ui-lib/molecules/NumberInputField';
+import { NumberInput } from '#/ui-lib/molecules/NumberInput';
 
 export default function FoodRecipeOverviewPage() {
   const { recipeId = '' } = useFoodPageParams();

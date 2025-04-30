@@ -1,6 +1,5 @@
-import { Field } from '#/ui-lib/atoms/Field';
-import { Input } from '#/ui-lib/atoms/Input';
-import { InputFieldProps, WithInputProps } from '#/ui-lib/types';
+import { Input } from '#/ui-lib/atoms/Input/Input';
+import { WithInputProps } from '#/ui-lib/types';
 import { ComponentProps, useCallback, useEffect, useState } from 'react';
 
 function convertInput(value?: string): { number?: number; string?: string } {
@@ -13,6 +12,10 @@ function convertInput(value?: string): { number?: number; string?: string } {
 
   if (value.startsWith('.')) {
     value = `0${value}`;
+  }
+
+  while (value.startsWith('0') && value[1] && value[1] !== '.') {
+    value = value.slice(1);
   }
 
   let valueArr = value.replace(/[^\d-\\.]/g, '').split('');
@@ -52,57 +55,6 @@ function convertInput(value?: string): { number?: number; string?: string } {
     number: Number(valueArr.join('')),
     string: valueArr.join(''),
   };
-}
-
-type NumberInputFieldProps = InputFieldProps<number | undefined> & {
-  label: string;
-};
-
-export function NumberInputField({ label, ...props }: NumberInputFieldProps) {
-  const valueProp = props.input.value;
-  const onValueUpdate = props.input.onValueUpdate;
-
-  const [numberValue, setNumberValue] = useState(() => {
-    return convertInput(String(valueProp)).number;
-  });
-  const [strValue, setStringValue] = useState(() => {
-    return convertInput(String(valueProp)).string;
-  });
-
-  const setValue = useCallback(
-    (newValue?: string) => {
-      const { string, number } = convertInput(newValue);
-
-      setNumberValue(number);
-      setStringValue(string);
-      onValueUpdate?.(number);
-    },
-    [onValueUpdate],
-  );
-
-  useEffect(() => {
-    if (valueProp !== numberValue) {
-      setStringValue(convertInput(String(valueProp)).string);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [valueProp]);
-
-  return (
-    <Field {...props.field}>
-      <Field.Label>{label}</Field.Label>
-      <Field.Input>
-        <Input
-          {...props.input}
-          onValueUpdate={setValue}
-          value={strValue}
-          convertValue={newValue => {
-            return convertInput(newValue).string;
-          }}
-        />
-      </Field.Input>
-      <Field.Message />
-    </Field>
-  );
 }
 
 type NumberInputProps = WithInputProps<number | undefined, ComponentProps<typeof Input>>;

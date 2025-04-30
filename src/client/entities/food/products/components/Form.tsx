@@ -12,9 +12,10 @@ import { Box } from '#/ui-lib/atoms/Box';
 import { Button } from '#/ui-lib/atoms/Button/Button';
 import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
 import { Form } from '#/ui-lib/atoms/Form/FinalForm';
-import { TextInputField } from '#/ui-lib/molecules/TextInputField';
+import { TextInput } from '#/ui-lib/molecules/TextInput';
 import { useMemo } from 'react';
 import { z } from 'zod';
+import { Field } from '#/ui-lib/atoms/Field';
 
 const schema = z.object({
   name: FoodProductValidators.name,
@@ -59,13 +60,39 @@ function Fields() {
     <>
       <Form.Field name="name" required>
         {fieldProps => {
-          return <TextInputField {...fieldProps} label="Имя" />;
+          return (
+            <Field {...fieldProps.field}>
+              <Field.Label>Имя</Field.Label>
+              <Field.Input>
+                <TextInput
+                  {...fieldProps.input}
+                  onValueUpdate={newValue => {
+                    fieldProps.input.onValueUpdate(newValue || '');
+                  }}
+                />
+              </Field.Input>
+              <Field.Message />
+            </Field>
+          );
         }}
       </Form.Field>
 
       <Form.Field name="manufacturer">
         {fieldProps => {
-          return <TextInputField {...fieldProps} label="Производитель" />;
+          return (
+            <Field {...fieldProps.field}>
+              <Field.Label>Производитель</Field.Label>
+              <Field.Input>
+                <TextInput
+                  {...fieldProps.input}
+                  onValueUpdate={newValue => {
+                    fieldProps.input.onValueUpdate(newValue || '');
+                  }}
+                />
+              </Field.Input>
+              <Field.Message />
+            </Field>
+          );
         }}
       </Form.Field>
 

@@ -4,7 +4,7 @@ import { createEntityFormDialog } from '#/client/component-factories/EntityFormD
 import { CommonValidators } from '#/shared/models/common';
 import { FForm } from '#/client/components/FForm';
 import { CosmeticBenefitSingleSelect } from './Select';
-import { TextInput } from '#/ui-lib/molecules/TextInputField';
+import { TextInput } from '#/ui-lib/molecules/TextInput';
 
 const schema = z.object({
   name: CommonValidators.str(255),

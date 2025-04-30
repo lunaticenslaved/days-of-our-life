@@ -3,7 +3,7 @@ import { Button } from '#/ui-lib/atoms/Button/Button';
 import { FForm } from '#/client/components/FForm';
 import { z } from 'zod';
 import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
-import { NumberInput } from '#/ui-lib/molecules/NumberInputField';
+import { NumberInput } from '#/ui-lib/molecules/NumberInput';
 
 const schema = z.object({
   weight: BodyStatisticsValidators.weight,

@@ -1,6 +1,7 @@
 import { FoodNutrients, FoodNutrientsValidators } from '#/shared/models/food';
+import { Field } from '#/ui-lib/atoms/Field';
 import { Form } from '#/ui-lib/atoms/Form/FinalForm';
-import { NumberInputField } from '#/ui-lib/molecules/NumberInputField';
+import { NumberInput } from '#/ui-lib/molecules/NumberInput';
 import { z } from 'zod';
 
 export const NutrientsInputValidator: z.ZodType<FoodNutrients> = z.object({
@@ -25,11 +26,13 @@ export function NutrientsInputFormField({ name }: NutrientsInputFormFieldProps) 
         required>
         {fieldProps => {
           return (
-            <NumberInputField
-              label="Калорий на 100 г"
-              field={{ ...fieldProps.field, required: true }}
-              input={{ ...fieldProps.input, value: fieldProps.input.value || 0 }}
-            />
+            <Field {...fieldProps.field}>
+              <Field.Label>Калорий на 100 г</Field.Label>
+              <Field.Input>
+                <NumberInput {...fieldProps.input} />
+              </Field.Input>
+              <Field.Message />
+            </Field>
           );
         }}
       </Form.Field>
@@ -39,11 +42,13 @@ export function NutrientsInputFormField({ name }: NutrientsInputFormFieldProps) 
         required>
         {fieldProps => {
           return (
-            <NumberInputField
-              label="Белков на 100 г"
-              field={{ ...fieldProps.field, required: true }}
-              input={{ ...fieldProps.input, value: fieldProps.input.value || 0 }}
-            />
+            <Field {...fieldProps.field}>
+              <Field.Label>Белков на 100 г</Field.Label>
+              <Field.Input>
+                <NumberInput {...fieldProps.input} />
+              </Field.Input>
+              <Field.Message />
+            </Field>
           );
         }}
       </Form.Field>
@@ -53,11 +58,13 @@ export function NutrientsInputFormField({ name }: NutrientsInputFormFieldProps) 
         required>
         {fieldProps => {
           return (
-            <NumberInputField
-              label="Жира на 100 г"
-              field={{ ...fieldProps.field, required: true }}
-              input={{ ...fieldProps.input, value: fieldProps.input.value || 0 }}
-            />
+            <Field {...fieldProps.field}>
+              <Field.Label>Жира на 100 г</Field.Label>
+              <Field.Input>
+                <NumberInput {...fieldProps.input} />
+              </Field.Input>
+              <Field.Message />
+            </Field>
           );
         }}
       </Form.Field>
@@ -67,11 +74,13 @@ export function NutrientsInputFormField({ name }: NutrientsInputFormFieldProps) 
         required>
         {fieldProps => {
           return (
-            <NumberInputField
-              label="Углеводов на 100 г"
-              field={{ ...fieldProps.field, required: true }}
-              input={{ ...fieldProps.input, value: fieldProps.input.value || 0 }}
-            />
+            <Field {...fieldProps.field}>
+              <Field.Label>Углеводов на 100 г</Field.Label>
+              <Field.Input>
+                <NumberInput {...fieldProps.input} />
+              </Field.Input>
+              <Field.Message />
+            </Field>
           );
         }}
       </Form.Field>
@@ -81,11 +90,13 @@ export function NutrientsInputFormField({ name }: NutrientsInputFormFieldProps) 
         required>
         {fieldProps => {
           return (
-            <NumberInputField
-              label="Клетчатка на 100 г"
-              field={{ ...fieldProps.field, required: true }}
-              input={{ ...fieldProps.input, value: fieldProps.input.value || 0 }}
-            />
+            <Field {...fieldProps.field}>
+              <Field.Label>Клетчатка на 100 г</Field.Label>
+              <Field.Input>
+                <NumberInput {...fieldProps.input} />
+              </Field.Input>
+              <Field.Message />
+            </Field>
           );
         }}
       </Form.Field>

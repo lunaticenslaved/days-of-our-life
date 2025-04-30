@@ -18,7 +18,7 @@ import { cloneDeep } from 'lodash';
 import { ComponentProps } from 'react';
 import { z } from 'zod';
 import { RadioGroup } from '#/ui-lib/atoms/Radio';
-import { NumberInput } from '#/ui-lib/molecules/NumberInputField';
+import { NumberInput } from '#/ui-lib/molecules/NumberInput';
 
 const schema = z.object({
   quantity: z.object({

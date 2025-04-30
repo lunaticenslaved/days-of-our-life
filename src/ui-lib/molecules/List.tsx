@@ -1,6 +1,6 @@
 import { Box } from '#/ui-lib/atoms/Box';
 import { Flex } from '#/ui-lib/atoms/Flex';
-import { Input } from '#/ui-lib/atoms/Input';
+import { Input } from '#/ui-lib/atoms/Input/Input';
 import { Text } from '#/ui-lib/atoms/Text';
 
 import { WithInputProps } from '#/ui-lib/types';
