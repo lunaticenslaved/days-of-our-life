@@ -1,11 +1,11 @@
 import { CommonValidators } from '#/shared/models/common';
-import { Button } from '#/ui-lib/atoms/Button/Button';
+import { Button } from '#/ui-lib/components/atoms/Button/Button';
 import { z } from 'zod';
 import { CosmeticProduct } from '#/shared/models/cosmetic';
 import { useMemo } from 'react';
-import { Form } from '#/ui-lib/atoms/Form';
-import { Field } from '#/ui-lib/atoms/Field';
-import { TextInput } from '#/ui-lib/molecules/TextInput';
+import { Form } from '#/ui-lib/components/atoms/Form';
+import { Field } from '#/ui-lib/components/atoms/Field';
+import { TextInput } from '#/ui-lib/components/molecules/TextInput';
 
 const schema = z.object({
   name: CommonValidators.str(255),

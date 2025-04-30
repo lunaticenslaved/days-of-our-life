@@ -1,6 +1,6 @@
 import { DirectionProp } from '#/client/types';
-import { Box } from '#/ui-lib/atoms/Box';
-import { Flex } from '#/ui-lib/atoms/Flex';
+import { Box } from '#/ui-lib/components/atoms/Box';
+import { Flex } from '#/ui-lib/components/atoms/Flex';
 import { WithInputProps } from '#/ui-lib/types';
 import {
   ChangeEvent,

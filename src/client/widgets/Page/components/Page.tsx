@@ -1,8 +1,8 @@
-import { Box } from '#/ui-lib/atoms/Box';
+import { Box } from '#/ui-lib/components/atoms/Box';
 import { ReactNode, Suspense } from 'react';
 import { PageContextProvider, usePageContextStrict } from '../context';
-import { Flex } from '#/ui-lib/atoms/Flex';
-import { Text } from '#/ui-lib/atoms/Text';
+import { Flex } from '#/ui-lib/components/atoms/Flex';
+import { Text } from '#/ui-lib/components/atoms/Text';
 
 const PADDING = 4;
 

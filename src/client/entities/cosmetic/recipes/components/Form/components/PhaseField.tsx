@@ -1,8 +1,8 @@
-import { Button } from '#/ui-lib/atoms/Button/Button';
-import { Form } from '#/ui-lib/atoms/Form';
-import { Box } from '#/ui-lib/atoms/Box';
-import { Text } from '#/ui-lib/atoms/Text';
-import { Flex } from '#/ui-lib/atoms/Flex';
+import { Button } from '#/ui-lib/components/atoms/Button/Button';
+import { Form } from '#/ui-lib/components/atoms/Form';
+import { Box } from '#/ui-lib/components/atoms/Box';
+import { Text } from '#/ui-lib/components/atoms/Text';
+import { Flex } from '#/ui-lib/components/atoms/Flex';
 import { CSS } from '@dnd-kit/utilities';
 
 import { FormPhase, FormIngredient } from '../schema';

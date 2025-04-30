@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { createEntityFormDialog } from '#/client/component-factories/EntityFormDialog';
 import { CommonValidators } from '#/shared/models/common';
 import { FForm } from '#/client/components/FForm';
-import { TextInput } from '#/ui-lib/molecules/TextInput';
+import { TextInput } from '#/ui-lib/components/molecules/TextInput';
 
 const schema = z.object({
   name: CommonValidators.str(255),

@@ -1,6 +1,4 @@
-import { Box } from '#/ui-lib/atoms/Box';
-import { Flex } from '#/ui-lib/atoms/Flex';
-import { List } from '#/ui-lib/molecules/List';
+import { Box, Flex, List } from '#/ui-lib/components';
 import { capitalize } from 'lodash';
 import React, { ReactNode } from 'react';
 

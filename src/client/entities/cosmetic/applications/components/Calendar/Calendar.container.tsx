@@ -11,8 +11,7 @@ import { CosmeticApplicationsList } from '../List';
 
 import { CosmeticApplicationCreatingAction } from '../CreatingAction';
 import { CosmeticApplicationActions } from '../Actions';
-import { Flex } from '#/ui-lib/atoms/Flex';
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button, Flex } from '#/ui-lib/components';
 import { CosmeticApplication } from '#/shared/models/cosmetic/applications';
 
 const startDate = DateUtils.toDateFormat(DateUtils.now().subtract(30, 'days'));

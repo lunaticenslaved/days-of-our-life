@@ -1,4 +1,4 @@
-import { Button } from '#/ui-lib/atoms/Button/Button';
+import { Button } from '#/ui-lib/components';
 import _ from 'lodash';
 import { Fragment, ReactNode } from 'react';
 import { FieldArray, FieldArrayRenderProps } from 'react-final-form-arrays';

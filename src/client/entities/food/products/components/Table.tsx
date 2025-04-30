@@ -1,5 +1,5 @@
 import { FoodProduct, multiplyNutrients, roundNutrients } from '#/shared/models/food';
-import { Button } from '#/ui-lib/atoms/Button/Button';
+import { Button } from '#/ui-lib/components/atoms/Button/Button';
 import _ from 'lodash';
 import { ReactNode } from 'react';
 

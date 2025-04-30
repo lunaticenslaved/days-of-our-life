@@ -7,8 +7,7 @@ import {
   useCosmeticCacheStrict,
   useCosmeticEventBusStrict,
 } from '#/client/entities/cosmetic';
-import { Button } from '#/ui-lib/atoms/Button';
-import { Flex } from '#/ui-lib/atoms/Flex';
+import { Button, Flex } from '#/ui-lib/components';
 
 type Props = ComponentProps<typeof ListWithCache>;
 

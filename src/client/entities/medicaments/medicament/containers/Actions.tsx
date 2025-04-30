@@ -1,6 +1,6 @@
 import { useDeleteMedicamentMutation, useUpdateMedicamentMutation } from '#/client/store';
 import { Medicament } from '#/shared/models/medicament';
-import { useDialog } from '#/ui-lib/atoms/Dialog';
+import { useDialog } from '#/ui-lib/components/atoms/Dialog';
 import { ActionsComponent } from '../components/Actions';
 import { FormDialogComponent } from '../components/Form';
 

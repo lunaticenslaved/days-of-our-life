@@ -1,7 +1,7 @@
-import { Box } from '#/ui-lib/atoms/Box';
-import { Flex } from '#/ui-lib/atoms/Flex';
-import { Input } from '#/ui-lib/atoms/Input/Input';
-import { Text } from '#/ui-lib/atoms/Text';
+import { Box } from '#/ui-lib/components/atoms/Box';
+import { Flex } from '#/ui-lib/components/atoms/Flex';
+import { Input } from '#/ui-lib/components/atoms/Input/Input';
+import { Text } from '#/ui-lib/components/atoms/Text';
 
 import { WithInputProps } from '#/ui-lib/types';
 import { getBorderStyles } from '#/ui-lib/utils/border';

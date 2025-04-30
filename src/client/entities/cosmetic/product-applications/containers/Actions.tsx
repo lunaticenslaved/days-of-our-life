@@ -1,7 +1,7 @@
 import { useListCosmeticProductsQuery } from '#/client/entities/cosmetic/products';
 import { useRemoveCosmeticProductFromDateMutation } from '#/client/store';
 import { CosmeticProductApplication } from '#/shared/models/cosmetic';
-import { useDialog } from '#/ui-lib/atoms/Dialog';
+import { useDialog } from '#/ui-lib/components/atoms/Dialog';
 import { ActionsComponent } from '../components/Actions';
 import { FormDialogComponent } from '../components/Form';
 

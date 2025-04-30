@@ -1,6 +1,5 @@
-import { Button } from '#/ui-lib/atoms/Button/Button';
+import { Dialog, IDialog, Button } from '#/ui-lib/components';
 import { FinalForm } from '#/client/components/FForm';
-import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
 import { ReactNode, useMemo } from 'react';
 import { ValidationErrors } from 'final-form';
 import { z } from 'zod';

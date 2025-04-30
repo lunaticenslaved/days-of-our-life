@@ -1,11 +1,11 @@
-import { Button } from '#/ui-lib/atoms/Button/Button';
+import { Button } from '#/ui-lib/components/atoms/Button/Button';
 import { z } from 'zod';
 import { useMemo } from 'react';
 import { CommonValidators } from '#/shared/models/common';
-import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
+import { Dialog, IDialog } from '#/ui-lib/components/atoms/Dialog';
 import { CosmeticProductSingleSelect } from '#/client/entities/cosmetic/products';
-import { Form } from '#/ui-lib/atoms/Form';
-import { Field } from '#/ui-lib/atoms/Field';
+import { Form } from '#/ui-lib/components/atoms/Form';
+import { Field } from '#/ui-lib/components/atoms/Field';
 import { CosmeticProduct } from '#/shared/models/cosmetic';
 
 const schema = z.object({

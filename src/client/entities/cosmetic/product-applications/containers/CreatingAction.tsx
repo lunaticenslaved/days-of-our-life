@@ -1,8 +1,8 @@
 import { useListCosmeticProductsQuery } from '#/client/entities/cosmetic/products';
 import { useAddCosmeticProductToDateMutation } from '#/client/store/days';
 import { DateFormat } from '#/shared/models/date';
-import { Button } from '#/ui-lib/atoms/Button/Button';
-import { useDialog } from '#/ui-lib/atoms/Dialog';
+import { Button } from '#/ui-lib/components/atoms/Button/Button';
+import { useDialog } from '#/ui-lib/components/atoms/Dialog';
 
 import { FormDialogComponent } from '../components/Form';
 

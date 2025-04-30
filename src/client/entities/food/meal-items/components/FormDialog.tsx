@@ -1,6 +1,6 @@
 import { createEntityFormDialog } from '#/client/component-factories/EntityFormDialog';
 import { FinalForm } from '#/client/components/FForm';
-import { Select } from '#/ui-lib/atoms/Select';
+import { Select } from '#/ui-lib/components/atoms/Select';
 import {
   FoodNutrientsList,
   FoodProductSearch,
@@ -17,8 +17,8 @@ import {
 import { cloneDeep } from 'lodash';
 import { ComponentProps } from 'react';
 import { z } from 'zod';
-import { RadioGroup } from '#/ui-lib/atoms/Radio';
-import { NumberInput } from '#/ui-lib/molecules/NumberInput';
+import { RadioGroup } from '#/ui-lib/components/atoms/Radio';
+import { NumberInput } from '#/ui-lib/components/molecules/NumberInput';
 
 const schema = z.object({
   quantity: z.object({

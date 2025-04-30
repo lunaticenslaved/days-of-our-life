@@ -1,4 +1,4 @@
-import { Button } from '#/ui-lib/atoms/Button/Button';
+import { Button } from '#/ui-lib/components/atoms/Button/Button';
 import { findNutrients } from '#/client/entities/food/meal-items/utils';
 import {
   useCreateFoodMealItem,
@@ -7,7 +7,7 @@ import {
 } from '#/client/store';
 import { DateFormat } from '#/shared/models/date';
 import { assertDefined } from '#/shared/utils';
-import { useDialog } from '#/ui-lib/atoms/Dialog';
+import { useDialog } from '#/ui-lib/components/atoms/Dialog';
 import { FoodMealItemFormDialog as FormDialogComponent } from '../components/FormDialog';
 
 interface CreatingActionProps {

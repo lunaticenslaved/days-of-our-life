@@ -8,14 +8,14 @@ import {
   multiplyNutrients,
   roundNutrients,
 } from '#/shared/models/food';
-import { Box } from '#/ui-lib/atoms/Box';
-import { Button } from '#/ui-lib/atoms/Button/Button';
-import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
-import { Form } from '#/ui-lib/atoms/Form/FinalForm';
-import { TextInput } from '#/ui-lib/molecules/TextInput';
+import { Box } from '#/ui-lib/components/atoms/Box';
+import { Button } from '#/ui-lib/components/atoms/Button/Button';
+import { Dialog, IDialog } from '#/ui-lib/components/atoms/Dialog';
+import { Form } from '#/ui-lib/components/atoms/Form/FinalForm';
+import { TextInput } from '#/ui-lib/components/molecules/TextInput';
 import { useMemo } from 'react';
 import { z } from 'zod';
-import { Field } from '#/ui-lib/atoms/Field';
+import { Field } from '#/ui-lib/components/atoms/Field';
 
 const schema = z.object({
   name: FoodProductValidators.name,

@@ -1,5 +1,5 @@
 import { DateFormat, DateUtils } from '#/shared/models/date';
-import { DatePicker, DatePickerRangeValue } from '#/ui-lib/atoms/DatePicker';
+import { DatePicker, DatePickerRangeValue } from '#/ui-lib/components/atoms/DatePicker';
 import { useListDayPartsQuery, useListDaysQuery } from '#/client/store';
 import { Calendar } from '#/client/widgets/Calendar';
 import { useMemo, useState } from 'react';

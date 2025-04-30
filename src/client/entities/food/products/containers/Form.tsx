@@ -7,7 +7,7 @@ import {
   useCreateFoodProductMutation,
   useUpdateFoodProductMutation,
 } from '#/client/store';
-import { IDialog } from '#/ui-lib/atoms/Dialog';
+import { IDialog } from '#/ui-lib/components/atoms/Dialog';
 
 type FoodProductFormProps = UpdateFormProps | CreateFormProps;
 type FoodProductFormDialogProps = UpdateFormDialogProps | CreateFormDialogProps;

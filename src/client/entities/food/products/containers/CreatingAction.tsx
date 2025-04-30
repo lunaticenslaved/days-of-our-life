@@ -1,5 +1,5 @@
-import { Button } from '#/ui-lib/atoms/Button/Button';
-import { useDialog } from '#/ui-lib/atoms/Dialog';
+import { Button } from '#/ui-lib/components/atoms/Button/Button';
+import { useDialog } from '#/ui-lib/components/atoms/Dialog';
 
 import { FoodProductFormDialog } from './Form';
 

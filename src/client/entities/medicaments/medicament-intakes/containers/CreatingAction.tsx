@@ -1,9 +1,9 @@
-import { Button } from '#/ui-lib/atoms/Button/Button';
+import { Button } from '#/ui-lib/components/atoms/Button/Button';
 import {
   useCreateMedicamentIntakeMutation,
   useListMedicamentsQuery,
 } from '#/client/store';
-import { useDialog } from '#/ui-lib/atoms/Dialog';
+import { useDialog } from '#/ui-lib/components/atoms/Dialog';
 import { FormDialogComponent } from '../components/Form';
 import { DateFormat } from '#/shared/models/date';
 

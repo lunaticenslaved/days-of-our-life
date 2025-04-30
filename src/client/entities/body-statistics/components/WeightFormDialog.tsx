@@ -1,9 +1,7 @@
 import { BodyStatisticsValidators } from '#/shared/models/body';
-import { Button } from '#/ui-lib/atoms/Button/Button';
+import { Button, Dialog, IDialog, NumberInput } from '#/ui-lib/components';
 import { FForm } from '#/client/components/FForm';
 import { z } from 'zod';
-import { Dialog, IDialog } from '#/ui-lib/atoms/Dialog';
-import { NumberInput } from '#/ui-lib/molecules/NumberInput';
 
 const schema = z.object({
   weight: BodyStatisticsValidators.weight,

@@ -1,4 +1,4 @@
-import { Input } from '#/ui-lib/atoms/Input/Input';
+import { Input } from '#/ui-lib/components/atoms/Input/Input';
 import { WithInputProps } from '#/ui-lib/types';
 import { ComponentProps, useCallback, useEffect, useState } from 'react';
 

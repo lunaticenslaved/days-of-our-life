@@ -1,7 +1,7 @@
 import { FoodNutrients, FoodNutrientsValidators } from '#/shared/models/food';
-import { Field } from '#/ui-lib/atoms/Field';
-import { Form } from '#/ui-lib/atoms/Form/FinalForm';
-import { NumberInput } from '#/ui-lib/molecules/NumberInput';
+import { Field } from '#/ui-lib/components/atoms/Field';
+import { Form } from '#/ui-lib/components/atoms/Form/FinalForm';
+import { NumberInput } from '#/ui-lib/components/molecules/NumberInput';
 import { z } from 'zod';
 
 export const NutrientsInputValidator: z.ZodType<FoodNutrients> = z.object({

@@ -4,7 +4,7 @@ import {
   Select as BaseSelect,
   SelectMultipleProps,
   SelectSingleProps,
-} from '#/ui-lib/atoms/Select';
+} from '#/ui-lib/components';
 
 interface EntitySingleSelectProps<TEntity> extends Omit<SelectSingleProps, 'multiple'> {
   name?: string;

@@ -1,6 +1,6 @@
 import { createEntityList } from '#/client/component-factories/EntityList';
 import { CosmeticRecipeComment } from '#/shared/models/cosmetic';
-import { Text } from '#/ui-lib/atoms/Text';
+import { Text } from '#/ui-lib/components/atoms/Text';
 
 export const ListComponent = createEntityList<CosmeticRecipeComment>({
   entityName: 'CosmeticRecipeComment',

@@ -1,9 +1,7 @@
-import { Button } from '#/ui-lib/atoms/Button/Button';
-import { Dialog, IDialog, useDialog } from '#/ui-lib/atoms/Dialog';
 import { FC } from 'react';
 import _ from 'lodash';
 import { usePendingCall } from '#/ui-lib/hooks';
-import { Flex } from '#/ui-lib/atoms/Flex';
+import { Dialog, IDialog, useDialog, Button, Flex } from '#/ui-lib/components';
 
 interface ActionConfig {
   text: string;

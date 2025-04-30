@@ -1,9 +1,9 @@
 import { Button, BUTTON_VIEWS } from './Button';
-import { Flex } from '#/ui-lib/atoms/Flex';
-import { Text } from '#/ui-lib/atoms/Text';
+import { Flex } from '#/ui-lib/components/atoms/Flex';
+import { Text } from '#/ui-lib/components/atoms/Text';
 import { SIZES } from '#/ui-lib/utils/size';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Box } from '#/ui-lib/atoms/Box';
+import { Box } from '#/ui-lib/components/atoms/Box';
 
 function Component() {
   return (

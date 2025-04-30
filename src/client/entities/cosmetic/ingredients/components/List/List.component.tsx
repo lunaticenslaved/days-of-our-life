@@ -1,8 +1,8 @@
 import { CosmeticIngredient } from '#/shared/models/cosmetic';
-import { Box } from '#/ui-lib/atoms/Box';
-import { Flex } from '#/ui-lib/atoms/Flex';
-import { Text } from '#/ui-lib/atoms/Text';
-import { List } from '#/ui-lib/molecules/List';
+import { Box } from '#/ui-lib/components/atoms/Box';
+import { Flex } from '#/ui-lib/components/atoms/Flex';
+import { Text } from '#/ui-lib/components/atoms/Text';
+import { List } from '#/ui-lib/components/molecules/List';
 import { WithInputProps } from '#/ui-lib/types';
 import { ReactNode } from 'react';
 import { getCosmeticIngredientKeywords } from '../../utils';

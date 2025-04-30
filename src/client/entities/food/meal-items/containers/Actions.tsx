@@ -9,7 +9,7 @@ import {
 } from '#/client/store/food';
 import { FoodMealItemFormDialog as FormDialogComponent } from '../components/FormDialog';
 import { findNutrients } from '#/client/entities/food/meal-items/utils';
-import { useDialog } from '#/ui-lib/atoms/Dialog';
+import { useDialog } from '#/ui-lib/components/atoms/Dialog';
 
 type ActionsComponentProps = ComponentProps<typeof ActionsComponent>;
 

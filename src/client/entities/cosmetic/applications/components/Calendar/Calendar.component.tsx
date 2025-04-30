@@ -1,7 +1,7 @@
 import { CosmeticApplication } from '#/shared/models/cosmetic/applications';
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { DayPart } from '#/shared/models/day';
-import { Box } from '#/ui-lib/atoms/Box';
+import { Box } from '#/ui-lib/components';
 import _ from 'lodash';
 import { ReactNode, useMemo } from 'react';
 

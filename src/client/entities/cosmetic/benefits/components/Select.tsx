@@ -3,7 +3,7 @@ import {
   CosmeticBenefitTree,
   CosmeticUtils,
 } from '#/shared/models/cosmetic';
-import { Select, SelectMultipleProps, SelectSingleProps } from '#/ui-lib/atoms/Select';
+import { Select, SelectMultipleProps, SelectSingleProps } from '#/ui-lib/components/atoms/Select';
 import { useMemo } from 'react';
 import { useListCosmeticBenefitsQuery } from '#/client/store';
 

@@ -1,12 +1,12 @@
-import { Button } from '#/ui-lib/atoms/Button/Button';
-import { Form } from '#/ui-lib/atoms/Form';
-import { Field } from '#/ui-lib/atoms/Field';
-import { Box } from '#/ui-lib/atoms/Box';
-import { Text } from '#/ui-lib/atoms/Text';
-import { TextInput } from '#/ui-lib/molecules/TextInput';
-import { Flex } from '#/ui-lib/atoms/Flex';
+import { Button } from '#/ui-lib/components/atoms/Button/Button';
+import { Form } from '#/ui-lib/components/atoms/Form';
+import { Field } from '#/ui-lib/components/atoms/Field';
+import { Box } from '#/ui-lib/components/atoms/Box';
+import { Text } from '#/ui-lib/components/atoms/Text';
+import { TextInput } from '#/ui-lib/components/molecules/TextInput';
+import { Flex } from '#/ui-lib/components/atoms/Flex';
 import { CosmeticIngredientCombobox } from '#/client/entities/cosmetic/ingredients';
-import { NumberInput } from '#/ui-lib/molecules/NumberInput';
+import { NumberInput } from '#/ui-lib/components/molecules/NumberInput';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 

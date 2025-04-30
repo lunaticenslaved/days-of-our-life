@@ -3,14 +3,11 @@ import {
   CosmeticINCIIngredient,
 } from '#/shared/models/cosmetic';
 import { z } from 'zod';
-import { TextInput } from '#/ui-lib/molecules/TextInput';
-import { Form } from '#/ui-lib/atoms/Form';
-import { Field } from '#/ui-lib/atoms/Field';
+import { TextInput, Form, Field, Button } from '#/ui-lib/components';
 import { useMemo } from 'react';
-import { Button } from '#/ui-lib/atoms/Button/Button';
 import { useListCosmeticBenefitsQuery } from '#/client/store/cosmetic';
 import { useListCosmeticINCIIngredientsQuery } from '#/client/entities/cosmetic/inci-indgredients';
-import { Flex } from '#/ui-lib/atoms/Flex';
+import { Flex } from '#/ui-lib/components/atoms/Flex';
 
 const schema = z.object({
   name: CosmeticINCIIngredientValidators.name,

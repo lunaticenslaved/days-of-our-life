@@ -1,12 +1,12 @@
 import { FoodRecipe, FoodValidators } from '#/shared/models/food';
-import { Button } from '#/ui-lib/atoms/Button/Button';
+import { Button } from '#/ui-lib/components/atoms/Button/Button';
 import { FForm } from '#/client/components/FForm';
 import { FoodProductSearch } from '#/client/entities/food';
 import { z } from 'zod';
-import { TextArea } from '#/ui-lib/atoms/TextArea';
-import { NumberInput } from '#/ui-lib/molecules/NumberInput';
-import { TextInput } from '#/ui-lib/molecules/TextInput';
-import { Box } from '#/ui-lib/atoms/Box';
+import { TextArea } from '#/ui-lib/components/atoms/TextArea';
+import { NumberInput } from '#/ui-lib/components/molecules/NumberInput';
+import { TextInput } from '#/ui-lib/components/molecules/TextInput';
+import { Box } from '#/ui-lib/components/atoms/Box';
 
 export const FoodRecipeValidator = z.object({
   name: FoodValidators.name,

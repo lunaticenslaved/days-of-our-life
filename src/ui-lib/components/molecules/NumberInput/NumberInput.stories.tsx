@@ -1,4 +1,4 @@
-import { Flex } from '#/ui-lib/atoms/Flex';
+import { Flex } from '#/ui-lib/components/atoms/Flex';
 import { NumberInput } from './NumberInput';
 import type { Meta, StoryObj } from '@storybook/react';
 

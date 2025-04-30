@@ -5,7 +5,7 @@ import {
   useUpdateCosmeticBenefitMutation,
 } from '#/client/store';
 import { CosmeticBenefit } from '#/shared/models/cosmetic';
-import { useDialog } from '#/ui-lib/atoms/Dialog';
+import { useDialog } from '#/ui-lib/components/atoms/Dialog';
 
 import { ActionsComponent } from '../components/Actions';
 

@@ -1,7 +1,7 @@
 import { useDeleteCosmeticRecipeMutation } from '#/client/entities/cosmetic/recipes';
 import { useCosmeticNavigation } from '#/client/pages/cosmetic';
 import { CosmeticRecipe } from '#/shared/models/cosmetic';
-import { useDialog } from '#/ui-lib/atoms/Dialog';
+import { useDialog } from '#/ui-lib/components/atoms/Dialog';
 
 import { CosmeticRecipesActions as ActionsComponent } from '../components/Actions';
 

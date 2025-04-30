@@ -2,11 +2,7 @@
 import { ListComponent as CosmeticRecipesList } from '#/client/entities/cosmetic/recipes/components/List';
 import { ListComponent as CosmeticProductList } from '#/client/entities/cosmetic/products/components/List';
 import { CosmeticProduct, CosmeticRecipe } from '#/shared/models/cosmetic';
-import { Box } from '#/ui-lib/atoms/Box';
-import { Button } from '#/ui-lib/atoms/Button';
-import { Flex } from '#/ui-lib/atoms/Flex';
-import { Popup } from '#/ui-lib/atoms/Popup';
-import { RadioGroup } from '#/ui-lib/atoms/Radio';
+import { Box, Button, Flex, Popup, RadioGroup } from '#/ui-lib/components';
 import { useState } from 'react';
 
 type LocalCosmeticProduct = Pick<CosmeticProduct, 'id' | 'name' | 'manufacturer'>;

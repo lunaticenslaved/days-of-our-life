@@ -7,8 +7,7 @@ import DaysRouter, { DAYS_NAVIGATION } from '../pages/days';
 import CosmeticRouter, { COSMETIC_NAVIGATION } from '../pages/cosmetic';
 import MedicamentsRouter, { MEDICAMENTS_NAVIGATION } from '../pages/medicaments';
 import { NavigationContextProvider } from '#/client/widgets/navigation';
-import { DialogContextProvider } from '#/ui-lib/atoms/Dialog';
-import { Box } from '#/ui-lib/atoms/Box';
+import { Box, DialogContextProvider } from '#/ui-lib/components';
 import isPropValid from '@emotion/is-prop-valid';
 import { StyleSheetManager } from 'styled-components';
 import { FoodIcon } from '#/client/entities/food';
@@ -19,7 +18,7 @@ import {
   CosmeticIcon,
 } from '#/client/entities/cosmetic';
 import { MedicamentsIcon } from '#/client/entities/medicaments';
-import { Flex } from '#/ui-lib/atoms/Flex';
+import { Flex } from '#/ui-lib/components/atoms/Flex';
 import { TheLeftNavigation } from './components/TheLeftNavigation';
 import { TheSubNavigation } from './components/TheSubNavigation';
 import { PageContextProvider } from '#/client/widgets/Page';

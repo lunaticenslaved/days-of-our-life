@@ -1,6 +1,4 @@
-import { Box } from '#/ui-lib/atoms/Box';
-import { Combobox } from '#/ui-lib/atoms/Combobox';
-import { Flex } from '#/ui-lib/atoms/Flex';
+import { Flex, Combobox, Box } from '#/ui-lib/components';
 import { ComponentProps, ReactNode } from 'react';
 
 import { ListComponent } from './List';

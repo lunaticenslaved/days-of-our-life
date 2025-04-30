@@ -1,6 +1,6 @@
-import { Button } from '#/ui-lib/atoms/Button/Button';
+import { Button } from '#/ui-lib/components/atoms/Button/Button';
 import { useCreateMedicamentMutation } from '#/client/store';
-import { useDialog } from '#/ui-lib/atoms/Dialog';
+import { useDialog } from '#/ui-lib/components/atoms/Dialog';
 import { FormDialogComponent } from '../components/Form';
 
 export function CreatingAction() {

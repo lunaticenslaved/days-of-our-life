@@ -1,6 +1,6 @@
 import { FoodMealItemsList, FoodNutrientsList } from '#/client/entities/food';
 import { useState } from 'react';
-import { DatePicker } from '#/ui-lib/atoms/DatePicker';
+import { DatePicker } from '#/ui-lib/components/atoms/DatePicker';
 import { DateFormat, DateUtils } from '#/shared/models/date';
 import { useGetDayQuery, useListFoodMealItemQuery } from '#/client/store';
 import { sumNutrients } from '#/shared/models/food';

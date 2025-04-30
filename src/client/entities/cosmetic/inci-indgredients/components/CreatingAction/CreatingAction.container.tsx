@@ -1,5 +1,5 @@
 import { COSMETIC_NAVIGATION } from '#/client/pages/cosmetic';
-import { Button } from '#/ui-lib/atoms/Button';
+import { Button } from '#/ui-lib/components/atoms/Button';
 
 export function CreatingActionContainer() {
   return (
