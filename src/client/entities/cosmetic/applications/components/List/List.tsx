@@ -1,10 +1,10 @@
 import { nonReachable } from '#/shared/utils';
-import { Box } from '#/ui-lib/atoms/Box';
-import { Flex } from '#/ui-lib/atoms/Flex';
-import { Text } from '#/ui-lib/atoms/Text';
-import { List } from '#/ui-lib/molecules/List';
+import { Box } from '#/ui-lib/components/atoms/Box';
+import { Flex } from '#/ui-lib/components/atoms/Flex';
+import { Text } from '#/ui-lib/components/atoms/Text';
+import { List } from '#/ui-lib/components/molecules/List';
 import { ReactNode } from 'react';
-import { SortableCloud } from '#/ui-lib/molecules/SortableCloud';
+import { SortableCloud } from '#/ui-lib/components/molecules/SortableCloud';
 import { CosmeticApplication } from '#/shared/models/cosmetic/applications';
 import { getCosmeticApplicationKeywords } from '#/client/entities/cosmetic/applications/utils';
 import { keyBy } from 'lodash';

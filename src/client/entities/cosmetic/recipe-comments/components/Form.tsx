@@ -1,10 +1,10 @@
-import { Button } from '#/ui-lib/atoms/Button/Button';
+import { Button } from '#/ui-lib/components/atoms/Button/Button';
 import { CosmeticRecipeCommentValidators } from '#/shared/models/cosmetic';
 import { useMemo } from 'react';
 import { z } from 'zod';
-import { Form } from '#/ui-lib/atoms/Form';
-import { Field } from '#/ui-lib/atoms/Field';
-import { TextInput } from '#/ui-lib/molecules/TextInput';
+import { Form } from '#/ui-lib/components/atoms/Form';
+import { Field } from '#/ui-lib/components/atoms/Field';
+import { TextInput } from '#/ui-lib/components/molecules/TextInput';
 
 const schema = z.object({
   text: CosmeticRecipeCommentValidators.text,

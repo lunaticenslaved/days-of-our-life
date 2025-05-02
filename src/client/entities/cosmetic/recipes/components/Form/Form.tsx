@@ -1,14 +1,14 @@
-import { Button } from '#/ui-lib/atoms/Button/Button';
+import { Button } from '#/ui-lib/components/atoms/Button/Button';
 import { CosmeticRecipe } from '#/shared/models/cosmetic';
 import { useMemo, useState } from 'react';
-import { Form } from '#/ui-lib/atoms/Form';
-import { Field } from '#/ui-lib/atoms/Field';
-import { Box } from '#/ui-lib/atoms/Box';
-import { Text } from '#/ui-lib/atoms/Text';
-import { TextInput } from '#/ui-lib/molecules/TextInput';
-import { Flex } from '#/ui-lib/atoms/Flex';
+import { Form } from '#/ui-lib/components/atoms/Form';
+import { Field } from '#/ui-lib/components/atoms/Field';
+import { Box } from '#/ui-lib/components/atoms/Box';
+import { Text } from '#/ui-lib/components/atoms/Text';
+import { TextInput } from '#/ui-lib/components/molecules/TextInput';
+import { Flex } from '#/ui-lib/components/atoms/Flex';
 import { sumBy, uniqueId } from 'lodash';
-import { TextArea } from '#/ui-lib/atoms/TextArea';
+import { TextArea } from '#/ui-lib/components/atoms/TextArea';
 
 import { IngredientField } from './components/IngredientField';
 import { PhaseField } from './components/PhaseField';

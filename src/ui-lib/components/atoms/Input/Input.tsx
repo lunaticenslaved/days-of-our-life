@@ -18,10 +18,10 @@ import { getSpacingStyles } from '#/ui-lib/utils/spacing';
 import styled, { StyledObject } from 'styled-components';
 import { TRANSITION_ALL } from '#/ui-lib/utils/transition';
 
-type State = 'error' | 'valid';
+export type State = 'error' | 'valid';
 
 // --- Background ---------------------------------------------------------------
-function Backgroud({
+export function Backgroud({
   children,
   state,
   required,
@@ -54,14 +54,14 @@ function Backgroud({
       }}>
       <div
         style={{
-          position: 'absolute',
           display: 'flex',
           alignItems: 'center',
           gap: '8px',
-          height: '100%',
           width: required ? 'calc(100% - 25px)' : '100%',
           right: required ? '25px' : undefined,
           ...getSpacingStyles(THEME.components.input.spacing['m']),
+          minHeight: getDimensions(THEME.components.input.height['m']),
+          height: 'max-content',
         }}>
         {children}
       </div>
@@ -72,11 +72,11 @@ function Backgroud({
             position: 'absolute',
             right: 0,
             display: 'flex',
-            alignItems: 'center',
             justifyContent: 'center',
             height: '100%',
             width: '25px',
             background: 'rgba(255,255,255, 0.05)',
+            paddingTop: '14px',
           }}>
           <FaStarOfLife
             fill={color}
@@ -91,15 +91,42 @@ function Backgroud({
   );
 }
 
+// --- Required Mark -------------------------------------------------------------
+export function RequiredMark({ state }: { state: State }) {
+  const color = state === 'error' ? 'red' : 'white';
+
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        right: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+        width: '25px',
+        background: 'rgba(255,255,255, 0.05)',
+      }}>
+      <FaStarOfLife
+        fill={color}
+        style={{
+          fontSize: '10px',
+          opacity: 0.6,
+        }}
+      />
+    </div>
+  );
+}
+
 // --- Info for Suffix and Prefix ------------------------------------------------
-function Info({ children, state }: { children: ReactNode; state: State }) {
+export function Info({ children, state }: { children: ReactNode; state: State }) {
   const color = state === 'error' ? 'red' : 'white';
 
   return <div style={{ opacity: 0.6, color }}>{children}</div>;
 }
 
 // --- Clear button --------------------------------------------------------------
-const ClearButton = styled.button(() => {
+const ClearButtonEL = styled.button(() => {
   const styles: StyledObject = {
     background: 'transparent',
     border: 'none',
@@ -124,6 +151,24 @@ const ClearButton = styled.button(() => {
 
   return styles;
 });
+export function ClearButton({ onClear }: { onClear: () => void }) {
+  return (
+    <ClearButtonEL
+      onClick={e => {
+        onClear();
+        e.stopPropagation();
+        e.preventDefault();
+      }}>
+      <FaXmark
+        style={{
+          color: 'inherit',
+          transition: TRANSITION_ALL,
+          fontSize: '15px',
+        }}
+      />
+    </ClearButtonEL>
+  );
+}
 
 // --- Input Field ---------------------------------------------------------------
 type InputProps = WithInputProps<
@@ -199,19 +244,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         />
         {!hideClear && (
           <ClearButton
-            onClick={e => {
+            onClear={() => {
               setLocalValue('');
-              e.stopPropagation();
-              e.preventDefault();
-            }}>
-            <FaXmark
-              style={{
-                color: 'inherit',
-                transition: TRANSITION_ALL,
-                fontSize: '15px',
-              }}
-            />
-          </ClearButton>
+            }}
+          />
         )}
         {!!append && <Info state={state}>{append}</Info>}
       </Backgroud>

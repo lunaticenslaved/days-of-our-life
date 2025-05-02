@@ -1,16 +1,16 @@
 import { CosmeticINCIIngredient } from '#/shared/models/cosmetic';
-import { Box } from '#/ui-lib/atoms/Box';
-import { Button } from '#/ui-lib/atoms/Button/Button';
-import { Flex } from '#/ui-lib/atoms/Flex';
-import { Text } from '#/ui-lib/atoms/Text';
+import { Box } from '#/ui-lib/components/atoms/Box';
+import { Button } from '#/ui-lib/components/atoms/Button/Button';
+import { Flex } from '#/ui-lib/components/atoms/Flex';
+import { Text } from '#/ui-lib/components/atoms/Text';
 import { WithInputProps } from '#/ui-lib/types';
 import _ from 'lodash';
 import { ReactNode, useMemo } from 'react';
 import {
   SortableCloud,
   SortableCloudElementRenderArg,
-} from '#/ui-lib/molecules/SortableCloud';
-import { Popup } from '#/ui-lib/atoms/Popup';
+} from '#/ui-lib/components/molecules/SortableCloud';
+import { Popup } from '#/ui-lib/components/atoms/Popup';
 import { ListComponent } from '../List/List.component';
 
 type TagSelectComponentProps = WithInputProps<

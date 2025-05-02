@@ -1,5 +1,5 @@
-import { IUsePopup, Popup, usePopup } from '#/ui-lib/atoms/Popup';
-import { TextInput } from '#/ui-lib/molecules/TextInput';
+import { IUsePopup, Popup, usePopup } from '#/ui-lib/components/atoms/Popup';
+import { TextInput } from '#/ui-lib/components/molecules/TextInput';
 import {
   createContext,
   PropsWithChildren,

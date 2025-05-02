@@ -1,7 +1,7 @@
 import { LeftNavigationItem } from '../types';
-import { Button } from '#/ui-lib/atoms/Button/Button';
-import { Flex } from '#/ui-lib/atoms/Flex';
-import { Selectable } from '#/ui-lib/molecules/Selectable';
+import { Button } from '#/ui-lib/components/atoms/Button/Button';
+import { Flex } from '#/ui-lib/components/atoms/Flex';
+import { Selectable } from '#/ui-lib/components/molecules/Selectable';
 import { useLocation } from 'react-router';
 
 export function TheLeftNavigation({ items }: { items: LeftNavigationItem[] }) {
