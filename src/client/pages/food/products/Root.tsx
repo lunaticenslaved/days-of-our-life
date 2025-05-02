@@ -4,12 +4,10 @@ import {
   FoodProductsTable,
   useFoodProductFilters,
 } from '#/client/entities/food';
-import { useListFoodProductsQuery } from '#/client/store';
+import { FoodProductActions } from '#/client/entities/food/products';
 import { Page } from '#/client/widgets/Page';
 
 export default function FoodProductsPage() {
-  const { data: products = [] } = useListFoodProductsQuery();
-
   const productsFilters = useFoodProductFilters();
 
   return (
@@ -29,7 +27,11 @@ export default function FoodProductsPage() {
       </Page.Header>
 
       <Page.Content>
-        <FoodProductsTable products={productsFilters.filter(products)} />
+        <FoodProductsTable
+          renderActions={product => {
+            return <FoodProductActions entity={product} />;
+          }}
+        />
       </Page.Content>
     </Page>
   );

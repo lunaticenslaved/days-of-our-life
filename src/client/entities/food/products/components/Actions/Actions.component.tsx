@@ -6,7 +6,7 @@ import { FoodProduct } from '#/shared/models/food';
 
 type Actions = 'edit' | 'delete';
 
-export const FoodProductActions = createEntityActions<FoodProduct, Actions>({
+export const ActionsComponent = createEntityActions<FoodProduct, Actions>({
   entityName: 'FoodProduct',
   actions: {
     edit: EntityActionsTemplate.edit,

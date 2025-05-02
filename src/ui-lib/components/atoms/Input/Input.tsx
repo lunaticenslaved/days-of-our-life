@@ -122,7 +122,16 @@ export function RequiredMark({ state }: { state: State }) {
 export function Info({ children, state }: { children: ReactNode; state: State }) {
   const color = state === 'error' ? 'red' : 'white';
 
-  return <div style={{ opacity: 0.6, color }}>{children}</div>;
+  return (
+    <div
+      style={{
+        opacity: 0.6,
+        color,
+        minWidth: 'max-content',
+      }}>
+      {children}
+    </div>
+  );
 }
 
 // --- Clear button --------------------------------------------------------------

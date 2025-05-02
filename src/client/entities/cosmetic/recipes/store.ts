@@ -21,8 +21,9 @@ import {
 } from '#/shared/api/types/cosmetic';
 import { CosmeticRecipe } from '#/shared/models/cosmetic';
 import { cloneDeep, orderBy } from 'lodash';
-import { useCosmeticCacheStrict, ItemStore } from '#/client/entities/cosmetic/cache';
+import { useCosmeticCacheStrict } from '#/client/entities/cosmetic/cache';
 import { useCosmeticEventBusStrict } from '#/client/entities/cosmetic/event-bus';
+import { ItemStore } from '#/client/hooks/cache';
 
 const StoreKeys = {
   getCosmeticRecipe: (recipeId: string): QueryKey => ['cosmetic', 'recipes', recipeId],

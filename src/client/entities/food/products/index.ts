@@ -1,10 +1,10 @@
-// Components
 export { FoodProductSingleSelect, FoodProductMultipleSelect } from './components/Select';
 export { FoodProductFilters, useFoodProductFilters } from './components/Filters';
+export { FoodProductForm } from './components/Form';
+export { FoodProductCreatingAction } from './components/CreatingAction';
+export { FoodProductActions } from './components/Actions';
+export { FoodProductsTable } from './components/Table';
 
-// Containers
-export { FoodProductForm, FoodProductFormDialog } from './containers/Form';
-export { FoodProductCreatingAction } from './containers/CreatingAction';
-export { FoodProductsTable } from './containers/Table';
-export { FoodProductActions } from './containers/Actions';
 export { FoodProductSearch } from './containers/FoodProductSearch';
+
+export * from './store';

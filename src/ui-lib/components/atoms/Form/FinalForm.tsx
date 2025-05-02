@@ -64,7 +64,7 @@ function useFormFieldContext() {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function Field<TValue = any>({
   name,
-  required,
+  required = false,
   children,
 }: {
   name: string;
@@ -93,6 +93,7 @@ function Field<TValue = any>({
             state: renderProps.meta.error ? 'invalid' : 'valid',
           },
           input: {
+            required,
             value: renderProps.input.value,
             disabled: renderProps.input.disabled || false,
             name: renderProps.input.name,

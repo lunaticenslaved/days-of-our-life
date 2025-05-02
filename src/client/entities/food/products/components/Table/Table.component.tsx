@@ -6,10 +6,10 @@ import { ReactNode } from 'react';
 interface FoodProductTablesProps {
   products: FoodProduct[];
   createHref(product: FoodProduct): string;
-  renderActions: (product: FoodProduct) => ReactNode;
+  renderActions?: (product: FoodProduct) => ReactNode;
 }
 
-export function FoodProductsTable(props: FoodProductTablesProps) {
+export function TableComponent(props: FoodProductTablesProps) {
   const { products, renderActions } = props;
 
   const preparedProducts = products.map(product => {
@@ -57,13 +57,16 @@ export function FoodProductsTable(props: FoodProductTablesProps) {
       title: 'Клетчатка',
       getValue: ({ nutrients }: Item) => nutrients.fibers,
     },
-    {
+  ];
+
+  if (renderActions) {
+    columns.push({
       title: '',
       getValue: (product: FoodProduct) => {
         return <>{renderActions(product)}</>;
       },
-    },
-  ];
+    });
+  }
 
   return (
     <table>

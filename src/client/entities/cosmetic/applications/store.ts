@@ -13,13 +13,14 @@ import { DefaultError, useMutation, useQuery } from '@tanstack/react-query';
 import { queryClient, wrapApiAction } from '#/client/utils/api';
 import { Schema } from '#/shared/api/schemas';
 import { MutationHandlers } from '#/client/types';
-import { useCosmeticCacheStrict, ItemStore } from '#/client/entities/cosmetic/cache';
+import { useCosmeticCacheStrict } from '#/client/entities/cosmetic/cache';
 import { DateFormat } from '#/shared/models/date';
 import {
   ReorderCosmeticApplicationsRequest,
   ReorderCosmeticApplicationsResponse,
 } from '#/shared/api/types/days';
 import _ from 'lodash';
+import { ItemStore } from '#/client/hooks/cache';
 
 const StoreKeys = {
   // FIXME use dates in key

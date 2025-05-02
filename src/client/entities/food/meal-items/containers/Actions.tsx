@@ -3,13 +3,13 @@ import { ActionsComponent } from '../components/Actions';
 import { assertDefined } from '#/shared/utils';
 import {
   useDeleteFoodMealItem,
-  useListFoodProductsQuery,
   useListFoodRecipesQuery,
   useUpdateFoodMealItem,
 } from '#/client/store/food';
 import { FoodMealItemFormDialog as FormDialogComponent } from '../components/FormDialog';
 import { findNutrients } from '#/client/entities/food/meal-items/utils';
 import { useDialog } from '#/ui-lib/components/atoms/Dialog';
+import { useListFoodProductsQuery } from '#/client/entities/food/products';
 
 type ActionsComponentProps = ComponentProps<typeof ActionsComponent>;
 

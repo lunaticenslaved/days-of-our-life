@@ -1,6 +1,4 @@
-import { Box } from '#/ui-lib/components/atoms/Box';
-import { Combobox } from '#/ui-lib/components/atoms/Combobox';
-import { Flex } from '#/ui-lib/components/atoms/Flex';
+import { Box, Popup, Flex } from '#/ui-lib/components';
 import { ComponentProps, ReactNode, useMemo } from 'react';
 
 import { ListComponent } from '../List/List.component';
@@ -16,17 +14,17 @@ export function ComboboxComponent({ trigger, ingredients, ...props }: ListProps)
   }, [ingredients]);
 
   return (
-    <Combobox>
-      <Combobox.Trigger>{trigger}</Combobox.Trigger>
+    <Popup>
+      <Popup.Trigger>{trigger}</Popup.Trigger>
 
-      <Combobox.Content>
+      <Popup.Content>
         {/* TODO добавить Paper компонент? */}
         <Box color="background">
           <Flex maxHeight="300px" overflow="auto">
             <ListComponent {...props} ingredients={items} />
           </Flex>
         </Box>
-      </Combobox.Content>
-    </Combobox>
+      </Popup.Content>
+    </Popup>
   );
 }

@@ -1,8 +1,8 @@
+import { useListFoodProductsQuery } from '#/client/entities/food/products';
 import {
   FoodProductSingleSelect,
   FoodProductSingleSelectProps,
 } from '#/client/entities/food/products/components/Select';
-import { useListFoodProductsQuery } from '#/client/store';
 
 interface FoodProductSearchProps
   extends Pick<FoodProductSingleSelectProps, 'value' | 'onValueUpdate'> {}

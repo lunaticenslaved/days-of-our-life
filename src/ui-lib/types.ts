@@ -41,6 +41,7 @@ export interface FieldContext {
 export type InputFieldProps<TValue> = {
   field: FieldContext;
   input: Required<InputProps<TValue>> & {
+    required: boolean;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onChange?: (...event: any[]) => void;
     onBlur?: Noop;

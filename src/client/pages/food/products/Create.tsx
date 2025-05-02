@@ -12,7 +12,7 @@ export default function FoodProductCreatingPage() {
       </Page.Header>
 
       <Page.Content>
-        <FoodProductForm type="create" onOptimisticSuccess={navigation.toProducts} />;
+        <FoodProductForm type="create" onSuccess={navigation.toProducts} />
       </Page.Content>
     </Page>
   );

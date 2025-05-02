@@ -1,11 +1,10 @@
-import { FoodProductForm } from '#/client/entities/food';
+import { FoodProductForm, useGetFoodProductQuery } from '#/client/entities/food';
 import { useFoodNavigation, useFoodPageParams } from '#/client/pages/food';
-import { useGetFoodProductQuery } from '#/client/store';
 import { Page } from '#/client/widgets/Page';
 
 export default function FoodProductUpdatingPage() {
   const { productId = '' } = useFoodPageParams();
-  const query = useGetFoodProductQuery({ id: productId });
+  const query = useGetFoodProductQuery(productId);
   const navigation = useFoodNavigation();
 
   if (query.isLoading) {
@@ -29,7 +28,7 @@ export default function FoodProductUpdatingPage() {
         <FoodProductForm
           type="update"
           product={product}
-          onSuccess={({ id: productId }) => {
+          onOptimisticResponse={() => {
             navigation.toProductOverview({ productId });
           }}
         />

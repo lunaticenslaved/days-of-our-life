@@ -1,4 +1,4 @@
-import { ItemStore, useCosmeticCacheStrict } from '#/client/entities/cosmetic/cache';
+import { useCosmeticCacheStrict } from '#/client/entities/cosmetic/cache';
 import { Schema } from '#/shared/api/schemas';
 import { MutationHandlers } from '#/client/types';
 import { queryClient, wrapApiAction } from '#/client/utils/api';
@@ -23,6 +23,7 @@ import {
 import { CosmeticIngredient } from '#/shared/models/cosmetic';
 import { orderBy } from 'lodash';
 import { useCosmeticEventBusStrict } from '#/client/entities/cosmetic/event-bus';
+import { ItemStore } from '#/client/hooks/cache';
 
 const StoreKeys = {
   list: (): QueryKey => ['cosmetic', 'ingredients', 'list'],

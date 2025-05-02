@@ -1,4 +1,4 @@
-import { Flex, Combobox, Box } from '#/ui-lib/components';
+import { Flex, Popup, Box } from '#/ui-lib/components';
 import { ComponentProps, ReactNode } from 'react';
 
 import { ListComponent } from './List';
@@ -9,17 +9,17 @@ type ListProps = ComponentProps<typeof ListComponent> & {
 
 export function CompoboxComponent({ trigger, ...props }: ListProps) {
   return (
-    <Combobox>
-      <Combobox.Trigger>{trigger}</Combobox.Trigger>
+    <Popup>
+      <Popup.Trigger>{trigger}</Popup.Trigger>
 
-      <Combobox.Content>
+      <Popup.Content>
         {/* TODO добавить Paper компонент? */}
         <Box color="background">
           <Flex maxHeight="300px" overflow="auto">
             <ListComponent {...props} />
           </Flex>
         </Box>
-      </Combobox.Content>
-    </Combobox>
+      </Popup.Content>
+    </Popup>
   );
 }

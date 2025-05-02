@@ -18,3 +18,5 @@ export { CreatingAction as FoodMealItemCreatingAction } from './meal-items/conta
 export { ListContainer as FoodMealItemsList } from './meal-items/containers/List';
 
 export * from './icons';
+
+export { FoodCacheProvider, useFoodCacheStrict } from './cache';

@@ -21,8 +21,9 @@ import {
 } from '#/shared/api/types/cosmetic';
 import { CosmeticProduct } from '#/shared/models/cosmetic';
 import { orderBy } from 'lodash';
-import { ItemStore, useCosmeticCacheStrict } from '#/client/entities/cosmetic/cache';
+import { useCosmeticCacheStrict } from '#/client/entities/cosmetic/cache';
 import { useCosmeticEventBusStrict } from '#/client/entities/cosmetic/event-bus';
+import { ItemStore } from '#/client/hooks/cache';
 
 const StoreKeys = {
   // Cosmetic Products

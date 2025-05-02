@@ -1,6 +1,5 @@
 import { FoodNutrients, FoodNutrientsValidators } from '#/shared/models/food';
-import { Field } from '#/ui-lib/components/atoms/Field';
-import { Form } from '#/ui-lib/components/atoms/Form/FinalForm';
+import { Field, Flex, Form, Text } from '#/ui-lib/components';
 import { NumberInput } from '#/ui-lib/components/molecules/NumberInput';
 import { z } from 'zod';
 
@@ -12,94 +11,66 @@ export const NutrientsInputValidator: z.ZodType<FoodNutrients> = z.object({
   proteins: FoodNutrientsValidators.proteins,
 });
 
-type NutrientsInputValues = z.infer<typeof NutrientsInputValidator>;
-
 type NutrientsInputFormFieldProps = {
   name: string;
 };
 
+const FIELDS = [
+  {
+    name: 'calories',
+    prepend: 'Ккал',
+  },
+  {
+    name: 'proteins',
+    prepend: 'Белки',
+  },
+  {
+    name: 'fats',
+    prepend: 'Жиры',
+  },
+  {
+    name: 'carbs',
+    prepend: 'Углеводы',
+  },
+  {
+    name: 'fibers',
+    prepend: 'Клетчатка',
+  },
+];
+
 export function NutrientsInputFormField({ name }: NutrientsInputFormFieldProps) {
   return (
-    <>
-      <Form.Field<NutrientsInputValues['calories'] | undefined>
-        name={`${name}.calories`}
-        required>
-        {fieldProps => {
-          return (
-            <Field {...fieldProps.field}>
-              <Field.Label>Калорий на 100 г</Field.Label>
-              <Field.Input>
-                <NumberInput {...fieldProps.input} />
-              </Field.Input>
-              <Field.Message />
-            </Field>
-          );
-        }}
-      </Form.Field>
+    <Flex direction="column" gap={2}>
+      <Text variant="header-xs">Макронутриенты</Text>
 
-      <Form.Field<NutrientsInputValues['proteins'] | undefined>
-        name={`${name}.proteins`}
-        required>
-        {fieldProps => {
-          return (
-            <Field {...fieldProps.field}>
-              <Field.Label>Белков на 100 г</Field.Label>
-              <Field.Input>
-                <NumberInput {...fieldProps.input} />
-              </Field.Input>
-              <Field.Message />
-            </Field>
-          );
-        }}
-      </Form.Field>
-
-      <Form.Field<NutrientsInputValues['fats'] | undefined>
-        name={`${name}.fats`}
-        required>
-        {fieldProps => {
-          return (
-            <Field {...fieldProps.field}>
-              <Field.Label>Жира на 100 г</Field.Label>
-              <Field.Input>
-                <NumberInput {...fieldProps.input} />
-              </Field.Input>
-              <Field.Message />
-            </Field>
-          );
-        }}
-      </Form.Field>
-
-      <Form.Field<NutrientsInputValues['carbs'] | undefined>
-        name={`${name}.carbs`}
-        required>
-        {fieldProps => {
-          return (
-            <Field {...fieldProps.field}>
-              <Field.Label>Углеводов на 100 г</Field.Label>
-              <Field.Input>
-                <NumberInput {...fieldProps.input} />
-              </Field.Input>
-              <Field.Message />
-            </Field>
-          );
-        }}
-      </Form.Field>
-
-      <Form.Field<NutrientsInputValues['fibers'] | undefined>
-        name={`${name}.fibers`}
-        required>
-        {fieldProps => {
-          return (
-            <Field {...fieldProps.field}>
-              <Field.Label>Клетчатка на 100 г</Field.Label>
-              <Field.Input>
-                <NumberInput {...fieldProps.input} />
-              </Field.Input>
-              <Field.Message />
-            </Field>
-          );
-        }}
-      </Form.Field>
-    </>
+      {FIELDS.map(field => {
+        return (
+          <Form.Field<number | undefined> name={`${name}.${field.name}`} required>
+            {fieldProps => {
+              return (
+                <Field {...fieldProps.field}>
+                  <Field.Input>
+                    <NumberInput
+                      {...fieldProps.input}
+                      prepend={
+                        <Text wordWrap="unset" minWidth="max-content">
+                          {field.prepend}:
+                        </Text>
+                      }
+                      append={
+                        <Text wordWrap="unset" minWidth="max-content">
+                          на 100 г
+                        </Text>
+                      }
+                    />
+                  </Field.Input>
+                  <Field.Message />
+                </Field>
+              );
+            }}
+          </Form.Field>
+        );
+      })}
+    </Flex>
   );
 }
