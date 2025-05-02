@@ -105,7 +105,7 @@ export const FoodValidators = {
             z.object({
               productId: CommonValidators.id,
               grams: z
-                .number({ message: ERROR_MESSAGES.required })
+                .number({ invalid_type_error: ERROR_MESSAGES.required })
                 .gte(0, ERROR_MESSAGES.gte(0)),
               description: z
                 .string({ message: ERROR_MESSAGES.required })

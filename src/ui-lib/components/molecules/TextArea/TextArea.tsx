@@ -15,7 +15,7 @@ type TextAreaProps = WithInputProps<
     prepend?: ReactNode;
     required?: boolean;
     state?: InputState;
-    hideClear?: boolean;
+    clearable?: boolean;
   }
 >;
 export function TextArea({
@@ -25,7 +25,7 @@ export function TextArea({
   prepend,
   required = false,
   state = 'valid',
-  hideClear,
+  clearable,
   ...props
 }: TextAreaProps) {
   const [value, _setValue] = useState(valueProp);
@@ -75,7 +75,7 @@ export function TextArea({
             _setValue(value);
           }}
         />
-        {!hideClear && !!value && <InputClearButton onClear={() => _setValue('')} />}
+        {!!clearable && !!value && <InputClearButton onClear={() => _setValue('')} />}
         {!!prepend && <InputInfo state={state}>{prepend}</InputInfo>}
       </div>
     </InputBackground>

@@ -179,7 +179,7 @@ type InputProps = WithInputProps<
   convertValue?: (value: string | undefined) => string | undefined;
   append?: ReactNode;
   prepend?: ReactNode;
-  hideClear?: boolean;
+  clearable?: boolean;
   state?: 'error' | 'valid';
   required?: boolean;
 };
@@ -192,7 +192,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       convertValue,
       append,
       prepend,
-      hideClear,
+      clearable,
       state = 'valid',
       required = false,
       ...props
@@ -242,7 +242,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             props.onChange?.(e);
           }}
         />
-        {!hideClear && (
+        {!!clearable && (
           <ClearButton
             onClear={() => {
               setLocalValue('');

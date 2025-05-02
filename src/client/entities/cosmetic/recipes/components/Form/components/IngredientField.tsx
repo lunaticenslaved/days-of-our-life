@@ -99,12 +99,7 @@ export function IngredientField({
                   <Field {...fieldProps.field} required={false}>
                     <Field.Label></Field.Label>
                     <Field.Input>
-                      <NumberInput
-                        {...fieldProps.input}
-                        required
-                        hideClear
-                        append={'%'}
-                      />
+                      <NumberInput {...fieldProps.input} required append={'%'} />
                     </Field.Input>
                     <Field.Message />
                   </Field>
