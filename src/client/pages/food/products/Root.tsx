@@ -3,7 +3,7 @@ import {
   FoodProductFilters,
   FoodProductsTable,
   useFoodProductFilters,
-} from '#/client/entities/food';
+} from '#/client/entities/food/products';
 import { FoodProductActions } from '#/client/entities/food/products';
 import { Page } from '#/client/widgets/Page';
 
@@ -29,7 +29,7 @@ export default function FoodProductsPage() {
       <Page.Content>
         <FoodProductsTable
           renderActions={product => {
-            return <FoodProductActions entity={product} />;
+            return <FoodProductActions productId={product.id} onDeleted={() => null} />;
           }}
         />
       </Page.Content>

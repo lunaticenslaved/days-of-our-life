@@ -1,6 +1,10 @@
-import { FoodRecipeForm } from '#/client/entities/food';
+import {
+  FoodRecipeForm,
+  useFoodRecipeFormData,
+  useGetFoodRecipeQuery,
+  useUpdateFoodRecipeMutation,
+} from '#/client/entities/food/recipes';
 import { useFoodNavigation, useFoodPageParams } from '#/client/pages/food';
-import { useGetFoodRecipeQuery, useUpdateFoodRecipeMutation } from '#/client/store';
 import { Page } from '#/client/widgets/Page';
 
 export default function FoodRecipeUpdatingPage() {
@@ -9,9 +13,15 @@ export default function FoodRecipeUpdatingPage() {
 
   const query = useGetFoodRecipeQuery(recipeId);
 
-  const editing = useUpdateFoodRecipeMutation({
+  const editing = useUpdateFoodRecipeMutation(recipeId, {
     onSuccess: () => navigation.toRecipeOverview({ recipeId }),
   });
+
+  const formData = useFoodRecipeFormData();
+
+  if (formData.isLoading) {
+    return 'Loading...';
+  }
 
   if (query.isLoading) {
     return <div>Loading...</div>;

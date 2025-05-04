@@ -163,6 +163,7 @@ const ClearButtonEL = styled.button(() => {
 export function ClearButton({ onClear }: { onClear: () => void }) {
   return (
     <ClearButtonEL
+      type="button"
       onClick={e => {
         onClear();
         e.stopPropagation();
@@ -251,7 +252,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             props.onChange?.(e);
           }}
         />
-        {!!clearable && (
+        {!!clearable && !!localValue && (
           <ClearButton
             onClear={() => {
               setLocalValue('');

@@ -1,34 +1,20 @@
 import {
   CreateFoodMealItemRequest,
   CreateFoodMealItemResponse,
-  CreateFoodRecipeRequest,
-  CreateFoodRecipeResponse,
   DeleteFoodMealItemResponse,
-  DeleteFoodRecipeRequest,
-  DeleteFoodRecipeResponse,
   ListFoodMealItemsResponse,
-  ListFoodRecipesResponse,
   UpdateFoodMealItemRequest,
   UpdateFoodMealItemResponse,
-  UpdateFoodRecipeRequest,
-  UpdateFoodRecipeResponse,
 } from '#/shared/api/types/food';
 import { MutationHandlers } from '#/client/types';
 import { queryClient, wrapApiAction } from '#/client/utils/api';
 import { Schema } from '#/shared/api/schemas';
 import { QueryKey, useMutation, useQuery } from '@tanstack/react-query';
-import { FoodMealItem, FoodNutrients, FoodRecipe } from '#/shared/models/food';
-import { omit, orderBy } from 'lodash';
+import { FoodMealItem, FoodNutrients } from '#/shared/models/food';
+import { omit } from 'lodash';
 import { DateFormat } from '#/shared/models/date';
 
 const StoreKeys = {
-  // Recipe
-  listRecipes: (): QueryKey => ['food', 'recipes', 'list'],
-  getRecipe: (recipeId: string): QueryKey => ['food', 'recipe', recipeId],
-  createRecipe: (): QueryKey => ['food', 'recipes', 'create'],
-  updateRecipe: (): QueryKey => ['food', 'recipes', 'update'],
-  deleteRecipe: (): QueryKey => ['food', 'recipes', 'delete'],
-
   // Meal Item
   listMealItems: (date: DateFormat): QueryKey => ['food', 'meal-items', date, 'list'],
   getMealItem: (mealItemId: string): QueryKey => ['food', 'meal-items', mealItemId],
@@ -36,88 +22,6 @@ const StoreKeys = {
   updateMealItem: (): QueryKey => ['food', 'meal-items', 'update'],
   deleteMealItem: (): QueryKey => ['food', 'meal-items', 'delete'],
 };
-
-// Recipe
-// FIXME add relavidation and cache updates
-export function useListFoodRecipesQuery() {
-  return useQuery<ListFoodRecipesResponse>({
-    queryKey: ['FoodSchema.recipes.list'],
-    queryFn: wrapApiAction(Schema.food.listFoodRecipes),
-    select: data => {
-      return orderBy(data, recipe => recipe.name.toLocaleLowerCase(), 'asc');
-    },
-  });
-}
-
-export function useGetFoodRecipeQuery(recipeId: string) {
-  return useQuery({
-    queryKey: StoreKeys.getRecipe(recipeId),
-    queryFn: () => wrapApiAction(Schema.food.getFoodRecipe)({ id: recipeId }),
-  });
-}
-
-export function useCreateFoodRecipeMutation(handlers: MutationHandlers<FoodRecipe> = {}) {
-  return useMutation<CreateFoodRecipeResponse, Error, CreateFoodRecipeRequest>({
-    mutationKey: StoreKeys.createRecipe(),
-    mutationFn: wrapApiAction(Schema.food.createFoodRecipe),
-    onMutate() {
-      handlers.onMutate?.();
-    },
-    onError: (_error, _request, _context) => {
-      handlers.onError?.();
-    },
-    onSuccess: (response, _request, _context) => {
-      handlers.onSuccess?.(response);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: StoreKeys.listRecipes(),
-      });
-    },
-  });
-}
-
-export function useUpdateFoodRecipeMutation(handlers: MutationHandlers<FoodRecipe> = {}) {
-  return useMutation<UpdateFoodRecipeResponse, Error, UpdateFoodRecipeRequest>({
-    mutationKey: StoreKeys.updateRecipe(),
-    mutationFn: wrapApiAction(Schema.food.updateFoodRecipe),
-    onMutate() {
-      handlers.onMutate?.();
-    },
-    onError: (_error, _request, _context) => {
-      handlers.onError?.();
-    },
-    onSuccess: (response, _request, _context) => {
-      handlers.onSuccess?.(response);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: StoreKeys.listRecipes(),
-      });
-    },
-  });
-}
-
-export function useDeleteFoodRecipeMutation(handlers: MutationHandlers<void> = {}) {
-  return useMutation<DeleteFoodRecipeResponse, Error, DeleteFoodRecipeRequest>({
-    mutationKey: StoreKeys.deleteRecipe(),
-    mutationFn: wrapApiAction(Schema.food.deleteFoodRecipe),
-    onMutate() {
-      handlers.onMutate?.();
-    },
-    onError: (_error, _request, _context) => {
-      handlers.onError?.();
-    },
-    onSuccess: (response, _request, _context) => {
-      handlers.onSuccess?.(response);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: StoreKeys.listRecipes(),
-      });
-    },
-  });
-}
 
 //
 //

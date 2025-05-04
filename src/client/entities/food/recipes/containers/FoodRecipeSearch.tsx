@@ -2,7 +2,7 @@ import {
   FoodRecipeSingleSelect,
   FoodRecipeSingleSelectProps,
 } from '#/client/entities/food/recipes/components/RecipeSelect';
-import { useListFoodRecipesQuery } from '#/client/store';
+import { useListFoodRecipesQuery } from '../store';
 
 interface FoodRecipeSearchProps extends Omit<FoodRecipeSingleSelectProps, 'entities'> {}
 

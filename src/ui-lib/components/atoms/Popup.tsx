@@ -88,7 +88,10 @@ function PopupTrigger({ children }: PropsWithChildren) {
   const { open, triggerEl } = usePopupContext();
 
   return (
-    <div onClick={open} ref={triggerEl as RefObject<HTMLDivElement>}>
+    <div
+      onClick={open}
+      style={{ maxWidth: 'max-content' }}
+      ref={triggerEl as RefObject<HTMLDivElement>}>
       {children}
     </div>
   );

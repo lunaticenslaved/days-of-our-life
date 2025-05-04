@@ -13,5 +13,6 @@ export * from './atoms/Radio';
 export * from './atoms/Select';
 
 export * from './molecules/TextInput';
+export * from './molecules/TextArea';
 export * from './molecules/NumberInput';
 export * from './molecules/List';

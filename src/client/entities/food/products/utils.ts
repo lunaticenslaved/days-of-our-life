@@ -6,3 +6,7 @@ export function orderFoodProducts<T extends Pick<FoodProduct, 'name'>>(
 ): T[] {
   return _.orderBy(products, product => product.name.toLocaleLowerCase(), 'asc');
 }
+
+export function getFoodProductKeywords(product: Pick<FoodProduct, 'name'>) {
+  return [product.name];
+}

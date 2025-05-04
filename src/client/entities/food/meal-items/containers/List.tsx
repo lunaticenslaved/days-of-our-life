@@ -1,7 +1,8 @@
 import { FoodMealItemCreatingAction, FoodNutrientsList } from '#/client/entities/food';
 import { useListFoodProductsQuery } from '#/client/entities/food/products';
+import { useListFoodRecipesQuery } from '#/client/entities/food/recipes';
 import { useListDayPartsQuery } from '#/client/store/days';
-import { useListFoodMealItemQuery, useListFoodRecipesQuery } from '#/client/store/food';
+import { useListFoodMealItemQuery } from '#/client/store/food';
 import { DateFormat } from '#/shared/models/date';
 import { sumNutrients } from '#/shared/models/food';
 import { ListComponent } from '../components/List';

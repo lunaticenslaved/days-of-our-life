@@ -113,6 +113,7 @@ function getInputFormFieldProps<
       isValid: formState.isValid,
     },
     input: {
+      state: 'valid',
       required: false,
       onChange: () => null,
       onBlur: field.onBlur,

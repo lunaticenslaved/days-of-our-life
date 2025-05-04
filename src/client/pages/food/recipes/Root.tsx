@@ -1,11 +1,11 @@
 import { FOOD_NAVIGATION } from '#/client/pages/food';
-import { useListFoodRecipesQuery } from '#/client/store';
 import { Button } from '#/ui-lib/components/atoms/Button/Button';
 import { Page } from '#/client/widgets/Page';
 import {
   FoodRecipeFilters,
   FoodRecipesTable,
   useFoodRecipeFilters,
+  useListFoodRecipesQuery,
 } from '#/client/entities/food/recipes';
 
 export default function FoodRecipesRootPage() {

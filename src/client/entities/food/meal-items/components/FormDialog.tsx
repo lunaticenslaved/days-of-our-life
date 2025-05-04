@@ -1,11 +1,7 @@
 import { createEntityFormDialog } from '#/client/component-factories/EntityFormDialog';
 import { FinalForm } from '#/client/components/FForm';
 import { Select } from '#/ui-lib/components/atoms/Select';
-import {
-  FoodNutrientsList,
-  FoodProductSearch,
-  FoodRecipeSearch,
-} from '#/client/entities/food';
+import { FoodNutrientsList, FoodRecipeSearch } from '#/client/entities/food';
 import { findNutrients, findQuantities, findQuantityConverter } from '../utils';
 import { CommonValidators } from '#/shared/models/common';
 import {
@@ -19,6 +15,7 @@ import { ComponentProps } from 'react';
 import { z } from 'zod';
 import { RadioGroup } from '#/ui-lib/components/atoms/Radio';
 import { NumberInput } from '#/ui-lib/components/molecules/NumberInput';
+import { FoodProductSearch } from '#/client/entities/food/products';
 
 const schema = z.object({
   quantity: z.object({

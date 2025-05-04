@@ -54,6 +54,10 @@ export function useItemCache<TItem>(
         return map[key];
       },
       get: (key: string) => {
+        if (!(key in map)) {
+          throw new Error(`Unknown item with key: ${key}`);
+        }
+
         return map[key];
       },
       list: keys => {

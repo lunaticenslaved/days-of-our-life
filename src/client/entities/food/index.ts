@@ -1,8 +1,4 @@
-// Food Product
-export * from './products';
-
 // Food Recipe
-export { FoodRecipeForm } from './recipes/components/RecipeForm';
 export { FoodRecipeOutput } from './recipes/components/RecipeOutput';
 export {
   FoodRecipeSingleSelect,

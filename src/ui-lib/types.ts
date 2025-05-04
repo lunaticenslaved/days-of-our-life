@@ -1,3 +1,4 @@
+import { InputState } from '#/ui-lib/components';
 import { CSSProperties } from 'react';
 import { Noop, RefCallBack } from 'react-hook-form';
 
@@ -41,6 +42,7 @@ export interface FieldContext {
 export type InputFieldProps<TValue> = {
   field: FieldContext;
   input: Required<InputProps<TValue>> & {
+    state: InputState;
     required: boolean;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onChange?: (...event: any[]) => void;

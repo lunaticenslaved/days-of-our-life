@@ -7,7 +7,7 @@ import { DEFAULT_SIZE, Size } from '#/ui-lib/utils/size';
 import { getSpacingStyles } from '#/ui-lib/utils/spacing';
 import { TRANSITION_ALL } from '#/ui-lib/utils/transition';
 import { getWidthStyles, SHOULD_FORWARD_WIDTH, WidthProps } from '#/ui-lib/utils/width';
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import { LinkProps, Link } from 'react-router-dom';
 import styled, { StyledObject } from 'styled-components';
 
@@ -119,15 +119,18 @@ type ButtonButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
   CommonButtonProps & {
     component?: 'button';
   };
-const ButtonButton = styled.button.withConfig({ shouldForwardProp })<ButtonButtonProps>(
-  props => {
-    const style = getStyle(props);
+const ButtonButtonComponent = styled.button.withConfig({
+  shouldForwardProp,
+})<ButtonButtonProps>(props => {
+  const style = getStyle(props);
 
-    return {
-      ...style,
-    };
-  },
-);
+  return {
+    ...style,
+  };
+});
+function ButtonButton(props: ComponentProps<typeof ButtonButtonComponent>) {
+  return <ButtonButtonComponent type="button" {...props} />;
+}
 
 // --- Anchor ------------------------------------------------------------------------------
 type AnchorButtonProps = React.AnchorHTMLAttributes<HTMLAnchorElement> &

@@ -1,16 +1,19 @@
-import { createContext, ReactNode, useContext, useMemo } from 'react';
+import { ComponentProps, createContext, ReactNode, useContext, useMemo } from 'react';
 import {
   Form as FinalForm,
   Field as FinalField,
   FormRenderProps,
   useForm,
   useFormState,
+  FieldRenderProps,
 } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
 import { Validator } from '#/shared/validation';
 import { z } from 'zod';
-import { FieldContext, InputFormFieldProps } from '#/ui-lib/types';
+import { FieldContext, FieldState, InputFormFieldProps } from '#/ui-lib/types';
 import { FieldArray } from 'react-final-form-arrays';
+import { InputState } from '#/ui-lib/components/atoms/Input';
+import { RefCallBack } from 'react-hook-form';
 
 // --- Form Context -------------------------------------------------------
 // TODO
@@ -71,40 +74,19 @@ function Field<TValue = any>({
   required?: boolean;
   children: (props: InputFormFieldProps<TValue>) => ReactNode;
 }) {
-  const form = useForm();
-  const formState = useFormState();
+  const getContextValue = useFieldContextValue<TValue>({
+    required,
+    name,
+  });
 
   return (
     <FinalField<TValue>
       name={name}
       render={renderProps => {
-        const childrenProps: InputFormFieldProps<TValue> = {
-          form: {
-            isValid: formState.valid,
-          },
-          field: {
-            required,
-            name,
-            disabled: renderProps.input.disabled || false, // FIXME add real value
-            isDirty: renderProps.meta.dirty,
-            isValidating: renderProps.meta.validating,
-            isTouched: renderProps.meta.touched,
-            error: renderProps.meta.error,
-            state: renderProps.meta.error ? 'invalid' : 'valid',
-          },
-          input: {
-            required,
-            value: renderProps.input.value,
-            disabled: renderProps.input.disabled || false,
-            name: renderProps.input.name,
-            ref: renderProps.input.ref,
-            onChange: () => null,
-            onBlur: renderProps.input.onBlur,
-            onValueUpdate: newValue => {
-              form.change(renderProps.input.name, newValue);
-            },
-          },
-        };
+        const childrenProps = getContextValue({
+          meta: renderProps.meta,
+          input: renderProps.input,
+        });
 
         return (
           <FormFieldContext.Provider value={childrenProps.field}>
@@ -117,9 +99,111 @@ function Field<TValue = any>({
 }
 
 Field.displayName = 'Form.Field';
-
-// --- Exports --------------------------------------------------------------
 Form.Field = Field;
-Form.FieldArray = FieldArray;
+
+// --- Field Array ----------------------------------------------------------
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function FieldArrayLocal<TValue = any>(
+  props: ComponentProps<typeof FieldArray<TValue>> & {
+    required?: boolean;
+  },
+) {
+  const getContextValue = useFieldContextValue<TValue[]>({
+    required: props.required || false,
+    name: props.name,
+  });
+
+  return (
+    <FieldArray
+      {...props}
+      render={renderProps => {
+        const context = getContextValue({
+          meta: renderProps.meta,
+          input: {
+            disabled: false,
+            value: renderProps.fields.value,
+            ref: undefined,
+            onBlur: undefined,
+          },
+        });
+
+        let content: ReactNode = null;
+
+        if (props.render) {
+          content = props.render?.(renderProps);
+        } else if (typeof props.children === 'function') {
+          content = props.children(renderProps);
+        } else if (typeof props.children === 'object') {
+          content = props.children;
+        }
+
+        return (
+          <FormFieldContext.Provider value={context.field}>
+            {content}
+          </FormFieldContext.Provider>
+        );
+      }}
+    />
+  );
+}
+Form.displayName = 'Form.FieldArray';
+Form.FieldArray = FieldArrayLocal;
+
+// --- Other --------------------------------------------------------------
+
+function useFieldContextValue<TValue>(arg: { required: boolean; name: string }) {
+  const form = useForm();
+  const formState = useFormState();
+
+  let fieldState: FieldState = 'valid';
+  let inputState: InputState = 'valid';
+
+  return (
+    renderProps: Pick<FieldRenderProps<TValue, HTMLElement, TValue>, 'meta'> & {
+      input: {
+        disabled?: boolean;
+        value: TValue;
+        ref?: RefCallBack;
+        onBlur?: (event?: React.FocusEvent<HTMLElement>) => void;
+      };
+    },
+  ) => {
+    if (renderProps.meta.error && renderProps.meta.touched) {
+      fieldState = 'invalid';
+      inputState = 'error';
+    }
+
+    const childrenProps: InputFormFieldProps<TValue> = {
+      form: {
+        isValid: formState.valid,
+      },
+      field: {
+        required: arg.required,
+        name: arg.name,
+        disabled: renderProps.input.disabled || false, // FIXME add real value
+        isDirty: renderProps.meta.dirty,
+        isValidating: renderProps.meta.validating,
+        isTouched: renderProps.meta.touched,
+        error: renderProps.meta.error,
+        state: fieldState,
+      },
+      input: {
+        required: arg.required,
+        state: inputState,
+        value: renderProps.input.value,
+        disabled: renderProps.input.disabled || false,
+        name: arg.name,
+        ref: renderProps.input.ref,
+        onChange: () => null,
+        onBlur: renderProps.input.onBlur,
+        onValueUpdate: newValue => {
+          form.change(arg.name, newValue);
+        },
+      },
+    };
+
+    return childrenProps;
+  };
+}
 
 export { Form, useFormFieldContext };

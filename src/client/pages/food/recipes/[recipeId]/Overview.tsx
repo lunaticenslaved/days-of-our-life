@@ -4,9 +4,9 @@ import { FOOD_NAVIGATION } from '../../index';
 import { FoodRecipeOutput, FoodNutrientsList } from '#/client/entities/food';
 import { multiplyNutrients } from '#/shared/models/food';
 import { useState } from 'react';
-import { useGetFoodRecipeQuery } from '#/client/store';
 import { Page } from '#/client/widgets/Page';
 import { NumberInput } from '#/ui-lib/components/molecules/NumberInput';
+import { useGetFoodRecipeQuery } from '#/client/entities/food/recipes';
 
 export default function FoodRecipeOverviewPage() {
   const { recipeId = '' } = useFoodPageParams();

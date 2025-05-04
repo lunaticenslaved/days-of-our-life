@@ -5,21 +5,34 @@ import {
   useDeleteFoodProductMutation,
   useUpdateFoodProductMutation,
 } from '#/client/entities/food/products';
+import { useFoodCacheStrict } from '#/client/entities/food/cache';
 
 type FoodProductActionsProps = Omit<
   ComponentProps<typeof ActionsComponent>,
-  'loading' | 'disabled' | 'onDelete' | 'onEdit'
->;
+  'loading' | 'disabled' | 'onDelete' | 'onEdit' | 'entity'
+> & {
+  productId: string;
+  onDeleted: () => void;
+};
 
-export function ActionsContainer(props: FoodProductActionsProps) {
+export function ActionsContainer({
+  productId,
+  onDeleted,
+  ...props
+}: FoodProductActionsProps) {
+  const product = useFoodCacheStrict().products.get(productId);
+
   const navigation = useFoodNavigation();
 
-  const deleting = useDeleteFoodProductMutation(props.entity.id);
-  const updating = useUpdateFoodProductMutation(props.entity.id);
+  const updating = useUpdateFoodProductMutation(productId);
+  const deleting = useDeleteFoodProductMutation(productId, {
+    onSuccess: onDeleted,
+  });
 
   return (
     <ActionsComponent
       {...props}
+      entity={product}
       onDelete={product => {
         deleting.mutate({
           id: product.id,

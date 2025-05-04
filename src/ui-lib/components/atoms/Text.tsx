@@ -6,7 +6,7 @@ import { getWidthStyles, SHOULD_FORWARD_WIDTH, WidthProps } from '#/ui-lib/utils
 import styled, { CSSProperties, StyledObject } from 'styled-components';
 
 // --- Settings ---------------------------------------------------------------------------
-type TextVariant = 'body-m' | 'body-s' | 'header-m' | 'header-xs';
+type TextVariant = 'body-m' | 'body-s' | 'header-m' | 'header-s' | 'header-xs';
 type CommonTextProps = Pick<CSSProperties, 'whiteSpace' | 'wordWrap'> &
   WidthProps & {
     variant?: TextVariant;
@@ -41,8 +41,12 @@ function getStyles({
     result.fontSize = getDimensions(3);
   } else if (variant === 'header-m') {
     result.fontSize = getDimensions(5);
+  } else if (variant === 'header-s') {
+    result.fontSize = getDimensions(4);
+    result.fontWeight = 'bold';
   } else if (variant === 'header-xs') {
     result.fontSize = getDimensions(3);
+    result.fontWeight = 'bold';
   } else {
     nonReachable(variant);
   }

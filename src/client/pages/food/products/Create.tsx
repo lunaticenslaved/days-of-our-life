@@ -1,4 +1,4 @@
-import { FoodProductForm } from '#/client/entities/food';
+import { FoodProductForm } from '#/client/entities/food/products';
 import { useFoodNavigation } from '#/client/pages/food';
 import { Page } from '#/client/widgets/Page';
 

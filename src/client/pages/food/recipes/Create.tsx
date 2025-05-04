@@ -1,6 +1,9 @@
-import { FoodRecipeForm } from '#/client/entities/food';
+import {
+  FoodRecipeForm,
+  useCreateFoodRecipeMutation,
+  useFoodRecipeFormData,
+} from '#/client/entities/food/recipes';
 import { useFoodNavigation } from '#/client/pages/food';
-import { useCreateFoodRecipeMutation } from '#/client/store';
 import { Page } from '#/client/widgets/Page';
 
 export default function FoodRecipeCreatingPage() {
@@ -9,6 +12,12 @@ export default function FoodRecipeCreatingPage() {
   const creating = useCreateFoodRecipeMutation({
     onSuccess: recipe => navigation.toRecipeOverview({ recipeId: recipe.id }),
   });
+
+  const formData = useFoodRecipeFormData();
+
+  if (formData.isLoading) {
+    return 'Loading...';
+  }
 
   return (
     <Page>
