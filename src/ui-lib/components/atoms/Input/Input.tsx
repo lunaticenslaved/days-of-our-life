@@ -25,10 +25,12 @@ export function Backgroud({
   children,
   state,
   required,
+  label,
 }: {
   children: ReactNode;
   state: State;
   required: boolean;
+  label: ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const isFocusWithin = useFocusWithin(ref);
@@ -51,14 +53,37 @@ export function Backgroud({
         position: 'relative',
         display: 'flex',
         overflow: 'hidden',
+        alignItems: 'stretch',
       }}>
+      {!!label && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            maxWidth: '150px',
+            background: 'rgba(255,255,255, 0.05)',
+            fontWeight: 'bold',
+            padding: '10px 10px',
+          }}>
+          <div
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              height: '100%',
+            }}>
+            {label}
+          </div>
+        </div>
+      )}
+
       <div
         style={{
+          position: 'relative',
           display: 'flex',
           alignItems: 'center',
           gap: '8px',
-          width: required ? 'calc(100% - 25px)' : '100%',
-          right: required ? '25px' : undefined,
+          flexGrow: 1,
           ...getSpacingStyles(THEME.components.input.spacing['m']),
           minHeight: getDimensions(THEME.components.input.height['m']),
           height: 'max-content',
@@ -69,12 +94,10 @@ export function Backgroud({
       {!!required && (
         <div
           style={{
-            position: 'absolute',
-            right: 0,
             display: 'flex',
             justifyContent: 'center',
-            height: '100%',
             width: '25px',
+            minWidth: '25px',
             background: 'rgba(255,255,255, 0.05)',
             paddingTop: '14px',
           }}>
@@ -192,6 +215,7 @@ type InputProps = WithInputProps<
   clearable?: boolean;
   state?: 'error' | 'valid';
   required?: boolean;
+  label?: ReactNode;
 };
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
@@ -205,6 +229,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       clearable,
       state = 'valid',
       required = false,
+      label,
       ...props
     },
     ref,
@@ -231,7 +256,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     );
 
     return (
-      <Backgroud state={state} required={required}>
+      <Backgroud state={state} required={required} label={label}>
         {!!prepend && <Info state={state}>{prepend}</Info>}
         <input
           ref={ref}

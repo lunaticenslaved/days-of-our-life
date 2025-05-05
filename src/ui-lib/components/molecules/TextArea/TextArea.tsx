@@ -9,13 +9,14 @@ import { HTMLProps, ReactNode, useEffect, useRef, useState } from 'react';
 
 type TextAreaProps = WithInputProps<
   string | undefined,
-  HTMLProps<HTMLTextAreaElement> & {
+  Omit<HTMLProps<HTMLTextAreaElement>, 'label'> & {
     maxRows?: number;
     append?: ReactNode;
     prepend?: ReactNode;
     required?: boolean;
     state?: InputState;
     clearable?: boolean;
+    label?: ReactNode;
   }
 >;
 export function TextArea({
@@ -26,6 +27,7 @@ export function TextArea({
   required = false,
   state = 'valid',
   clearable,
+  label,
   ...props
 }: TextAreaProps) {
   const [value, _setValue] = useState(valueProp);
@@ -37,7 +39,7 @@ export function TextArea({
   const { ref } = useAutoSize();
 
   return (
-    <InputBackground state={state} required={required}>
+    <InputBackground state={state} required={required} label={label}>
       <div style={{ display: 'flex', gap: '8px', padding: '10px 0', width: '100%' }}>
         {!!append && <InputInfo state={state}>{append}</InputInfo>}
         <textarea

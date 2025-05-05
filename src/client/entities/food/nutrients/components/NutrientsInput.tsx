@@ -18,23 +18,23 @@ type NutrientsInputFormFieldProps = {
 const FIELDS = [
   {
     name: 'calories',
-    prepend: 'Ккал',
+    label: 'Ккал',
   },
   {
     name: 'proteins',
-    prepend: 'Белки',
+    label: 'Белки',
   },
   {
     name: 'fats',
-    prepend: 'Жиры',
+    label: 'Жиры',
   },
   {
     name: 'carbs',
-    prepend: 'Углеводы',
+    label: 'Углеводы',
   },
   {
     name: 'fibers',
-    prepend: 'Клетчатка',
+    label: 'Клетчатка',
   },
 ];
 
@@ -52,11 +52,7 @@ export function NutrientsInputFormField({ name }: NutrientsInputFormFieldProps) 
                   <Field.Input>
                     <NumberInput
                       {...fieldProps.input}
-                      prepend={
-                        <Text wordWrap="unset" minWidth="max-content">
-                          {field.prepend}:
-                        </Text>
-                      }
+                      label={field.label}
                       append={
                         <Text wordWrap="unset" minWidth="max-content">
                           на 100 г
