@@ -4,6 +4,9 @@ import { orderBy } from 'lodash';
 import { z } from 'zod';
 import { ERROR_MESSAGES } from '#/shared/validation';
 
+export * from './homemade';
+export * from './applications';
+
 export interface CosmeticProduct {
   id: string;
   name: string;
@@ -84,6 +87,9 @@ export interface CosmeticIngredient {
   description: string | null;
   benefitIds: string[];
   INCIIngredientIds: string[];
+  storage: {
+    grams: number;
+  };
 }
 
 export const CosmeticIngredientValidators = (() => {

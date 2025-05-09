@@ -2,6 +2,8 @@ import type { Preview } from '@storybook/react';
 import { StyleSheetManager } from 'styled-components';
 import isPropValid from '@emotion/is-prop-valid';
 
+import {AppContextProvider} from '../src/client/app/AppContext'
+
 const preview: Preview = {
   parameters: {
     backgrounds: {
@@ -14,9 +16,9 @@ const preview: Preview = {
     },
   },
   decorators: [
-    Story => <StyleSheetManager shouldForwardProp={isPropValid}>
+    Story => <AppContextProvider api='test'>
         <Story />
-    </StyleSheetManager>
+    </AppContextProvider>
   ],
 };
 

@@ -18,7 +18,7 @@ export const BUTTON_VIEWS: ButtonView[] = ['clear', 'filled', 'toned', 'outlined
 const DEFAULT_COLOR: Color = 'primary';
 const DEFAULT_VIEW: ButtonView = 'filled';
 
-// FIXME add disabled and loading ui
+// FIXME add loading state
 type CommonButtonProps = ColorProps &
   WidthProps & {
     size?: Size;
@@ -29,7 +29,7 @@ type CommonButtonProps = ColorProps &
 
 const shouldForwardProp = checkProps<CommonButtonProps>({
   loading: false,
-  disabled: false,
+  disabled: true,
   color: false,
   size: false,
   view: false,
@@ -40,6 +40,7 @@ function getStyle({
   color = DEFAULT_COLOR,
   view = DEFAULT_VIEW,
   size = DEFAULT_SIZE,
+  disabled,
   ...props
 }: CommonButtonProps): StyledObject {
   // TODO add disabled style
@@ -89,6 +90,11 @@ function getStyle({
     };
   } else {
     nonReachable(view);
+  }
+
+  if (disabled) {
+    styles['&:hover'] = undefined;
+    styles.opacity = '0.6';
   }
 
   return {

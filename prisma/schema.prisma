@@ -301,9 +301,10 @@ model CosmeticIngredient {
   name        String  @db.Char(255)
   description String? @db.Char(1000)
 
-  benefits CosmeticBenefit[]
-  recipes  CosmeticRecipeIngredient[]
-  INCIs    CosmeticINCIIngredient[]
+  benefits     CosmeticBenefit[]
+  recipes      CosmeticRecipeIngredient[]
+  INCIs        CosmeticINCIIngredient[]
+  storageItems CosmeticHomemade_IngredientStorageItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -388,4 +389,13 @@ model CosmeticRecipeComment {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model CosmeticHomemade_IngredientStorageItem {
+  id String @id @default(uuid()) @db.Uuid
+
+  ingredientId String             @db.Uuid
+  ingredient   CosmeticIngredient @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
+
+  grams Float @db.DoublePrecision
 }

@@ -21,10 +21,10 @@ import { RefCallBack } from 'react-hook-form';
 // --- Form ---------------------------------------------------------------
 interface FormProps<TSchema extends Zod.SomeZodObject, TFormValues = z.infer<TSchema>> {
   schema: TSchema;
-  disabled?: boolean; // TODO use in form context
+  disabled?: boolean;
   initialValues: TFormValues;
   onSubmit(values: TFormValues): void | Promise<void>;
-  children(props: FormRenderProps<z.infer<TSchema>>): ReactNode;
+  children(props: FormRenderProps<z.infer<TSchema>> & IFormContext): ReactNode;
 }
 
 function Form<TSchema extends Zod.SomeZodObject>({
@@ -32,6 +32,7 @@ function Form<TSchema extends Zod.SomeZodObject>({
   children,
   schema,
   initialValues,
+  disabled = false,
 }: FormProps<TSchema>) {
   type TFormValues = z.infer<TSchema>;
 
@@ -44,10 +45,17 @@ function Form<TSchema extends Zod.SomeZodObject>({
       initialValues={initialValues}
       mutators={{ ...arrayMutators }}>
       {formRenderProps => {
+        const contextValue: IFormContext = { disabled };
+
         return (
-          <form onSubmit={formRenderProps.handleSubmit} style={{ display: 'contents' }}>
-            {children(formRenderProps)}
-          </form>
+          <FormContext.Provider value={contextValue}>
+            <form onSubmit={formRenderProps.handleSubmit} style={{ display: 'contents' }}>
+              {children({
+                ...formRenderProps,
+                ...contextValue,
+              })}
+            </form>
+          </FormContext.Provider>
         );
       }}
     </FinalForm>
@@ -55,6 +63,16 @@ function Form<TSchema extends Zod.SomeZodObject>({
 }
 
 Form.displayName = 'Form';
+
+// --- Form Context ---------------------------------------------------------
+interface IFormContext {
+  disabled: boolean;
+}
+const FormContext = createContext<IFormContext | null>(null);
+
+function useFormContext() {
+  return useContext(FormContext);
+}
 
 // --- Form Field Context ---------------------------------------------------
 const FormFieldContext = createContext<FieldContext | null>(null);
@@ -155,6 +173,8 @@ function useFieldContextValue<TValue>(arg: { required: boolean; name: string }) 
   const form = useForm();
   const formState = useFormState();
 
+  const formContext = useFormContext();
+
   let fieldState: FieldState = 'valid';
   let inputState: InputState = 'valid';
 
@@ -173,6 +193,8 @@ function useFieldContextValue<TValue>(arg: { required: boolean; name: string }) 
       inputState = 'error';
     }
 
+    const disabled = renderProps.input.disabled || formContext?.disabled || false;
+
     const childrenProps: InputFormFieldProps<TValue> = {
       form: {
         isValid: formState.valid,
@@ -180,7 +202,7 @@ function useFieldContextValue<TValue>(arg: { required: boolean; name: string }) 
       field: {
         required: arg.required,
         name: arg.name,
-        disabled: renderProps.input.disabled || false, // FIXME add real value
+        disabled,
         isDirty: renderProps.meta.dirty,
         isValidating: renderProps.meta.validating,
         isTouched: renderProps.meta.touched,
@@ -191,7 +213,7 @@ function useFieldContextValue<TValue>(arg: { required: boolean; name: string }) 
         required: arg.required,
         state: inputState,
         value: renderProps.input.value,
-        disabled: renderProps.input.disabled || false,
+        disabled,
         name: arg.name,
         ref: renderProps.input.ref,
         onChange: () => null,

@@ -13,6 +13,8 @@ import { DateUtils } from '#/shared/models/date';
 import { CosmeticApplication } from '#/shared/models/cosmetic/applications';
 import _ from 'lodash';
 
+export * from './ingredient-storage';
+
 export const COSMETIC_PRODUCT_SELECTOR = {
   select: {
     id: true,
@@ -43,6 +45,11 @@ export const COSMETIC_INGREDIENT_SELECTOR = {
     benefits: {
       select: {
         id: true,
+      },
+    },
+    storageItems: {
+      select: {
+        grams: true,
       },
     },
   },
@@ -76,6 +83,7 @@ export function convertCosmeticProductSelector(
 export function convertCosmeticIngredientSelector({
   benefits,
   INCIs,
+  storageItems,
   ...data
 }: Prisma.CosmeticIngredientGetPayload<
   typeof COSMETIC_INGREDIENT_SELECTOR
@@ -84,6 +92,9 @@ export function convertCosmeticIngredientSelector({
     ...data,
     INCIIngredientIds: INCIs.map(i => i.id),
     benefitIds: benefits.map(benefit => benefit.id),
+    storage: {
+      grams: _.sumBy(storageItems, item => item.grams),
+    },
   };
 }
 

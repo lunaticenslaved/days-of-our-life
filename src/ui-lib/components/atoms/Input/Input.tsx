@@ -26,10 +26,12 @@ export function Backgroud({
   state,
   required,
   label,
+  disabled,
 }: {
   children: ReactNode;
   state: State;
   required: boolean;
+  disabled: boolean;
   label: ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -54,6 +56,7 @@ export function Backgroud({
         display: 'flex',
         overflow: 'hidden',
         alignItems: 'stretch',
+        opacity: disabled ? '0.5' : undefined,
       }}>
       {!!label && (
         <div
@@ -216,6 +219,7 @@ type InputProps = WithInputProps<
   state?: 'error' | 'valid';
   required?: boolean;
   label?: ReactNode;
+  disabled?: boolean;
 };
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
@@ -230,6 +234,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       state = 'valid',
       required = false,
       label,
+      disabled = false,
       ...props
     },
     ref,
@@ -256,7 +261,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     );
 
     return (
-      <Backgroud state={state} required={required} label={label}>
+      <Backgroud disabled={disabled} state={state} required={required} label={label}>
         {!!prepend && <Info state={state}>{prepend}</Info>}
         <input
           ref={ref}

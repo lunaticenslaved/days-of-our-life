@@ -6,6 +6,7 @@ import {
 } from '#/ui-lib/components';
 import { WithInputProps } from '#/ui-lib/types';
 import { HTMLProps, ReactNode, useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
 
 type TextAreaProps = WithInputProps<
   string | undefined,
@@ -17,6 +18,7 @@ type TextAreaProps = WithInputProps<
     state?: InputState;
     clearable?: boolean;
     label?: ReactNode;
+    disabled?: boolean;
   }
 >;
 export function TextArea({
@@ -28,6 +30,7 @@ export function TextArea({
   state = 'valid',
   clearable,
   label,
+  disabled = false,
   ...props
 }: TextAreaProps) {
   const [value, _setValue] = useState(valueProp);
@@ -39,10 +42,10 @@ export function TextArea({
   const { ref } = useAutoSize();
 
   return (
-    <InputBackground state={state} required={required} label={label}>
+    <InputBackground disabled={disabled} state={state} required={required} label={label}>
       <div style={{ display: 'flex', gap: '8px', padding: '10px 0', width: '100%' }}>
         {!!append && <InputInfo state={state}>{append}</InputInfo>}
-        <textarea
+        <StyledTextArea
           {...props}
           ref={ref}
           value={value ? String(value) : ''}
@@ -84,6 +87,14 @@ export function TextArea({
   );
 }
 
+const StyledTextArea = styled.textarea(() => {
+  return {
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
+  };
+});
+
 function useAutoSize() {
   const currentEl = useRef<HTMLTextAreaElement>();
   const removeListenersFn = useRef<() => void>(() => null);
@@ -98,18 +109,18 @@ function useAutoSize() {
 
         /* 0-timeout to get the already changed text */
         const delayedResize = () => {
-          window.setTimeout(resize, 0);
+          setTimeout(resize, 0);
         };
 
         removeListenersFn.current();
+
+        resize();
 
         text.addEventListener('change', resize);
         text.addEventListener('cut', delayedResize);
         text.addEventListener('paste', delayedResize);
         text.addEventListener('drop', delayedResize);
         text.addEventListener('keydown', delayedResize);
-
-        resize();
 
         removeListenersFn.current = () => {
           text.removeEventListener('change', resize);

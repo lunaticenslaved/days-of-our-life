@@ -6,6 +6,7 @@ import {
   ReactNode,
   RefObject,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -15,7 +16,7 @@ import {
 
 // --- Popup Context ---------------------------------------------------------------------
 interface IPopupContext extends ReturnType<typeof usePopup> {
-  triggerEl: RefObject<Element>;
+  setRef: (el: Element | null) => void;
   contentEl: RefObject<Element>;
   position: {
     top: number;
@@ -51,33 +52,54 @@ function usePopup(arg: { isOpen?: boolean } = {}) {
 type IUsePopup = ReturnType<typeof usePopup>;
 
 // --- Popup Root -----------------------------------------------------------------------
-type PopupProps = PropsWithChildren & { popup?: IUsePopup };
-function Popup({ children, popup: popupProp }: PopupProps) {
+type PopupProps = PropsWithChildren & {
+  popup?: IUsePopup;
+  triggerEl?: RefObject<Element>;
+};
+function Popup({ children, popup: popupProp, triggerEl: triggerElProp }: PopupProps) {
   const popupLocal = usePopup();
   const popup = popupProp || popupLocal;
 
-  const triggerEl = useRef<Element>(null);
+  const triggerElLocal = useRef<Element | null>(null);
+
   const contentEl = useRef<Element>(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
 
-  useClickOutside([contentEl, triggerEl], popup.close);
+  useClickOutside(
+    [contentEl, triggerElLocal, ...(triggerElProp ? [triggerElProp] : [])],
+    popup.close,
+  );
+
+  const [isOpen, setIsOpen] = useState(false);
+  useEffect(() => {
+    if (popup.isOpen) {
+      if (triggerElProp?.current) {
+        const { bottom, left } = triggerElProp.current.getBoundingClientRect();
+
+        setPosition({ top: bottom, left });
+        setIsOpen(true);
+      } else if (triggerElLocal.current) {
+        const { bottom, left } = triggerElLocal.current.getBoundingClientRect();
+
+        setPosition({ top: bottom, left });
+        setIsOpen(true);
+      }
+    } else {
+      setIsOpen(false);
+    }
+  }, [popup.isOpen, triggerElProp]);
 
   const contextValue = useMemo((): IPopupContext => {
     return {
       ...popup,
-      triggerEl,
       contentEl,
       position,
-      open: () => {
-        if (triggerEl.current) {
-          const { bottom, left } = triggerEl.current.getBoundingClientRect();
-
-          setPosition({ top: bottom, left });
-          popup.open();
-        }
+      isOpen,
+      setRef: el => {
+        triggerElLocal.current = el;
       },
     };
-  }, [popup, position]);
+  }, [isOpen, popup, position]);
 
   return <PopupContext.Provider value={contextValue}>{children}</PopupContext.Provider>;
 }
@@ -85,13 +107,10 @@ Popup.displayName = 'Popup';
 
 // --- Popup Trigger ---------------------------------------------------------------------
 function PopupTrigger({ children }: PropsWithChildren) {
-  const { open, triggerEl } = usePopupContext();
+  const { open, setRef } = usePopupContext();
 
   return (
-    <div
-      onClick={open}
-      style={{ maxWidth: 'max-content' }}
-      ref={triggerEl as RefObject<HTMLDivElement>}>
+    <div onClick={open} style={{ maxWidth: 'max-content' }} ref={setRef}>
       {children}
     </div>
   );

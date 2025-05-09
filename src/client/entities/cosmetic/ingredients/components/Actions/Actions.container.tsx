@@ -1,6 +1,9 @@
 import { ActionsComponent } from './Actions.component';
 import { useCosmeticNavigation } from '#/client/pages/cosmetic';
-import { useDeleteCosmeticIngredientMutation } from '../../store';
+import {
+  useDeleteCosmeticIngredientMutation,
+  useUpdateCosmeticIngredientMutation,
+} from '../../store';
 import { useCosmeticCacheStrict } from '#/client/entities/cosmetic/cache';
 
 type ActionsProps = {
@@ -12,29 +15,29 @@ export function Actions({ onDeleted, ingredientId }: ActionsProps) {
   const cosmeticNavigation = useCosmeticNavigation();
   const cache = useCosmeticCacheStrict();
 
-  const deleteCosmeticIngredientMutation = useDeleteCosmeticIngredientMutation(
-    ingredientId,
-    {
-      onMutate: onDeleted,
-    },
-  );
+  const deleting = useDeleteCosmeticIngredientMutation(ingredientId, {
+    onMutate: onDeleted,
+  });
+  const updating = useUpdateCosmeticIngredientMutation(ingredientId, {
+    onMutate: onDeleted,
+  });
 
   return (
     <ActionsComponent
       entity={cache.ingredients.get(ingredientId)}
       onDelete={ingredient => {
-        deleteCosmeticIngredientMutation.mutate(ingredient);
+        deleting.mutate(ingredient);
       }}
       onEdit={ingredient => {
         cosmeticNavigation.toIngredientEdit({ ingredientId: ingredient.id });
       }}
       disabled={{
-        edit: false,
-        delete: deleteCosmeticIngredientMutation.isPending,
+        edit: deleting.isPending,
+        delete: deleting.isPending,
       }}
       loading={{
-        edit: false,
-        delete: deleteCosmeticIngredientMutation.isPending,
+        edit: updating.isPending,
+        delete: deleting.isPending,
       }}
     />
   );

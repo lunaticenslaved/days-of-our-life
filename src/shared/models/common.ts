@@ -27,7 +27,9 @@ export const CommonValidators = {
     ZodStringDef
   >,
   number: (arg: { min?: number; max?: number } = {}) => {
-    let validator = z.number({ message: ERROR_MESSAGES.required });
+    let validator = z.number({
+      invalid_type_error: ERROR_MESSAGES.required,
+    });
 
     if (typeof arg.min === 'number') {
       validator = validator.min(arg.min, ERROR_MESSAGES.minNumber(arg.min));

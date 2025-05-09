@@ -78,6 +78,9 @@ export function useCreateCosmeticIngredientMutation(
         description: request.description || null,
         INCIIngredientIds: request.INCIIngredientIds,
         benefitIds: request.benefitIds,
+        storage: {
+          grams: 0,
+        },
       };
 
       updateCosmeticIngredientsQueries(cache.ingredients, {
@@ -202,6 +205,9 @@ export function useUpdateCosmeticIngredientMutation(
         description: request.newData.description || null,
         INCIIngredientIds: request.newData.INCIIngredientIds,
         benefitIds: request.newData.benefitIds,
+        storage: {
+          grams: 0,
+        },
       };
 
       updateCosmeticIngredientsQueries(cache.ingredients, {

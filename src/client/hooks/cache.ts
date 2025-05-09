@@ -28,6 +28,7 @@ export function useItemCache<TItem>(
         setMap(value => ({ ...value, [getKey(item)]: item }));
       },
       update: item => {
+        console.log('update', item);
         setMap(value => {
           const key = getKey(item);
 

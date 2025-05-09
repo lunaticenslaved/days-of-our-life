@@ -70,6 +70,10 @@ import {
   ListCosmeticApplicationsRequest,
   ListCosmeticApplicationsResponse,
 } from '#/shared/api/types/cosmetic';
+import {
+  CreateCosmeticHomemade_StorageItemRequest,
+  CreateCosmeticHomemade_StorageItemResponse,
+} from '#/shared/api/types/cosmetic/homemade';
 import { createAction } from '#/shared/api/utils';
 
 export const CosmeticSchema = {
@@ -341,5 +345,16 @@ export const CosmeticSchema = {
     path: () => `/api/cosmetic/applications`,
     method: 'GET',
     query: data => data,
+  }),
+
+  // --- Cosmetic Homemade Ingredient Store ---------------------------------
+  updateHomemadeCosmeticIngredientStorage: createAction<
+    CreateCosmeticHomemade_StorageItemRequest,
+    CreateCosmeticHomemade_StorageItemResponse
+  >({
+    path: ({ ingredientId }) =>
+      `/api/cosmetic/homemade/ingredients/${ingredientId}/storage`,
+    method: 'POST',
+    body: ({ ingredientId: _ingredientId, ...data }) => data,
   }),
 };

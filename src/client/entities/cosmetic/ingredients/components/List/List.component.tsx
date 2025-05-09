@@ -38,7 +38,9 @@ export function ListComponent({
                 keywords={getCosmeticIngredientKeywords(ingredient)}
                 onClick={() => onItemClick?.(ingredient)}>
                 <Flex gap={2} alignItems="center">
-                  <Text>{ingredient.name}</Text>
+                  <Box flexGrow={1}>
+                    <Text>{ingredient.name}</Text>
+                  </Box>
                   {!!renderActions && <Box>{renderActions?.(ingredient)}</Box>}
                 </Flex>
               </List.Item>
