@@ -10,6 +10,7 @@ type ListComponentProps = WithInputProps<
     products: FoodProduct[];
     renderActions?: (ing: FoodProduct) => ReactNode;
     onItemClick?: (ing: FoodProduct) => void;
+    autoFocus?: 'search';
   }
 >;
 
@@ -19,6 +20,7 @@ export function ListComponent({
   products,
   renderActions,
   onItemClick,
+  autoFocus,
 }: ListComponentProps) {
   const orderedProducts = useMemo(() => {
     return orderFoodProducts(products);
@@ -27,7 +29,7 @@ export function ListComponent({
   return (
     <List value={value} onValueUpdate={onValueUpdate}>
       <Box spacing={{ px: 4, pt: 4 }}>
-        <List.Search placeholder="Поиск..." />
+        <List.Search placeholder="Поиск..." autoFocus={autoFocus === 'search'} />
       </Box>
       <List.Empty>
         <Box spacing={{ px: 4 }}>Продукты не найдены</Box>

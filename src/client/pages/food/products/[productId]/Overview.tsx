@@ -1,6 +1,9 @@
 import { multiplyNutrients } from '#/shared/models/food';
 import { FoodNutrientsList } from '#/client/entities/food';
-import { FoodProductActions } from '#/client/entities/food/products';
+import {
+  FoodProductActions,
+  useFoodProductActionsContainer,
+} from '#/client/entities/food/products';
 import { useGetFoodProductQuery } from '#/client/entities/food/products';
 import { useFoodNavigation, useFoodPageParams } from '#/client/pages/food';
 import { Page } from '#/client/widgets/Page';
@@ -10,6 +13,13 @@ export default function FoodProductOverviewPage() {
   const query = useGetFoodProductQuery(productId);
 
   const navigation = useFoodNavigation();
+
+  const actionsContainer = useFoodProductActionsContainer({
+    productId,
+    onDeleted: () => {
+      navigation.toProducts();
+    },
+  });
 
   if (query.isLoading) {
     return <div>Loading...</div>;
@@ -27,12 +37,7 @@ export default function FoodProductOverviewPage() {
       <Page.Header>
         <Page.Title>{product.name}</Page.Title>
         <Page.Actions>
-          <FoodProductActions
-            productId={productId}
-            onDeleted={() => {
-              navigation.toProducts();
-            }}
-          />
+          <FoodProductActions {...actionsContainer} entity={query.data} />
         </Page.Actions>
       </Page.Header>
 

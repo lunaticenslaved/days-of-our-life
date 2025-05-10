@@ -3,12 +3,19 @@ import {
   FoodProductFilters,
   FoodProductsTable,
   useFoodProductFilters,
+  useFoodProductsTableContainer,
 } from '#/client/entities/food/products';
-import { FoodProductActions } from '#/client/entities/food/products';
 import { Page } from '#/client/widgets/Page';
 
 export default function FoodProductsPage() {
   const productsFilters = useFoodProductFilters();
+  const tableContainer = useFoodProductsTableContainer({
+    filter: productsFilters.filter,
+    actions: {
+      use: true,
+      onDeleted: () => null,
+    },
+  });
 
   return (
     <Page>
@@ -27,11 +34,7 @@ export default function FoodProductsPage() {
       </Page.Header>
 
       <Page.Content>
-        <FoodProductsTable
-          renderActions={product => {
-            return <FoodProductActions productId={product.id} onDeleted={() => null} />;
-          }}
-        />
+        <FoodProductsTable {...tableContainer} />
       </Page.Content>
     </Page>
   );

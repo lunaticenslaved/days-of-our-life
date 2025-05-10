@@ -1,18 +1,18 @@
 import { FoodProduct } from '#/shared/models/food';
 import { Flex } from '#/ui-lib/components/atoms/Flex';
 import { TextInput } from '#/ui-lib/components/molecules/TextInput';
-import { InputProps } from '#/ui-lib/types';
+import { WithInputProps } from '#/ui-lib/types';
 import { useCallback, useState } from 'react';
 
-type FoodProductFiltersValues = {
+export type FoodProductFiltersValues = {
   search?: string;
 };
 
-type FoodProductFiltersProps = InputProps<FoodProductFiltersValues>;
+type FoodProductFiltersProps = WithInputProps<FoodProductFiltersValues>;
 
 export function FoodProductFilters({ value, onValueUpdate }: FoodProductFiltersProps) {
   const update = (newValue: Partial<FoodProductFiltersValues>) => {
-    onValueUpdate({
+    onValueUpdate?.({
       ...value,
       ...newValue,
     });
@@ -22,7 +22,7 @@ export function FoodProductFilters({ value, onValueUpdate }: FoodProductFiltersP
     <Flex>
       <TextInput
         placeholder="Поиск"
-        value={value.search}
+        value={value?.search}
         onValueUpdate={search => update({ search })}
       />
     </Flex>

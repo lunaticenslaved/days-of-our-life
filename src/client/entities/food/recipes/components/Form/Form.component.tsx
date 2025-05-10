@@ -242,6 +242,7 @@ export function FormComponent({ onSubmit, recipe, onFindProduct }: FormComponent
                                                       return (
                                                         <Box color="background">
                                                           <FoodProductsList
+                                                            autoFocus="search"
                                                             onItemClick={product => {
                                                               fields.push({
                                                                 productId: product.id,
