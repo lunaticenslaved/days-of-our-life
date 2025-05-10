@@ -3,7 +3,10 @@ import {
   CosmeticIngredientValidators,
 } from '#/shared/models/cosmetic';
 import { z } from 'zod';
-import { CosmeticBenefitTagSelect } from '#/client/entities/cosmetic/benefits';
+import {
+  CosmeticBenefitsCloud,
+  useListCosmeticBenefitsQuery,
+} from '#/client/entities/cosmetic/benefits';
 import { CosmeticINCIIngredientTagSelect } from '#/client/entities/cosmetic/inci-indgredients';
 import { TextArea } from '#/ui-lib/components/atoms/TextArea';
 import { TextInput } from '#/ui-lib/components/molecules/TextInput';
@@ -11,7 +14,6 @@ import { Form } from '#/ui-lib/components/atoms/Form';
 import { Field } from '#/ui-lib/components/atoms/Field';
 import { useMemo } from 'react';
 import { Button } from '#/ui-lib/components/atoms/Button/Button';
-import { useListCosmeticBenefitsQuery } from '#/client/store/cosmetic';
 import { Flex } from '#/ui-lib/components/atoms/Flex';
 
 const schema = z.object({
@@ -105,8 +107,9 @@ export function FormComponent({
                   <Field>
                     <Field.Label>Направления действия</Field.Label>
                     <Field.Input>
-                      <CosmeticBenefitTagSelect
+                      <CosmeticBenefitsCloud
                         {...fieldProps.input}
+                        isFetchingBenefits={false}
                         benefits={benefits}
                       />
                     </Field.Input>

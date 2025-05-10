@@ -1,10 +1,15 @@
-// Component
+export { CosmeticBenefitSingleSelect } from './components/Select';
 export {
-  CosmeticBenefitMultipleSelect,
-  CosmeticBenefitSingleSelect,
-} from './components/Select';
-export { BenefitTagSelect as CosmeticBenefitTagSelect } from './components/TagSelect';
+  CosmeticBenefitsCloud,
+  useCosmeticBenefitsCloudContainer,
+} from './components/Cloud';
+export {
+  CosmeticBenefitsList,
+  useCosmeticBenefitsListContainer,
+} from './components/List';
+export {
+  CosmeticBenefitCreatingAction,
+  useCosmeticBenefitCreatingActionContainer,
+} from './components/CreatingAction';
 
-// Containers
-export { ListContainer as CosmeticBenefitsList } from './containers/List';
-export { CreatingAction as CosmeticBenefitCreatingAction } from './containers/CreatingAction';
+export * from './queries';

@@ -16,3 +16,4 @@ export * from './molecules/TextInput';
 export * from './molecules/TextArea';
 export * from './molecules/NumberInput';
 export * from './molecules/List';
+export * from './molecules/Label';

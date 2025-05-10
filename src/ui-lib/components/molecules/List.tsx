@@ -305,7 +305,9 @@ const LI = styled.li.withConfig({
 });
 
 // --- List Search --------------------------------------------------------------------------
-function ListSearch(props: Pick<ComponentProps<typeof Input>, 'placeholder'>) {
+function ListSearch(
+  props: Pick<ComponentProps<typeof Input>, 'placeholder' | 'autoFocus'>,
+) {
   const { search, setSearch } = useListContext();
 
   return (

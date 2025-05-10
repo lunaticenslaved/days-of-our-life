@@ -4,6 +4,7 @@ import {
 } from '#/client/entities/cosmetic/event-bus';
 import { ItemStore, useItemCache } from '#/client/hooks/cache';
 import {
+  CosmeticBenefit,
   CosmeticINCIIngredient,
   CosmeticIngredient,
   CosmeticProduct,
@@ -19,6 +20,7 @@ interface ICosmeticStore {
   recipes: ItemStore<CosmeticRecipe>;
   inciIngredients: ItemStore<CosmeticINCIIngredient>;
   ingredients: ItemStore<CosmeticIngredient>;
+  benefits: ItemStore<CosmeticBenefit>;
 }
 
 const Context = createContext<ICosmeticStore | null>(null);
@@ -30,6 +32,7 @@ interface CosmeticCacheProviderProps {
   applications?: CosmeticApplication[];
   inciIngredients?: CosmeticINCIIngredient[];
   ingredients?: CosmeticIngredient[];
+  benefits?: CosmeticBenefit[];
 }
 
 const getKey = (arg: { id: string }) => arg.id;
@@ -41,6 +44,7 @@ export function CosmeticCacheProvider({
   applications,
   inciIngredients,
   ingredients,
+  benefits,
 }: CosmeticCacheProviderProps) {
   const value: ICosmeticStore = {
     applications: useItemCache(getKey, applications),
@@ -48,6 +52,7 @@ export function CosmeticCacheProvider({
     recipes: useItemCache(getKey, recipes),
     inciIngredients: useItemCache(getKey, inciIngredients),
     ingredients: useItemCache(getKey, ingredients),
+    benefits: useItemCache(getKey, benefits),
   };
 
   const eventBus = useCosmeticEventBusStrict();

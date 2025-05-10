@@ -5,9 +5,9 @@ import {
 import { z } from 'zod';
 import { TextInput, Form, Field, Button } from '#/ui-lib/components';
 import { useMemo } from 'react';
-import { useListCosmeticBenefitsQuery } from '#/client/store/cosmetic';
 import { useListCosmeticINCIIngredientsQuery } from '#/client/entities/cosmetic/inci-indgredients';
 import { Flex } from '#/ui-lib/components/atoms/Flex';
+import { useListCosmeticBenefitsQuery } from '#/client/entities/cosmetic/benefits';
 
 const schema = z.object({
   name: CosmeticINCIIngredientValidators.name,

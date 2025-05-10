@@ -26,7 +26,7 @@ export function TagSelectComponent({
   ingredients,
 }: TagSelectComponentProps) {
   const ingredientsMap = useMemo(() => {
-    return _.fromPairs(
+    return _.fromPairs<CosmeticINCIIngredient | undefined>(
       ingredients.map(ingredient => {
         return [ingredient.id, ingredient];
       }),
@@ -45,10 +45,14 @@ export function TagSelectComponent({
           return (
             <Label
               sortable={sortable}
-              onRemove={() => {
-                onValueUpdate?.(value.filter(id => id !== ingredient.id));
-              }}>
-              {ingredient.name}
+              onRemove={
+                ingredient
+                  ? () => {
+                      onValueUpdate?.(value.filter(id => id !== ingredient.id));
+                    }
+                  : undefined
+              }>
+              {ingredient?.name}
             </Label>
           );
         }}

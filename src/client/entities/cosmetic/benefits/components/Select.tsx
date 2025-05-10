@@ -3,9 +3,9 @@ import {
   CosmeticBenefitTree,
   CosmeticUtils,
 } from '#/shared/models/cosmetic';
-import { Select, SelectMultipleProps, SelectSingleProps } from '#/ui-lib/components/atoms/Select';
+import { Select, SelectSingleProps } from '#/ui-lib/components/atoms/Select';
 import { useMemo } from 'react';
-import { useListCosmeticBenefitsQuery } from '#/client/store';
+import { useListCosmeticBenefitsQuery } from '../queries';
 
 function Options({
   benefits,
@@ -83,28 +83,6 @@ export function CosmeticBenefitSingleSelect({
 
   return (
     <Select {...props}>
-      <Options
-        {...props}
-        benefits={listCosmeticBenefitsQuery.data || []}
-        hiddenIds={hiddenIds}
-      />
-    </Select>
-  );
-}
-
-interface CosmeticBenefitMultipleSelectProps
-  extends Pick<SelectMultipleProps, 'value' | 'onValueUpdate'> {
-  hiddenIds?: string[];
-}
-
-export function CosmeticBenefitMultipleSelect({
-  hiddenIds,
-  ...props
-}: CosmeticBenefitMultipleSelectProps) {
-  const listCosmeticBenefitsQuery = useListCosmeticBenefitsQuery();
-
-  return (
-    <Select {...props} multiple>
       <Options
         {...props}
         benefits={listCosmeticBenefitsQuery.data || []}

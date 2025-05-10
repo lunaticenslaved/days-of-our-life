@@ -1,8 +1,3 @@
-export interface Handlers<T> {
-  onError?(error: Error): void;
-  onSuccess?(data: T): void;
-}
-
 export interface ClassNameProp {
   className?: string;
 }
@@ -21,5 +16,11 @@ export interface ModelValueProps<T = unknown> {
 export interface MutationHandlers<TSuccessData = undefined> {
   onMutate?(): void;
   onError?(): void;
+  onSuccess?: TSuccessData extends undefined ? () => void : (data: TSuccessData) => void;
+}
+
+export interface Handlers<TSuccessData = undefined> {
+  // FIXME заглушка на error?
+  onError?(error?: Error): void;
   onSuccess?: TSuccessData extends undefined ? () => void : (data: TSuccessData) => void;
 }
