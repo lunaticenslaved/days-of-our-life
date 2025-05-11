@@ -32,7 +32,7 @@ export function FormComponent({ onSubmit, recipe, onFindProduct }: FormComponent
 
   return (
     <Form schema={schema} onSubmit={onSubmit} initialValues={initialValues}>
-      {({ handleSubmit }) => (
+      {({ handleSubmit, form, values }) => (
         <>
           <Box maxWidth={MAX_WIDTH}>
             <Form.Field name="name" required>
@@ -188,6 +188,16 @@ export function FormComponent({ onSubmit, recipe, onFindProduct }: FormComponent
                                                                     <NumberInput
                                                                       {...fieldProps.input}
                                                                       append="г"
+                                                                      autoFocus={
+                                                                        partField ===
+                                                                          values
+                                                                            .addedIngredient
+                                                                            ?.partField &&
+                                                                        values
+                                                                          .addedIngredient
+                                                                          .ingredientIndex ===
+                                                                          ingredientIndex
+                                                                      }
                                                                       required
                                                                     />
                                                                   </Field.Input>
@@ -249,6 +259,16 @@ export function FormComponent({ onSubmit, recipe, onFindProduct }: FormComponent
                                                                 grams: 0,
                                                                 description: '',
                                                               });
+
+                                                              form.change(
+                                                                'addedIngredient',
+                                                                {
+                                                                  partField,
+                                                                  ingredientIndex:
+                                                                    fields.length || 0,
+                                                                },
+                                                              );
+
                                                               popup.close();
                                                             }}
                                                           />
