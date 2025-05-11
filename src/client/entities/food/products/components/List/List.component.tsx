@@ -11,6 +11,7 @@ type ListComponentProps = WithInputProps<
     renderActions?: (ing: FoodProduct) => ReactNode;
     onItemClick?: (ing: FoodProduct) => void;
     autoFocus?: 'search';
+    maxHeight: string;
   }
 >;
 
@@ -21,6 +22,7 @@ export function ListComponent({
   renderActions,
   onItemClick,
   autoFocus,
+  maxHeight,
 }: ListComponentProps) {
   const orderedProducts = useMemo(() => {
     return orderFoodProducts(products);
@@ -35,7 +37,7 @@ export function ListComponent({
         <Box spacing={{ px: 4 }}>Продукты не найдены</Box>
       </List.Empty>
       <List.Group>
-        <Box spacing={{ px: 4, pb: 4 }} overflow="auto">
+        <Box spacing={{ px: 4, pb: 4 }} maxHeight={maxHeight} overflow="auto">
           {orderedProducts.map(product => {
             return (
               <List.Item

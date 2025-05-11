@@ -6,12 +6,7 @@ export const schema = z.object({
   description: FoodValidators.recipeDescription,
   output: FoodValidators.recipeOutput,
   parts: FoodValidators.recipeParts,
-  addedIngredient: z
-    .object({
-      partField: z.string(),
-      ingredientIndex: z.number(),
-    })
-    .optional(),
+  addedIngredientField: z.string().optional(),
 });
 
 export type FormValues = z.infer<typeof schema>;

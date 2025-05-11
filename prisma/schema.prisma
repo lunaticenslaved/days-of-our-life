@@ -57,6 +57,7 @@ model FoodRecipe {
   parts          FoodRecipePart[]
   mealIngreients FoodMealItem[]
   quantities     FoodQuantityConverter[]
+  comments       Comment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -398,4 +399,14 @@ model CosmeticHomemade_IngredientStorageItem {
   ingredient   CosmeticIngredient @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
 
   grams Float @db.DoublePrecision
+}
+
+model Comment {
+  id String @id @default(uuid()) @db.Uuid
+
+  foodRecipe   FoodRecipe @relation(fields: [foodRecipeId], references: [id], onDelete: Cascade)
+  foodRecipeId String     @db.Uuid
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

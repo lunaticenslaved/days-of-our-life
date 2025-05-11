@@ -1,9 +1,9 @@
-import { Box, Popup, Flex } from '#/ui-lib/components';
+import { Box, Popup } from '#/ui-lib/components';
 import { ComponentProps, ReactNode } from 'react';
 
 import { ListComponent } from '../List/List.component';
 
-type ListProps = ComponentProps<typeof ListComponent> & {
+type ListProps = Omit<ComponentProps<typeof ListComponent>, 'maxHeight'> & {
   trigger: ReactNode;
 };
 
@@ -15,9 +15,7 @@ export function ComboboxComponent({ trigger, products, ...props }: ListProps) {
       <Popup.Content>
         {/* TODO добавить Paper компонент? */}
         <Box color="background">
-          <Flex maxHeight="300px" overflow="auto">
-            <ListComponent {...props} products={products} />
-          </Flex>
+          <ListComponent {...props} products={products} maxHeight="300px" />
         </Box>
       </Popup.Content>
     </Popup>

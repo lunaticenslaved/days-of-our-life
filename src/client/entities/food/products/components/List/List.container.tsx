@@ -5,7 +5,7 @@ import { ComponentProps } from 'react';
 
 type ListContainerProps = Pick<
   ComponentProps<typeof ListComponent>,
-  'onItemClick' | 'value' | 'onValueUpdate' | 'renderActions' | 'autoFocus'
+  'onItemClick' | 'value' | 'onValueUpdate' | 'renderActions' | 'autoFocus' | 'maxHeight'
 >;
 
 export function ListContainer(props: ListContainerProps) {

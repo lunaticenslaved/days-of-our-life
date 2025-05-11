@@ -5,7 +5,7 @@ import {
 import { CosmeticIngredientStorageForm } from '#/client/entities/cosmetic/ingredient-storage';
 import { CosmeticIngredient } from '#/shared/models/cosmetic';
 import { Box, Button, Flex, Popup, usePopup } from '#/ui-lib/components';
-import { ComponentProps, useRef } from 'react';
+import { ComponentProps } from 'react';
 
 type Actions = 'edit' | 'delete';
 
@@ -23,18 +23,14 @@ const ActionsComponentBase = createEntityActions<CosmeticIngredient, Actions>({
 type ActionsComponentProps = ComponentProps<typeof ActionsComponentBase>;
 
 export function ActionsComponent(props: ActionsComponentProps) {
-  const popupTriggerRef = useRef<HTMLDivElement>(null);
   const popup = usePopup();
 
   return (
     <Flex gap={2}>
-      <div ref={popupTriggerRef}>
-        <Button view="toned" onClick={popup.open}>
-          В наличии: {props.entity.storage.grams} грамм
-        </Button>
-      </div>
-
-      <Popup popup={popup} triggerEl={popupTriggerRef}>
+      <Popup popup={popup}>
+        <Popup.Trigger>
+          <Button view="toned">В наличии: {props.entity.storage.grams} грамм</Button>
+        </Popup.Trigger>
         <Popup.Content>
           <Box color="background" spacing={{ p: 4 }}>
             <CosmeticIngredientStorageForm
