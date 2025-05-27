@@ -7,6 +7,8 @@ import {
   FoodRecipeOutput,
 } from '#/shared/models/food';
 
+export * as ProductComplex from './product-complex';
+
 interface Id {
   id: string;
 }

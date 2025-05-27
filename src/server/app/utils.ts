@@ -11,6 +11,7 @@ import { LC } from '#/shared/types';
 import { APP_ENV } from '#/server/constants';
 
 import { RequestContext } from '#/server/utils/RequestContext';
+import { ApiActions } from '#/server/utils/api-action';
 import express from 'express';
 import { Controller } from '#/server/utils/Controller';
 import path from 'path';
@@ -71,6 +72,65 @@ export async function configureApp(app: Express) {
   );
   app.use(express.json());
   app.use(addHeaders);
+
+  app.post('/act', async (req, res) => {
+    try {
+      const actionType = req.body.action;
+
+      if (typeof actionType !== 'string') {
+        throw new Error('Action is not string');
+      }
+
+      const actionConfig = ApiActions[actionType];
+
+      if (!actionConfig) {
+        throw new Error(`Unknown action config for '${actionType}'`);
+      }
+
+      const validationResult = actionConfig.validator.safeParse(req.body);
+
+      if (validationResult.error) {
+        throw new ValidationError({
+          errors: validationResult.error.errors.map(e => e.message),
+          status: 400,
+        });
+      }
+
+      const requestContext: RequestContext = {
+        prisma: prisma,
+      };
+
+      res.setHeader('content-type', 'application/json');
+
+      const resData = await actionConfig.handler(validationResult, requestContext);
+
+      res
+        .status(200)
+        .send({
+          type: 'success',
+          data: resData,
+        } satisfies ApiResponse<unknown>)
+        .end();
+    } catch (error) {
+      let status = 500;
+      let message = (error as Error)?.message || 'Unknown error';
+
+      if (error instanceof ApiError) {
+        message = error.message;
+        status = error.status;
+      }
+
+      console.error(error);
+
+      res
+        .status(status)
+        .send({
+          type: 'error',
+          message: message,
+        } satisfies ApiResponse<unknown>)
+        .end();
+    }
+  });
 
   const controllers = await loadControllers();
 

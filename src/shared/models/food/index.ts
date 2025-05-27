@@ -2,6 +2,8 @@ export { type FoodProduct, FoodProductValidators } from './product';
 export { type FoodNutrients, FoodNutrientsValidators } from './nutrients';
 export { type FoodQuantityConverter, FoodQuantityConverterValidators } from './quantity';
 
+export * as ProductComplex from './product-complex';
+
 // ---- OLD ----------
 import { FoodProduct } from './product';
 import { FoodNutrients } from './nutrients';

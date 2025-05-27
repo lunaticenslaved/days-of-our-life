@@ -34,9 +34,10 @@ model FoodProduct {
   nutrientsPerGramId String        @unique @db.Uuid
   nutrientsPerGram   FoodNutrients @relation(fields: [nutrientsPerGramId], references: [id], onDelete: Restrict)
 
-  quantities        FoodQuantityConverter[]
-  recipeIngrediends FoodRecipeIngredient[]
-  mealIngreients    FoodMealItem[]
+  quantities          FoodQuantityConverter[]
+  recipeIngrediends   FoodRecipeIngredient[]
+  mealIngreients      FoodMealItem[]
+  complexProductBinds FoodProductComplex_ProductBind[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -54,10 +55,11 @@ model FoodRecipe {
   outputId String           @unique @db.Uuid
   output   FoodRecipeOutput @relation(fields: [outputId], references: [id], onDelete: Restrict)
 
-  parts          FoodRecipePart[]
-  mealIngreients FoodMealItem[]
-  quantities     FoodQuantityConverter[]
-  comments       Comment[]
+  parts           FoodRecipePart[]
+  mealIngreients  FoodMealItem[]
+  quantities      FoodQuantityConverter[]
+  notes           Note[]
+  productsComplex FoodProductComplex[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -401,12 +403,40 @@ model CosmeticHomemade_IngredientStorageItem {
   grams Float @db.DoublePrecision
 }
 
-model Comment {
+model Note {
   id String @id @default(uuid()) @db.Uuid
 
-  foodRecipe   FoodRecipe @relation(fields: [foodRecipeId], references: [id], onDelete: Cascade)
-  foodRecipeId String     @db.Uuid
+  foodRecipe   FoodRecipe? @relation(fields: [foodRecipeId], references: [id], onDelete: Cascade)
+  foodRecipeId String?     @db.Uuid
+
+  text String @db.Char(2000)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model FoodProductComplex {
+  id String @id @default(uuid()) @db.Uuid
+
+  recipe   FoodRecipe? @relation(fields: [recipeId], references: [id], onDelete: SetNull)
+  recipeId String?     @db.Uuid
+
+  title String @db.Char(255)
+  grams Int    @db.Integer
+
+  productBinds FoodProductComplex_ProductBind[]
+
+  createdAt DateTime @default(now())
+}
+
+model FoodProductComplex_ProductBind {
+  productComplex   FoodProductComplex @relation(fields: [productComplexId], references: [id], onDelete: Cascade)
+  productComplexId String             @db.Uuid
+
+  product   FoodProduct @relation(fields: [productId], references: [id], onDelete: Restrict)
+  productId String      @db.Uuid
+
+  grams Int @db.Integer
+
+  @@id([productComplexId, productId])
 }

@@ -90,7 +90,7 @@ export function PhaseField({
 
                       return (
                         <IngredientField
-                          key={ingredient.id}
+                          key={ingFieldName}
                           phaseId={phase.id}
                           ingredient={ingredient}
                           fieldName={ingFieldName}
