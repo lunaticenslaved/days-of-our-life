@@ -20,17 +20,21 @@ export type ApiResponse<T> =
       message: string;
     };
 
-export type ActionResponse<TData> =
-  | {
-      type: 'success';
-      data: TData;
-    }
-  | {
-      type: 'error';
-      message: string;
-    };
+export type ActionResponse<TData> = TData & {
+  //
+};
 
 export type ActionRequest<TAction extends Action, TData> = {
   action: TAction;
   data: TData;
 };
+
+export type ActionError<TData> = TData & ActionCommonError;
+
+export type ActionCommonError =
+  | {
+      type: 'error/common/validation-error';
+    }
+  | {
+      type: 'error/common/unknown-action';
+    };

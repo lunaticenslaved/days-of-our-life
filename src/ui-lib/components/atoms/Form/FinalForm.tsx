@@ -9,34 +9,41 @@ import {
 } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
 import { Validator } from '#/shared/validation';
-import { z } from 'zod';
 import { FieldContext, FieldState, InputFormFieldProps } from '#/ui-lib/types';
 import { FieldArray } from 'react-final-form-arrays';
 import { InputState } from '#/ui-lib/components/atoms/Input';
 import { RefCallBack } from 'react-hook-form';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type FormValidationErrors = Record<string, any>;
+
 // --- Form Context -------------------------------------------------------
 // TODO
 
 // --- Form ---------------------------------------------------------------
-interface FormProps<TSchema extends Zod.SomeZodObject, TFormValues = z.infer<TSchema>> {
-  schema: TSchema;
+interface FormProps<TFormValues> {
+  schema?: Zod.ZodType<TFormValues>;
+  validate?: (
+    values: TFormValues,
+  ) => Promise<FormValidationErrors> | FormValidationErrors;
   disabled?: boolean;
   initialValues: TFormValues;
   onSubmit(values: TFormValues): void | Promise<void>;
-  children(props: FormRenderProps<z.infer<TSchema>> & IFormContext): ReactNode;
+  children(props: FormRenderProps<TFormValues> & IFormContext): ReactNode;
 }
 
-function Form<TSchema extends Zod.SomeZodObject>({
+function Form<TFormValues>({
   onSubmit,
   children,
   schema,
   initialValues,
+  validate,
   disabled = false,
-}: FormProps<TSchema>) {
-  type TFormValues = z.infer<TSchema>;
-
-  const validator = useMemo(() => new Validator(schema), [schema]);
+}: FormProps<TFormValues>) {
+  const validator = useMemo(
+    () => (schema ? new Validator(schema) : { validate }),
+    [schema, validate],
+  );
 
   return (
     <FinalForm<TFormValues>

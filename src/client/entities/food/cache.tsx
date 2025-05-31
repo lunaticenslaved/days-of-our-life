@@ -1,4 +1,5 @@
 import { ItemStore, useItemCache } from '#/client/hooks/cache';
+import { Domain } from '#/shared';
 import { FoodProduct, FoodRecipe } from '#/shared/models/food';
 
 import _ from 'lodash';
@@ -7,6 +8,7 @@ import { createContext, ReactNode, useContext } from 'react';
 interface IFoodStore {
   products: ItemStore<FoodProduct>;
   recipes: ItemStore<FoodRecipe>;
+  productComplexes: ItemStore<Domain.Food.ProductComplex>;
 }
 
 const Context = createContext<IFoodStore | null>(null);
@@ -15,6 +17,7 @@ interface FoodCacheProviderProps {
   children: ReactNode;
   products?: FoodProduct[];
   recipes?: FoodRecipe[];
+  productComplexes?: Domain.Food.ProductComplex[];
 }
 
 const getKey = (arg: { id: string }) => arg.id;
@@ -23,10 +26,12 @@ export function FoodCacheProvider({
   children,
   products,
   recipes,
+  productComplexes,
 }: FoodCacheProviderProps) {
   const value: IFoodStore = {
     products: useItemCache(getKey, products),
     recipes: useItemCache(getKey, recipes),
+    productComplexes: useItemCache(getKey, productComplexes),
   };
 
   return (

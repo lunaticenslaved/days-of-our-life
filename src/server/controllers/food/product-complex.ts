@@ -42,6 +42,7 @@ createApiAction<Food.ProductComplex.CreateRequest, Food.ProductComplex.CreateRes
     return {
       type: 'success',
       data: {
+        _key: 'Food.ProductComplex',
         id: created.id,
       },
     };

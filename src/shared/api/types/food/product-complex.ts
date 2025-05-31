@@ -1,11 +1,10 @@
+import { Domain } from '#/shared';
 import { Action } from '#/shared/api/types';
-import { ActionRequest, ActionResponse } from '#/shared/api/types/shared';
+import { ActionError, ActionRequest, ActionResponse } from '#/shared/api/types/shared';
 
-export type CreateResponse = ActionResponse<{
-  id: string;
-}>;
+// CREATE
 export type CreateRequest = ActionRequest<
-  Action,
+  Action.Food_ProductComplex_Create,
   {
     products: Array<{
       grams: number;
@@ -15,6 +14,44 @@ export type CreateRequest = ActionRequest<
       grams: number;
     };
     title: string;
+    description?: string;
     recipeId?: string;
   }
 >;
+export type CreateResponse = ActionResponse<{
+  type: 'success';
+  data: Domain.Food.ProductComplex;
+}>;
+export type CreateError = ActionError<{
+  type: 'validation_error';
+}>;
+
+// VALIDATE
+export type ValidateRequest = ActionRequest<
+  Action.Food_ProductComplex_Validate,
+  CreateRequest['data']
+>;
+export type ValidateResponse = ActionResponse<
+  | {
+      type: 'valid';
+    }
+  | {
+      type: 'invalid';
+      errors: {
+        title?: string;
+        description?: string;
+        recipeId?: string;
+        products?: Array<
+          | {
+              grams?: string;
+              productId?: string;
+            }
+          | undefined
+        >;
+        output?: {
+          grams?: string;
+        };
+      };
+    }
+>;
+export type ValidateError = ActionError<void>;

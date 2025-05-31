@@ -28,6 +28,7 @@ module.exports = {
         varsIgnorePattern: '^_',
       },
     ],
+    '@typescript-eslint/no-namespace': 0,
   },
   ignorePatterns: ['dist', 'node_modules'],
 };

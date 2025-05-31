@@ -1,4 +1,4 @@
 export type ProductComplex = {
-  _key: 'ProductComplex';
+  _key: 'Food.ProductComplex';
   id: string;
 };

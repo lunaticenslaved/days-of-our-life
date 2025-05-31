@@ -1,6 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 
-import { ActionRequest, ActionResponse, ApiResponse } from '#/shared/api/types/shared';
+import { ApiResponse } from '#/shared/api/types/shared';
 import { ApiAction } from '#/shared/api/utils';
 import { Handlers } from '#/client/types';
 import axiosLib from 'axios';
@@ -71,12 +71,7 @@ export function wrapApiAction<
   };
 }
 
-export async function act<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  TReq extends ActionRequest<any, any>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  TRes extends ActionResponse<any>,
->(request: TReq): Promise<TRes> {
+export async function act<TReq, TRes>(request: TReq): Promise<TRes> {
   const response = await axios('/act', {
     method: 'POST',
     headers: {
